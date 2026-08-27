@@ -1,8 +1,12 @@
 # DevOps by hmrdkn-labs
 
-A portable, question-first DevOps learning system. Read it at
-[`devops.hamardikan.com`](https://devops.hamardikan.com), download the Markdown,
-or run the same curriculum locally.
+A portable, question-first DevOps learning system planned for
+[`devops.hamardikan.com`](https://devops.hamardikan.com). Download the Markdown
+or run the same curriculum locally today.
+
+> Production deployment is currently paused. See
+> [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for the exact implementation state,
+> blockers, and safe resume order.
 
 The owner beta starts with **From Process to Pod**: 18 original learning units
 that connect computer processes, Linux, networking, containers, Git/YAML, and
