@@ -47,8 +47,9 @@ not modified while this application was built.
 - **2026-08-27 — blocker change validated:** private CI run `33046829376`
   completed successfully after the capability-contract and evidence update.
 - **Current:** deployment is paused on that credential-scope/account-match
-  blocker. The intended immutable public source is the latest pushed commit
-  `d75c0a138c89404b0d13eb5ce9e10c06d46f8e3c`.
+  blocker. Application code last changed in `498489e`; subsequent public
+  commits are status-only updates. The retry should pin the latest approved
+  public SHA after the credential fix.
 
 ## Completed
 
