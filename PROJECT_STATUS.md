@@ -1,14 +1,18 @@
 # Project status and handoff
 
-Status captured on **2026-08-27**. Work was intentionally stopped before any
-production infrastructure or DNS change.
+Status captured on **2026-08-27**. This file is the canonical running log for
+the project: update it at every meaningful completion, handoff, blocker, or
+change of deployment phase.
 
 ## Current state
 
 - Public repository: <https://github.com/hmrdkn-labs/devops>
-- Last implementation commit before this handoff: `9cc0c72`
+- Latest public application commit: `498489e`
 - Product phase: owner-beta application implemented and verified locally
-- Production status: **not deployed**
+- Deployment phase: **protected guest deployment preparation in progress**
+- Production status: **D1 provisioned; Worker and DNS not deployed yet**
+- Production D1: database `hmrdkn-devops` (resource ID is retained only in
+  private infrastructure)
 - Public curriculum: 18 reviewed **From Process to Pod** units, 36
   explain-or-predict questions, and 90 review cards
 - Target domain: <https://devops.hamardikan.com> (not connected yet)
@@ -16,6 +20,23 @@ production infrastructure or DNS change.
 The repository has clean, independent history. The private KodeKloud knowledge
 base was not copied into this repository, is not a build dependency, and was
 not modified while this application was built.
+
+## Progress log
+
+- **2026-08-27 — resumed deployment work:** the agreed Astro-on-Cloudflare
+  Worker route remains the production architecture; the incompatible Sites
+  preview is optional and not on the production path.
+- **2026-08-27 — provisioned D1:** created the empty APAC database
+  `hmrdkn-devops`; its UUID is deliberately kept out of this public log.
+- **2026-08-27 — prepared private boundary:** added the private service
+  contract, Worker configuration, guarded deployment workflow, evidence
+  template, environment references, and validators in a local clone of
+  `hamardikan/hamardikan-infra`.
+- **2026-08-27 — validated deployment artifact:** Wrangler dry-run passed with
+  the Cloudflare Worker entrypoint, D1 binding, 210 static assets, and the
+  generated client/server output.
+- **Current:** private-infrastructure changes are locally validated and must
+  be committed/pushed before dispatching the protected guest deployment.
 
 ## Completed
 
@@ -37,6 +58,9 @@ not modified while this application was built.
 - CI that validates content, types, tests, builds, browser flows, accessibility,
   release classification, deterministic generated files, and absence of public
   production secrets/deployment capabilities
+- Private-infrastructure contract and protected workflow prepared for the
+  `devops.hamardikan.com` Worker route; local validators and Worker dry-run pass
+- Empty production D1 resource provisioned for the `DB` binding
 
 ## Verification at the stopping point
 
@@ -52,7 +76,9 @@ npm audit           # 0 vulnerabilities
 
 Additional checks passed for an empty D1 migration, indexed due-review query,
 duplicate-submission idempotency, guest privacy, accessibility, and a stable
-content-archive checksum across repeated builds.
+content-archive checksum across repeated builds. The private infrastructure
+validator suite and a Wrangler Worker dry-run also pass; no production Worker
+deployment has been claimed from those static checks.
 
 ## Exact blockers
 
@@ -68,18 +94,18 @@ This does **not** block the planned production route. Production should use the
 Astro Cloudflare Worker artifact directly. The failed Sites preview is not
 production and has no custom domain attached.
 
-### 2. The private production boundary is not implemented yet
+### 2. The protected production deployment is prepared but not dispatched
 
-The private `hamardikan/hamardikan-infra` repository exists, but it was not
-cloned or changed during the stopped deployment phase. At the stopping point,
-its GitHub repository had no Actions secrets or variables configured.
+The private `hamardikan/hamardikan-infra` repository now has a locally prepared
+service contract and guarded workflow. Its local validators and the Worker
+dry-run pass, but that change set has not yet been committed/pushed to the
+private repository and no production deployment has been dispatched.
 
 The following production work therefore remains:
 
-- create the production D1 database and apply this repository's migrations;
-- bind it to the Worker as `DB`;
-- add the Worker configuration and protected release workflow in the private
-  infrastructure repository;
+- commit and push the reviewed private-infrastructure wiring;
+- dispatch the protected guest release for an immutable public commit;
+- apply this repository's D1 migrations and bind it to the Worker as `DB`;
 - deploy the exact approved public commit;
 - connect `devops.hamardikan.com` as the Worker custom domain;
 - verify health, content-manifest SHA, public pages, raw Markdown, search, auth,
@@ -116,19 +142,18 @@ implementation.
 
 ## Safe resume order
 
-1. Start in the private infrastructure repository and read its local
-   contributor/agent instructions before changing it.
-2. Create D1, record the resource binding privately, and apply the migration
-   from this repository.
-3. Create and configure the two OAuth applications, then store all credentials
-   only in the private deployment boundary.
-4. Add a protected workflow that checks out an immutable public commit, runs
-   the full validation suite, builds the Astro Worker, and fails closed when a
-   release is misclassified.
-5. Deploy to Cloudflare, attach the custom domain, run the verification list in
-   [`docs/deployment.md`](docs/deployment.md), and record the previous Worker
-   version for rollback.
-6. Complete the owner-beta success gate before expanding the curriculum.
+1. Commit and push the reviewed private-infrastructure wiring (without the
+   temporary local dry-run artifacts), then run its validation workflows.
+2. Dispatch the protected **guest** release for the latest approved public
+   commit; apply the D1 migration and Worker deployment through that workflow.
+3. Verify the public health endpoint, manifest SHA, routes, raw Markdown,
+   search, and custom-domain response, then record metadata-only evidence and
+   the previous Worker version privately.
+4. Create and configure the two OAuth applications, then store all credentials
+   only in the private deployment boundary; owner mode remains blocked until
+   those secrets and the stable provider-ID allowlist exist.
+5. Deploy owner mode, run the owner-beta success gate, and only then expand the
+   curriculum.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or
 production deployment permissions in this public repository.
