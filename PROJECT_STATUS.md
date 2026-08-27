@@ -1,25 +1,46 @@
-# Project status and handoff
+# DevOps by hmrdkn-labs — project status
 
-Status captured on **2026-08-27**. This file is the canonical running log for
-the project: update it at every meaningful completion, handoff, blocker, or
-change of deployment phase.
+> **Last updated:** 2026-08-27 · This is the canonical running log. Update it
+> whenever a phase completes, work starts, or a blocker changes.
 
-## Current state
+## Read this first
 
-- Public repository: <https://github.com/hmrdkn-labs/devops>
-- Latest public application commit: `498489e`
-- Product phase: owner-beta application implemented and verified locally
-- Deployment phase: **protected guest release dispatch pending**
-- Production status: **D1 provisioned; Worker and DNS not deployed yet**
-- Production D1: database `hmrdkn-devops` (resource ID is retained only in
-  private infrastructure)
-- Public curriculum: 18 reviewed **From Process to Pod** units, 36
-  explain-or-predict questions, and 90 review cards
-- Target domain: <https://devops.hamardikan.com> (not connected yet)
+**Bottom line:** the learning application is built, tested, and ready to run.
+The production D1 database and protected Cloudflare deployment path are also
+prepared. Release is paused at one external boundary: the private GitHub
+environment's Cloudflare credential cannot access D1 (API error `7403`). The
+attempt stopped before migration, Worker deployment, or DNS changes.
 
-The repository has clean, independent history. The private KodeKloud knowledge
-base was not copied into this repository, is not a build dependency, and was
-not modified while this application was built.
+**One action unblocks the release:** update the private
+`production-cloudflare` Cloudflare API token so it has D1 Edit, Workers Scripts
+Edit, Workers Routes Edit, and Zone Read access for the same account that owns
+`hmrdkn-devops`. Then rerun the protected **guest** workflow. Do not paste the
+token into Git, logs, or chat.
+
+**Architecture decision:** no change is needed. The production path is the
+Astro Cloudflare Worker directly; the incompatible Sites preview is optional
+and is not part of production.
+
+## Progress at a glance
+
+`✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
+`⛔ Guest release` → `⏳ Owner beta`
+
+| Phase | Status | What it means |
+| --- | --- | --- |
+| Product contract | ✅ Complete | Learning flow, mastery, portability, privacy, and rollout rules are documented. |
+| Learning app | ✅ Complete | Astro 7/Solid application, question-first study flow, review scheduling, notes, readiness, search, and export are implemented. |
+| Initial content | ✅ Complete | 18 reviewed **From Process to Pod** units, 36 explain/predict prompts, and 90 cards are published. |
+| Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
+| Guest release | ⛔ Blocked | Run `33046394332` failed closed at D1 migration because the Cloudflare credential was not authorized for D1; no production traffic changed. |
+| Owner beta | ⏳ Waiting | GitHub/Google OAuth secrets and the stable owner allowlist are not configured yet. |
+
+**Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
+deployment boundary: `hamardikan/hamardikan-infra`
+
+The public repository has independent history. The private KodeKloud
+knowledge base was not copied into this repository, is not a build dependency,
+and was not modified while this application was built.
 
 ## Progress log
 
