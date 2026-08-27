@@ -9,7 +9,7 @@ change of deployment phase.
 - Public repository: <https://github.com/hmrdkn-labs/devops>
 - Latest public application commit: `498489e`
 - Product phase: owner-beta application implemented and verified locally
-- Deployment phase: **protected guest deployment preparation in progress**
+- Deployment phase: **protected guest release dispatch pending**
 - Production status: **D1 provisioned; Worker and DNS not deployed yet**
 - Production D1: database `hmrdkn-devops` (resource ID is retained only in
   private infrastructure)
@@ -35,8 +35,12 @@ not modified while this application was built.
 - **2026-08-27 — validated deployment artifact:** Wrangler dry-run passed with
   the Cloudflare Worker entrypoint, D1 binding, 210 static assets, and the
   generated client/server output.
-- **Current:** private-infrastructure changes are locally validated and must
-  be committed/pushed before dispatching the protected guest deployment.
+- **2026-08-27 — private wiring pushed:** `hamardikan-infra` commit `47178cd`
+  is on `main`; its repository validation run `33046123635` is still in
+  progress.
+- **Current:** the guest release is ready to dispatch after that CI gate. The
+  intended immutable public source is the latest pushed commit on
+  `hmrdkn-labs/devops`.
 
 ## Completed
 
@@ -96,14 +100,14 @@ production and has no custom domain attached.
 
 ### 2. The protected production deployment is prepared but not dispatched
 
-The private `hamardikan/hamardikan-infra` repository now has a locally prepared
-service contract and guarded workflow. Its local validators and the Worker
-dry-run pass, but that change set has not yet been committed/pushed to the
-private repository and no production deployment has been dispatched.
+The private `hamardikan/hamardikan-infra` repository now has the service
+contract and guarded workflow committed on `main`. Its local validators and
+the Worker dry-run pass; the corresponding repository CI gate is still
+running, and no production deployment has been dispatched.
 
 The following production work therefore remains:
 
-- commit and push the reviewed private-infrastructure wiring;
+- complete the private repository CI gate;
 - dispatch the protected guest release for an immutable public commit;
 - apply this repository's D1 migrations and bind it to the Worker as `DB`;
 - deploy the exact approved public commit;
@@ -142,8 +146,7 @@ implementation.
 
 ## Safe resume order
 
-1. Commit and push the reviewed private-infrastructure wiring (without the
-   temporary local dry-run artifacts), then run its validation workflows.
+1. Complete the private repository CI gate for commit `47178cd`.
 2. Dispatch the protected **guest** release for the latest approved public
    commit; apply the D1 migration and Worker deployment through that workflow.
 3. Verify the public health endpoint, manifest SHA, routes, raw Markdown,
