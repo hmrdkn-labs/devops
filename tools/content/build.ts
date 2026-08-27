@@ -10,7 +10,7 @@ import {
 } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { zipSync, strToU8 } from 'fflate';
+import { zipSync, strToU8, type Zippable } from 'fflate';
 import { parse } from 'yaml';
 import {
   cardFileSchema,
@@ -226,15 +226,15 @@ function xml(value: string) {
   })[character] ?? character);
 }
 
-async function collectArchiveFiles(directory: string, prefix = ''): Promise<Record<string, Uint8Array>> {
-  const files: Record<string, Uint8Array> = {};
+async function collectArchiveFiles(directory: string, prefix = ''): Promise<Zippable> {
+  const files: Zippable = {};
   for (const entry of await readdir(directory)) {
     const absolute = path.join(directory, entry);
     const relative = path.join(prefix, entry);
     if ((await stat(absolute)).isDirectory()) {
       Object.assign(files, await collectArchiveFiles(absolute, relative));
     } else {
-      files[relative] = strToU8(await readFile(absolute, 'utf8'));
+      files[relative] = [strToU8(await readFile(absolute, 'utf8')), { mtime: 315_532_800_000 }];
     }
   }
   return files;

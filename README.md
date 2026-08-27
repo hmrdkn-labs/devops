@@ -58,7 +58,7 @@ Requirements: Node.js 22+, npm 10+, and a Cloudflare account only when testing
 remote resources or deploying.
 
 ```bash
-npm ci --legacy-peer-deps
+npm ci
 cp .dev.vars.example .dev.vars
 npm run dev
 ```
