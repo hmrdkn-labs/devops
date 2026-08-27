@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run ci
+      - run: git diff --exit-code
+      - name: Verify revision classification
+        if: github.event_name == 'pull_request'
+        run: npm run revision:check -- --base=origin/${{ github.base_ref }}
+      - name: Classify release
+        id: classify
+        if: github.event_name == 'pull_request'
+        run: npm run release:classify -- --base=origin/${{ github.base_ref }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-contract-${{ github.sha }}
+          path: |
+            dist/release-manifest.json
+            public/content/v1/manifest.json
+          if-no-files-found: error
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  no-production-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject production deployment capabilities
+        run: |
+          test ! -e .github/workflows/deploy.yml
+          ! grep --line-number -E 'database_id|client_secret' wrangler.jsonc
+          ! grep -R --line-number -E 'wrangler deploy|cloudflare/wrangler-action' .github/workflows

@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:container-network-storage
+slug: container-network-storage
+title: Container networking and storage
+summary: Follow interfaces, published ports, bind mounts, and volumes across the isolation boundary of a container.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: containers
+estimated_minutes: 18
+aliases: []
+applicable_versions:
+  - product: container-networking
+    range: conceptual-stable
+prerequisites: [fpp:container-lifecycle, fpp:routing-nat-firewalls]
+objectives:
+  - id: fpp:container-network-storage/network-boundary
+    title: Explain container interfaces and explicit port publication
+    critical: true
+  - id: fpp:container-network-storage/storage-boundary
+    title: Distinguish writable layers, bind mounts, and managed volumes
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

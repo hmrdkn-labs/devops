@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:config-secrets-storage
+revision: 1
+questions:
+  - id: fpp:config-secrets-storage/q-fresh
+    kind: predict
+    prompt: Can every brand-new EKS cluster dynamically provision an EBS PVC immediately with no additional setup?
+    model_answer: No. Dynamic EBS provisioning requires the EBS CSI driver, its IAM permissions, and a compatible StorageClass. Cluster creation alone does not guarantee that whole data path.
+    critical_points:
+      - CSI implementation and permissions are required.
+      - A StorageClass selects provisioning behavior.
+    objective_ids: [fpp:config-secrets-storage/pv-topology]
+  - id: fpp:config-secrets-storage/q-az
+    kind: scenario
+    prompt: An AZ fails. Can a Pod automatically move to another AZ and reattach the same EBS volume?
+    model_answer: Not the same zonal EBS volume. The scheduler must place the Pod where the volume is accessible; cross-AZ recovery needs replicated storage, restore from backup or snapshot, or an application-level failover design.
+    critical_points:
+      - EBS volumes have AZ topology.
+      - Pod rescheduling cannot erase storage failure domains.
+    objective_ids: [fpp:config-secrets-storage/pv-topology]

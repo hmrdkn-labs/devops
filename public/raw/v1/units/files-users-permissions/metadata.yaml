@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:files-users-permissions
+slug: files-users-permissions
+title: Files, users, and permissions
+summary: Understand Linux paths, ownership, mode bits, and why service identity is part of both reliability and security.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: linux
+estimated_minutes: 14
+aliases: []
+applicable_versions:
+  - product: linux
+    range: posix-permissions
+prerequisites: [fpp:processes-and-resources]
+objectives:
+  - id: fpp:files-users-permissions/path-identity
+    title: Relate paths and ownership to process access
+    critical: true
+  - id: fpp:files-users-permissions/mode-bits
+    title: Interpret read, write, and execute permission checks
+    critical: false
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [cloud-native-architecture]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

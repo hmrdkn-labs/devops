@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:ip-subnets
+practices:
+  - id: fpp:ip-subnets/p-routes
+    title: Explain your route table
+    mode: guided_markdown
+    prompt: Use read-only commands to connect local addresses to route selection.
+    steps:
+      - List interface addresses with ip address.
+      - List routes with ip route.
+      - Ask ip route get for one local and one internet destination.
+    success_checks:
+      - You can identify the selected interface and next hop.
+      - You can name the longest matching prefix for each destination.
+    safety:
+      - Do not change routes or interface addresses.

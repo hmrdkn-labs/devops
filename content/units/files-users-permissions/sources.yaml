@@ -1,0 +1,10 @@
+schema_version: 1
+unit_id: fpp:files-users-permissions
+sources:
+  - id: source:path-resolution
+    title: path_resolution — how a pathname is resolved
+    url: https://man7.org/linux/man-pages/man7/path_resolution.7.html
+    publisher: Linux man-pages
+    type: manual
+    verified_at: 2026-08-27
+    note: Primary reference for traversal and pathname permission checks.

@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:container-lifecycle
+sources:
+  - id: source:oci-runtime-spec
+    title: OCI Runtime Specification
+    url: https://github.com/opencontainers/runtime-spec
+    publisher: Open Container Initiative
+    type: specification
+    verified_at: 2026-08-27
+    note: Normative lifecycle and runtime configuration model.
+  - id: source:docker-start
+    title: Start containers automatically
+    url: https://docs.docker.com/engine/containers/start-containers-automatically/
+    publisher: Docker
+    type: documentation
+    verified_at: 2026-08-27
+    note: Concrete restart-policy behavior in Docker Engine.

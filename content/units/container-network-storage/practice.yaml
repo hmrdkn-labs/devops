@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:container-network-storage
+practices:
+  - id: fpp:container-network-storage/p-boundaries
+    title: Compare runtime boundaries
+    mode: guided_markdown
+    prompt: Observe a disposable container before and after explicit network and volume configuration.
+    steps:
+      - Run a trusted service without port publication and inspect its container address.
+      - Recreate it with a loopback-only published host port.
+      - Mount a temporary managed volume and write a non-sensitive marker.
+    success_checks:
+      - You can state which endpoint is host-visible.
+      - You can verify the marker survives container replacement.
+    safety:
+      - Use no privileged mode or sensitive host bind mounts.

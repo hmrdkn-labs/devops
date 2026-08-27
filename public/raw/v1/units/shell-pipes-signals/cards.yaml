@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:shell-pipes-signals
+revision: 1
+cards:
+  - id: fpp:shell-pipes-signals/c-zero
+    type: short
+    front: Conventional exit status for success?
+    back: Zero.
+    critical_points: []
+    objective_ids: [fpp:shell-pipes-signals/stream-composition]
+  - id: fpp:shell-pipes-signals/c-pipe
+    type: short
+    front: A shell pipe connects which streams by default?
+    back: The left process's standard output to the right process's standard input.
+    critical_points: []
+    objective_ids: [fpp:shell-pipes-signals/stream-composition]
+  - id: fpp:shell-pipes-signals/c-kill
+    type: short
+    front: Which signal cannot be caught or handled?
+    back: SIGKILL.
+    critical_points: []
+    objective_ids: [fpp:shell-pipes-signals/signal-shutdown]
+  - id: fpp:shell-pipes-signals/c-explain
+    type: prompt
+    front: Explain graceful termination in one sentence.
+    back: Deliver a catchable termination request, stop new work, finish or hand off in-flight work, flush state, then exit before the deadline.
+    critical_points: [SIGTERM is a request, not an instant forced stop]
+    objective_ids: [fpp:shell-pipes-signals/signal-shutdown]
+  - id: fpp:shell-pipes-signals/c-scenario
+    type: scenario
+    front: grep finds nothing in a three-command pipeline. Why can the pipeline still appear successful?
+    back: Without pipefail, the shell may report only the final command's zero status.
+    critical_points: [Choose pipeline status semantics explicitly]
+    objective_ids: [fpp:shell-pipes-signals/stream-composition]

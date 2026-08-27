@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { units, unitsById } from '@/lib/content/catalog';
+
+export const prerender = true;
+const layerOrder = ['architecture', 'linux', 'networking', 'containers', 'delivery', 'kubernetes', 'operations'];
+---
+
+<BaseLayout title="Technical map" description="Explore the prerequisite graph behind the guided DevOps learning path.">
+  <header class="page-hero shell">
+    <p class="eyebrow">Secondary navigation · prerequisite graph</p>
+    <h1>Every abstraction rests on another.</h1>
+    <p class="lede">Use the path for sequence. Use this map when you need to find the missing layer beneath a symptom.</p>
+  </header>
+  <section class="shell concept-map" aria-label="DevOps prerequisite map">
+    {layerOrder.map((layer, layerIndex) => (
+      <div class="map-layer">
+        <div class="map-layer-label">
+          <span>{String(layerIndex + 1).padStart(2, '0')}</span>
+          <h2>{layer}</h2>
+        </div>
+        <div class="map-nodes">
+          {units.filter((unit) => unit.metadata.layer === layer).map((unit) => (
+            <a class="map-node" href={'/learn/' + unit.metadata.slug}>
+              <strong>{unit.metadata.title}</strong>
+              {unit.metadata.prerequisites.length > 0 && (
+                <small>
+                  builds on {unit.metadata.prerequisites.map((id) => unitsById.get(id)?.metadata.title).filter(Boolean).join(' · ')}
+                </small>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+</BaseLayout>

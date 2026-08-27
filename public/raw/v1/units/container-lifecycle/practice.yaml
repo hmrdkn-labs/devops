@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:container-lifecycle
+practices:
+  - id: fpp:container-lifecycle/p-exit
+    title: Observe an exit lifecycle
+    mode: guided_markdown
+    prompt: Run a trusted short-lived image and account for every state transition.
+    steps:
+      - Create and run a container whose command prints once and exits.
+      - Inspect its command, logs, state, and exit code.
+      - Remove the container and confirm the image remains.
+    success_checks:
+      - You can distinguish create, start, exit, and remove.
+      - You can explain which artifacts persist after each transition.
+    safety:
+      - Use a trusted minimal image and no host mounts.

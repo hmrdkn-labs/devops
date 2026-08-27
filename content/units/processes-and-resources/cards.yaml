@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:processes-and-resources
+revision: 1
+cards:
+  - id: fpp:processes-and-resources/c-program-process
+    type: short
+    front: Program versus process?
+    back: A program is stored instructions; a process is one running execution with runtime state.
+    critical_points: []
+    objective_ids: [fpp:processes-and-resources/process-model]
+  - id: fpp:processes-and-resources/c-fd
+    type: short
+    front: What can a Linux file descriptor represent?
+    back: An open file, pipe, terminal, socket, or another kernel-managed I/O endpoint.
+    critical_points: []
+    objective_ids: [fpp:processes-and-resources/process-model]
+  - id: fpp:processes-and-resources/c-blocked
+    type: short
+    front: Why can latency be high while CPU is idle?
+    back: Processes may be blocked waiting for storage, network, locks, or another dependency.
+    critical_points: []
+    objective_ids: [fpp:processes-and-resources/resource-pressure]
+  - id: fpp:processes-and-resources/c-explain
+    type: prompt
+    front: Explain why a running process is not proof of a healthy service.
+    back: It can be alive yet unable to accept work, reach dependencies, acquire resources, or respond before a deadline.
+    critical_points: [Distinguish existence from readiness]
+    objective_ids: [fpp:processes-and-resources/process-model]
+  - id: fpp:processes-and-resources/c-scenario
+    type: scenario
+    front: New connections fail with too many open files. Which finite resource is exhausted?
+    back: The process or system file-descriptor limit.
+    critical_points: [Inspect descriptor usage and configured limits]
+    objective_ids: [fpp:processes-and-resources/resource-pressure]

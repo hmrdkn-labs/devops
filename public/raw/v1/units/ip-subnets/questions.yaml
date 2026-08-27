@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:ip-subnets
+revision: 1
+questions:
+  - id: fpp:ip-subnets/q-local
+    kind: predict
+    prompt: A host has 10.20.4.17/24. Is 10.20.5.9 considered on-link from that interface?
+    model_answer: No. With a /24 prefix, the connected network is 10.20.4.0/24. Traffic to 10.20.5.9 needs another matching route, commonly through a router.
+    critical_points:
+      - Compare the prefix, not the visual similarity of the address.
+      - Non-local destinations require a route.
+    objective_ids: [fpp:ip-subnets/address-prefix, fpp:ip-subnets/local-or-routed]
+  - id: fpp:ip-subnets/q-pod
+    kind: explain
+    prompt: What does a unique pod IP buy Kubernetes beyond assigning only node IPs?
+    model_answer: It gives each pod a directly addressable network identity, avoids host-port coordination for ordinary pod traffic, and supports a flat model where Services select changing pod endpoints.
+    critical_points:
+      - Pod identity is distinct from node identity.
+      - Services remain stable while pod IPs change.
+    objective_ids: [fpp:ip-subnets/address-prefix]

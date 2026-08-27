@@ -1,0 +1,18 @@
+schema_version: 1
+unit_id: fpp:troubleshoot-process-to-pod
+practices:
+  - id: fpp:troubleshoot-process-to-pod/p-game-day
+    title: Run an evidence-first game day
+    mode: guided_markdown
+    prompt: Diagnose one deliberately broken disposable service without making an early fix.
+    steps:
+      - Have a partner introduce one selector, port, readiness, command, or policy fault.
+      - Record the failed transaction and evidence at each relevant layer.
+      - State and test one hypothesis at a time, then make the smallest fix.
+      - Verify the original transaction and write the causal chain.
+    success_checks:
+      - The diagnosis names the exact broken relationship.
+      - The verification repeats the original user-visible check.
+      - The final note separates evidence, inference, change, and result.
+    safety:
+      - Use an isolated disposable namespace with no production credentials.

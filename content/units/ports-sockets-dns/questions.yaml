@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:ports-sockets-dns
+revision: 1
+questions:
+  - id: fpp:ports-sockets-dns/q-loopback
+    kind: predict
+    prompt: A web server listens on 127.0.0.1:8080. Can another pod or host connect to that listener directly?
+    model_answer: No. The listener is bound to loopback inside its own network namespace. It must bind to a reachable interface address or be reached through an explicit proxy in that namespace.
+    critical_points:
+      - A port is scoped by address and network namespace.
+      - Loopback is local to that namespace.
+    objective_ids: [fpp:ports-sockets-dns/socket-endpoint]
+  - id: fpp:ports-sockets-dns/q-dns
+    kind: scenario
+    prompt: DNS returns the expected IP, but TCP connections time out. What should you investigate next?
+    model_answer: Inspect the route and packet path, network policy or firewall, whether a process listens on the destination address and port, and whether any load-balancer endpoints are healthy.
+    critical_points:
+      - Successful resolution does not prove transport reachability.
+      - Test the next layer with evidence.
+    objective_ids: [fpp:ports-sockets-dns/dns-resolution, fpp:ports-sockets-dns/socket-endpoint]

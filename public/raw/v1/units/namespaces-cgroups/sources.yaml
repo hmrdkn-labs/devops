@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:namespaces-cgroups
+sources:
+  - id: source:linux-namespaces
+    title: namespaces — overview of Linux namespaces
+    url: https://man7.org/linux/man-pages/man7/namespaces.7.html
+    publisher: Linux man-pages
+    type: manual
+    verified_at: 2026-08-27
+    note: Primary namespace semantics reference.
+  - id: source:cgroup-v2
+    title: Control Group v2
+    url: https://docs.kernel.org/admin-guide/cgroup-v2.html
+    publisher: Linux kernel documentation
+    type: documentation
+    verified_at: 2026-08-27
+    note: Primary cgroup v2 interface and behavior reference.

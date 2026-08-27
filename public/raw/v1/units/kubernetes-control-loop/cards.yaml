@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-control-loop
+revision: 1
+cards:
+  - id: fpp:kubernetes-control-loop/c-api
+    type: short
+    front: Which component is the front door to Kubernetes state?
+    back: The kube-apiserver.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-control-loop/api-state]
+  - id: fpp:kubernetes-control-loop/c-etcd
+    type: short
+    front: Where is durable Kubernetes control-plane state stored?
+    back: etcd.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-control-loop/api-state]
+  - id: fpp:kubernetes-control-loop/c-reconcile
+    type: short
+    front: What does a controller compare?
+    back: Desired state with observed state.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-control-loop/reconciliation]
+  - id: fpp:kubernetes-control-loop/c-explain
+    type: prompt
+    front: Explain why deleting a managed child is not a lasting configuration change.
+    back: Its controller still sees the original desired state and recreates or corrects the child.
+    critical_points: [Change the owning declaration]
+    objective_ids: [fpp:kubernetes-control-loop/reconciliation]
+  - id: fpp:kubernetes-control-loop/c-scenario
+    type: scenario
+    front: A Pod exists with no nodeName. Which component should make the placement decision?
+    back: The scheduler.
+    critical_points: [Scheduling records a node binding through the API]
+    objective_ids: [fpp:kubernetes-control-loop/reconciliation]

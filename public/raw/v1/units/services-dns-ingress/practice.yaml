@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:services-dns-ingress
+practices:
+  - id: fpp:services-dns-ingress/p-trace
+    title: Trace Service discovery
+    mode: guided_markdown
+    prompt: Trace one disposable Service from name to listening process.
+    steps:
+      - Create a small Deployment and ClusterIP Service in an isolated namespace.
+      - Inspect its DNS answer, selector, EndpointSlice, ports, and ready Pods.
+      - Change one label so endpoints disappear, observe, then restore it.
+    success_checks:
+      - You can localize the failure without changing DNS.
+      - You can name the controller-produced relationship.
+    safety:
+      - Use an isolated namespace and remove it afterward.

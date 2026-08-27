@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:container-network-storage
+revision: 1
+questions:
+  - id: fpp:container-network-storage/q-port
+    kind: explain
+    prompt: Why does a process listening on port 8080 inside a container not necessarily expose host port 8080?
+    model_answer: The process listens in the container network namespace. Host reachability requires routing to the container address or an explicit publication rule or proxy on a host endpoint.
+    critical_points:
+      - Ports are scoped to an address and namespace.
+      - Publication creates a separate forwarding path.
+    objective_ids: [fpp:container-network-storage/network-boundary]
+  - id: fpp:container-network-storage/q-data
+    kind: predict
+    prompt: A container is removed and recreated from the same image. Which data survives automatically?
+    model_answer: Image content survives because it is separate and immutable. Writable-layer data does not; only data placed in an external volume, bind mount, or service survives by design.
+    critical_points:
+      - Writable layers belong to a container instance.
+      - Persistence must be explicit.
+    objective_ids: [fpp:container-network-storage/storage-boundary]

@@ -1,0 +1,32 @@
+schema_version: 1
+id: fpp:config-secrets-storage
+slug: config-secrets-storage
+title: Configuration, secrets, and persistent storage
+summary: Separate non-secret configuration, sensitive values, and stateful volume lifecycle while respecting identity and topology.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 21
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.35
+prerequisites: [fpp:pods-workloads, fpp:container-network-storage, fpp:files-users-permissions]
+objectives:
+  - id: fpp:config-secrets-storage/config-secret
+    title: Choose ConfigMap, Secret, and external secret delivery deliberately
+    critical: true
+  - id: fpp:config-secrets-storage/pv-topology
+    title: Trace PVC binding, storage classes, volume attachment, and topology
+    critical: true
+certification_mappings:
+  - certification: cncf:cka
+    domains: [storage]
+    advisory: true
+  - certification: cncf:cks
+    domains: [system-hardening]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

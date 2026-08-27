@@ -1,0 +1,81 @@
+---
+import AuthMenu from '@/components/AuthMenu';
+import ThemeToggle from '@/components/ThemeToggle';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  pageClass?: string;
+}
+
+const {
+  title = 'DevOps by hmrdkn-labs',
+  description = 'Build durable DevOps understanding from process to production.',
+  canonicalPath = Astro.url.pathname,
+  pageClass = '',
+} = Astro.props;
+const pageTitle = title === 'DevOps by hmrdkn-labs' ? title : `${title} · DevOps by hmrdkn-labs`;
+const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
+---
+
+<!doctype html>
+<html lang="en" data-theme="system">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f0e8" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111713" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DevOps by hmrdkn-labs" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="DevOps by hmrdkn-labs" />
+    <link rel="icon" href="/favicon.svg" />
+    <script is:inline>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('hmrdkn-theme') || 'system';
+      } catch {}
+    </script>
+    <title>{pageTitle}</title>
+  </head>
+  <body class={pageClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="DevOps by hmrdkn-labs home">
+        <span class="brand-mark" aria-hidden="true">hm</span>
+        <span>DevOps <small>by hmrdkn-labs</small></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/paths/from-process-to-pod">Focus</a>
+        <a href="/map">Map</a>
+        <a href="/library">Library</a>
+        <a href="/search">Search</a>
+        <a href="/review">Review</a>
+      </nav>
+      <div class="header-tools">
+        <ThemeToggle client:load />
+        <AuthMenu client:load />
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div>
+        <strong>DevOps by hmrdkn-labs</strong>
+        <p>An independent learning project. Not affiliated with or endorsed by CNCF, Linux Foundation, Kubernetes, Docker, AWS, or KodeKloud.</p>
+      </div>
+      <div class="footer-links">
+        <a href="/references">References</a>
+        <a href="/content/v1/manifest.json">Content manifest</a>
+        <a href="/devops-content-v1.zip">Markdown archive</a>
+        <a href="/llms.txt">llms.txt</a>
+        <a href="https://github.com/hmrdkn-labs/devops">GitHub</a>
+      </div>
+      <p class="license-line">Code and examples: MIT · Prose and original diagrams: CC BY-SA 4.0</p>
+    </footer>
+  </body>
+</html>

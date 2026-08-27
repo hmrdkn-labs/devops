@@ -1,0 +1,15 @@
+schema_version: 1
+unit_id: fpp:shell-pipes-signals
+practices:
+  - id: fpp:shell-pipes-signals/p-status
+    title: Observe pipeline status
+    mode: guided_markdown
+    prompt: Compare a failing left-hand command with and without pipeline failure propagation.
+    steps:
+      - Run a pipeline whose first command exits non-zero and whose last command succeeds.
+      - Inspect the pipeline exit status.
+      - Enable your shell's pipefail option and repeat.
+    success_checks:
+      - You can state which status the shell returned in each case.
+      - You can explain why automation should choose this behavior deliberately.
+    safety: []

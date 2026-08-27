@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-control-loop
+revision: 1
+questions:
+  - id: fpp:kubernetes-control-loop/q-delete
+    kind: predict
+    prompt: You delete one Pod owned by a Deployment whose desired replica count remains three. What should happen?
+    model_answer: The Deployment and ReplicaSet controllers observe a replica shortfall and create a replacement Pod. The scheduler and kubelet then realize it on a suitable node.
+    critical_points:
+      - Desired state remains three.
+      - Controllers recreate disposable children.
+    objective_ids: [fpp:kubernetes-control-loop/reconciliation]
+  - id: fpp:kubernetes-control-loop/q-eks-kubectl
+    kind: explain
+    prompt: Is kubectl fundamentally different on EKS than on a self-managed Kubernetes cluster?
+    model_answer: Its Kubernetes operations are the same API requests. EKS commonly adds an AWS credential and token-generation step to build kubeconfig and authenticate to a different API server, with AWS-integrated authorization.
+    critical_points:
+      - kubectl remains a Kubernetes API client.
+      - Authentication setup and API-server ownership differ.
+    objective_ids: [fpp:kubernetes-control-loop/api-state]

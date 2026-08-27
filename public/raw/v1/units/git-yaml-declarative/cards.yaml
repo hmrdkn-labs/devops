@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:git-yaml-declarative
+revision: 1
+cards:
+  - id: fpp:git-yaml-declarative/c-commit
+    type: short
+    front: What does a Git commit identify?
+    back: A repository snapshot, metadata, and parent history.
+    critical_points: []
+    objective_ids: [fpp:git-yaml-declarative/versioned-intent]
+  - id: fpp:git-yaml-declarative/c-branch
+    type: short
+    front: Is a Git branch name an immutable snapshot?
+    back: No. It is a movable reference to a commit.
+    critical_points: []
+    objective_ids: [fpp:git-yaml-declarative/versioned-intent]
+  - id: fpp:git-yaml-declarative/c-yaml
+    type: short
+    front: What does valid YAML prove?
+    back: Only that a parser can interpret its serialized structure.
+    critical_points: []
+    objective_ids: [fpp:git-yaml-declarative/yaml-schema]
+  - id: fpp:git-yaml-declarative/c-explain
+    type: prompt
+    front: Explain why a reviewed Git diff is useful but insufficient.
+    back: It makes intended text changes visible, but schema, policy, secrets, runtime effects, and deployed state need separate validation.
+    critical_points: [Version control is evidence, not deployment]
+    objective_ids: [fpp:git-yaml-declarative/versioned-intent]
+  - id: fpp:git-yaml-declarative/c-scenario
+    type: scenario
+    front: The YAML field replicas is quoted as a string. Which layer should reject it?
+    back: The Kubernetes API schema validation because replicas expects an integer.
+    critical_points: [Parsed YAML can still have the wrong scalar type]
+    objective_ids: [fpp:git-yaml-declarative/yaml-schema]

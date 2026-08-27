@@ -1,0 +1,62 @@
+{
+  "name": "@hmrdkn-labs/devops",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@10.9.8",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "overrides": {
+    "vite": "8.2.2",
+    "esbuild": "0.28.2"
+  },
+  "scripts": {
+    "predev": "npm run content:build",
+    "dev": "astro dev",
+    "build": "npm run content:build && astro build",
+    "preview": "astro dev",
+    "start": "astro dev",
+    "content:check": "tsx tools/content/build.ts --check",
+    "content:build": "tsx tools/content/build.ts",
+    "revision:check": "tsx tools/content/revision-check.ts",
+    "release:classify": "tsx tools/release/classify.ts",
+    "release:manifest": "tsx tools/release/manifest.ts",
+    "typecheck": "astro check",
+    "test": "vitest run",
+    "test:d1": "tsx tools/test-d1.ts",
+    "test:e2e": "playwright test",
+    "check": "npm run content:check && npm run typecheck && npm test && npm run test:d1",
+    "ci": "npm run check && npm run build && npm run release:manifest",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.2.5",
+    "@astrojs/solid-js": "7.0.2",
+    "astro": "7.2.8",
+    "better-auth": "^1.7.2",
+    "drizzle-orm": "0.45.2",
+    "fflate": "^0.8.2",
+    "marked": "^18.0.11",
+    "sanitize-html": "^2.17.7",
+    "solid-js": "1.9.15",
+    "ts-fsrs": "^5.4.1",
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@cloudflare/workers-types": "4.20260515.1",
+    "@openai/sites-vite-plugin": "^0.2.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "22.19.19",
+    "@types/sanitize-html": "^2.16.1",
+    "drizzle-kit": "0.31.10",
+    "tsx": "^4.23.12",
+    "typescript": "5.9.3",
+    "vite-plus": "^0.3.0",
+    "vitest": "^4.1.11",
+    "wrangler": "4.126.0"
+  }
+}

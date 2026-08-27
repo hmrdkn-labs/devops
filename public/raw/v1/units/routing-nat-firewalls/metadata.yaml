@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:routing-nat-firewalls
+slug: routing-nat-firewalls
+title: Routing, NAT, and firewalls
+summary: Follow packet decisions through routes, address translation, and stateful policy without collapsing them into one network box.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: networking
+estimated_minutes: 17
+aliases: []
+applicable_versions:
+  - product: linux-networking
+    range: conceptual-stable
+prerequisites: [fpp:ip-subnets, fpp:ports-sockets-dns]
+objectives:
+  - id: fpp:routing-nat-firewalls/packet-path
+    title: Trace forwarding as a sequence of route and policy decisions
+    critical: true
+  - id: fpp:routing-nat-firewalls/nat-policy
+    title: Distinguish address translation from access control
+    critical: false
+certification_mappings:
+  - certification: cncf:cka
+    domains: [services-and-networking]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

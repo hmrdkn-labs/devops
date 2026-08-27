@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:container-network-storage
+revision: 1
+cards:
+  - id: fpp:container-network-storage/c-loopback
+    type: short
+    front: Whose namespace does container localhost refer to?
+    back: The container or pod network namespace, not the host by default.
+    critical_points: []
+    objective_ids: [fpp:container-network-storage/network-boundary]
+  - id: fpp:container-network-storage/c-publish
+    type: short
+    front: What does port publication create?
+    back: A host-side endpoint and forwarding or proxy path to a container endpoint.
+    critical_points: []
+    objective_ids: [fpp:container-network-storage/network-boundary]
+  - id: fpp:container-network-storage/c-volume
+    type: short
+    front: "What outlives a container by design: writable layer or volume?"
+    back: A volume, subject to its own lifecycle policy.
+    critical_points: []
+    objective_ids: [fpp:container-network-storage/storage-boundary]
+  - id: fpp:container-network-storage/c-explain
+    type: prompt
+    front: Explain why a bind mount changes the container trust boundary.
+    back: It exposes a host path directly, allowing container processes to read or modify host-managed data according to the mount and permissions.
+    critical_points: [Scope host paths narrowly]
+    objective_ids: [fpp:container-network-storage/storage-boundary]
+  - id: fpp:container-network-storage/c-scenario
+    type: scenario
+    front: Two host-network containers both need TCP 80. What conflict appears?
+    back: They compete to bind the same host address and port.
+    critical_points: [Host networking shares the host socket namespace]
+    objective_ids: [fpp:container-network-storage/network-boundary]

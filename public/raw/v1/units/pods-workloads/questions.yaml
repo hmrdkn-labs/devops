@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:pods-workloads
+revision: 1
+questions:
+  - id: fpp:pods-workloads/q-daemonset
+    kind: scenario
+    prompt: You need one log collector on every eligible worker node, including nodes added later. Which controller fits and why?
+    model_answer: A DaemonSet. Its controller creates a matching Pod for each eligible node and responds as nodes join, leave, or change eligibility.
+    critical_points:
+      - Desired count derives from eligible nodes.
+      - The use case is node-local infrastructure.
+    objective_ids: [fpp:pods-workloads/controller-choice]
+  - id: fpp:pods-workloads/q-share
+    kind: explain
+    prompt: What do two normal containers in the same Pod share, and what remains separate?
+    model_answer: They share the Pod network namespace, IP, localhost, lifecycle placement, and declared shared volumes. They retain separate process identities, image filesystems, and resource settings unless explicitly configured otherwise.
+    critical_points:
+      - One Pod has one network identity.
+      - Containers remain separate runtime processes.
+    objective_ids: [fpp:pods-workloads/pod-boundary]

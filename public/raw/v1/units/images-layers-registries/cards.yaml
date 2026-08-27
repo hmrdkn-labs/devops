@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:images-layers-registries
+revision: 1
+cards:
+  - id: fpp:images-layers-registries/c-manifest
+    type: short
+    front: What does an image manifest point to?
+    back: Image configuration and an ordered list of filesystem-layer descriptors.
+    critical_points: []
+    objective_ids: [fpp:images-layers-registries/image-content]
+  - id: fpp:images-layers-registries/c-tag
+    type: short
+    front: Is an image tag immutable?
+    back: No. A registry tag can be moved to different content.
+    critical_points: []
+    objective_ids: [fpp:images-layers-registries/tag-digest]
+  - id: fpp:images-layers-registries/c-digest
+    type: short
+    front: What property does a digest provide?
+    back: A cryptographic, content-addressed identifier for the referenced object.
+    critical_points: []
+    objective_ids: [fpp:images-layers-registries/tag-digest]
+  - id: fpp:images-layers-registries/c-explain
+    type: prompt
+    front: Explain why fewer deliberate layers can improve an image.
+    back: They reduce duplicated or hidden bytes, limit accidental build context, improve cache behavior, and make contents easier to audit.
+    critical_points: [Layer history persists]
+    objective_ids: [fpp:images-layers-registries/image-content]
+  - id: fpp:images-layers-registries/c-scenario
+    type: scenario
+    front: Two nodes pull api:stable a day apart and run different code. What mutable object likely changed?
+    back: The stable tag was repointed to a different image manifest.
+    critical_points: [Compare resolved image digests]
+    objective_ids: [fpp:images-layers-registries/tag-digest]

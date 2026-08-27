@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kubernetes-control-loop
+practices:
+  - id: fpp:kubernetes-control-loop/p-owner
+    title: Follow an ownership chain
+    mode: guided_markdown
+    prompt: Inspect a disposable Deployment and trace desired state to a running process.
+    steps:
+      - Create a small Deployment in an isolated namespace.
+      - Follow owner references from Pod to ReplicaSet to Deployment.
+      - Delete one Pod and watch the replacement events.
+    success_checks:
+      - You can name the controller responsible for replacement.
+      - You can separate API object creation from node realization.
+    safety:
+      - Use an isolated namespace and remove it afterward.

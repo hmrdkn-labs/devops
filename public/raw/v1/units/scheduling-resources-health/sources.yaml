@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:scheduling-resources-health
+sources:
+  - id: source:kubernetes-resources
+    title: Resource Management for Pods and Containers
+    url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream requests, limits, and enforcement reference.
+  - id: source:kubernetes-probes
+    title: Configure Liveness, Readiness and Startup Probes
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream probe behavior and configuration reference.

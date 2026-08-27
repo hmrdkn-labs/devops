@@ -1,0 +1,22 @@
+# DevOps by hmrdkn-labs
+
+> Question-first, portable DevOps learning material. Prose is CC BY-SA 4.0; code is MIT.
+
+- [Configuration, secrets, and persistent storage](https://devops.hamardikan.com/raw/v1/units/config-secrets-storage/unit.md): Separate non-secret configuration, sensitive values, and stateful volume lifecycle while respecting identity and topology.
+- [Container runtime and lifecycle](https://devops.hamardikan.com/raw/v1/units/container-lifecycle/unit.md): Connect an image to the runtime-created process, writable layer, isolation settings, logs, exit status, and restart behavior.
+- [Container networking and storage](https://devops.hamardikan.com/raw/v1/units/container-network-storage/unit.md): Follow interfaces, published ports, bind mounts, and volumes across the isolation boundary of a container.
+- [Files, users, and permissions](https://devops.hamardikan.com/raw/v1/units/files-users-permissions/unit.md): Understand Linux paths, ownership, mode bits, and why service identity is part of both reliability and security.
+- [Git, YAML, and declarative intent](https://devops.hamardikan.com/raw/v1/units/git-yaml-declarative/unit.md): Use versioned text to express desired state while respecting YAML types, schema validation, review, and reconciliation.
+- [HTTP requests and TLS identity](https://devops.hamardikan.com/raw/v1/units/http-tls/unit.md): Trace application requests above TCP and understand the separate guarantees provided by TLS encryption and certificate identity.
+- [Container images, layers, and registries](https://devops.hamardikan.com/raw/v1/units/images-layers-registries/unit.md): Treat an image as immutable content plus configuration, then reason about layers, tags, digests, and supply-chain movement.
+- [IP addresses and subnets](https://devops.hamardikan.com/raw/v1/units/ip-subnets/unit.md): Reason about interface addresses, prefixes, local delivery, and the route choice behind every packet.
+- [Kubernetes API and control loops](https://devops.hamardikan.com/raw/v1/units/kubernetes-control-loop/unit.md): Understand Kubernetes as an API-driven system where controllers continuously reconcile declared intent with observed state.
+- [Namespaces and control groups](https://devops.hamardikan.com/raw/v1/units/namespaces-cgroups/unit.md): See containers as ordinary processes given scoped views and enforceable resource boundaries by the Linux kernel.
+- [Pods and workload controllers](https://devops.hamardikan.com/raw/v1/units/pods-workloads/unit.md): Choose the smallest Kubernetes execution unit and the controller whose identity and replacement semantics match the workload.
+- [Ports, sockets, and DNS](https://devops.hamardikan.com/raw/v1/units/ports-sockets-dns/unit.md): Connect process sockets to transport ports and use DNS as name-to-record lookup rather than magical connectivity.
+- [Processes and finite resources](https://devops.hamardikan.com/raw/v1/units/processes-and-resources/unit.md): Build the mental model that every service is a process competing for CPU time, memory, files, and input/output.
+- [Routing, NAT, and firewalls](https://devops.hamardikan.com/raw/v1/units/routing-nat-firewalls/unit.md): Follow packet decisions through routes, address translation, and stateful policy without collapsing them into one network box.
+- [Scheduling, resources, and health probes](https://devops.hamardikan.com/raw/v1/units/scheduling-resources-health/unit.md): Relate placement to requests, runtime enforcement to limits, and traffic or restart decisions to distinct health signals.
+- [Services, cluster DNS, and ingress](https://devops.hamardikan.com/raw/v1/units/services-dns-ingress/unit.md): Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.
+- [Shells, pipes, exit status, and signals](https://devops.hamardikan.com/raw/v1/units/shell-pipes-signals/unit.md): Treat the shell as a process launcher and composition tool, then reason precisely about streams, status, and shutdown.
+- [Troubleshoot from process to pod](https://devops.hamardikan.com/raw/v1/units/troubleshoot-process-to-pod/unit.md): Localize failures with an evidence ladder that moves from desired state to process, network, policy, and user-visible behavior.

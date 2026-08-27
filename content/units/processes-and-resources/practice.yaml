@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:processes-and-resources
+practices:
+  - id: fpp:processes-and-resources/p-observe
+    title: Observe one process
+    mode: guided_markdown
+    prompt: Start a harmless long-running command and connect its PID to kernel-exposed state.
+    steps:
+      - Run sleep 300 in one terminal and record its PID.
+      - Inspect ps output and selected files under /proc/PID.
+      - Identify its state, command line, and open descriptors.
+    success_checks:
+      - You can distinguish the executable from this execution.
+      - You can name at least two resources represented in /proc.
+    safety:
+      - Stop only the sleep process you created.

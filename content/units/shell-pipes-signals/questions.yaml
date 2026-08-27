@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:shell-pipes-signals
+revision: 1
+questions:
+  - id: fpp:shell-pipes-signals/q-pipe
+    kind: explain
+    prompt: What exactly travels between two commands joined by a pipe, and what does not?
+    model_answer: Bytes written to the first process's standard output become bytes on the second process's standard input. Standard error is separate unless redirected, and the pipe carries no semantic knowledge of records.
+    critical_points:
+      - A pipe connects file descriptors.
+      - Standard error is not piped by default.
+    objective_ids: [fpp:shell-pipes-signals/stream-composition]
+  - id: fpp:shell-pipes-signals/q-term
+    kind: scenario
+    prompt: Kubernetes sends SIGTERM, but the app keeps running until it is killed. Name two likely causes.
+    model_answer: The application may not handle SIGTERM, or a PID 1 wrapper may not forward it. The graceful termination window may also be shorter than the application's drain time.
+    critical_points:
+      - SIGTERM is cooperative.
+      - The signal must reach the intended process.
+    objective_ids: [fpp:shell-pipes-signals/signal-shutdown]

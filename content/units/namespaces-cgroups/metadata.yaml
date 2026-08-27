@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:namespaces-cgroups
+slug: namespaces-cgroups
+title: Namespaces and control groups
+summary: See containers as ordinary processes given scoped views and enforceable resource boundaries by the Linux kernel.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: linux
+estimated_minutes: 16
+aliases: []
+applicable_versions:
+  - product: linux-kernel
+    range: cgroup-v2
+prerequisites: [fpp:processes-and-resources, fpp:files-users-permissions]
+objectives:
+  - id: fpp:namespaces-cgroups/isolation
+    title: Distinguish namespace isolation from virtual machines
+    critical: true
+  - id: fpp:namespaces-cgroups/resource-control
+    title: Explain how cgroups account for and limit resources
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

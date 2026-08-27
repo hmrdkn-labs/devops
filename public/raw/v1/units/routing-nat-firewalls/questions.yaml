@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:routing-nat-firewalls
+revision: 1
+questions:
+  - id: fpp:routing-nat-firewalls/q-nat
+    kind: explain
+    prompt: Why is NAT not the same control as a firewall?
+    model_answer: NAT rewrites packet address or port fields and tracks the mapping. A firewall permits or denies traffic by policy. A device may perform both, but translation alone is not authorization.
+    critical_points:
+      - Translation changes packet identity.
+      - Filtering decides permitted traffic.
+    objective_ids: [fpp:routing-nat-firewalls/nat-policy]
+  - id: fpp:routing-nat-firewalls/q-return
+    kind: scenario
+    prompt: Requests leave a pod and reach a server, but replies never return. Which direction and state must you inspect?
+    model_answer: Trace the reverse route, return-policy state, and any SNAT mapping. The forward path can work while the response follows an asymmetric or filtered path.
+    critical_points:
+      - Validate both directions.
+      - Include translation and connection tracking in the path.
+    objective_ids: [fpp:routing-nat-firewalls/packet-path]

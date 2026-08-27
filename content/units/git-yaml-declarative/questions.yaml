@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:git-yaml-declarative
+revision: 1
+questions:
+  - id: fpp:git-yaml-declarative/q-valid
+    kind: predict
+    prompt: A Kubernetes manifest parses as YAML. Does that prove the API server will accept it?
+    model_answer: No. YAML parsing checks serialization syntax only. Kubernetes then validates API version, kind, field names, types, admission policy, and semantic constraints.
+    critical_points:
+      - Syntax and schema are separate checks.
+      - Admission can add further policy.
+    objective_ids: [fpp:git-yaml-declarative/yaml-schema]
+  - id: fpp:git-yaml-declarative/q-declarative
+    kind: explain
+    prompt: What makes a desired-state file declarative rather than a shell script that creates resources once?
+    model_answer: It describes the target state and remains input to a reconciler that repeatedly compares and corrects observed state, instead of encoding only a one-time sequence of commands.
+    critical_points:
+      - Desired state persists.
+      - Reconciliation is repeated and convergent.
+    objective_ids: [fpp:git-yaml-declarative/versioned-intent]

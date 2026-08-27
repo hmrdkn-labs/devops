@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:ports-sockets-dns
+sources:
+  - id: source:ip-socket
+    title: ip — Linux IPv4 protocol implementation
+    url: https://man7.org/linux/man-pages/man7/ip.7.html
+    publisher: Linux man-pages
+    type: manual
+    verified_at: 2026-08-27
+    note: Socket addressing and port behavior reference.
+  - id: source:dns-concepts
+    title: Domain Names — Concepts and Facilities
+    url: https://www.rfc-editor.org/rfc/rfc1034
+    publisher: IETF
+    type: standard
+    verified_at: 2026-08-27
+    note: Foundational DNS architecture reference.

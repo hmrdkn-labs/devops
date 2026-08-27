@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:troubleshoot-process-to-pod
+revision: 1
+cards:
+  - id: fpp:troubleshoot-process-to-pod/c-first
+    type: short
+    front: First troubleshooting step before commands?
+    back: Define the failed transaction, time window, expected result, and observed result.
+    critical_points: []
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]
+  - id: fpp:troubleshoot-process-to-pod/c-crashloop
+    type: short
+    front: Is CrashLoopBackOff a root cause?
+    back: No. It describes increasing retry delay after repeated container exits.
+    critical_points: []
+    objective_ids: [fpp:troubleshoot-process-to-pod/cross-layer]
+  - id: fpp:troubleshoot-process-to-pod/c-hypothesis
+    type: short
+    front: What makes a troubleshooting hypothesis useful?
+    back: It is specific and falsifiable by an observation.
+    critical_points: []
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]
+  - id: fpp:troubleshoot-process-to-pod/c-explain
+    type: prompt
+    front: Explain why restarting first can slow diagnosis.
+    back: It changes state, may erase transient evidence, and tests no localized causal hypothesis.
+    critical_points: [Capture evidence before mutation]
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]
+  - id: fpp:troubleshoot-process-to-pod/c-scenario
+    type: scenario
+    front: DNS and endpoints are correct, but SYN packets receive no reply. Which layer comes next?
+    back: Inspect listener binding, request and return routes, CNI or NetworkPolicy, firewall, and load-balancer path.
+    critical_points: [Move from discovery to transport evidence]
+    objective_ids: [fpp:troubleshoot-process-to-pod/cross-layer]

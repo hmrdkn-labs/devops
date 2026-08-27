@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:namespaces-cgroups
+revision: 1
+questions:
+  - id: fpp:namespaces-cgroups/q-difference
+    kind: explain
+    prompt: What question do namespaces answer, and what different question do cgroups answer?
+    model_answer: Namespaces define the resources and identities a process can see. Cgroups group processes to account for, prioritize, and limit their resource consumption.
+    critical_points:
+      - Namespaces scope visibility.
+      - Cgroups control resource use.
+    objective_ids: [fpp:namespaces-cgroups/isolation, fpp:namespaces-cgroups/resource-control]
+  - id: fpp:namespaces-cgroups/q-memory
+    kind: scenario
+    prompt: The host has free memory, but one container is OOM-killed after crossing its limit. How can both facts be true?
+    model_answer: The process belongs to a memory cgroup with a lower boundary than total host memory. Enforcement occurs at the cgroup even though the host still has capacity.
+    critical_points:
+      - Cgroup limits are independent of host-wide free memory.
+      - A container is still a host process under cgroup policy.
+    objective_ids: [fpp:namespaces-cgroups/resource-control]

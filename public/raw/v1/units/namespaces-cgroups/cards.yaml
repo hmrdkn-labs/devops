@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:namespaces-cgroups
+revision: 1
+cards:
+  - id: fpp:namespaces-cgroups/c-namespace
+    type: short
+    front: Primary purpose of a Linux namespace?
+    back: Give a process a scoped view of a class of kernel resources.
+    critical_points: []
+    objective_ids: [fpp:namespaces-cgroups/isolation]
+  - id: fpp:namespaces-cgroups/c-cgroup
+    type: short
+    front: Primary purpose of a cgroup?
+    back: Account for, prioritize, and limit resources for a process group.
+    critical_points: []
+    objective_ids: [fpp:namespaces-cgroups/resource-control]
+  - id: fpp:namespaces-cgroups/c-kernel
+    type: short
+    front: Do normal containers run a separate guest kernel?
+    back: No. Their processes use the host kernel.
+    critical_points: []
+    objective_ids: [fpp:namespaces-cgroups/isolation]
+  - id: fpp:namespaces-cgroups/c-explain
+    type: prompt
+    front: Explain why a network namespace does not limit CPU.
+    back: It scopes network resources; CPU accounting and limits are a cgroup responsibility.
+    critical_points: [Name the separate mechanisms]
+    objective_ids: [fpp:namespaces-cgroups/isolation, fpp:namespaces-cgroups/resource-control]
+  - id: fpp:namespaces-cgroups/c-scenario
+    type: scenario
+    front: A container sees only PID 1 and its children. Which mechanism creates that view?
+    back: A PID namespace.
+    critical_points: [Visibility is a namespace concern]
+    objective_ids: [fpp:namespaces-cgroups/isolation]

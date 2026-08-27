@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:services-dns-ingress
+sources:
+  - id: source:kubernetes-services
+    title: Service
+    url: https://kubernetes.io/docs/concepts/services-networking/service/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream Service types, selection, and virtual-IP model.
+  - id: source:kubernetes-ingress
+    title: Ingress
+    url: https://kubernetes.io/docs/concepts/services-networking/ingress/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream Ingress API and controller requirement.

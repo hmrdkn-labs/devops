@@ -1,0 +1,33 @@
+schema_version: 1
+verified_at: 2026-08-27
+certifications:
+  - id: cncf:kcna
+    title: Kubernetes and Cloud Native Associate
+    organization: CNCF
+    url: https://www.cncf.io/training/certification/kcna/
+    status: target
+    sequence: 1
+  - id: cncf:kcsa
+    title: Kubernetes and Cloud Native Security Associate
+    organization: CNCF
+    url: https://www.cncf.io/training/certification/kcsa/
+    status: advisory
+    sequence: 2
+  - id: cncf:cka
+    title: Certified Kubernetes Administrator
+    organization: CNCF
+    url: https://www.cncf.io/training/certification/cka/
+    status: advisory
+    sequence: 3
+  - id: cncf:ckad
+    title: Certified Kubernetes Application Developer
+    organization: CNCF
+    url: https://www.cncf.io/training/certification/ckad/
+    status: advisory
+    sequence: 4
+  - id: cncf:cks
+    title: Certified Kubernetes Security Specialist
+    organization: CNCF
+    url: https://www.cncf.io/training/certification/cks/
+    status: advisory
+    sequence: 5

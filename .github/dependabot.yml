@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      astro-runtime:
+        patterns: ["astro", "@astrojs/*", "vite"]
+      test-tooling:
+        patterns: ["vitest", "@playwright/*", "@axe-core/*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

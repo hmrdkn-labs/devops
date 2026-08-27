@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:images-layers-registries
+practices:
+  - id: fpp:images-layers-registries/p-inspect
+    title: Inspect image identity
+    mode: guided_markdown
+    prompt: Inspect a small public image without running untrusted code.
+    steps:
+      - Pull a trusted minimal image from its official repository.
+      - Inspect its resolved digest, configuration, and layer history.
+      - Compare the tag reference with the content digest.
+    success_checks:
+      - You can identify the immutable digest.
+      - You can distinguish metadata, layers, and the writable runtime layer.
+    safety:
+      - Use an official image and inspect it without starting a container.

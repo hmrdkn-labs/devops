@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:images-layers-registries
+sources:
+  - id: source:oci-image-spec
+    title: OCI Image Format Specification
+    url: https://github.com/opencontainers/image-spec
+    publisher: Open Container Initiative
+    type: specification
+    verified_at: 2026-08-27
+    note: Normative image manifest, configuration, and layer model.
+  - id: source:oci-distribution
+    title: OCI Distribution Specification
+    url: https://github.com/opencontainers/distribution-spec
+    publisher: Open Container Initiative
+    type: specification
+    verified_at: 2026-08-27
+    note: Registry API and content distribution model.

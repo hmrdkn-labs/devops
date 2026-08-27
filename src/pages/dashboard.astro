@@ -1,0 +1,13 @@
+---
+import ProgressClient from '@/components/ProgressClient';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Dashboard" description="Private readiness and mastery evidence for the owner beta.">
+  <header class="page-hero shell compact-hero">
+    <p class="eyebrow">Private owner dashboard</p>
+    <h1>Readiness is evidence, not completion.</h1>
+    <p class="lede">Scores can decrease when recall, application, or later-date retention evidence becomes stale.</p>
+  </header>
+  <section class="shell dashboard-shell"><ProgressClient client:load /></section>
+</BaseLayout>

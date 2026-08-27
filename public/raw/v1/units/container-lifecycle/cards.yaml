@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:container-lifecycle
+revision: 1
+cards:
+  - id: fpp:container-lifecycle/c-input
+    type: short
+    front: Image versus container?
+    back: An image is immutable packaged input; a container is a runtime instance with processes and a writable layer.
+    critical_points: []
+    objective_ids: [fpp:container-lifecycle/create-start-stop]
+  - id: fpp:container-lifecycle/c-exit
+    type: short
+    front: What normally ends a container?
+    back: Exit of its main process.
+    critical_points: []
+    objective_ids: [fpp:container-lifecycle/pid1-exit]
+  - id: fpp:container-lifecycle/c-logs
+    type: short
+    front: Default application log streams in a container?
+    back: Standard output and standard error.
+    critical_points: []
+    objective_ids: [fpp:container-lifecycle/pid1-exit]
+  - id: fpp:container-lifecycle/c-explain
+    type: prompt
+    front: Explain the runtime work between image and running process.
+    back: It prepares the root filesystem, namespaces, cgroups, mounts, identity, and command, then starts the process.
+    critical_points: [A container is created by runtime configuration]
+    objective_ids: [fpp:container-lifecycle/create-start-stop]
+  - id: fpp:container-lifecycle/c-scenario
+    type: scenario
+    front: A service ignores SIGTERM when launched through a shell wrapper. What should you inspect?
+    back: Whether the wrapper replaces itself with the app or forwards signals to the child process.
+    critical_points: [Trace signal delivery to PID 1 and children]
+    objective_ids: [fpp:container-lifecycle/pid1-exit]

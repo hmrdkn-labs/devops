@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:scheduling-resources-health
+revision: 1
+questions:
+  - id: fpp:scheduling-resources-health/q-bigger
+    kind: predict
+    prompt: Will doubling an EC2 worker's CPU and memory always double the Pods it can run?
+    model_answer: No. Requests may not scale evenly, and pod-IP limits, maximum pods, daemon overhead, storage attachments, topology, or other node constraints may become the bottleneck.
+    critical_points:
+      - Capacity is multidimensional.
+      - The scheduler uses declared requests and constraints.
+    objective_ids: [fpp:scheduling-resources-health/requests-limits]
+  - id: fpp:scheduling-resources-health/q-probe
+    kind: scenario
+    prompt: A shared database fails and every application liveness probe checks it. What harmful behavior can follow?
+    model_answer: Kubelet may restart otherwise healthy application processes across the fleet, adding startup load and hiding the real dependency failure. The shared dependency usually belongs in readiness or external monitoring, not liveness.
+    critical_points:
+      - Restart must be a plausible repair.
+      - Liveness should avoid shared dependency coupling.
+    objective_ids: [fpp:scheduling-resources-health/probe-semantics]

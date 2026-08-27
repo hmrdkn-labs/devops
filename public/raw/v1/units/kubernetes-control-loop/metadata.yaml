@@ -1,0 +1,32 @@
+schema_version: 1
+id: fpp:kubernetes-control-loop
+slug: kubernetes-control-loop
+title: Kubernetes API and control loops
+summary: Understand Kubernetes as an API-driven system where controllers continuously reconcile declared intent with observed state.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 19
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.35
+prerequisites: [fpp:git-yaml-declarative, fpp:container-lifecycle]
+objectives:
+  - id: fpp:kubernetes-control-loop/api-state
+    title: Explain the API server and durable cluster state
+    critical: true
+  - id: fpp:kubernetes-control-loop/reconciliation
+    title: Trace desired, observed, and reconciled state
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+  - certification: cncf:cka
+    domains: [cluster-architecture-installation-configuration]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

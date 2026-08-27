@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:files-users-permissions
+practices:
+  - id: fpp:files-users-permissions/p-path
+    title: Predict path access
+    mode: guided_markdown
+    prompt: Create a temporary directory tree and predict access before changing each mode.
+    steps:
+      - Create a private temporary directory containing one readable file.
+      - Remove directory read permission, then test access by exact filename.
+      - Restore read and remove execute permission, then test again.
+    success_checks:
+      - You can explain listing versus traversal.
+      - You restore or remove the temporary directory afterward.
+    safety:
+      - Work only inside a newly created temporary directory.

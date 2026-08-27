@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:shell-pipes-signals
+sources:
+  - id: source:signal-overview
+    title: signal — overview of signals
+    url: https://man7.org/linux/man-pages/man7/signal.7.html
+    publisher: Linux man-pages
+    type: manual
+    verified_at: 2026-08-27
+    note: Primary reference for Linux signal delivery and dispositions.
+  - id: source:posix-shell
+    title: Shell Command Language
+    url: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html
+    publisher: The Open Group
+    type: standard
+    verified_at: 2026-08-27
+    note: Portable reference for shell parsing, pipelines, and exit behavior.

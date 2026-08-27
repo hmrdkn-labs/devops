@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:processes-and-resources
+revision: 1
+questions:
+  - id: fpp:processes-and-resources/q-process
+    kind: explain
+    prompt: A binary exists on disk but has not been started. What changes when it becomes a process?
+    model_answer: The operating system creates a running execution with a process ID, address space, scheduling state, open-file table, identity, and environment. The bytes on disk remain the program.
+    critical_points:
+      - A program is passive; a process is an execution.
+      - Each execution has its own runtime state and identity.
+    objective_ids: [fpp:processes-and-resources/process-model]
+  - id: fpp:processes-and-resources/q-pressure
+    kind: predict
+    prompt: CPU is mostly idle, but requests wait while disk latency is high. What process state and bottleneck would you expect?
+    model_answer: Workers are likely blocked or sleeping while they wait for I/O. Adding CPU does not remove the storage bottleneck; inspect I/O queues and the dependency performing the slow operation.
+    critical_points:
+      - Idle CPU does not imply spare end-to-end capacity.
+      - A blocked process waits for a resource other than CPU.
+    objective_ids: [fpp:processes-and-resources/resource-pressure]

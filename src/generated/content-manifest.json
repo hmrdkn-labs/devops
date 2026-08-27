@@ -1,0 +1,573 @@
+{
+  "schema_version": 1,
+  "content_version": "2026.08.1",
+  "generated_at": "2026-08-27T00:00:00.000Z",
+  "canonical_base_url": "https://devops.hamardikan.com",
+  "licenses": {
+    "prose_and_diagrams": "CC-BY-SA-4.0",
+    "application_and_examples": "MIT"
+  },
+  "units": [
+    {
+      "id": "fpp:config-secrets-storage",
+      "slug": "config-secrets-storage",
+      "title": "Configuration, secrets, and persistent storage",
+      "summary": "Separate non-secret configuration, sensitive values, and stateful volume lifecycle while respecting identity and topology.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:pods-workloads",
+        "fpp:container-network-storage",
+        "fpp:files-users-permissions"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:config-secrets-storage/config-secret": "ef26bbbc80912c0aeacc5074f6ff405aba2b5be83854303fef395424e326f3dd",
+        "fpp:config-secrets-storage/pv-topology": "5217abd9555fd69e9ecf17937fa33ecc443827cc03f390019676eb3ea282994e"
+      },
+      "mastery_hash": "d0c4096517e9193eb5c7d18b0daecc9618ee182ab0c96b05212f98eb6c2b4b87",
+      "enrichment_hash": "cf36b7790ec163f5f7cbab3114898c12cb55eae48d4853140983f33a123e748c",
+      "editorial_hash": "719425ae747e5cf99d0776ad800ea60c6bc89a1198aab386acb66707f0696e5f",
+      "content_hash": "bcae8194dd19dbbe1f656e6d15db4cd458b226f889eac7b17ed1bd2e349b4a73",
+      "raw_markdown_url": "/raw/v1/units/config-secrets-storage/unit.md"
+    },
+    {
+      "id": "fpp:container-lifecycle",
+      "slug": "container-lifecycle",
+      "title": "Container runtime and lifecycle",
+      "summary": "Connect an image to the runtime-created process, writable layer, isolation settings, logs, exit status, and restart behavior.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "containers",
+      "prerequisites": [
+        "fpp:namespaces-cgroups",
+        "fpp:shell-pipes-signals",
+        "fpp:images-layers-registries"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:container-lifecycle/create-start-stop": "0b8a892eaedf31dd9bd2d1a65399ef69ca7ba17066de3e66b83d721cc73700e4",
+        "fpp:container-lifecycle/pid1-exit": "6b547c3035d7d0ee2dcfc47d45ef5e33456cf1daf7d48539901583bf2217b591"
+      },
+      "mastery_hash": "08a03c16754549703a7da1c547fc404594355cdd07003c2b86062cfa26723819",
+      "enrichment_hash": "a87cbf40a1d0c08135292e1e46facf393f346e794bc818f3b2f36ca9731a2029",
+      "editorial_hash": "4e4754eb851ab1edef8f6ad38adb533e20ab86efe22152c957e34ee8239a4c82",
+      "content_hash": "819f3b067a19e248db2f9ade34c0af2126b681cf49ab276eb3b8a0f1a0da0f20",
+      "raw_markdown_url": "/raw/v1/units/container-lifecycle/unit.md"
+    },
+    {
+      "id": "fpp:container-network-storage",
+      "slug": "container-network-storage",
+      "title": "Container networking and storage",
+      "summary": "Follow interfaces, published ports, bind mounts, and volumes across the isolation boundary of a container.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "containers",
+      "prerequisites": [
+        "fpp:container-lifecycle",
+        "fpp:routing-nat-firewalls"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:container-network-storage/network-boundary": "55d30a5c42fae77262801b22cfacafd6d42857ad156ab331ca39ffd3befdef61",
+        "fpp:container-network-storage/storage-boundary": "52622264ab8a1d26dc96e4ace467fc032c688646256c5b8e936164e65ea5cb44"
+      },
+      "mastery_hash": "1a3a832d93ac3e98aa3e08d8d0d01ea8d169fc8e902a4907ccec5137c4d8dac1",
+      "enrichment_hash": "d564b9faf4da64a10e4af52807737ed6b513c62e6bbe60d848c3b6a09f4b2311",
+      "editorial_hash": "db9d5601b8d2c60b3299b3c75f5996ebee2fe857c6bec4d00fe0cf917e5d0c0e",
+      "content_hash": "9fc22632b5e548a074b46799c40d473c7a0e7abc30bff33afd47cf0da4bf0d6d",
+      "raw_markdown_url": "/raw/v1/units/container-network-storage/unit.md"
+    },
+    {
+      "id": "fpp:files-users-permissions",
+      "slug": "files-users-permissions",
+      "title": "Files, users, and permissions",
+      "summary": "Understand Linux paths, ownership, mode bits, and why service identity is part of both reliability and security.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "linux",
+      "prerequisites": [
+        "fpp:processes-and-resources"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:files-users-permissions/path-identity": "66f67ee64cf0c0b7b2b55421ff43983d41b328287ac5098b93c68d37c5d50fc0",
+        "fpp:files-users-permissions/mode-bits": "ac7b69d6d25eef8bfcfca6f3b411ac30c511b82375becf56aa2f4a914ad5a8a9"
+      },
+      "mastery_hash": "890d2a56bfdad0847f4824fcfefdfd72c5d340a786111c8c356b37fbf69e7eaf",
+      "enrichment_hash": "5cbe328cf901c268b99dac1abc74792da8c1410038bf637d36d262e0a9ed496d",
+      "editorial_hash": "d1b23217aa74961b5e0a6991f54268c06b74bee7ff00d152be28d272ac0235a4",
+      "content_hash": "4e752c9f8e1000c2c2dd8c81c2d17d2fa2535961649bf0edb3be43b2cbacac73",
+      "raw_markdown_url": "/raw/v1/units/files-users-permissions/unit.md"
+    },
+    {
+      "id": "fpp:git-yaml-declarative",
+      "slug": "git-yaml-declarative",
+      "title": "Git, YAML, and declarative intent",
+      "summary": "Use versioned text to express desired state while respecting YAML types, schema validation, review, and reconciliation.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "delivery",
+      "prerequisites": [
+        "fpp:shell-pipes-signals"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:git-yaml-declarative/versioned-intent": "aa5dec6bc8ff091ec2632ca49a3c148c054df05d13826b2bea1bbfc5204fbe37",
+        "fpp:git-yaml-declarative/yaml-schema": "05e732976b01ad18e1629e7a09d780fadfc6e8dd3228a9dea4db4ca7066cde08"
+      },
+      "mastery_hash": "ecd2872c18584dca01dd7c3ad1dfd04d7b5af6867fe9730e2f379aa6683a9d68",
+      "enrichment_hash": "f5607bdc0369c5e58c204edbd4b2912facbe2c663ef7b78aff60a01c8ff6718c",
+      "editorial_hash": "5cb3cefb5545b495648bc7d3f3b9d054a72b066fe3271120ef2b00366aa19811",
+      "content_hash": "70e27d8c57ceaef4ead90cc4d48615a8ce29442ce17a1c6c803becaaa44dacee",
+      "raw_markdown_url": "/raw/v1/units/git-yaml-declarative/unit.md"
+    },
+    {
+      "id": "fpp:http-tls",
+      "slug": "http-tls",
+      "title": "HTTP requests and TLS identity",
+      "summary": "Trace application requests above TCP and understand the separate guarantees provided by TLS encryption and certificate identity.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "networking",
+      "prerequisites": [
+        "fpp:ports-sockets-dns",
+        "fpp:routing-nat-firewalls"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:http-tls/http-message": "2d2c0e5741aa34bd8cf037e25918063ceabd3c549322cb61b6840f785248876d",
+        "fpp:http-tls/tls-identity": "9636c7029a9a1843e01bba8ce4daabcc4a5a3e2400f92e152a6a30d3b161cade"
+      },
+      "mastery_hash": "731dba6ba9adba590284bc9ec5da22304c7b18e588fe1848fc6e3d693b56bc52",
+      "enrichment_hash": "68d4ef6da97de21c37d1e5d8db7dd6a5f9cbf135a464657df4051c42ad55959d",
+      "editorial_hash": "3dfc61661074d551e9aea61b0a8e9f8a5df29443d0f20ce79074caf86e794b83",
+      "content_hash": "f735701f7acf751a7d15495dcf69dcf53c6e1e8a656c487d9eac600df2b17024",
+      "raw_markdown_url": "/raw/v1/units/http-tls/unit.md"
+    },
+    {
+      "id": "fpp:images-layers-registries",
+      "slug": "images-layers-registries",
+      "title": "Container images, layers, and registries",
+      "summary": "Treat an image as immutable content plus configuration, then reason about layers, tags, digests, and supply-chain movement.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "containers",
+      "prerequisites": [
+        "fpp:files-users-permissions",
+        "fpp:http-tls"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:images-layers-registries/image-content": "af6ac9c85f7f30331b4ee9213abf11ea661668344f903c35002dc04105a18806",
+        "fpp:images-layers-registries/tag-digest": "1ff3c3ef8c2615c019d955f22ccaaef9246177c75ae2ccb7fa04bec422e0dc60"
+      },
+      "mastery_hash": "5c9a4c83e2fcecb5f2ce11470c898e76d85e01cc7c98d69ceb52b2dc658f2067",
+      "enrichment_hash": "fd487171c5cad539913da4f6d3583ee52612c4d026284ccf411ab844bda949ec",
+      "editorial_hash": "650e9478d627a5c591e69132611656cce251b5fdc1c74ec7734db18e4569edd1",
+      "content_hash": "05bf29624b74a5f3c48d39cbb1e7fa631b71b97964c85771f882575d2f0d993a",
+      "raw_markdown_url": "/raw/v1/units/images-layers-registries/unit.md"
+    },
+    {
+      "id": "fpp:ip-subnets",
+      "slug": "ip-subnets",
+      "title": "IP addresses and subnets",
+      "summary": "Reason about interface addresses, prefixes, local delivery, and the route choice behind every packet.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "networking",
+      "prerequisites": [
+        "fpp:processes-and-resources"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:ip-subnets/address-prefix": "cb01bbfa75867a7e0229c9b1876945848b17d58a5f11bb67d0a4fce81279052c",
+        "fpp:ip-subnets/local-or-routed": "c50c38e0060c8be0573fc7aea3d1f8012113564c3a81fc3ff07b02a285b1fcc9"
+      },
+      "mastery_hash": "6806463125693e05ab52fd637c7506e9e34460e90ec267a8483e337e1821f5d3",
+      "enrichment_hash": "ac03ab12ca2e933380a6ee7d957789e2c19e4fe18e00728a8e4016c767cb09ea",
+      "editorial_hash": "c102dc66eb8d09d3799a167bb27fc0d9d64fbc01a7d06f0f89076bce67e8a421",
+      "content_hash": "31b1d506a58449b8a5fbac9eb5bb46906b2f2c3ba233cb9bba56e55fc7d2d2cb",
+      "raw_markdown_url": "/raw/v1/units/ip-subnets/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-control-loop",
+      "slug": "kubernetes-control-loop",
+      "title": "Kubernetes API and control loops",
+      "summary": "Understand Kubernetes as an API-driven system where controllers continuously reconcile declared intent with observed state.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:git-yaml-declarative",
+        "fpp:container-lifecycle"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-control-loop/api-state": "5ec8c1e2804e32a8f5c976ad6fe0b464943db04b8966076c072cc556e59dc595",
+        "fpp:kubernetes-control-loop/reconciliation": "68ca218f4fe97d849b9f175b0092da9bb7d91febe12fde9130a7790bc106efe3"
+      },
+      "mastery_hash": "f2ec50d019292418a019d49c587031909b7aa119c1043003fcbd972359d3d075",
+      "enrichment_hash": "8efe67c5e16ac996866f43b6251cf7a80a04fe322584866657b06823867efe17",
+      "editorial_hash": "fb8d1c25fab6c49772667c0e3627cdae0f4dc241379056a5854b71bb0e5f3d7a",
+      "content_hash": "538a5f441e62e23f4e65d55b1f95a168585ee049a6171650e7fb63e896f90f04",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-control-loop/unit.md"
+    },
+    {
+      "id": "fpp:namespaces-cgroups",
+      "slug": "namespaces-cgroups",
+      "title": "Namespaces and control groups",
+      "summary": "See containers as ordinary processes given scoped views and enforceable resource boundaries by the Linux kernel.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "linux",
+      "prerequisites": [
+        "fpp:processes-and-resources",
+        "fpp:files-users-permissions"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:namespaces-cgroups/isolation": "1212f281baef3e48c10391115f8057a9857cd1fd593d1244d25ab85d80c9ab23",
+        "fpp:namespaces-cgroups/resource-control": "27f8f6b6a5498f9141171da06d27e4c038fff86f9542715a6110988ea626aa94"
+      },
+      "mastery_hash": "f73901c6fd2f9532d073c01fab247c28a5069c4d9be7b6651923b595b05e2013",
+      "enrichment_hash": "5abbf8b9108b8780c5ecc589b08a61bfeecde909a38dc7eddd826e3a7758dc76",
+      "editorial_hash": "078410c6c97fbe4ecc16e60a2f06aec6ff854abd0f0fb9f5085ecf3b029bfb97",
+      "content_hash": "0244674ec46327647d045e4cb02ee4a75f2183e9a5bfac19c0bb1a3297051447",
+      "raw_markdown_url": "/raw/v1/units/namespaces-cgroups/unit.md"
+    },
+    {
+      "id": "fpp:pods-workloads",
+      "slug": "pods-workloads",
+      "title": "Pods and workload controllers",
+      "summary": "Choose the smallest Kubernetes execution unit and the controller whose identity and replacement semantics match the workload.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-control-loop",
+        "fpp:container-network-storage"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:pods-workloads/pod-boundary": "1ba782fba2a9a6f2024d51f98f1bcb72f7b2e87a9d4aded1f308be7fa7d15b99",
+        "fpp:pods-workloads/controller-choice": "8b38cd82365e92a4143539c8eeb88824a3504ae20e685eb1bd54f868171407c4"
+      },
+      "mastery_hash": "cc960cfe34fc0041cb2d1f335ecd10e8436bcbf1076a4070e5547b8f644a48fb",
+      "enrichment_hash": "9c3a9c8f84e82f4a837267df2708ab07f7f20a7c6914ec682cc836883f7b63bb",
+      "editorial_hash": "c45346d9a81d1896588b39f0e3cfbfcbe840a981708c55c7ff36a5912ece1d7b",
+      "content_hash": "a6b98db7e467b65468ecbbb671a3deaaef6d6c6e0d62a6b55caadc350edb2e8b",
+      "raw_markdown_url": "/raw/v1/units/pods-workloads/unit.md"
+    },
+    {
+      "id": "fpp:ports-sockets-dns",
+      "slug": "ports-sockets-dns",
+      "title": "Ports, sockets, and DNS",
+      "summary": "Connect process sockets to transport ports and use DNS as name-to-record lookup rather than magical connectivity.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "networking",
+      "prerequisites": [
+        "fpp:ip-subnets"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:ports-sockets-dns/socket-endpoint": "4ba818d6df3bf9138ae826b57802a6a0c5988038d4bdc7824fbb64fdd5f59a84",
+        "fpp:ports-sockets-dns/dns-resolution": "4827eb732d9421b8f7a487fa01c15934bfdfab07746b757caee40f3c4df637b8"
+      },
+      "mastery_hash": "7a28cfb2e210506912b652347f53d91f4b906c8d3e6f943c660d84268ba57a7a",
+      "enrichment_hash": "cc9a1792a66545bab8791f518e2d617ff55c313b0420c9c39a3db38e297f0d51",
+      "editorial_hash": "ca1ddbe06c922ea8e042d991a7661c371de6fe9f4293c2c6192ad3d91c893d43",
+      "content_hash": "c11dc0031d35f7196915754ded40b191b8307d5daafe8e318c464bc974d01bd4",
+      "raw_markdown_url": "/raw/v1/units/ports-sockets-dns/unit.md"
+    },
+    {
+      "id": "fpp:processes-and-resources",
+      "slug": "processes-and-resources",
+      "title": "Processes and finite resources",
+      "summary": "Build the mental model that every service is a process competing for CPU time, memory, files, and input/output.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "architecture",
+      "prerequisites": [],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:processes-and-resources/process-model": "a6c3239c3f4115814612920e01c5969fb75c8f41eb6329091bdc8142b084cee8",
+        "fpp:processes-and-resources/resource-pressure": "2149b09266fdb3378cce83cf1561ce0a7b2e536789989f38ba71e17b19f209dd"
+      },
+      "mastery_hash": "6a2130fd04a96ac96bb12a6e63a351419d9c54e1163c003ba9abb542776270f2",
+      "enrichment_hash": "b83e16efe85b269213476c680e9d02df71fb345ae1bdbbb50b653139094de8d3",
+      "editorial_hash": "b8ea6641f8fe88aeae7927ef7a7eca82ba78e3ae2ebeb5a4f68181ddca230403",
+      "content_hash": "7e132eebcf14a91528bef326c57d3f05c66b19902608da10d3ec98178be79978",
+      "raw_markdown_url": "/raw/v1/units/processes-and-resources/unit.md"
+    },
+    {
+      "id": "fpp:routing-nat-firewalls",
+      "slug": "routing-nat-firewalls",
+      "title": "Routing, NAT, and firewalls",
+      "summary": "Follow packet decisions through routes, address translation, and stateful policy without collapsing them into one network box.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "networking",
+      "prerequisites": [
+        "fpp:ip-subnets",
+        "fpp:ports-sockets-dns"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:routing-nat-firewalls/packet-path": "cd060212f79c39e68c2f678a3d91476548f2f0946b77cffacaf2ea3e6a520d25",
+        "fpp:routing-nat-firewalls/nat-policy": "78392091031008c63acd4295daa1245fdd51d0a05522172927c26961b81bc474"
+      },
+      "mastery_hash": "5cd6b7c0e4c663e89fe002158146fcad364c7dc419292f0e708e3887720b145c",
+      "enrichment_hash": "e21f27394708a4c024110c942e6bdd47b5d297922a91a04d778d768a56b4f49a",
+      "editorial_hash": "519167b1e246f24a97cd05684d3dd44d082323d592ed01102325eb1a8a9cc18c",
+      "content_hash": "da11dd246bbf87c82485dec7870f731c5bdee04559ce0d5e290ff6e2ef96b6fc",
+      "raw_markdown_url": "/raw/v1/units/routing-nat-firewalls/unit.md"
+    },
+    {
+      "id": "fpp:scheduling-resources-health",
+      "slug": "scheduling-resources-health",
+      "title": "Scheduling, resources, and health probes",
+      "summary": "Relate placement to requests, runtime enforcement to limits, and traffic or restart decisions to distinct health signals.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:pods-workloads",
+        "fpp:processes-and-resources"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:scheduling-resources-health/requests-limits": "0a63541f5319f7d6c504ac2551a52f437bd8b85078d89f54b961cfacbb683174",
+        "fpp:scheduling-resources-health/probe-semantics": "c4b0bcb859b17571483460796b23607b59e0413082554f91ec55e194ea294524"
+      },
+      "mastery_hash": "3d3509de627adf6b1c7f25d59564e2210f60d18cd2e20f5690cf4f1bdd150d12",
+      "enrichment_hash": "10ebbc1ba12cef4343911bbdde1be6745677b263873a422dd4a7ddc95669a117",
+      "editorial_hash": "7648f7d1a6656a4a39249a492cad16bfd8a280b45753d572734b502fff31d4f1",
+      "content_hash": "be75943c1e25c2b8c806fa8587ac4646e6b6d67c9126c260f76a77e1369cb640",
+      "raw_markdown_url": "/raw/v1/units/scheduling-resources-health/unit.md"
+    },
+    {
+      "id": "fpp:services-dns-ingress",
+      "slug": "services-dns-ingress",
+      "title": "Services, cluster DNS, and ingress",
+      "summary": "Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:pods-workloads",
+        "fpp:http-tls"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:services-dns-ingress/service-endpoints": "149deab226e5e93d8c1ca0d20514d68d2446c57f5b901e128db928cddc25e29e",
+        "fpp:services-dns-ingress/external-routing": "a8e272eda5692bc2ced0be9811435be268f35275ffff62a08293880632fdeeb4"
+      },
+      "mastery_hash": "a29afe0aea6d7424c4c0252b3e399da91694595e8c691a87c9683fa61ad4e2be",
+      "enrichment_hash": "a3fecf869d801756e2baab665b6d05d1ab48093640c2bf0fd1a008adff078070",
+      "editorial_hash": "199c4a8cb7ee5232c9087161c0a4181a147de6731d104df6aa0fe46b741202e4",
+      "content_hash": "9d982830fbe7cb9d9275c1576a19e87338715634c227238d1038ecde54652ee2",
+      "raw_markdown_url": "/raw/v1/units/services-dns-ingress/unit.md"
+    },
+    {
+      "id": "fpp:shell-pipes-signals",
+      "slug": "shell-pipes-signals",
+      "title": "Shells, pipes, exit status, and signals",
+      "summary": "Treat the shell as a process launcher and composition tool, then reason precisely about streams, status, and shutdown.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "linux",
+      "prerequisites": [
+        "fpp:processes-and-resources",
+        "fpp:files-users-permissions"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:shell-pipes-signals/stream-composition": "6573ae49d8e9a76fca3636b1259d47ebc5fefafb1de4ff9aab27e1ea46c438e7",
+        "fpp:shell-pipes-signals/signal-shutdown": "e089d9ccef2c706ebb3a6f3cd37f7c80cbf639bb3e536f21630da8947b698cd9"
+      },
+      "mastery_hash": "9edef245220a286072b05cca3365f28448ffc68f95ff652a36b7e27b392e39b5",
+      "enrichment_hash": "be233b80ce78676915f845cd9ed40aa9aa72a5387cd9cea3775f1970363b0d96",
+      "editorial_hash": "f98eb8012dbaf0f44d4006f7f664f2ffab64ed4758e58f25ee12ce2dc959f29b",
+      "content_hash": "8ca16de4df21a629e34815a54d6be298ecd94a18f5cfbddea4ab8b448d48f193",
+      "raw_markdown_url": "/raw/v1/units/shell-pipes-signals/unit.md"
+    },
+    {
+      "id": "fpp:troubleshoot-process-to-pod",
+      "slug": "troubleshoot-process-to-pod",
+      "title": "Troubleshoot from process to pod",
+      "summary": "Localize failures with an evidence ladder that moves from desired state to process, network, policy, and user-visible behavior.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "operations",
+      "prerequisites": [
+        "fpp:kubernetes-control-loop",
+        "fpp:services-dns-ingress",
+        "fpp:scheduling-resources-health",
+        "fpp:config-secrets-storage"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:troubleshoot-process-to-pod/evidence-ladder": "39c9b90601b3b27c182f8d8d311503464b15d1839430868e052362dd81ddfb70",
+        "fpp:troubleshoot-process-to-pod/cross-layer": "28874cbf4f5e637b9902cfc879d2cb551c9568de98c785904e8e4beeba75eb5b"
+      },
+      "mastery_hash": "ae27cab208ec3604c13a5f01cec3d81c13eb6b98c7d97520333f024931637e68",
+      "enrichment_hash": "0b56b04205a3d74b9bf03bac3e5a250f8c7ca24c01b9ea98da221f6e04830779",
+      "editorial_hash": "582cc4759e495810458b5a831aef5776e55a715da55b3e80e78c9087ac557e27",
+      "content_hash": "9001b661198822bffe08520127cbc233a18c152c3b057dc82c8d3b58b22d4af9",
+      "raw_markdown_url": "/raw/v1/units/troubleshoot-process-to-pod/unit.md"
+    }
+  ],
+  "paths": [
+    {
+      "schema_version": 1,
+      "id": "path:from-process-to-pod",
+      "slug": "from-process-to-pod",
+      "title": "From Process to Pod",
+      "summary": "Follow a workload from operating-system execution through networking, containers, declarative delivery, and Kubernetes operations.",
+      "revision": 1,
+      "status": "published",
+      "units": [
+        {
+          "unit_id": "fpp:processes-and-resources",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:files-users-permissions",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:shell-pipes-signals",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:namespaces-cgroups",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:ip-subnets",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:ports-sockets-dns",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:routing-nat-firewalls",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:http-tls",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:images-layers-registries",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:container-lifecycle",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:container-network-storage",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:git-yaml-declarative",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:kubernetes-control-loop",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:pods-workloads",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:services-dns-ingress",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:scheduling-resources-health",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:config-secrets-storage",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:troubleshoot-process-to-pod",
+          "weight": 2
+        }
+      ]
+    }
+  ],
+  "certifications": {
+    "schema_version": 1,
+    "verified_at": "2026-08-27",
+    "certifications": [
+      {
+        "id": "cncf:kcna",
+        "title": "Kubernetes and Cloud Native Associate",
+        "organization": "CNCF",
+        "url": "https://www.cncf.io/training/certification/kcna/",
+        "status": "target",
+        "sequence": 1
+      },
+      {
+        "id": "cncf:kcsa",
+        "title": "Kubernetes and Cloud Native Security Associate",
+        "organization": "CNCF",
+        "url": "https://www.cncf.io/training/certification/kcsa/",
+        "status": "advisory",
+        "sequence": 2
+      },
+      {
+        "id": "cncf:cka",
+        "title": "Certified Kubernetes Administrator",
+        "organization": "CNCF",
+        "url": "https://www.cncf.io/training/certification/cka/",
+        "status": "advisory",
+        "sequence": 3
+      },
+      {
+        "id": "cncf:ckad",
+        "title": "Certified Kubernetes Application Developer",
+        "organization": "CNCF",
+        "url": "https://www.cncf.io/training/certification/ckad/",
+        "status": "advisory",
+        "sequence": 4
+      },
+      {
+        "id": "cncf:cks",
+        "title": "Certified Kubernetes Security Specialist",
+        "organization": "CNCF",
+        "url": "https://www.cncf.io/training/certification/cks/",
+        "status": "advisory",
+        "sequence": 5
+      }
+    ]
+  },
+  "manifest_sha256": "36e619e0601808bc39370b5b3b8b7f7fdaf8634b748076d290abeb0e460d7802"
+}

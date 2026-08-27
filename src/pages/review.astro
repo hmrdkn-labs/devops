@@ -1,0 +1,13 @@
+---
+import ReviewDeck from '@/components/ReviewDeck';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Review" description="A mixed FSRS review queue for recall, explanation, and troubleshooting.">
+  <header class="page-hero shell compact-hero">
+    <p class="eyebrow">FSRS · 90% requested retention</p>
+    <h1>Retrieve. Reveal. Rate honestly.</h1>
+    <p class="lede">The queue targets 60% short cards, 20% explain or predict prompts, and 20% scenarios.</p>
+  </header>
+  <section class="shell review-shell"><ReviewDeck client:load /></section>
+</BaseLayout>

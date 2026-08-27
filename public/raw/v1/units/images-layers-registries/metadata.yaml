@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:images-layers-registries
+slug: images-layers-registries
+title: Container images, layers, and registries
+summary: Treat an image as immutable content plus configuration, then reason about layers, tags, digests, and supply-chain movement.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: containers
+estimated_minutes: 18
+aliases: []
+applicable_versions:
+  - product: oci-image
+    range: image-spec-1.x
+prerequisites: [fpp:files-users-permissions, fpp:http-tls]
+objectives:
+  - id: fpp:images-layers-registries/image-content
+    title: Explain image manifests, configuration, and filesystem layers
+    critical: true
+  - id: fpp:images-layers-registries/tag-digest
+    title: Distinguish mutable tags from content-addressed digests
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

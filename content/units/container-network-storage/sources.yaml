@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:container-network-storage
+sources:
+  - id: source:docker-network
+    title: Docker networking overview
+    url: https://docs.docker.com/engine/network/
+    publisher: Docker
+    type: documentation
+    verified_at: 2026-08-27
+    note: Concrete container namespace and port-publication model.
+  - id: source:docker-storage
+    title: Storage overview
+    url: https://docs.docker.com/engine/storage/
+    publisher: Docker
+    type: documentation
+    verified_at: 2026-08-27
+    note: Writable layer, volume, and bind-mount distinctions.

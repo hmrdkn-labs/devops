@@ -1,0 +1,39 @@
+---
+import StudyFlow from '@/components/StudyFlow';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { units } from '@/lib/content/catalog';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return units.map((unit) => ({
+    params: { unit: unit.metadata.slug },
+    props: { unit },
+  }));
+}
+
+const { unit } = Astro.props;
+const payload = {
+  id: unit.metadata.id,
+  revision: unit.metadata.revision,
+  title: unit.metadata.title,
+  summary: unit.metadata.summary,
+  layer: unit.metadata.layer,
+  estimatedMinutes: unit.metadata.estimated_minutes,
+  questions: unit.questions,
+  cards: unit.cards,
+  practices: unit.practices,
+  sources: unit.sources,
+  lessonHtml: renderMarkdown(unit.markdown),
+};
+---
+
+<BaseLayout
+  title={unit.metadata.title}
+  description={unit.metadata.summary}
+  canonicalPath={'/learn/' + unit.metadata.slug}
+  pageClass="unit-page"
+>
+  <StudyFlow unit={payload} client:load />
+</BaseLayout>

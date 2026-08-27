@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:troubleshoot-process-to-pod
+sources:
+  - id: source:kubernetes-debug
+    title: Troubleshooting Applications
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream application, Pod, Service, and debugging guidance.
+  - id: source:kubernetes-ephemeral
+    title: Debug Running Pods
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream ephemeral-container and runtime observation workflow.

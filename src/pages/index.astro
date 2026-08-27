@@ -1,0 +1,80 @@
+---
+import ProgressClient from '@/components/ProgressClient';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { units } from '@/lib/content/catalog';
+
+export const prerender = true;
+const totalMinutes = units.reduce((sum, unit) => sum + unit.metadata.estimated_minutes, 0);
+---
+
+<BaseLayout>
+  <section class="hero shell">
+    <div class="eyebrow">Owner beta · 18 connected learning units</div>
+    <h1>Understand the system.<br /><em>Then operate it.</em></h1>
+    <p class="lede">
+      A question-first DevOps notebook that turns portable Markdown into recall,
+      application, and retained understanding.
+    </p>
+    <div class="hero-actions">
+      <a class="button primary" href="/learn/processes-and-resources">Start with a process</a>
+      <a class="button" href="/paths/from-process-to-pod">Preview the path</a>
+    </div>
+    <dl class="hero-stats">
+      <div><dt>Units</dt><dd>{units.length}</dd></div>
+      <div><dt>Review cards</dt><dd>{units.reduce((sum, unit) => sum + unit.cards.length, 0)}</dd></div>
+      <div><dt>Guided time</dt><dd>≈{Math.round(totalMinutes / 60)}h</dd></div>
+      <div><dt>Canonical format</dt><dd>GFM + YAML</dd></div>
+    </dl>
+  </section>
+
+  <section class="learning-loop shell" aria-labelledby="loop-title">
+    <div class="loop-intro">
+      <p class="section-kicker">The learning contract</p>
+      <h2 id="loop-title">Understanding starts before the explanation.</h2>
+      <p>You produce a model, compare it with critical points, then create evidence through recall and real scenarios.</p>
+    </div>
+    <ol>
+      <li><span>01</span><div><strong>Predict</strong><p>Answer before the lesson makes recognition impossible to confuse with recall.</p></div></li>
+      <li><span>02</span><div><strong>Compare</strong><p>Use a concise model and checklist. No opaque AI score decides whether you understand.</p></div></li>
+      <li><span>03</span><div><strong>Apply</strong><p>Troubleshooting and configuration scenarios test whether the model transfers.</p></div></li>
+      <li><span>04</span><div><strong>Retain</strong><p>FSRS schedules later retrieval; readiness fades when evidence becomes stale.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="path-preview shell" aria-labelledby="path-title">
+    <div class="path-copy">
+      <p class="section-kicker">Guided focus path</p>
+      <h2 id="path-title">From Process to Pod</h2>
+      <p>Follow one workload through the layers that make Kubernetes possible. The map remains available when you need to branch into a prerequisite.</p>
+      <a href="/paths/from-process-to-pod">See all 18 units →</a>
+    </div>
+    <ol class="layer-list">
+      <li><span>01</span><strong>Process</strong><small>CPU · memory · signals</small></li>
+      <li><span>02</span><strong>Linux</strong><small>users · files · namespaces</small></li>
+      <li><span>03</span><strong>Network</strong><small>IP · DNS · routes · TLS</small></li>
+      <li><span>04</span><strong>Container</strong><small>image · runtime · isolation</small></li>
+      <li><span>05</span><strong>Pod</strong><small>scheduling · health · service</small></li>
+    </ol>
+  </section>
+
+  <section class="home-progress shell">
+    <div>
+      <p class="section-kicker">Evidence, not streaks</p>
+      <h2>Your readiness can tell the truth.</h2>
+      <p>Encountered, Recalled, Applied, and Retained are different claims. Critical prerequisites count twice in the path score.</p>
+    </div>
+    <ProgressClient compact client:visible />
+  </section>
+
+  <section class="portable-callout shell">
+    <div>
+      <p class="section-kicker">Portable by construction</p>
+      <h2>The curriculum is not trapped in this app.</h2>
+    </div>
+    <p>Download the canonical Markdown archive, consume stable raw URLs, or build another renderer from the versioned manifest. Framework code never enters the lesson source.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="/devops-content-v1.zip">Download content</a>
+      <a class="button" href="/content/v1/manifest.json">Inspect manifest</a>
+    </div>
+  </section>
+</BaseLayout>

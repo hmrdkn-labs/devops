@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { certificationRegistry, units } from '@/lib/content/catalog';
+
+export const prerender = true;
+const sources = units.flatMap((unit) => unit.sources.map((source) => ({ ...source, unit })));
+const publishers = [...new Set(sources.map((source) => source.publisher))].sort();
+---
+
+<BaseLayout title="References" description="Primary source catalog and updateable certification registry.">
+  <header class="page-hero shell">
+    <p class="eyebrow">Source catalog · {sources.length} primary references</p>
+    <h1>References are provenance, not copied lessons.</h1>
+    <p class="lede">Every unit is independently written. Links and source metadata remain separate from the teaching content.</p>
+  </header>
+  <section class="shell certification-registry">
+    <div>
+      <p class="section-kicker">Advisory sequence</p>
+      <h2>Kubestronaut direction</h2>
+      <p>Registry verified {certificationRegistry.verified_at}. Requirements can change; confirm them with CNCF before planning an exam.</p>
+    </div>
+    <ol>
+      {certificationRegistry.certifications.sort((a, b) => a.sequence - b.sequence).map((certification) => (
+        <li>
+          <span>{String(certification.sequence).padStart(2, '0')}</span>
+          <a href={certification.url} rel="noopener noreferrer">{certification.title}</a>
+          <small>{certification.status}</small>
+        </li>
+      ))}
+    </ol>
+  </section>
+  <div class="shell reference-groups">
+    {publishers.map((publisher) => (
+      <section>
+        <h2>{publisher}</h2>
+        <ul>
+          {sources.filter((source) => source.publisher === publisher).map((source) => (
+            <li>
+              <div>
+                <a href={source.url} rel="noopener noreferrer">{source.title}</a>
+                <p>{source.note}</p>
+              </div>
+              <a class="reference-unit" href={'/learn/' + source.unit.metadata.slug}>{source.unit.metadata.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

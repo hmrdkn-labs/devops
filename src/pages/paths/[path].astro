@@ -1,0 +1,47 @@
+---
+import ProgressClient from '@/components/ProgressClient';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { paths, unitsById } from '@/lib/content/catalog';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return paths.map((path) => ({
+    params: { path: path.slug },
+    props: { path },
+  }));
+}
+
+const { path } = Astro.props;
+const pathUnits = path.units.flatMap((entry, index) => {
+  const unit = unitsById.get(entry.unit_id);
+  return unit ? [{ unit, index, weight: entry.weight }] : [];
+});
+---
+
+<BaseLayout title={path.title} description={path.summary} canonicalPath={'/paths/' + path.slug}>
+  <header class="page-hero shell">
+    <p class="eyebrow">Guided focus path · revision {path.revision}</p>
+    <h1>{path.title}</h1>
+    <p class="lede">{path.summary}</p>
+  </header>
+  <div class="shell path-layout">
+    <ProgressClient compact client:visible />
+    <ol class="path-timeline">
+      {pathUnits.map(({ unit, index, weight }) => (
+        <li>
+          <span class="path-number">{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <span class="unit-layer">{unit.metadata.layer}</span>
+            <h2><a href={'/learn/' + unit.metadata.slug}>{unit.metadata.title}</a></h2>
+            <p>{unit.metadata.summary}</p>
+          </div>
+          <div class="path-badges">
+            {weight === 2 && <span>critical prerequisite</span>}
+            <span>{unit.metadata.estimated_minutes} min</span>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</BaseLayout>

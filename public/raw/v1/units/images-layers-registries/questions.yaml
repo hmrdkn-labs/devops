@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:images-layers-registries
+revision: 1
+questions:
+  - id: fpp:images-layers-registries/q-delete
+    kind: predict
+    prompt: A secret is copied into one build layer and deleted in the next. Is it absent from the image's stored history?
+    model_answer: No. The later deletion changes the final filesystem view, but the earlier layer still contains the bytes. Prevent the secret from entering any layer.
+    critical_points:
+      - Layers are immutable content objects.
+      - Later deletion does not rewrite earlier content.
+    objective_ids: [fpp:images-layers-registries/image-content]
+  - id: fpp:images-layers-registries/q-digest
+    kind: explain
+    prompt: Why does deploying by digest improve reproducibility compared with deploying only by tag?
+    model_answer: A digest identifies a specific manifest by content, while a registry tag can be moved to different content. Digest pinning removes that mutable lookup from the deployment.
+    critical_points:
+      - Tags are references that can change.
+      - Digests are content-addressed identifiers.
+    objective_ids: [fpp:images-layers-registries/tag-digest]

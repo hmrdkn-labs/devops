@@ -1,0 +1,36 @@
+schema_version: 1
+id: fpp:troubleshoot-process-to-pod
+slug: troubleshoot-process-to-pod
+title: Troubleshoot from process to pod
+summary: Localize failures with an evidence ladder that moves from desired state to process, network, policy, and user-visible behavior.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: operations
+estimated_minutes: 24
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.35
+prerequisites:
+  - fpp:kubernetes-control-loop
+  - fpp:services-dns-ingress
+  - fpp:scheduling-resources-health
+  - fpp:config-secrets-storage
+objectives:
+  - id: fpp:troubleshoot-process-to-pod/evidence-ladder
+    title: Localize a failure before changing state
+    critical: true
+  - id: fpp:troubleshoot-process-to-pod/cross-layer
+    title: Connect Kubernetes status to Linux and network evidence
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+  - certification: cncf:cka
+    domains: [troubleshooting]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

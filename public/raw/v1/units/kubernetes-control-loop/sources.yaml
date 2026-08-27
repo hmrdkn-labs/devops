@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-control-loop
+sources:
+  - id: source:kubernetes-components
+    title: Kubernetes components
+    url: https://kubernetes.io/docs/concepts/overview/components/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream control-plane and node-component overview.
+  - id: source:kubernetes-api
+    title: The Kubernetes API
+    url: https://kubernetes.io/docs/concepts/overview/kubernetes-api/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream API object and interaction model.

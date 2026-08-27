@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:routing-nat-firewalls
+practices:
+  - id: fpp:routing-nat-firewalls/p-draw
+    title: Draw a packet path
+    mode: guided_markdown
+    prompt: Document one outbound connection from process to destination without changing policy.
+    steps:
+      - Record the local socket and selected route.
+      - Mark every host or network boundary the packet crosses.
+      - Annotate where filtering or translation could occur.
+    success_checks:
+      - Every ingress or egress label names its boundary.
+      - Routing, policy, and NAT are separate annotations.
+    safety:
+      - Use observation only; do not alter firewall rules.

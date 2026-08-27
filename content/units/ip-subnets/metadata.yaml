@@ -1,0 +1,32 @@
+schema_version: 1
+id: fpp:ip-subnets
+slug: ip-subnets
+title: IP addresses and subnets
+summary: Reason about interface addresses, prefixes, local delivery, and the route choice behind every packet.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: networking
+estimated_minutes: 16
+aliases: []
+applicable_versions:
+  - product: internet-protocol
+    range: ipv4-and-ipv6-concepts
+prerequisites: [fpp:processes-and-resources]
+objectives:
+  - id: fpp:ip-subnets/address-prefix
+    title: Separate an interface address from its network prefix
+    critical: true
+  - id: fpp:ip-subnets/local-or-routed
+    title: Predict whether a destination is local or needs a router
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: true
+  - certification: cncf:cka
+    domains: [services-and-networking]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

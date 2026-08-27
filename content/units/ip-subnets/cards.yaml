@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:ip-subnets
+revision: 1
+cards:
+  - id: fpp:ip-subnets/c-prefix
+    type: short
+    front: What does the number in /24 represent?
+    back: The number of leading address bits that form the network prefix.
+    critical_points: []
+    objective_ids: [fpp:ip-subnets/address-prefix]
+  - id: fpp:ip-subnets/c-route
+    type: short
+    front: How does IP choose among matching routes?
+    back: The longest, most-specific prefix match wins.
+    critical_points: []
+    objective_ids: [fpp:ip-subnets/local-or-routed]
+  - id: fpp:ip-subnets/c-pod-address
+    type: short
+    front: Do containers in one Kubernetes pod have separate pod IPs?
+    back: Normally no. They share the pod network namespace and its IP addresses.
+    critical_points: []
+    objective_ids: [fpp:ip-subnets/address-prefix]
+  - id: fpp:ip-subnets/c-explain
+    type: prompt
+    front: Explain address, prefix, and route as three different facts.
+    back: The address names an interface, the prefix describes a network range, and a route says how to reach a destination prefix.
+    critical_points: [Do not treat an address as a route]
+    objective_ids: [fpp:ip-subnets/address-prefix, fpp:ip-subnets/local-or-routed]
+  - id: fpp:ip-subnets/c-scenario
+    type: scenario
+    front: A new node has free CPU but cannot allocate more pod IPs. Which capacity may be exhausted?
+    back: The node or subnet address-allocation capacity, depending on the CNI.
+    critical_points: [Compute network capacity separately from compute capacity]
+    objective_ids: [fpp:ip-subnets/address-prefix]

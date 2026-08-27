@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:namespaces-cgroups
+practices:
+  - id: fpp:namespaces-cgroups/p-inspect
+    title: Compare namespace identities
+    mode: guided_markdown
+    prompt: Inspect the namespaces and cgroup membership of your shell without changing the host.
+    steps:
+      - Record your shell PID.
+      - List the namespace links under /proc/PID/ns.
+      - Read the process cgroup membership under /proc/PID/cgroup.
+    success_checks:
+      - You can identify at least three namespace types.
+      - You can explain why namespace IDs and cgroup paths describe different boundaries.
+    safety:
+      - This practice is read-only.

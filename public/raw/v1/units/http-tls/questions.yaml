@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:http-tls
+revision: 1
+questions:
+  - id: fpp:http-tls/q-certificate
+    kind: predict
+    prompt: DNS resolves and TCP connects, but the certificate does not cover the requested hostname. Should the client continue?
+    model_answer: A correctly validating client should reject the connection. Encryption was negotiated, but the peer did not prove the expected hostname identity.
+    critical_points:
+      - Reachability is not identity.
+      - Hostname validation is part of TLS verification.
+    objective_ids: [fpp:http-tls/tls-identity]
+  - id: fpp:http-tls/q-502
+    kind: scenario
+    prompt: An ingress proxy returns HTTP 502. What layer is proven to work, and what likely boundary failed?
+    model_answer: The client reached an HTTP-speaking proxy. The proxy could not obtain a valid upstream response, so inspect backend endpoint selection, transport, TLS, and application health.
+    critical_points:
+      - An HTTP status localizes the response-producing layer.
+      - Proxy-to-upstream is a separate connection.
+    objective_ids: [fpp:http-tls/http-message]

@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:scheduling-resources-health
+revision: 1
+cards:
+  - id: fpp:scheduling-resources-health/c-request
+    type: short
+    front: Which resource value participates directly in scheduling?
+    back: The request.
+    critical_points: []
+    objective_ids: [fpp:scheduling-resources-health/requests-limits]
+  - id: fpp:scheduling-resources-health/c-readiness
+    type: short
+    front: Which probe controls Service endpoint readiness?
+    back: The readiness probe.
+    critical_points: []
+    objective_ids: [fpp:scheduling-resources-health/probe-semantics]
+  - id: fpp:scheduling-resources-health/c-liveness
+    type: short
+    front: Which probe can trigger a container restart?
+    back: The liveness probe.
+    critical_points: []
+    objective_ids: [fpp:scheduling-resources-health/probe-semantics]
+  - id: fpp:scheduling-resources-health/c-explain
+    type: prompt
+    front: Explain request versus limit without calling either current usage.
+    back: A request reserves scheduling capacity and influences shares; a limit sets an enforceable runtime boundary.
+    critical_points: [Usage is observed separately]
+    objective_ids: [fpp:scheduling-resources-health/requests-limits]
+  - id: fpp:scheduling-resources-health/c-scenario
+    type: scenario
+    front: A slow-starting app is killed by liveness before initialization finishes. Which probe should gate liveness?
+    back: A startup probe.
+    critical_points: [Give initialization its own success window]
+    objective_ids: [fpp:scheduling-resources-health/probe-semantics]

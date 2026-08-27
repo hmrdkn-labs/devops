@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:files-users-permissions
+revision: 1
+questions:
+  - id: fpp:files-users-permissions/q-directory-x
+    kind: predict
+    prompt: A file is world-readable, but its parent directory lacks execute permission for your user. Can you read it by path?
+    model_answer: No. Directory execute permission is required to traverse the directory and resolve the named entry, even if the final file has a read bit.
+    critical_points:
+      - Directory execute means traversal.
+      - Every path component participates in access.
+    objective_ids: [fpp:files-users-permissions/mode-bits]
+  - id: fpp:files-users-permissions/q-identity
+    kind: explain
+    prompt: Why should a service use a stable non-root user instead of relying on root?
+    model_answer: A stable least-privilege identity limits blast radius and makes required ownership explicit. Root can conceal bad permissions and leaves privileged artifacts that break later non-root execution.
+    critical_points:
+      - Identity controls kernel permission checks.
+      - Least privilege supports repeatable operation as well as security.
+    objective_ids: [fpp:files-users-permissions/path-identity]

@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:services-dns-ingress
+revision: 1
+questions:
+  - id: fpp:services-dns-ingress/q-no-endpoints
+    kind: scenario
+    prompt: A Service DNS name resolves, but its EndpointSlice is empty. What works and what is broken?
+    model_answer: Service discovery works, but no ready Pods match the Service selector or port relationship. Inspect selector labels, Pod readiness, and EndpointSlice controller output.
+    critical_points:
+      - DNS and backend selection are separate.
+      - A Service with no endpoints cannot deliver to a workload.
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/q-ingress
+    kind: explain
+    prompt: Why does creating an Ingress object not guarantee an external endpoint?
+    model_answer: Ingress is desired-state API configuration. An installed controller must recognize its class, configure a proxy or load balancer, publish status, and have working DNS and network access.
+    critical_points:
+      - An implementing controller is required.
+      - External DNS and load-balancer lifecycle are separate integrations.
+    objective_ids: [fpp:services-dns-ingress/external-routing]

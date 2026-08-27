@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:ports-sockets-dns
+revision: 1
+cards:
+  - id: fpp:ports-sockets-dns/c-port
+    type: short
+    front: What identifies a TCP listener besides its port number?
+    back: Its local address, protocol, network namespace, and owning process.
+    critical_points: []
+    objective_ids: [fpp:ports-sockets-dns/socket-endpoint]
+  - id: fpp:ports-sockets-dns/c-four-tuple
+    type: short
+    front: What four values identify a TCP connection?
+    back: Source IP, source port, destination IP, and destination port.
+    critical_points: []
+    objective_ids: [fpp:ports-sockets-dns/socket-endpoint]
+  - id: fpp:ports-sockets-dns/c-dns
+    type: short
+    front: What does an A record return?
+    back: An IPv4 address associated with a DNS name.
+    critical_points: []
+    objective_ids: [fpp:ports-sockets-dns/dns-resolution]
+  - id: fpp:ports-sockets-dns/c-explain
+    type: prompt
+    front: Explain why correct DNS is not proof that an application is reachable.
+    back: DNS supplies a record; routing, filtering, listening, TLS, and application behavior are separate layers.
+    critical_points: [Name at least one later layer]
+    objective_ids: [fpp:ports-sockets-dns/dns-resolution]
+  - id: fpp:ports-sockets-dns/c-scenario
+    type: scenario
+    front: A process is listening on port 8080, but only local curl works. What binding is likely?
+    back: A loopback-only address such as 127.0.0.1.
+    critical_points: [Inspect the local listen address]
+    objective_ids: [fpp:ports-sockets-dns/socket-endpoint]

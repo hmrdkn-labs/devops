@@ -1,0 +1,10 @@
+schema_version: 1
+unit_id: fpp:processes-and-resources
+sources:
+  - id: source:linux-proc
+    title: proc — process information pseudo-filesystem
+    url: https://man7.org/linux/man-pages/man5/proc.5.html
+    publisher: Linux man-pages
+    type: manual
+    verified_at: 2026-08-27
+    note: Primary reference for observable Linux process state.

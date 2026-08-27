@@ -1,0 +1,32 @@
+schema_version: 1
+id: fpp:services-dns-ingress
+slug: services-dns-ingress
+title: Services, cluster DNS, and ingress
+summary: Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 20
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.35
+prerequisites: [fpp:pods-workloads, fpp:http-tls]
+objectives:
+  - id: fpp:services-dns-ingress/service-endpoints
+    title: Trace a Service to ready endpoints
+    critical: true
+  - id: fpp:services-dns-ingress/external-routing
+    title: Distinguish Service exposure from Ingress or Gateway HTTP routing
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+  - certification: cncf:cka
+    domains: [services-and-networking]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

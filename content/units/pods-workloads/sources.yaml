@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:pods-workloads
+sources:
+  - id: source:kubernetes-pods
+    title: Pods
+    url: https://kubernetes.io/docs/concepts/workloads/pods/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream Pod model and shared-context reference.
+  - id: source:kubernetes-workloads
+    title: Workloads
+    url: https://kubernetes.io/docs/concepts/workloads/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream controller selection overview.

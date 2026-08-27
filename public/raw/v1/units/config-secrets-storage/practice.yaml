@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:config-secrets-storage
+practices:
+  - id: fpp:config-secrets-storage/p-storage-path
+    title: Trace a claim without provisioning
+    mode: guided_markdown
+    prompt: Inspect an existing non-production claim and explain every ownership boundary.
+    steps:
+      - Read the PVC, bound PV, StorageClass, CSI driver, and selected Pod.
+      - Record access mode, reclaim policy, volume mode, and topology.
+      - State what happens on Pod deletion, claim deletion, node loss, and AZ loss.
+    success_checks:
+      - You distinguish Pod, claim, volume, and cloud-resource lifecycle.
+      - Your AZ answer matches the storage topology.
+    safety:
+      - Inspect only; do not delete or patch storage resources.

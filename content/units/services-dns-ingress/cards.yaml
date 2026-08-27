@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:services-dns-ingress
+revision: 1
+cards:
+  - id: fpp:services-dns-ingress/c-stable
+    type: short
+    front: Which object gives changing Pods a stable virtual destination?
+    back: A Service.
+    critical_points: []
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/c-endpointslice
+    type: short
+    front: Which objects record Service backend addresses?
+    back: EndpointSlices.
+    critical_points: []
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/c-controller
+    type: short
+    front: What must exist for an Ingress object to affect traffic?
+    back: A compatible Ingress controller.
+    critical_points: []
+    objective_ids: [fpp:services-dns-ingress/external-routing]
+  - id: fpp:services-dns-ingress/c-explain
+    type: prompt
+    front: Explain Service port versus targetPort.
+    back: Clients address the Service port; the data plane forwards to targetPort on selected endpoints.
+    critical_points: [Both sides must match actual listener intent]
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/c-scenario
+    type: scenario
+    front: A LoadBalancer Service stays pending. Which integration boundary should you inspect?
+    back: The cloud or load-balancer controller, permissions, supported annotations, quotas, and subnet configuration.
+    critical_points: [The Service request needs an external implementation]
+    objective_ids: [fpp:services-dns-ingress/external-routing]

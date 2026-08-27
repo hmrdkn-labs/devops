@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:http-tls
+practices:
+  - id: fpp:http-tls/p-curl
+    title: Separate HTTP from TLS evidence
+    mode: guided_markdown
+    prompt: Inspect one public HTTPS exchange without sending sensitive data.
+    steps:
+      - Use curl verbose mode against a public documentation URL.
+      - Identify DNS results, connection address, certificate hostname, request authority, and status.
+      - Write one sentence of evidence for each layer.
+    success_checks:
+      - You do not use a successful status as proof of every lower layer.
+      - You can identify where TLS identity was checked.
+    safety:
+      - Use a public read-only URL and no credentials.

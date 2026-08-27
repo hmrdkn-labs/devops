@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:ports-sockets-dns
+practices:
+  - id: fpp:ports-sockets-dns/p-listener
+    title: Trace a listener
+    mode: guided_markdown
+    prompt: Connect a listening socket to its process and DNS-independent reachability.
+    steps:
+      - Start a local development server on loopback.
+      - Inspect the listener with ss and identify its PID.
+      - Resolve localhost and compare the address with the listener binding.
+    success_checks:
+      - You can name address, port, protocol, namespace, and process.
+      - You can explain why remote reachability differs.
+    safety:
+      - Bind only to loopback and stop the server afterward.

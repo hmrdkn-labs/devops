@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { units } from '@/lib/content/catalog';
+
+export const prerender = true;
+const layers = [...new Set(units.map((unit) => unit.metadata.layer))];
+---
+
+<BaseLayout title="Library" description="Browse every published portable DevOps learning unit.">
+  <header class="page-hero shell">
+    <p class="eyebrow">Public library · {units.length} units</p>
+    <h1>One concept per durable unit.</h1>
+    <p class="lede">The curriculum is deduplicated by objective, not organized as mirrored courses.</p>
+  </header>
+  <div class="shell library-groups">
+    {layers.map((layer) => (
+      <section>
+        <h2>{layer}</h2>
+        <div class="library-grid">
+          {units.filter((unit) => unit.metadata.layer === layer).map((unit) => (
+            <a href={'/learn/' + unit.metadata.slug} class="library-card">
+              <span>{unit.metadata.estimated_minutes} min · r{unit.metadata.revision}</span>
+              <h3>{unit.metadata.title}</h3>
+              <p>{unit.metadata.summary}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,15 @@
+schema_version: 1
+unit_id: fpp:pods-workloads
+practices:
+  - id: fpp:pods-workloads/p-choose
+    title: Choose a controller
+    mode: guided_markdown
+    prompt: Classify four workloads before writing any manifest.
+    steps:
+      - Describe identity, duration, placement, scaling, and replacement needs.
+      - Choose a controller for an API, database, node agent, and backup task.
+      - State one failure caused by choosing a different controller.
+    success_checks:
+      - Every choice cites controller semantics rather than familiarity.
+      - Pod-level sharing is explicit for multi-container cases.
+    safety: []

@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:routing-nat-firewalls
+revision: 1
+cards:
+  - id: fpp:routing-nat-firewalls/c-routing
+    type: short
+    front: What does routing choose?
+    back: The next hop and output interface for a destination prefix.
+    critical_points: []
+    objective_ids: [fpp:routing-nat-firewalls/packet-path]
+  - id: fpp:routing-nat-firewalls/c-snat
+    type: short
+    front: What packet field does SNAT primarily rewrite?
+    back: The source address, and sometimes the source port.
+    critical_points: []
+    objective_ids: [fpp:routing-nat-firewalls/nat-policy]
+  - id: fpp:routing-nat-firewalls/c-stateful
+    type: short
+    front: What does a stateful firewall remember?
+    back: Connection or flow state used to classify related packets.
+    critical_points: []
+    objective_ids: [fpp:routing-nat-firewalls/nat-policy]
+  - id: fpp:routing-nat-firewalls/c-explain
+    type: prompt
+    front: Explain ingress and egress without using fixed directions.
+    back: Ingress enters a named boundary and egress leaves it; the direction depends on whether the boundary is a pod, node, subnet, or service.
+    critical_points: [Always name the boundary]
+    objective_ids: [fpp:routing-nat-firewalls/packet-path]
+  - id: fpp:routing-nat-firewalls/c-scenario
+    type: scenario
+    front: A private pod reaches the internet using the node's public identity. Which mechanism is likely involved?
+    back: Source NAT or masquerading on an egress device.
+    critical_points: [Trace the source-address rewrite]
+    objective_ids: [fpp:routing-nat-firewalls/nat-policy]

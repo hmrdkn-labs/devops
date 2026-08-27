@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:container-lifecycle
+slug: container-lifecycle
+title: Container runtime and lifecycle
+summary: Connect an image to the runtime-created process, writable layer, isolation settings, logs, exit status, and restart behavior.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: containers
+estimated_minutes: 18
+aliases: []
+applicable_versions:
+  - product: oci-runtime
+    range: runtime-spec-1.x
+prerequisites: [fpp:namespaces-cgroups, fpp:shell-pipes-signals, fpp:images-layers-registries]
+objectives:
+  - id: fpp:container-lifecycle/create-start-stop
+    title: Trace image pull, container creation, start, stop, and removal
+    critical: true
+  - id: fpp:container-lifecycle/pid1-exit
+    title: Explain PID 1, signals, logs, and container exit
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

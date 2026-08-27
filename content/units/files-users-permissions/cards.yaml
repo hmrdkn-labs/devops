@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:files-users-permissions
+revision: 1
+cards:
+  - id: fpp:files-users-permissions/c-inode
+    type: short
+    front: What does a directory entry map a name to?
+    back: An inode that holds metadata and references file data.
+    critical_points: []
+    objective_ids: [fpp:files-users-permissions/path-identity]
+  - id: fpp:files-users-permissions/c-dir-x
+    type: short
+    front: What does execute permission mean on a directory?
+    back: Permission to traverse it and resolve entries inside it.
+    critical_points: []
+    objective_ids: [fpp:files-users-permissions/mode-bits]
+  - id: fpp:files-users-permissions/c-mode-order
+    type: short
+    front: Which three identity classes do Unix mode bits describe?
+    back: Owner, group, and other.
+    critical_points: []
+    objective_ids: [fpp:files-users-permissions/mode-bits]
+  - id: fpp:files-users-permissions/c-explain
+    type: prompt
+    front: Explain why chmod 777 is not a durable troubleshooting fix.
+    back: It discards least privilege without identifying the intended owner, group, operation, or path component that failed.
+    critical_points: [Fix the identity and exact permission requirement]
+    objective_ids: [fpp:files-users-permissions/path-identity]
+  - id: fpp:files-users-permissions/c-scenario
+    type: scenario
+    front: A non-root container cannot write a mounted directory created by root. What should you inspect first?
+    back: The process UID/GID and the mounted directory ownership and mode bits.
+    critical_points: [Compare runtime identity with filesystem ownership]
+    objective_ids: [fpp:files-users-permissions/path-identity]

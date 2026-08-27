@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:scheduling-resources-health
+practices:
+  - id: fpp:scheduling-resources-health/p-budget
+    title: Build a node budget
+    mode: guided_markdown
+    prompt: Calculate whether a hypothetical Pod can be scheduled before looking at live usage.
+    steps:
+      - Record allocatable node CPU and memory.
+      - Sum existing Pod requests and the new Pod requests.
+      - Check non-resource constraints and identify the first binding limit.
+    success_checks:
+      - Your answer uses allocatable capacity and requests.
+      - You list at least one non-CPU capacity dimension.
+    safety:
+      - This is a read-only calculation.

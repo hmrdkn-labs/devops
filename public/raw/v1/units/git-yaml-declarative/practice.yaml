@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:git-yaml-declarative
+practices:
+  - id: fpp:git-yaml-declarative/p-validate
+    title: Validate at two layers
+    mode: guided_markdown
+    prompt: Demonstrate that parseable YAML and schema-valid configuration are different claims.
+    steps:
+      - Create a harmless sample manifest with valid syntax and one wrong field type.
+      - Parse it with a YAML-aware tool.
+      - Validate it against the target API schema using a client dry run.
+    success_checks:
+      - Parsing succeeds.
+      - Schema validation identifies the wrong type without creating a resource.
+    safety:
+      - Use client-side dry-run or an isolated disposable cluster.

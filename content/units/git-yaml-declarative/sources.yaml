@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:git-yaml-declarative
+sources:
+  - id: source:git-data-model
+    title: Git Internals — Git Objects
+    url: https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
+    publisher: Git project
+    type: documentation
+    verified_at: 2026-08-27
+    note: Git object and commit model reference.
+  - id: source:yaml-spec
+    title: YAML 1.2.2 Specification
+    url: https://yaml.org/spec/1.2.2/
+    publisher: YAML Language Development Team
+    type: specification
+    verified_at: 2026-08-27
+    note: YAML syntax and data model reference.

@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:config-secrets-storage
+sources:
+  - id: source:kubernetes-persistent-volumes
+    title: Persistent Volumes
+    url: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-08-27
+    note: Upstream PV, PVC, StorageClass, and binding model.
+  - id: source:eks-ebs-csi
+    title: Store Kubernetes volumes with Amazon EBS
+    url: https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html
+    publisher: AWS
+    type: documentation
+    verified_at: 2026-08-27
+    note: EKS EBS CSI driver prerequisites and behavior.

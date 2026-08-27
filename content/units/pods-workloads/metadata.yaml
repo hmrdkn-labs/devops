@@ -1,0 +1,32 @@
+schema_version: 1
+id: fpp:pods-workloads
+slug: pods-workloads
+title: Pods and workload controllers
+summary: Choose the smallest Kubernetes execution unit and the controller whose identity and replacement semantics match the workload.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 19
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.35
+prerequisites: [fpp:kubernetes-control-loop, fpp:container-network-storage]
+objectives:
+  - id: fpp:pods-workloads/pod-boundary
+    title: Explain shared and isolated resources within a Pod
+    critical: true
+  - id: fpp:pods-workloads/controller-choice
+    title: Select Deployment, StatefulSet, DaemonSet, Job, or CronJob semantics
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+  - certification: cncf:ckad
+    domains: [application-design-and-build]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-08-27

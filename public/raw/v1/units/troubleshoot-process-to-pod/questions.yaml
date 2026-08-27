@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:troubleshoot-process-to-pod
+revision: 1
+questions:
+  - id: fpp:troubleshoot-process-to-pod/q-crashloop
+    kind: scenario
+    prompt: A Pod is in CrashLoopBackOff. What evidence should you collect before changing the manifest?
+    model_answer: Inspect container current and previous state, exit code or signal, termination reason, events, the effective command and configuration, and previous-instance logs. Then map the evidence to the underlying process failure.
+    critical_points:
+      - CrashLoopBackOff is retry behavior, not the root cause.
+      - Previous execution evidence is essential.
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder, fpp:troubleshoot-process-to-pod/cross-layer]
+  - id: fpp:troubleshoot-process-to-pod/q-order
+    kind: explain
+    prompt: Why should you inspect Service endpoints before editing DNS when a Service name resolves but requests fail?
+    model_answer: Resolution already proves the name lookup path. Endpoint membership is the next dependency and can show selector or readiness failure without making an unrelated DNS change.
+    critical_points:
+      - Let evidence choose the next layer.
+      - Change only after localizing the failed relationship.
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]

@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:pods-workloads
+revision: 1
+cards:
+  - id: fpp:pods-workloads/c-smallest
+    type: short
+    front: Smallest Kubernetes schedulable unit?
+    back: A Pod.
+    critical_points: []
+    objective_ids: [fpp:pods-workloads/pod-boundary]
+  - id: fpp:pods-workloads/c-daemon
+    type: short
+    front: Controller for one eligible Pod per node?
+    back: DaemonSet.
+    critical_points: []
+    objective_ids: [fpp:pods-workloads/controller-choice]
+  - id: fpp:pods-workloads/c-finite
+    type: short
+    front: Controller for finite work that must complete?
+    back: Job.
+    critical_points: []
+    objective_ids: [fpp:pods-workloads/controller-choice]
+  - id: fpp:pods-workloads/c-explain
+    type: prompt
+    front: Explain when a sidecar belongs in the same Pod.
+    back: When it is tightly coupled to the main process and must share network, storage, placement, and lifecycle as one operational unit.
+    critical_points: [Co-location creates shared failure and scaling boundaries]
+    objective_ids: [fpp:pods-workloads/pod-boundary]
+  - id: fpp:pods-workloads/c-scenario
+    type: scenario
+    front: Three database replicas need stable names and one claim each. Which controller fits?
+    back: StatefulSet.
+    critical_points: [Stable ordinal identity and storage claim templates]
+    objective_ids: [fpp:pods-workloads/controller-choice]

@@ -1,0 +1,44 @@
+schema_version: 1
+id: path:from-process-to-pod
+slug: from-process-to-pod
+title: From Process to Pod
+summary: Follow a workload from operating-system execution through networking, containers, declarative delivery, and Kubernetes operations.
+revision: 1
+status: published
+units:
+  - unit_id: fpp:processes-and-resources
+    weight: 1
+  - unit_id: fpp:files-users-permissions
+    weight: 1
+  - unit_id: fpp:shell-pipes-signals
+    weight: 1
+  - unit_id: fpp:namespaces-cgroups
+    weight: 2
+  - unit_id: fpp:ip-subnets
+    weight: 2
+  - unit_id: fpp:ports-sockets-dns
+    weight: 2
+  - unit_id: fpp:routing-nat-firewalls
+    weight: 1
+  - unit_id: fpp:http-tls
+    weight: 1
+  - unit_id: fpp:images-layers-registries
+    weight: 2
+  - unit_id: fpp:container-lifecycle
+    weight: 2
+  - unit_id: fpp:container-network-storage
+    weight: 1
+  - unit_id: fpp:git-yaml-declarative
+    weight: 1
+  - unit_id: fpp:kubernetes-control-loop
+    weight: 2
+  - unit_id: fpp:pods-workloads
+    weight: 2
+  - unit_id: fpp:services-dns-ingress
+    weight: 2
+  - unit_id: fpp:scheduling-resources-health
+    weight: 2
+  - unit_id: fpp:config-secrets-storage
+    weight: 1
+  - unit_id: fpp:troubleshoot-process-to-pod
+    weight: 2

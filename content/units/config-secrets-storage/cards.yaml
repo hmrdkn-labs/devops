@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:config-secrets-storage
+revision: 1
+cards:
+  - id: fpp:config-secrets-storage/c-configmap
+    type: short
+    front: Which object is intended for non-confidential configuration?
+    back: ConfigMap.
+    critical_points: []
+    objective_ids: [fpp:config-secrets-storage/config-secret]
+  - id: fpp:config-secrets-storage/c-base64
+    type: short
+    front: Does base64 encoding make a Secret encrypted?
+    back: No.
+    critical_points: []
+    objective_ids: [fpp:config-secrets-storage/config-secret]
+  - id: fpp:config-secrets-storage/c-pvc
+    type: short
+    front: What does a PersistentVolumeClaim express?
+    back: A workload's request for storage with particular capacity and access properties.
+    critical_points: []
+    objective_ids: [fpp:config-secrets-storage/pv-topology]
+  - id: fpp:config-secrets-storage/c-explain
+    type: prompt
+    front: Explain why workload identity can be safer than a long-lived cloud key in a Secret.
+    back: It issues short-lived, scoped credentials to an authenticated workload and avoids distributing a reusable static secret.
+    critical_points: [Authentication and authorization remain server-side]
+    objective_ids: [fpp:config-secrets-storage/config-secret]
+  - id: fpp:config-secrets-storage/c-scenario
+    type: scenario
+    front: A Pod using a zonal volume is unschedulable in another AZ. What constraint is working?
+    back: Volume node affinity or topology prevents placement where the volume cannot attach.
+    critical_points: [Compute and storage placement must agree]
+    objective_ids: [fpp:config-secrets-storage/pv-topology]

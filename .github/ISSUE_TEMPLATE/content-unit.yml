@@ -1,0 +1,42 @@
+name: Learning unit proposal
+description: Propose an independently written, portable learning unit.
+title: "content: "
+labels: [content]
+body:
+  - type: input
+    id: outcome
+    attributes:
+      label: Learning outcome
+      description: What should a learner be able to explain or do afterward?
+    validations:
+      required: true
+  - type: textarea
+    id: prerequisites
+    attributes:
+      label: Prerequisites and layer
+      description: List prerequisite unit IDs and the technical layer.
+    validations:
+      required: true
+  - type: textarea
+    id: questions
+    attributes:
+      label: Question-first prompts
+      description: Include at least one explain, predict, or scenario prompt.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Public authoritative sources
+      description: Links and why each source is relevant. Do not paste source text.
+    validations:
+      required: true
+  - type: checkboxes
+    id: provenance
+    attributes:
+      label: Provenance
+      options:
+        - label: I will contribute independently written material under the repository licenses.
+          required: true
+        - label: I will not mirror private or proprietary course content.
+          required: true

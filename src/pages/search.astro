@@ -1,0 +1,15 @@
+---
+import SearchClient from '@/components/SearchClient';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+export const prerender = true;
+---
+
+<BaseLayout title="Search" description="Exact public search across published DevOps learning content.">
+  <header class="page-hero shell compact-hero">
+    <p class="eyebrow">Public exact search</p>
+    <h1>Find the layer you need.</h1>
+    <p class="lede">Search is generated from reviewed public content. Private notes never enter this index.</p>
+  </header>
+  <section class="shell"><SearchClient client:load /></section>
+</BaseLayout>

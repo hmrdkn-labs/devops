@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:http-tls
+revision: 1
+cards:
+  - id: fpp:http-tls/c-method
+    type: short
+    front: Which HTTP field states the requested operation?
+    back: The request method.
+    critical_points: []
+    objective_ids: [fpp:http-tls/http-message]
+  - id: fpp:http-tls/c-authority
+    type: short
+    front: Why does HTTP carry an authority or Host value?
+    back: To identify the named virtual service the client wants at a shared address.
+    critical_points: []
+    objective_ids: [fpp:http-tls/http-message]
+  - id: fpp:http-tls/c-tls
+    type: short
+    front: What identity does a normal HTTPS client validate?
+    back: The requested hostname against a trusted, time-valid certificate chain.
+    critical_points: []
+    objective_ids: [fpp:http-tls/tls-identity]
+  - id: fpp:http-tls/c-explain
+    type: prompt
+    front: Explain why TLS encryption alone is insufficient.
+    back: Without authenticating the expected peer, the client could create an encrypted connection to an attacker.
+    critical_points: [Confidentiality and identity are separate guarantees]
+    objective_ids: [fpp:http-tls/tls-identity]
+  - id: fpp:http-tls/c-scenario
+    type: scenario
+    front: A proxy returns 404 for one hostname but works for another at the same IP. What should you inspect?
+    back: Host or authority routing rules and the request's Host value.
+    critical_points: [One address can serve multiple HTTP authorities]
+    objective_ids: [fpp:http-tls/http-message]

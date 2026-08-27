@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:container-lifecycle
+revision: 1
+questions:
+  - id: fpp:container-lifecycle/q-exit
+    kind: predict
+    prompt: The main process exits successfully after completing a one-time task. What happens to the container?
+    model_answer: The container enters a stopped or exited state with status zero. Whether another execution starts depends on an external restart policy or controller.
+    critical_points:
+      - Container lifetime follows its main process.
+      - Restart is separate policy.
+    objective_ids: [fpp:container-lifecycle/pid1-exit]
+  - id: fpp:container-lifecycle/q-restart
+    kind: explain
+    prompt: Why is a restarted container a new process execution rather than a continuation?
+    model_answer: The previous process and its memory ended. The runtime starts the configured command again using image content, retained configuration, and any external storage.
+    critical_points:
+      - Process memory is not resumed.
+      - Durable state must live outside the process.
+    objective_ids: [fpp:container-lifecycle/create-start-stop]
