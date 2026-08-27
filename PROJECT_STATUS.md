@@ -44,9 +44,11 @@ not modified while this application was built.
 - **2026-08-27 — blocker recorded privately:** `hamardikan-infra` commit
   `519578e` adds the D1 capability requirement and metadata-only failed-run
   evidence; no credential values were changed.
+- **2026-08-27 — blocker change validated:** private CI run `33046829376`
+  completed successfully after the capability-contract and evidence update.
 - **Current:** deployment is paused on that credential-scope/account-match
-  blocker. The intended immutable public source remains the pushed commit
-  `6e3ebda411368959a1e594575056b8a61defce32`.
+  blocker. The intended immutable public source is the latest pushed commit
+  `d75c0a138c89404b0d13eb5ce9e10c06d46f8e3c`.
 
 ## Completed
 
