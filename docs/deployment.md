@@ -41,7 +41,7 @@ https://devops.hamardikan.com/api/auth/callback/google
 
 After deploy, the private workflow must verify:
 
-1. `/api/health` returns `status: ok`, `database: connected`, and the expected
+1. `/api/health` returns `status: ok`, `database: ready`, and the expected
    content manifest SHA;
 2. the homepage, one prerendered unit, raw Markdown, search index, and auth
    entrypoint respond successfully;
