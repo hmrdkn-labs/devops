@@ -36,11 +36,14 @@ not modified while this application was built.
   the Cloudflare Worker entrypoint, D1 binding, 210 static assets, and the
   generated client/server output.
 - **2026-08-27 — private wiring pushed:** `hamardikan-infra` commit `47178cd`
-  is on `main`; its repository validation run `33046123635` is still in
-  progress.
-- **Current:** the guest release is ready to dispatch after that CI gate. The
-  intended immutable public source is the latest pushed commit on
-  `hmrdkn-labs/devops`.
+  is on `main`; repository validation run `33046123635` completed successfully.
+- **2026-08-27 — guest release attempted:** protected run `33046394332`
+  stopped at D1 migration with Cloudflare API error code `7403` (the
+  `production-cloudflare` credential cannot access the new D1 service). No
+  Worker or DNS change was made.
+- **Current:** deployment is paused on that credential-scope/account-match
+  blocker. The intended immutable public source remains the pushed commit
+  `6e3ebda411368959a1e594575056b8a61defce32`.
 
 ## Completed
 
@@ -65,6 +68,9 @@ not modified while this application was built.
 - Private-infrastructure contract and protected workflow prepared for the
   `devops.hamardikan.com` Worker route; local validators and Worker dry-run pass
 - Empty production D1 resource provisioned for the `DB` binding
+- Private repository validation run `33046123635` completed successfully
+- Guest deployment attempt `33046394332` failed closed before D1 migration
+  because the Cloudflare credential was not authorized for D1
 
 ## Verification at the stopping point
 
@@ -98,17 +104,21 @@ This does **not** block the planned production route. Production should use the
 Astro Cloudflare Worker artifact directly. The failed Sites preview is not
 production and has no custom domain attached.
 
-### 2. The protected production deployment is prepared but not dispatched
+### 2. Cloudflare D1 authorization blocks the protected guest deployment
 
 The private `hamardikan/hamardikan-infra` repository now has the service
 contract and guarded workflow committed on `main`. Its local validators and
-the Worker dry-run pass; the corresponding repository CI gate is still
-running, and no production deployment has been dispatched.
+the Worker dry-run pass, and its repository CI gate passed. The first protected
+guest run failed closed before any migration or Worker deployment because the
+`production-cloudflare` credential could not access the new D1 service
+(Cloudflare API code `7403`).
 
 The following production work therefore remains:
 
-- complete the private repository CI gate;
-- dispatch the protected guest release for an immutable public commit;
+- update the private environment with a Cloudflare API token that is authorized
+  for D1 edit plus Worker script/route operations, and verify its account ID
+  matches the D1 account;
+- rerun the protected guest release for the immutable public commit;
 - apply this repository's D1 migrations and bind it to the Worker as `DB`;
 - deploy the exact approved public commit;
 - connect `devops.hamardikan.com` as the Worker custom domain;
@@ -146,9 +156,10 @@ implementation.
 
 ## Safe resume order
 
-1. Complete the private repository CI gate for commit `47178cd`.
-2. Dispatch the protected **guest** release for the latest approved public
-   commit; apply the D1 migration and Worker deployment through that workflow.
+1. Update/verify the `production-cloudflare` token scope and account ID through
+   the private secret boundary; do not place values in Git, logs, or chat.
+2. Rerun the protected **guest** release for the immutable public commit;
+   apply the D1 migration and Worker deployment through that workflow.
 3. Verify the public health endpoint, manifest SHA, routes, raw Markdown,
    search, and custom-domain response, then record metadata-only evidence and
    the previous Worker version privately.
