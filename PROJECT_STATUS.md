@@ -41,6 +41,9 @@ not modified while this application was built.
   stopped at D1 migration with Cloudflare API error code `7403` (the
   `production-cloudflare` credential cannot access the new D1 service). No
   Worker or DNS change was made.
+- **2026-08-27 — blocker recorded privately:** `hamardikan-infra` commit
+  `519578e` adds the D1 capability requirement and metadata-only failed-run
+  evidence; no credential values were changed.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. The intended immutable public source remains the pushed commit
   `6e3ebda411368959a1e594575056b8a61defce32`.
@@ -71,6 +74,8 @@ not modified while this application was built.
 - Private repository validation run `33046123635` completed successfully
 - Guest deployment attempt `33046394332` failed closed before D1 migration
   because the Cloudflare credential was not authorized for D1
+- Metadata-only failed-run evidence is recorded in the private infrastructure
+  repository; no secret or response body was recorded
 
 ## Verification at the stopping point
 
