@@ -17,6 +17,13 @@ Edit, Workers Routes Edit, and Zone Read access for the same account that owns
 `hmrdkn-devops`. Then rerun the protected **guest** workflow. Do not paste the
 token into Git, logs, or chat.
 
+**There are only two Cloudflare entries for this deployment:**
+`CLOUDFLARE_API_TOKEN` is the single secret token used for both Worker and D1;
+`CLOUDFLARE_ACCOUNT_ID` is the plain ID of the account that owns the database.
+No additional Cloudflare token is required. The existing
+`STATUS_INGEST_SECRET` belongs to a separate status workflow and does not need
+to change for this release.
+
 ## Credential fix checklist
 
 1. In Cloudflare **API Tokens**, create or edit the deployment token with
