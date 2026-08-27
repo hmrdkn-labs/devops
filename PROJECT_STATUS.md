@@ -17,6 +17,21 @@ Edit, Workers Routes Edit, and Zone Read access for the same account that owns
 `hmrdkn-devops`. Then rerun the protected **guest** workflow. Do not paste the
 token into Git, logs, or chat.
 
+## Credential fix checklist
+
+1. In Cloudflare **API Tokens**, create or edit the deployment token with
+   **Account → D1 → Edit** and **Account → Workers Scripts → Edit**.
+2. Add **Zone → Workers Routes → Edit** and **Zone → Zone → Read**, scoped to
+   the `hamardikan.com` zone. Scope the account resource to the account that
+   owns `hmrdkn-devops`; do not select all accounts/zones unless required.
+3. In the private repository's `production-cloudflare` environment, update
+   `CLOUDFLARE_API_TOKEN` and verify `CLOUDFLARE_ACCOUNT_ID` identifies that same
+   Cloudflare account. GitHub encrypts environment secrets when set through
+   the UI or `gh secret set`.
+4. Rerun `deploy-devops-learning` in **guest** mode with the apply and route
+   confirmations enabled. The workflow will apply migrations, deploy the
+   Worker, and verify the public route without logging response bodies.
+
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
 and is not part of production.
