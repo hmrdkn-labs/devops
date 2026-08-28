@@ -115,6 +115,14 @@ and was not modified while this application was built.
   after the browser session ended and the same two-policy configuration was
   confirmed. It remains open at the final review step and is still not
   submitted.
+- **2026-08-28 — permission audit:** re-mapped every Cloudflare operation in
+  the private workflow and Worker config. The current four scopes are the
+  strict deployment minimum: account-level D1 Edit and Workers Scripts Edit,
+  plus `hamardikan.com`-scoped Workers Routes Edit and Zone Read. Account
+  Settings Read is not required because the workflow supplies the account ID;
+  Cloudflare's generic Workers Builds template includes it for broader
+  compatibility, but this release does not use that template. No KV, R2, DNS,
+  user, Pages, Containers, AI, or observability-management permission is used.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. Application code last changed in `498489e`; subsequent public
   commits are status-only updates. The retry should pin the latest approved
