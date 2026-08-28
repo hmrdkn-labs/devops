@@ -1,6 +1,6 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-08-27 · This is the canonical running log. Update it
+> **Last updated:** 2026-08-28 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
@@ -31,6 +31,12 @@ GitHub, that token is stored as the `CLOUDFLARE_API_TOKEN` secret under
 `hamardikan/hamardikan-infra` → `production-cloudflare`. The local Wrangler
 OAuth login is not the GitHub deployment token, and the token value cannot be
 read back from GitHub.
+
+**Token inventory checked 2026-08-28:** the visible User API Tokens are named
+for staging, homelab infrastructure, tunnels, or build services. None is a
+dedicated DevOps deployment token with D1 access. Do not reuse those tokens;
+create the dedicated Account API Token described below. No token value was
+viewed or recorded.
 
 ## Credential fix checklist
 
@@ -97,6 +103,9 @@ and was not modified while this application was built.
   evidence; no credential values were changed.
 - **2026-08-27 — blocker change validated:** private CI run `33046829376`
   completed successfully after the capability-contract and evidence update.
+- **2026-08-28 — Cloudflare token inventory checked:** no existing visible
+  token matches the DevOps Worker + D1 deployment boundary; a dedicated
+  Account API Token is required.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. Application code last changed in `498489e`; subsequent public
   commits are status-only updates. The retry should pin the latest approved
