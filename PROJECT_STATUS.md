@@ -24,6 +24,14 @@ No additional Cloudflare token is required. The existing
 `STATUS_INGEST_SECRET` belongs to a separate status workflow and does not need
 to change for this release.
 
+**Which token is it?** In Cloudflare, the deployment token should be a
+dedicated API token for this application (for example,
+`hmrdkn-devops-deploy`) with the permissions in the checklist below. In
+GitHub, that token is stored as the `CLOUDFLARE_API_TOKEN` secret under
+`hamardikan/hamardikan-infra` → `production-cloudflare`. The local Wrangler
+OAuth login is not the GitHub deployment token, and the token value cannot be
+read back from GitHub.
+
 ## Credential fix checklist
 
 1. In Cloudflare **API Tokens**, create or edit the deployment token with
