@@ -106,6 +106,11 @@ and was not modified while this application was built.
 - **2026-08-28 — Cloudflare token inventory checked:** no existing visible
   token matches the DevOps Worker + D1 deployment boundary; a dedicated
   Account API Token is required.
+- **2026-08-28 — dedicated token form prepared:** Cloudflare's Account API
+  Token form is configured as `hmrdkn-devops-deploy` with account-level D1
+  Edit and Workers Scripts Edit, plus `hamardikan.com`-scoped Workers Routes
+  Edit and Zone Read. The token has not been created; no secret value was
+  viewed or recorded.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. Application code last changed in `498489e`; subsequent public
   commits are status-only updates. The retry should pin the latest approved
