@@ -131,6 +131,15 @@ and was not modified while this application was built.
   Routes API. If the portfolio later needs those capabilities, create a
   separately scoped infrastructure token—or explicitly broaden this token
   after review—rather than silently increasing the app token's blast radius.
+- **2026-08-28 — shared-environment audit:** the same private
+  `production-cloudflare` environment currently serves the DevOps Worker, the
+  status Worker, and metadata-only route inventory. The status Worker uses
+  Durable Objects and static assets, but no R2 or KV binding; its DNS-mutation
+  workflow is deliberately fail-closed. Therefore the four current scopes
+  cover all existing Cloudflare workflows. A future shared infrastructure
+  token may add `Workers R2 Storage: Write` and zone-scoped `DNS: Write`, but
+  only together with an explicit workflow/approval change and a review of the
+  larger blast radius.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. Application code last changed in `498489e`; subsequent public
   commits are status-only updates. The retry should pin the latest approved
