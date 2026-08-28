@@ -123,6 +123,14 @@ and was not modified while this application was built.
   Cloudflare's generic Workers Builds template includes it for broader
   compatibility, but this release does not use that template. No KV, R2, DNS,
   user, Pages, Containers, AI, or observability-management permission is used.
+- **2026-08-28 — future deployment scope reviewed:** R2 and DNS Write remain
+  intentionally outside this application token. R2 is needed only when a
+  future Worker binds or manages an R2 bucket; the current `assets.directory`
+  upload is part of the Worker deployment. DNS Write is needed only when a
+  workflow creates or changes DNS records; the current route uses the Workers
+  Routes API. If the portfolio later needs those capabilities, create a
+  separately scoped infrastructure token—or explicitly broaden this token
+  after review—rather than silently increasing the app token's blast radius.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. Application code last changed in `498489e`; subsequent public
   commits are status-only updates. The retry should pin the latest approved
