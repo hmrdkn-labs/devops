@@ -111,6 +111,10 @@ and was not modified while this application was built.
   Edit and Workers Scripts Edit, plus `hamardikan.com`-scoped Workers Routes
   Edit and Zone Read. The token has not been created; no secret value was
   viewed or recorded.
+- **2026-08-28 — token form reverified:** the dedicated form was recreated
+  after the browser session ended and the same two-policy configuration was
+  confirmed. It remains open at the final review step and is still not
+  submitted.
 - **Current:** deployment is paused on that credential-scope/account-match
   blocker. Application code last changed in `498489e`; subsequent public
   commits are status-only updates. The retry should pin the latest approved
