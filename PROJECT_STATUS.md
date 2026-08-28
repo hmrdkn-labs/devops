@@ -5,17 +5,16 @@
 
 ## Read this first
 
-**Bottom line:** the learning application is built, tested, and ready to run.
-The production D1 database and protected Cloudflare deployment path are also
-prepared. Release is paused at one external boundary: the private GitHub
-environment's Cloudflare credential cannot access D1 (API error `7403`). The
-attempt stopped before migration, Worker deployment, or DNS changes.
+**Bottom line:** the learning application is built, tested, and deployed on
+the production Cloudflare Worker. The protected guest release completed
+successfully after the deployment token was added to GitHub. The public route,
+D1 health, manifest, raw Markdown, and study pages are live and verified.
 
-**One action unblocks the release:** update the private
-`production-cloudflare` Cloudflare API token so it has D1 Edit, Workers Scripts
-Edit, Workers Routes Edit, and Zone Read access for the same account that owns
-`hmrdkn-devops`. Then rerun the protected **guest** workflow. Do not paste the
-token into Git, logs, or chat.
+The next blocker is owner mode: GitHub/Google OAuth credentials,
+`BETTER_AUTH_SECRET`, and the stable owner allowlist still need to be added to
+the private deployment environment. Guests can study now; persistent owner
+progress remains disabled until those values exist. Do not paste credentials
+into Git, logs, or chat.
 
 **There are only two Cloudflare entries for this deployment:**
 `CLOUDFLARE_API_TOKEN` is the single secret token used for both Worker and D1;
@@ -32,26 +31,26 @@ GitHub, that token is stored as the `CLOUDFLARE_API_TOKEN` secret under
 OAuth login is not the GitHub deployment token, and the token value cannot be
 read back from GitHub.
 
-**Token inventory checked 2026-08-28:** the visible User API Tokens are named
-for staging, homelab infrastructure, tunnels, or build services. None is a
-dedicated DevOps deployment token with D1 access. Do not reuse those tokens;
-create the dedicated Account API Token described below. No token value was
+**Token inventory checked before creation (2026-08-28):** the visible User API
+Tokens were named for staging, homelab infrastructure, tunnels, or build
+services. None matched the DevOps deployment boundary with D1 access, so the
+dedicated Account API Token described below was created. No token value was
 viewed or recorded.
 
-## Credential fix checklist
+## Credential and deployment record
 
-1. In Cloudflare **API Tokens**, create or edit the deployment token with
+1. ✅ Completed: the dedicated Cloudflare deployment token was created with
    **Account → D1 → Edit** and **Account → Workers Scripts → Edit**.
-2. Add **Zone → Workers Routes → Edit** and **Zone → Zone → Read**, scoped to
-   the `hamardikan.com` zone. Scope the account resource to the account that
-   owns `hmrdkn-devops`; do not select all accounts/zones unless required.
-3. In the private repository's `production-cloudflare` environment, update
-   `CLOUDFLARE_API_TOKEN` and verify `CLOUDFLARE_ACCOUNT_ID` identifies that same
-   Cloudflare account. GitHub encrypts environment secrets when set through
-   the UI or `gh secret set`.
-4. Rerun `deploy-devops-learning` in **guest** mode with the apply and route
-   confirmations enabled. The workflow will apply migrations, deploy the
-   Worker, and verify the public route without logging response bodies.
+2. ✅ Completed: it includes **Zone → Workers Routes → Edit** and
+   **Zone → Zone → Read**, scoped to the `hamardikan.com` zone and the account
+   that owns `hmrdkn-devops`.
+3. ✅ Completed: the private repository's `production-cloudflare` environment
+   contains `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; only secret
+   names/timestamps were inspected, never values. GitHub encrypts environment
+   secrets when set through the UI or `gh secret set`.
+4. ✅ Completed: `deploy-devops-learning` ran in **guest** mode with the apply
+   and route confirmations enabled. It applied migrations, deployed the
+   Worker, and verified the public route without logging response bodies.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -60,7 +59,7 @@ and is not part of production.
 ## Progress at a glance
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
-`⛔ Guest release` → `⏳ Owner beta`
+`✅ Guest release` → `⛔ Owner beta`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -68,8 +67,8 @@ and is not part of production.
 | Learning app | ✅ Complete | Astro 7/Solid application, question-first study flow, review scheduling, notes, readiness, search, and export are implemented. |
 | Initial content | ✅ Complete | 18 reviewed **From Process to Pod** units, 36 explain/predict prompts, and 90 cards are published. |
 | Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
-| Guest release | ⛔ Blocked | Run `33046394332` failed closed at D1 migration because the Cloudflare credential was not authorized for D1; no production traffic changed. |
-| Owner beta | ⏳ Waiting | GitHub/Google OAuth secrets and the stable owner allowlist are not configured yet. |
+| Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
+| Owner beta | ⛔ Blocked | GitHub/Google OAuth secrets, `BETTER_AUTH_SECRET`, and the stable owner allowlist are not configured yet. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -106,15 +105,15 @@ and was not modified while this application was built.
 - **2026-08-28 — Cloudflare token inventory checked:** no existing visible
   token matches the DevOps Worker + D1 deployment boundary; a dedicated
   Account API Token is required.
-- **2026-08-28 — dedicated token form prepared:** Cloudflare's Account API
-  Token form is configured as `hmrdkn-devops-deploy` with account-level D1
-  Edit and Workers Scripts Edit, plus `hamardikan.com`-scoped Workers Routes
-  Edit and Zone Read. The token has not been created; no secret value was
-  viewed or recorded.
+- **2026-08-28 — dedicated token created:** the owner created
+  `hmrdkn-devops-deploy` with account-level D1 Edit and Workers Scripts Edit,
+  plus `hamardikan.com`-scoped Workers Routes Edit and Zone Read. The token
+  value was never viewed or recorded here.
 - **2026-08-28 — token form reverified:** the dedicated form was recreated
   after the browser session ended and the same two-policy configuration was
-  confirmed. It remains open at the final review step and is still not
-  submitted.
+  confirmed. That separate draft remains open at the final review step and is
+  still not submitted; it is not needed now that the active token is installed
+  in GitHub.
 - **2026-08-28 — permission audit:** re-mapped every Cloudflare operation in
   the private workflow and Worker config. The current four scopes are the
   strict deployment minimum: account-level D1 Edit and Workers Scripts Edit,
@@ -140,10 +139,22 @@ and was not modified while this application was built.
   token may add `Workers R2 Storage: Write` and zone-scoped `DNS: Write`, but
   only together with an explicit workflow/approval change and a review of the
   larger blast radius.
-- **Current:** deployment is paused on that credential-scope/account-match
-  blocker. Application code last changed in `498489e`; subsequent public
-  commits are status-only updates. The retry should pin the latest approved
-  public SHA after the credential fix.
+- **2026-08-28 — deployment credential installed:** GitHub environment
+  `production-cloudflare` now contains `CLOUDFLARE_API_TOKEN` and
+  `CLOUDFLARE_ACCOUNT_ID`; only secret names/timestamps were inspected, never
+  values.
+- **2026-08-28 — first guest release:** run `33137097525` successfully applied
+  D1 migrations and deployed the Worker, but its immediate health probe saw a
+  transient 5xx during route propagation. No rollback or secret exposure
+  occurred.
+- **2026-08-28 — guest release verified:** retry run `33137237808` passed in
+  full for public commit `45e320963dc4a491d61fb67ab0cd9620df3fc740`.
+  `/api/health` returned `status=ok`, `database=ready`, and the expected
+  manifest SHA; public pages, raw Markdown, search, map, and references also
+  passed. The guest release is complete.
+- **Current:** the public guest site is live at
+  `https://devops.hamardikan.com`. Owner beta is waiting only on OAuth and
+  owner-allowlist configuration; application code last changed in `498489e`.
 
 ## Completed
 
@@ -171,6 +182,9 @@ and was not modified while this application was built.
 - Private repository validation run `33046123635` completed successfully
 - Guest deployment attempt `33046394332` failed closed before D1 migration
   because the Cloudflare credential was not authorized for D1
+- Guest deployment retry run `33137237808` completed successfully after the
+  corrected Cloudflare token was installed; D1 migrations, Worker deployment,
+  route binding, and public verification all passed
 - Metadata-only failed-run evidence is recorded in the private infrastructure
   repository; no secret or response body was recorded
 
@@ -189,8 +203,8 @@ npm audit           # 0 vulnerabilities
 Additional checks passed for an empty D1 migration, indexed due-review query,
 duplicate-submission idempotency, guest privacy, accessibility, and a stable
 content-archive checksum across repeated builds. The private infrastructure
-validator suite and a Wrangler Worker dry-run also pass; no production Worker
-deployment has been claimed from those static checks.
+validator suite and a Wrangler Worker dry-run passed before release; protected
+run `33137237808` now also verifies the production Worker and D1 health.
 
 ## Exact blockers
 
@@ -206,26 +220,19 @@ This does **not** block the planned production route. Production should use the
 Astro Cloudflare Worker artifact directly. The failed Sites preview is not
 production and has no custom domain attached.
 
-### 2. Cloudflare D1 authorization blocks the protected guest deployment
+### 2. Resolved: Cloudflare D1 authorization
 
-The private `hamardikan/hamardikan-infra` repository now has the service
-contract and guarded workflow committed on `main`. Its local validators and
-the Worker dry-run pass, and its repository CI gate passed. The first protected
-guest run failed closed before any migration or Worker deployment because the
-`production-cloudflare` credential could not access the new D1 service
-(Cloudflare API code `7403`).
+The private `hamardikan/hamardikan-infra` repository has the service contract
+and guarded workflow committed on `main`. The original protected guest run
+failed closed before migration because the old `production-cloudflare`
+credential could not access D1 (Cloudflare API code `7403`). After the
+dedicated token was installed, retry run `33137237808` applied the migrations,
+deployed the exact public commit, bound the Worker route, and passed the full
+public verification suite. No rollback was required.
 
-The following production work therefore remains:
-
-- update the private environment with a Cloudflare API token that is authorized
-  for D1 edit plus Worker script/route operations, and verify its account ID
-  matches the D1 account;
-- rerun the protected guest release for the immutable public commit;
-- apply this repository's D1 migrations and bind it to the Worker as `DB`;
-- deploy the exact approved public commit;
-- connect `devops.hamardikan.com` as the Worker custom domain;
-- verify health, content-manifest SHA, public pages, raw Markdown, search, auth,
-  and the rollback target.
+The transient 5xx seen by run `33137097525` was route propagation immediately
+after the first deploy; the subsequent retry returned healthy D1 and manifest
+metadata.
 
 ### 3. Owner OAuth credentials do not exist in the deployment boundary
 
@@ -258,17 +265,10 @@ implementation.
 
 ## Safe resume order
 
-1. Update/verify the `production-cloudflare` token scope and account ID through
-   the private secret boundary; do not place values in Git, logs, or chat.
-2. Rerun the protected **guest** release for the immutable public commit;
-   apply the D1 migration and Worker deployment through that workflow.
-3. Verify the public health endpoint, manifest SHA, routes, raw Markdown,
-   search, and custom-domain response, then record metadata-only evidence and
-   the previous Worker version privately.
-4. Create and configure the two OAuth applications, then store all credentials
+1. Create and configure the two OAuth applications, then store all credentials
    only in the private deployment boundary; owner mode remains blocked until
    those secrets and the stable provider-ID allowlist exist.
-5. Deploy owner mode, run the owner-beta success gate, and only then expand the
+2. Deploy owner mode, run the owner-beta success gate, and only then expand the
    curriculum.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or
