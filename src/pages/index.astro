@@ -19,6 +19,14 @@ const totalMinutes = units.reduce((sum, unit) => sum + unit.metadata.estimated_m
       <a class="button primary" href="/learn/processes-and-resources">Start with a process</a>
       <a class="button" href="/paths/from-process-to-pod">Preview the path</a>
     </div>
+    <div class="hero-next" aria-label="Suggested focus path">
+      <div>
+        <p class="section-kicker">Suggested next step</p>
+        <strong>Follow one process into a pod</strong>
+        <span>18 units · question first · portable Markdown</span>
+      </div>
+      <a class="button" href="/paths/from-process-to-pod">Open focus path <span aria-hidden="true">→</span></a>
+    </div>
     <dl class="hero-stats">
       <div><dt>Units</dt><dd>{units.length}</dd></div>
       <div><dt>Review cards</dt><dd>{units.reduce((sum, unit) => sum + unit.cards.length, 0)}</dd></div>

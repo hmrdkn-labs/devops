@@ -18,6 +18,14 @@ const {
 } = Astro.props;
 const pageTitle = title === 'DevOps by hmrdkn-labs' ? title : `${title} · DevOps by hmrdkn-labs`;
 const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
+const navigation = [
+  { href: '/paths/from-process-to-pod', label: 'Focus' },
+  { href: '/map', label: 'Map' },
+  { href: '/library', label: 'Library' },
+  { href: '/search', label: 'Search' },
+  { href: '/review', label: 'Review' },
+];
+const isCurrent = (href: string) => Astro.url.pathname === href || Astro.url.pathname.startsWith(href + '/');
 ---
 
 <!doctype html>
@@ -26,8 +34,8 @@ const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f0e8" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111713" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f8f5" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1512" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -46,20 +54,28 @@ const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
   <body class={pageClass}>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="DevOps by hmrdkn-labs home">
-        <span class="brand-mark" aria-hidden="true">hm</span>
-        <span>DevOps <small>by hmrdkn-labs</small></span>
-      </a>
-      <nav aria-label="Primary navigation">
-        <a href="/paths/from-process-to-pod">Focus</a>
-        <a href="/map">Map</a>
-        <a href="/library">Library</a>
-        <a href="/search">Search</a>
-        <a href="/review">Review</a>
-      </nav>
-      <div class="header-tools">
-        <ThemeToggle client:load />
-        <AuthMenu client:load />
+      <div class="site-header-inner">
+        <a class="brand" href="/" aria-label="DevOps by hmrdkn-labs home">
+          <span class="brand-mark" aria-hidden="true">hm</span>
+          <span>DevOps <small>by hmrdkn-labs</small></span>
+        </a>
+        <nav class="site-nav" aria-label="Primary navigation">
+          {navigation.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <div class="header-tools">
+          <ThemeToggle client:load />
+          <AuthMenu client:load />
+          <details class="mobile-nav">
+            <summary class="quiet-button" aria-label="Open navigation">Menu</summary>
+            <nav class="mobile-nav-panel" aria-label="Mobile navigation">
+              {navigation.map((item) => (
+                <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+              ))}
+            </nav>
+          </details>
+        </div>
       </div>
     </header>
     <main id="main"><slot /></main>

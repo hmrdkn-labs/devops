@@ -65,10 +65,10 @@ export default function ReviewDeck() {
           }>
             {(card) => (
               <>
-                <div class="review-meta">
+                <div class="review-meta" aria-label="Review context">
                   <span>{card().type}</span>
                   <span>{card().unitTitle}</span>
-                  <span>{cards().length} due</span>
+                  <span><strong>{cards().length}</strong> due · {completed()} done</span>
                 </div>
                 <section class="review-card" aria-live="polite">
                   <p class="section-kicker">Retrieve before revealing</p>
