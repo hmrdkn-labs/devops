@@ -10,14 +10,14 @@ the production Cloudflare Worker. The protected guest release completed
 successfully after the deployment token was added to GitHub. The public route,
 D1 health, manifest, raw Markdown, and study pages are live and verified.
 
-The visual reset is now in progress on the public app: the content contract,
-routes, learning behavior, and privacy boundaries stay unchanged while the
-interface moves from a marketing-like notebook page to a focused study
-workspace. The design contract is in [`DESIGN.md`](DESIGN.md), the executable
-worklist is in [`docs/UI-REDESIGN-PLAN.md`](docs/UI-REDESIGN-PLAN.md), and the
-current working tree has the new tokens, shell, homepage focus prompt, and
-two-column study flow. It has passed typecheck, content checks, unit tests,
-D1 tests, and a production build; release verification is still pending.
+The visual reset is now live on the public app: the content contract, routes,
+learning behavior, and privacy boundaries stayed unchanged while the
+interface moved from a marketing-like notebook page to a focused study
+workspace. The design contract is in [`DESIGN.md`](DESIGN.md), and the
+implementation record is in [`docs/UI-REDESIGN-PLAN.md`](docs/UI-REDESIGN-PLAN.md).
+The release passed local typecheck, content checks, unit tests, D1 tests,
+desktop/mobile E2E and accessibility checks, production build, and protected
+route verification.
 
 The Google-only owner rollout is live. The Google OAuth client,
 `BETTER_AUTH_SECRET`, and stable owner allowlist are stored in the private
@@ -70,7 +70,7 @@ and is not part of production.
 ## Progress at a glance
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
-`✅ Guest release` → `✅ Owner release` → `🔄 UI reset` → `🔄 Owner beta gate`
+`✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -80,7 +80,7 @@ and is not part of production.
 | Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
-| UI reset | 🔄 In progress | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, and focused study workspace are implemented and validated locally. The protected release has not run yet. |
+| UI reset | ✅ Complete | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, focused study/review workspace, responsive surfaces, and accessibility fixes are deployed in protected run `33487216904` for source `190e0e5`. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -187,6 +187,13 @@ and was not modified while this application was built.
   workspace. Added the durable design contract and implementation plan. Local
   `npm run check` and `npm run build` pass; deployment follows after the
   remaining review/browse polish and release verification.
+- **2026-09-01 — UI reset released:** public commit `190e0e5f7aa1e3933e3ca0274ef4772d7d486935`
+  passed `npm run ci` and six desktop/mobile E2E checks, including serious and
+  critical accessibility gates. Protected owner run `33487216904` deployed the
+  exact commit, applied D1 migrations, installed the existing Google-only
+  owner secrets without logging values, and verified `/`, `/library`,
+  `/search`, `/map`, `/references`, a learning route, raw Markdown,
+  `/api/health`, and `/api/auth/get-session`.
 
 ## Completed
 
