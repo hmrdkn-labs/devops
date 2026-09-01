@@ -10,7 +10,7 @@ pull request.
 The private `hamardikan-infra` repository owns:
 
 - the D1 resource and Worker binding;
-- GitHub and Google OAuth secrets;
+- Google OAuth secrets;
 - `BETTER_AUTH_SECRET`, owner identity allowlist, and production origin;
 - `devops.hamardikan.com` DNS/custom-domain configuration;
 - protected deployment approval, smoke verification, and rollback target.
@@ -30,10 +30,9 @@ Any source, dependency, schema, migration, binding, or workflow change is an
 
 The Worker receives a D1 binding named `DB` and the variables documented in
 `.dev.vars.example`. Values never enter the public repository. OAuth callback
-URLs use:
+URL is:
 
 ```text
-https://devops.hamardikan.com/api/auth/callback/github
 https://devops.hamardikan.com/api/auth/callback/google
 ```
 

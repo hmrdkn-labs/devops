@@ -1,5 +1,4 @@
 import { Show, createResource, createSignal } from 'solid-js';
-import { authClient } from '@/lib/auth-client';
 
 interface Profile {
   activePathId: string;
@@ -28,15 +27,11 @@ export default function SettingsClient() {
     setMessage(response.ok ? 'Settings saved.' : 'Could not save settings.');
   }
 
-  async function link(provider: 'github' | 'google') {
-    await authClient.linkSocial({ provider, callbackURL: window.location.href });
-  }
-
   return (
     <Show when={profile()} fallback={
       <div class="empty-state">
         <strong>Owner settings are private.</strong>
-        <p>Sign in with the allowlisted GitHub or Google identity to configure scheduling and export data.</p>
+        <p>Sign in with the allowlisted Google identity to configure scheduling and export data.</p>
       </div>
     }>
       {(value) => (
@@ -67,16 +62,6 @@ export default function SettingsClient() {
             </label>
             <button class="button primary" onClick={save}>Save scheduling settings</button>
             <span role="status">{message()}</span>
-          </section>
-
-          <section class="settings-card">
-            <p class="section-kicker">Identity</p>
-            <h2>Link the second provider</h2>
-            <p>Additional providers are linked deliberately from this authenticated owner session.</p>
-            <div class="stacked-actions">
-              <button onClick={() => link('github')}>Link GitHub</button>
-              <button onClick={() => link('google')}>Link Google</button>
-            </div>
           </section>
 
           <section class="settings-card">

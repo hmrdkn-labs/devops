@@ -1,6 +1,6 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-08-28 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-01 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
@@ -10,11 +10,12 @@ the production Cloudflare Worker. The protected guest release completed
 successfully after the deployment token was added to GitHub. The public route,
 D1 health, manifest, raw Markdown, and study pages are live and verified.
 
-The next blocker is owner mode: GitHub/Google OAuth credentials,
-`BETTER_AUTH_SECRET`, and the stable owner allowlist still need to be added to
-the private deployment environment. Guests can study now; persistent owner
-progress remains disabled until those values exist. Do not paste credentials
-into Git, logs, or chat.
+The next step is the Google-only owner rollout. The Google OAuth client,
+`BETTER_AUTH_SECRET`, and stable owner allowlist are now stored in the private
+deployment environment. Guests can study now; persistent owner progress stays
+disabled on the live Worker until the updated application is deployed and the
+first allowlisted Google sign-in is verified. Do not paste credentials or
+provider subjects into Git, logs, or chat.
 
 **There are only two Cloudflare entries for this deployment:**
 `CLOUDFLARE_API_TOKEN` is the single secret token used for both Worker and D1;
@@ -59,7 +60,7 @@ and is not part of production.
 ## Progress at a glance
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
-`✅ Guest release` → `⛔ Owner beta`
+`✅ Guest release` → `🔄 Owner beta`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -68,7 +69,7 @@ and is not part of production.
 | Initial content | ✅ Complete | 18 reviewed **From Process to Pod** units, 36 explain/predict prompts, and 90 cards are published. |
 | Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
-| Owner beta | ⛔ Blocked | GitHub/Google OAuth secrets, `BETTER_AUTH_SECRET`, and the stable owner allowlist are not configured yet. |
+| Owner beta | 🔄 In progress | Google-only source/config changes are complete locally and the private environment is configured; protected owner deployment and first-login verification remain. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -154,7 +155,13 @@ and was not modified while this application was built.
   passed. The guest release is complete.
 - **Current:** the public guest site is live at
   `https://devops.hamardikan.com`. Owner beta is waiting only on OAuth and
-  owner-allowlist configuration; application code last changed in `498489e`.
+  owner-allowlist deployment; application code last changed in `498489e`.
+- **2026-09-01 — Google-only owner decision:** at the owner's request, GitHub
+  OAuth was removed from the owner-beta contract. A persistent Google Web OAuth
+  client was created with the production callback, and the Google client
+  values, `BETTER_AUTH_SECRET`, and `OWNER_IDENTITIES` were installed in the
+  private `production-cloudflare` environment. Values are intentionally not
+  recorded here. The protected owner release is the next action.
 
 ## Completed
 
@@ -167,7 +174,7 @@ and was not modified while this application was built.
 - Astro 7 application with Solid islands and the Cloudflare adapter
 - Question-first learning flow, critical-point checks, guest sessions, notes,
   mixed FSRS reviews, readiness projections, dashboard, settings, and export
-- Better Auth integration for allowlisted GitHub and Google identities
+- Better Auth integration for the allowlisted Google identity
 - D1 schema and migration for authentication, attempts, reviews, evidence,
   private answers, notes, revision acknowledgements, and idempotency
 - Public routes and APIs described in the product plan
@@ -234,19 +241,20 @@ The transient 5xx seen by run `33137097525` was route propagation immediately
 after the first deploy; the subsequent retry returned healthy D1 and manifest
 metadata.
 
-### 3. Owner OAuth credentials do not exist in the deployment boundary
+### 3. Owner release has not yet been deployed and verified
 
-The application code is ready, but production still needs GitHub and Google
-OAuth applications, provider client IDs/secrets, `BETTER_AUTH_SECRET`, and the
-stable provider-ID allowlist. Creating those provider applications requires
-the site owner to own/approve the persistent provider configuration. Until
-those values are present, the public guest experience can run, but owner login
-and persistent learning state cannot.
+The application code now uses Google OAuth only. The persistent Google Web
+client and the four required private environment secrets
+(`BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and
+`OWNER_IDENTITIES`) are configured. The remaining work is to push the source
+and private contract changes, run the protected owner deployment, and verify a
+first sign-in with the allowlisted Google identity. Until that release is
+live, the public guest experience continues to work but owner login and
+persistent learning state remain unavailable.
 
 Use these callbacks:
 
 ```text
-https://devops.hamardikan.com/api/auth/callback/github
 https://devops.hamardikan.com/api/auth/callback/google
 ```
 
@@ -265,11 +273,10 @@ implementation.
 
 ## Safe resume order
 
-1. Create and configure the two OAuth applications, then store all credentials
-   only in the private deployment boundary; owner mode remains blocked until
-   those secrets and the stable provider-ID allowlist exist.
-2. Deploy owner mode, run the owner-beta success gate, and only then expand the
-   curriculum.
+1. Push the Google-only application and private contract changes.
+2. Deploy owner mode with the protected workflow and verify the callback,
+   allowlist, D1 persistence, and health manifest.
+3. Run the owner-beta success gate, and only then expand the curriculum.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or
 production deployment permissions in this public repository.

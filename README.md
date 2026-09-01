@@ -4,9 +4,9 @@ A portable, question-first DevOps learning system planned for
 [`devops.hamardikan.com`](https://devops.hamardikan.com). Download the Markdown
 or run the same curriculum locally today.
 
-> Production deployment is currently paused. See
-> [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for the exact implementation state,
-> blockers, and safe resume order.
+> The guest production route is live; the Google-only owner rollout is in
+> progress. See [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for the exact
+> implementation state, blockers, and safe resume order.
 
 The owner beta starts with **From Process to Pod**: 18 original learning units
 that connect computer processes, Linux, networking, containers, Git/YAML, and
@@ -27,9 +27,9 @@ application, and 25% later-date retention. Evidence becomes stale over time;
 critical path units carry weight 2.
 
 Guests can read and complete a session without an account. Guest activity is
-memory-only and is never merged after sign-in. Only explicitly allowlisted
-GitHub or Google provider identities may create the single owner account and
-persist private answers, notes, progress, and reviews.
+memory-only and is never merged after sign-in. Only the explicitly allowlisted
+Google provider identity may create the single owner account and persist
+private answers, notes, progress, and reviews.
 
 ## Portable content
 
@@ -100,16 +100,15 @@ mobile layouts, and automated accessibility checks.
 ## Owner authentication
 
 Better Auth runs inside the same Cloudflare Worker and stores its tables in D1.
-Copy `.dev.vars.example` and set both OAuth applications plus:
+Copy `.dev.vars.example` and set the Google OAuth application plus:
 
-- `OWNER_IDENTITIES`: comma-separated stable provider identities such as
-  `github:<numeric-id>,google:<subject>`;
+- `OWNER_IDENTITIES`: the stable Google provider identity in the form
+  `google:<subject>`;
 - `BETTER_AUTH_SECRET`: a random value of at least 32 characters;
 - `BETTER_AUTH_URL`: the deployment origin.
 
-Authorization never relies on an email address. The first allowlisted provider
-may create the owner; a second provider must be linked manually from the
-existing owner session.
+Authorization never relies on an email address. The allowlisted Google account
+may create the single owner account; other Google identities are rejected.
 
 ## Architecture
 

@@ -5,8 +5,6 @@ export interface AuthEnvironment {
   DB?: D1Database;
   BETTER_AUTH_SECRET?: string;
   BETTER_AUTH_URL?: string;
-  GITHUB_CLIENT_ID?: string;
-  GITHUB_CLIENT_SECRET?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
   OWNER_IDENTITIES?: string;
@@ -17,8 +15,6 @@ export type ConfiguredAuthEnvironment = AuthEnvironment & Required<Pick<AuthEnvi
   'DB' |
   'BETTER_AUTH_SECRET' |
   'BETTER_AUTH_URL' |
-  'GITHUB_CLIENT_ID' |
-  'GITHUB_CLIENT_SECRET' |
   'GOOGLE_CLIENT_ID' |
   'GOOGLE_CLIENT_SECRET' |
   'OWNER_IDENTITIES'
@@ -29,8 +25,6 @@ export function isAuthConfigured(environment: AuthEnvironment): environment is C
     environment.DB &&
     environment.BETTER_AUTH_SECRET &&
     environment.BETTER_AUTH_URL &&
-    environment.GITHUB_CLIENT_ID &&
-    environment.GITHUB_CLIENT_SECRET &&
     environment.GOOGLE_CLIENT_ID &&
     environment.GOOGLE_CLIENT_SECRET &&
     environment.OWNER_IDENTITIES,
@@ -90,16 +84,12 @@ export function createAuth(environment: ConfiguredAuthEnvironment) {
       accountLinking: {
         enabled: true,
         disableImplicitLinking: true,
-        trustedProviders: ['github', 'google'],
+        trustedProviders: ['google'],
         allowDifferentEmails: true,
         allowUnlinkingAll: false,
       },
     },
     socialProviders: {
-      github: {
-        clientId: environment.GITHUB_CLIENT_ID,
-        clientSecret: environment.GITHUB_CLIENT_SECRET,
-      },
       google: {
         clientId: environment.GOOGLE_CLIENT_ID,
         clientSecret: environment.GOOGLE_CLIENT_SECRET,

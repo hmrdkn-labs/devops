@@ -14,7 +14,7 @@ export default function AuthMenu() {
     return response.json() as Promise<Me>;
   });
 
-  async function signIn(provider: 'github' | 'google') {
+  async function signIn(provider: 'google') {
     setBusy(true);
     await authClient.signIn.social({ provider, callbackURL: window.location.href });
     setBusy(false);
@@ -41,7 +41,6 @@ export default function AuthMenu() {
             <Show when={me()?.authConfigured} fallback={
               <p class="microcopy">Owner OAuth is not configured on this deployment yet.</p>
             }>
-              <button disabled={busy()} onClick={() => signIn('github')}>Continue with GitHub</button>
               <button disabled={busy()} onClick={() => signIn('google')}>Continue with Google</button>
             </Show>
           </div>
