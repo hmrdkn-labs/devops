@@ -10,12 +10,13 @@ the production Cloudflare Worker. The protected guest release completed
 successfully after the deployment token was added to GitHub. The public route,
 D1 health, manifest, raw Markdown, and study pages are live and verified.
 
-The next step is the Google-only owner rollout. The Google OAuth client,
-`BETTER_AUTH_SECRET`, and stable owner allowlist are now stored in the private
-deployment environment. Guests can study now; persistent owner progress stays
-disabled on the live Worker until the updated application is deployed and the
-first allowlisted Google sign-in is verified. Do not paste credentials or
-provider subjects into Git, logs, or chat.
+The Google-only owner rollout is live. The Google OAuth client,
+`BETTER_AUTH_SECRET`, and stable owner allowlist are stored in the private
+deployment environment; protected run `33464102323` deployed public commit
+`0e63a2e` and passed the Worker, D1, manifest, and auth-route checks. The first
+allowlisted Google sign-in was verified in the browser and opened the private
+dashboard. The next milestone is the owner-beta success gate, not a deployment
+blocker. Do not paste credentials or provider subjects into Git, logs, or chat.
 
 **There are only two Cloudflare entries for this deployment:**
 `CLOUDFLARE_API_TOKEN` is the single secret token used for both Worker and D1;
@@ -69,7 +70,7 @@ and is not part of production.
 | Initial content | ✅ Complete | 18 reviewed **From Process to Pod** units, 36 explain/predict prompts, and 90 cards are published. |
 | Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
-| Owner beta | 🔄 In progress | Google-only source/config changes are complete locally and the private environment is configured; protected owner deployment and first-login verification remain. |
+| Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -162,6 +163,12 @@ and was not modified while this application was built.
   values, `BETTER_AUTH_SECRET`, and `OWNER_IDENTITIES` were installed in the
   private `production-cloudflare` environment. Values are intentionally not
   recorded here. The protected owner release is the next action.
+- **2026-09-01 — owner release verified:** protected rerun `33464102323`
+  deployed public commit `0e63a2e7b63a2e5f4758d4557eb99beee61b046b` with the
+  Google-only contract. D1 migrations, Worker deployment, secret installation,
+  route checks, `/api/health`, and `/api/auth/get-session` passed. The first
+  allowlisted Google sign-in reached the private dashboard; no credential or
+  provider-subject value is recorded.
 
 ## Completed
 
@@ -241,16 +248,16 @@ The transient 5xx seen by run `33137097525` was route propagation immediately
 after the first deploy; the subsequent retry returned healthy D1 and manifest
 metadata.
 
-### 3. Owner release has not yet been deployed and verified
+### 3. No active deployment blocker: owner-beta success gate remains
 
 The application code now uses Google OAuth only. The persistent Google Web
 client and the four required private environment secrets
 (`BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and
-`OWNER_IDENTITIES`) are configured. The remaining work is to push the source
-and private contract changes, run the protected owner deployment, and verify a
-first sign-in with the allowlisted Google identity. Until that release is
-live, the public guest experience continues to work but owner login and
-persistent learning state remain unavailable.
+`OWNER_IDENTITIES`) are configured. Protected run `33464102323` deployed the
+exact public source and the first allowlisted Google sign-in reached the private
+dashboard. There is no current deployment blocker; the remaining work is the
+owner-beta success gate (real focus sessions, scheduled recall, a revalidation
+check, and a parseable export) before expanding the corpus.
 
 Use these callbacks:
 
@@ -273,10 +280,9 @@ implementation.
 
 ## Safe resume order
 
-1. Push the Google-only application and private contract changes.
-2. Deploy owner mode with the protected workflow and verify the callback,
-   allowlist, D1 persistence, and health manifest.
-3. Run the owner-beta success gate, and only then expand the curriculum.
+1. Run the owner-beta success gate: ten real focus sessions over seven days,
+   scheduled recall, one content revalidation, and a full export.
+2. Grow the independent curriculum toward the 70–100-unit pre-KCNA target.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or
 production deployment permissions in this public repository.
