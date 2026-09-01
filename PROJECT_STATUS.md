@@ -154,9 +154,10 @@ and was not modified while this application was built.
   `/api/health` returned `status=ok`, `database=ready`, and the expected
   manifest SHA; public pages, raw Markdown, search, map, and references also
   passed. The guest release is complete.
-- **Current:** the public guest site is live at
-  `https://devops.hamardikan.com`. Owner beta is waiting only on OAuth and
-  owner-allowlist deployment; application code last changed in `498489e`.
+- **Current:** the public guest site and Google-only owner login are live at
+  `https://devops.hamardikan.com`. The remaining owner-beta work is the
+  success gate; the deployed application is source commit `0e63a2e` and this
+  status log records the verification.
 - **2026-09-01 — Google-only owner decision:** at the owner's request, GitHub
   OAuth was removed from the owner-beta contract. A persistent Google Web OAuth
   client was created with the production callback, and the Google client
