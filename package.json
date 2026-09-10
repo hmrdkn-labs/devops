@@ -31,9 +31,9 @@
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.2.5",
+    "@astrojs/cloudflare": "14.3.0",
     "@astrojs/solid-js": "7.0.2",
-    "astro": "7.2.8",
+    "astro": "7.3.1",
     "better-auth": "^1.7.2",
     "drizzle-orm": "0.45.2",
     "fflate": "^0.8.2",
