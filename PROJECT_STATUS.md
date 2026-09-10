@@ -5,21 +5,25 @@
 
 ## Read this first
 
-**Bottom line:** UI v3 is live on the production Cloudflare Worker from exact
-public source `205044b85a30b3fc6561a7b81531e18f720563ad`. Protected owner run
-`34457036278` rebuilt that SHA, applied D1 migrations, deployed the Worker,
-preserved Google owner authentication, and passed its route/manifest checks.
-Public CI run `34456854247` is green for the same SHA.
+**Bottom line:** the dedicated KCNA focus workspace is live on the production
+Cloudflare Worker from exact public source
+`0cf0d32cb122ede36d8bd5c4ecfacdd6de04c951`. Public CI run `34459708536` is
+green, and protected owner deployment run `34459923972` rebuilt that exact SHA,
+applied D1 migrations, deployed the Worker, restored owner secrets, and passed
+its production checks.
 
-**KCNA focus workspace is implemented locally:** `/kcna` isolates the existing
+**KCNA focus workspace is live:** `/kcna` isolates the existing
 29-unit KCNA path into four study checkpoints—Kubernetes Fundamentals,
 Kubernetes Resources, Cluster Behavior, and Cloud-Native Context—without
 duplicating canonical Markdown. It also surfaces the two quiz companions,
 filters the readiness widget to `path:kcna`, makes KCNA a first-class primary
 navigation destination, and gives mapped learning units a direct return link
-to the KCNA focus space. Local content/type/unit/D1/build checks pass; the
-expanded browser matrix passes with 22 tests and 2 intentional mobile-only
-skips. Deployment is still pending at this point in the log.
+to the KCNA focus space. Local content/type/unit/D1/build checks pass, the
+expanded browser matrix passes with 22 tests and 2 intentional skips, and
+independent live probes return 200 for `/kcna/`, `/paths/kcna/`, the Kubernetes
+Resources review unit, `/api/health`, and `/api/auth/get-session`. D1 reports
+`ready` with manifest SHA
+`a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`.
 
 The accepted compact developer-learning workspace is now production: a `<H>`
 monogram/wordmark, restrained terminal-green identity, 40px display-title
@@ -108,6 +112,11 @@ viewed or recorded.
    references, and the auth session route; D1 reports `ready`, and the live
    content archive SHA-256 is
    `93e876b1f24b7f69b4918be8e3362a21b4431029dc928d6d2792c729aa7f5f1a`.
+7. ✅ Completed: KCNA focus exact source
+   `0cf0d32cb122ede36d8bd5c4ecfacdd6de04c951` passed public CI run
+   `34459708536` and protected owner deployment run `34459923972`. Independent
+   live probes verified the dedicated KCNA workspace, plain KCNA path,
+   representative KCNA review unit, D1 health, and auth session route.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -117,7 +126,7 @@ and is not part of production.
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
-`✅ KCNA protected release` → `✅ UI v3 release` → `🔄 KCNA focus workspace` → `🔄 Owner beta gate`
+`✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -131,7 +140,7 @@ and is not part of production.
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
 | UI reset | ✅ Complete | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, focused study/review workspace, responsive surfaces, and accessibility fixes are deployed in protected run `33487216904` for source `190e0e5`. |
 | UI v3 refinement | ✅ Live | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size light/dark browser evidence are live from source `205044b`; public CI `34456854247` and protected deploy `34457036278` passed. |
-| KCNA focus workspace | 🔄 Release candidate | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Local checks and 22/24 browser cases pass; the two skips are the intentional non-mobile instances of the mobile touch-target test. |
+| KCNA focus workspace | ✅ Live | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Public CI `34459708536`, protected owner deploy `34459923972`, and independent live probes all passed for exact source `0cf0d32`. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
