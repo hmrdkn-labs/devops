@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-apply-live-state
+slug: kubernetes-apply-live-state
+title: kubectl apply and live state
+summary: Treat kubectl apply as declarative API reconciliation, compare local intent with live state, and understand why successful configuration is only one proof layer.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 20
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:kubernetes-manifests, fpp:kubernetes-deployments-rollouts]
+objectives:
+  - id: fpp:kubernetes-apply-live-state/declarative
+    title: Explain apply as an update of declared fields rather than a command to directly run containers
+    critical: true
+  - id: fpp:kubernetes-apply-live-state/live-state
+    title: Compare local configuration, live API state, and controller-observed runtime state
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

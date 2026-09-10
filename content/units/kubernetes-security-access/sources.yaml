@@ -1,0 +1,38 @@
+schema_version: 1
+unit_id: fpp:kubernetes-security-access
+sources:
+  - id: source:kubernetes-authentication
+    title: Authenticating
+    url: https://kubernetes.io/docs/reference/access-authn-authz/authentication/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Kubernetes authentication mechanisms and identity model.
+  - id: source:kubernetes-authorization
+    title: Authorization
+    url: https://kubernetes.io/docs/reference/access-authn-authz/authorization/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Authorization decision model and supported modes.
+  - id: source:kubernetes-rbac
+    title: Using RBAC Authorization
+    url: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Roles, ClusterRoles, bindings, subjects, and least-privilege guidance.
+  - id: source:kubernetes-pod-security
+    title: Pod Security Standards
+    url: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Privileged, Baseline, and Restricted Pod security profiles.
+  - id: source:kubernetes-service-accounts
+    title: Service Accounts
+    url: https://kubernetes.io/docs/concepts/security/service-accounts/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Workload identity concepts for Pods and Kubernetes API access.

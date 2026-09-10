@@ -1,3 +1,303 @@
+# Cloud-native architecture principles
+
+Canonical ID: fpp:cloud-native-architecture-principles
+
+# Cloud-native architecture principles
+
+Running a monolith on a virtual machine in a public cloud does not automatically make the architecture cloud-native.
+
+The CNCF cloud-native definition emphasizes systems built for dynamic environments using approaches such as containers, service meshes, microservices, immutable infrastructure, and declarative APIs. The deeper theme is **adaptability through automation and explicit contracts**.
+
+## Properties that reinforce each other
+
+### Declarative desired state
+
+You describe what should exist; controllers or automation reconcile toward it. This makes replacement and recovery repeatable because the operating model does not depend on a unique hand-configured machine.
+
+### Loose coupling
+
+Components communicate through explicit interfaces rather than sharing hidden process or filesystem state. Loose coupling does not require hundreds of microservices. It means change and failure boundaries are understood.
+
+### Immutable, replaceable artifacts
+
+Instead of modifying a running server until it becomes unique, build a new versioned artifact and replace instances. Kubernetes Pods and container images fit this model well, but persistent data still needs deliberate lifecycle management.
+
+### Automation and reconciliation
+
+Automation turns repeatable intent into repeatable action. Reconciliation continuously compares desired and observed state, which is stronger than a one-time installation script when systems drift.
+
+### Observability
+
+Dynamic, distributed systems need evidence about their runtime behavior. Metrics, logs, traces, events, and user-visible probes make automated and human decisions possible.
+
+### Resilience by design
+
+Replicas, health checks, failure-domain spreading, retry budgets, graceful degradation, and replaceable instances can improve resilience. Redundancy only helps when replicas do not share the same hidden failure mode.
+
+## Replication, autoscaling, and elasticity are different
+
+**Replication** means running multiple instances. It can improve capacity and availability.
+
+**Autoscaling** changes desired capacity based on observed signals or policy. Kubernetes HPA, for example, adjusts a workload's replica target based on configured metrics.
+
+**Elasticity** is the broader ability to expand and contract resource use as demand changes. Autoscaling is one mechanism that can contribute to elasticity.
+
+**Serverless** platforms abstract much of the server lifecycle from the application owner and often scale execution based on requests or events. "Serverless" does not mean no servers exist; it means the infrastructure lifecycle is more strongly delegated to the platform.
+
+## Portability is a spectrum
+
+Containers and Kubernetes can reduce coupling to individual hosts, but applications can still depend on provider-specific databases, identity systems, storage semantics, or load balancers. Cloud native aims for explicit interfaces and automation, not a guarantee that every workload can move unchanged between providers.
+
+## The useful exam question
+
+When comparing two designs, ask which one has clearer desired state, replaceable artifacts, automated reconciliation, explicit service boundaries, observable behavior, and failure handling. Those properties matter more than whether the diagram contains a cloud logo.
+
+---
+
+# CI, CD, declarative delivery, and GitOps
+
+Canonical ID: fpp:cloud-native-delivery-gitops
+
+# CI, CD, declarative delivery, and GitOps
+
+Application delivery has at least two different products: a **versioned artifact** and a **desired deployment state**.
+
+## CI builds evidence and artifacts
+
+Continuous Integration (CI) integrates code changes frequently and runs automated checks. A typical CI pipeline may compile, test, scan, and build a container image. The durable output should be an immutable, identifiable artifact such as an image digest.
+
+CI answering "the image was built successfully" does not prove that production is running that image.
+
+## CD changes an environment
+
+Continuous Delivery keeps a releasable change ready for controlled promotion. Continuous Deployment automatically promotes qualifying changes to an environment. Teams use the terms differently, so focus on the boundary: delivery/deployment changes declared environment state after CI has produced an artifact.
+
+For Kubernetes, a release often changes a Deployment image reference or another manifest value. Kubernetes controllers then perform the rollout. The delivery system does not directly become the kubelet or Service dataplane.
+
+```text
+source change
+  -> CI checks
+  -> immutable image/artifact
+  -> desired deployment change
+  -> delivery/GitOps reconciliation
+  -> Kubernetes API state
+  -> controllers roll out Pods
+  -> runtime and traffic proof
+```
+
+## GitOps adds a reconciliation contract
+
+The OpenGitOps principles describe a system whose desired state is declarative, versioned and immutable, pulled automatically, and continuously reconciled.
+
+That changes the operating model. Instead of a human laptop being the only source of deployment truth, a reconciler compares version-controlled desired state with the target system and works to converge it.
+
+Git remains a record of intended state; the GitOps controller is the translator/reconciler. Kubernetes controllers still own Kubernetes workload reconciliation beneath it.
+
+## Drift and rollback
+
+If someone manually edits a live object, a GitOps reconciler may detect that drift and restore the declared state. That behavior is valuable only when Git truly is the intended source of truth and emergency procedures are designed around reconciliation.
+
+A Git revert or new corrective commit changes desired state. It does not time-travel external databases, undo every side effect, or guarantee the previous application version is safe with current data. Delivery rollback and data rollback are separate concerns.
+
+## What to prove after delivery
+
+Do not stop at a green pipeline. Verify:
+
+1. the intended artifact digest exists;
+2. desired deployment state references it;
+3. reconciliation reports healthy/synchronized state;
+4. the Kubernetes rollout reaches ready replicas;
+5. a user-visible or service-level check succeeds.
+
+This produces a causal chain from source to running behavior instead of equating "pipeline passed" with "release succeeded."
+
+---
+
+# Metrics, logs, traces, events, and observability
+
+Canonical ID: fpp:cloud-native-observability-signals
+
+# Metrics, logs, traces, events, and observability
+
+Observability is the ability to infer what a system is doing from the evidence it exposes. No single signal answers every question.
+
+## Metrics answer "how much" and "how often"
+
+Metrics are numeric measurements over time: request rate, error count, CPU usage, queue depth, latency histogram, or available replicas. They are compact and excellent for trends, dashboards, and alert conditions.
+
+Prometheus commonly discovers or is configured with targets, scrapes metrics, stores labeled time series, and evaluates queries and recording/alerting rules. Alertmanager handles notification routing for alerts produced by Prometheus rules.
+
+A healthy Prometheus target proves that a metrics endpoint was scraped successfully. It does not prove every user transaction is healthy.
+
+## Logs explain discrete events from one component
+
+Logs contain timestamped records emitted by applications and infrastructure. They are useful for exceptions, startup configuration, request context, and state transitions.
+
+Logs can be missing, sampled, malformed, or too local. A log line saying "request sent" does not prove the downstream service processed it.
+
+## Traces connect work across boundaries
+
+A distributed trace follows one request or operation across participating services. A trace is made of spans representing units of work and their relationships. It is especially useful for answering where latency or errors appear in a multi-service path.
+
+Trace context must propagate between components for the causal path to remain connected.
+
+## Kubernetes events are control-plane clues
+
+Events often explain scheduling failures, image-pull problems, probe failures, mount problems, and other transitions. They are valuable but temporary and are not a durable application log.
+
+## OpenTelemetry is instrumentation and telemetry plumbing
+
+OpenTelemetry provides vendor-neutral APIs, SDKs, semantic conventions, and a Collector for generating, processing, and exporting telemetry. It can handle traces, metrics, and logs. It is not a storage/query backend by itself.
+
+```text
+application/infrastructure
+  -> instrumentation / telemetry signals
+  -> OpenTelemetry Collector or direct exporter
+  -> backend such as Prometheus-compatible metrics, trace store, or log store
+  -> dashboards / alerts / investigation
+```
+
+## Start incidents from the user boundary
+
+If users report slowness:
+
+1. Define the exact transaction and time window.
+2. Check a user-visible or synthetic request to confirm the symptom.
+3. Use metrics to find where rate/error/latency changed.
+4. Use traces to localize slow spans across services.
+5. Use logs and Kubernetes events to explain the local cause.
+
+Evidence becomes stronger when independent signals agree. A dashboard is a view of measurements, not the system itself.
+
+---
+
+# Release strategies and application debugging
+
+Canonical ID: fpp:cloud-native-release-debugging
+
+# Release strategies and application debugging
+
+A release strategy answers two questions: **how much new code exists at once, and how much traffic is exposed to it?**
+
+## Rolling update
+
+Kubernetes Deployments natively support rolling updates. A new ReplicaSet grows while the old one shrinks according to rollout settings. Old and new replicas can coexist temporarily.
+
+Rolling updates are efficient when versions can safely overlap and ordinary readiness checks are enough to decide whether a replica should receive traffic.
+
+## Blue-green
+
+Blue-green keeps two complete environments or versions and switches traffic from the current set to the new set after validation. It can make traffic cutover and rollback simple, but it costs extra capacity and still requires data compatibility.
+
+Kubernetes does not have a single built-in `strategy: BlueGreen` on ordinary Deployments. Teams implement the pattern with Services, ingress/gateway routing, progressive-delivery controllers, or deployment platforms.
+
+## Canary
+
+Canary delivery exposes a small portion of traffic or users to a new version, observes defined signals, then expands or aborts. The key idea is **controlled exposure with measurement**, not merely "run one new Pod."
+
+Traffic weighting may live in an ingress controller, service mesh, cloud load balancer, or progressive-delivery tool. Always identify the actual traffic executor.
+
+## Debug a release as a chain
+
+When a release fails, walk forward from intent:
+
+```text
+artifact exists
+  -> desired manifest references correct artifact
+  -> API accepts object
+  -> controller creates rollout objects
+  -> Pods schedule
+  -> image pulls
+  -> containers start
+  -> readiness becomes true
+  -> EndpointSlices include replicas
+  -> traffic reaches the new version
+  -> user-visible behavior succeeds
+```
+
+Each step has different evidence:
+
+- image digest or registry metadata for the artifact;
+- `kubectl rollout status` and ReplicaSets for rollout progress;
+- Pod events for scheduling/image/start failures;
+- `kubectl logs --previous` for a crashing previous container instance;
+- readiness conditions and EndpointSlices for traffic eligibility;
+- an actual request for end-to-end proof.
+
+## Readiness protects traffic; liveness restarts processes
+
+A readiness failure can remove a Pod from Service endpoints without restarting the container. A liveness failure tells the kubelet to restart the container. Using liveness for a dependency outage can turn an external failure into a restart storm.
+
+## Roll back only after naming the failure boundary
+
+Rollback can be the safest mitigation, but it is not a substitute for diagnosis. Record the failing revision and the smallest evidence first. If the failure is a shared database outage or invalid Secret, rolling back application Pods may not fix the incident.
+
+The durable skill is to localize the first broken boundary before choosing the mitigation.
+
+---
+
+# CNCF ecosystem, projects, standards, and community
+
+Canonical ID: fpp:cncf-ecosystem-community
+
+# CNCF ecosystem, projects, standards, and community
+
+Kubernetes is one project in a much larger cloud-native ecosystem. KCNA expects you to recognize common responsibilities, not memorize every logo in the CNCF Landscape.
+
+## Learn projects by job
+
+Representative examples:
+
+| Need | Example project or interface | Mental model |
+| --- | --- | --- |
+| Container runtime | containerd | Runs containers beneath higher-level orchestration |
+| Cluster DNS | CoreDNS | Resolves service/workload names using pluggable DNS behavior |
+| Metrics monitoring | Prometheus | Scrapes/stores/query labeled time-series metrics and evaluates alert rules |
+| Telemetry instrumentation | OpenTelemetry | Vendor-neutral APIs, SDKs, semantic conventions, and Collector |
+| Proxy/data plane | Envoy | L4/L7 proxy often used by gateways and service meshes |
+| Logging pipeline | Fluentd | Collects and routes log/event data |
+| Package management | Helm | Templates and packages Kubernetes resources as charts |
+| GitOps delivery | Flux / Argo CD | Reconciles version-controlled desired state into a target platform |
+
+The table is a responsibility map, not a required architecture. You can run Kubernetes without using every listed project.
+
+## Landscape is a catalog, not a product prescription
+
+The CNCF Landscape organizes a very large ecosystem of projects and products. Inclusion in the landscape does not mean CNCF requires or endorses every item as part of one standard stack.
+
+For exam questions, identify the category first: runtime, networking, observability, delivery, storage, security, service mesh, or another responsibility. Then recognize representative tools.
+
+## Project maturity and governance
+
+CNCF-hosted projects can move through maturity levels such as Sandbox, Incubating, and Graduated according to CNCF governance and project criteria. Maturity indicates project status within CNCF; it does not mean a Sandbox project is automatically unsafe or a Graduated project fits every use case.
+
+The CNCF Technical Oversight Committee and project maintainers participate in project governance. Kubernetes itself has a large community structure with Special Interest Groups (SIGs), Working Groups, and other contributor roles that divide ownership by technical area.
+
+## Open interfaces reduce hard coupling
+
+Cloud-native systems benefit from stable interfaces between responsibilities. Examples include:
+
+- OCI image/runtime specifications for container artifacts and runtime behavior;
+- CRI between kubelet and container runtimes;
+- CNI conventions for container/Pod network integration;
+- CSI for storage integration.
+
+These boundaries allow implementations to evolve behind a known contract. Do not confuse an interface with one implementation: CNI is not itself a single network plugin, and CSI is not a storage backend.
+
+## Community collaboration is part of the architecture story
+
+Open governance matters because cloud-native infrastructure is built by many organizations that need shared specifications, interoperable implementations, documented ownership, and public technical decision processes.
+
+When you encounter an unfamiliar project, ask three questions:
+
+1. What responsibility does it own?
+2. Which interface or control/data-plane boundary does it implement?
+3. Is it an implementation, a specification, a hosted project, or a catalog entry?
+
+That method is more durable than memorizing the visual layout of the CNCF Landscape.
+
+---
+
 # Configuration, secrets, and persistent storage
 
 Canonical ID: fpp:config-secrets-storage
@@ -313,6 +613,549 @@ misdiagnoses.
 
 ---
 
+# KCNA domain map and reasoning strategy
+
+Canonical ID: fpp:kcna-domain-map
+
+# KCNA domain map and reasoning strategy
+
+KCNA is a conceptual exam, but "conceptual" does not mean "memorize a glossary." The fastest durable model is to keep asking who owns an action, who executes it, and what evidence would prove the result.
+
+As of the current post-November-2025 blueprint, the exam is organized into four domains:
+
+| Domain | Weight | What you should be able to reason about |
+| --- | ---: | --- |
+| Kubernetes Fundamentals | 44% | Core concepts, administration, scheduling, and containerization |
+| Container Orchestration | 28% | Networking, security, troubleshooting, and storage |
+| Cloud Native Application Delivery | 16% | Delivery workflows and debugging |
+| Cloud Native Architecture | 12% | Observability, ecosystem/principles, community/collaboration |
+
+The percentages are exam weights, not a recommended order. A networking prerequisite can be worth learning early even though it belongs under a later exam domain.
+
+## One model for most questions
+
+Use five layers:
+
+1. **Intent/configuration** — what object, manifest, policy, or desired state was submitted?
+2. **Control/reconciliation** — what component watches that intent and decides what should change?
+3. **Execution/data plane** — what process, runtime, proxy, plugin, or kernel mechanism actually performs the work?
+4. **Workload/state** — what Pod, container, endpoint, volume, or release is now running?
+5. **Feedback/proof** — what status, event, log, metric, trace, or request proves the outcome?
+
+This prevents a common mistake: treating every Kubernetes object as if it directly executes behavior. A Service is an API object; it does not forward packets by itself. A Deployment expresses rollout intent; the Deployment controller and ReplicaSets reconcile that intent. A NetworkPolicy expresses allowed connectivity; a compatible network implementation enforces it.
+
+## Translate multiple-choice wording into ownership
+
+When a question says "Kubernetes does X," translate it into a more precise question:
+
+> Which Kubernetes component owns the decision, which component performs the work, and at what boundary?
+
+Examples:
+
+- "Kubernetes schedules a Pod" → the scheduler selects a node; the API records the binding; the kubelet on that node starts the Pod through the runtime.
+- "A Service routes traffic" → the Service selects endpoints; a data-plane implementation such as kube-proxy or eBPF programming performs forwarding.
+- "GitOps deploys an application" → Git stores declared intent; a GitOps controller observes it and reconciles the target platform.
+- "Prometheus monitors Kubernetes" → Prometheus collects time-series metrics from configured targets; it does not replace logs, traces, events, or user-visible probes.
+
+## What to memorize and what to derive
+
+Memorize only stable vocabulary and boundaries: Pod, Deployment, Service, PVC, scheduler, kubelet, RBAC, NetworkPolicy, metrics/logs/traces, CI/CD, GitOps, and the major CNCF roles.
+
+Derive operational answers from the layers. If a Pod is `Pending`, ask whether intent was accepted, whether scheduling has a feasible node, whether storage is bound, and what events report. If a Service exists but the app is unreachable, inspect selectors, EndpointSlices, readiness, ports, policies, and the actual listener.
+
+## Remember this
+
+KCNA readiness means you can explain the path from **declared intent → controller decision → executor → running state → proof**. Commands are useful observations, but the exam is testing the model behind them.
+
+---
+
+# KCNA Kubernetes Fundamentals quiz companion
+
+Canonical ID: fpp:kcna-kubernetes-fundamentals-review
+
+# KCNA Kubernetes Fundamentals quiz companion
+
+Use this page as the fast layer beside the quiz. The detailed units explain the mechanisms; this page is optimized for recognition, elimination, and quick recall.
+
+## 30-second scan
+
+| If the question is about... | Think... |
+| --- | --- |
+| Why containers? | Package an application and dependencies into a portable process environment; containers share the host kernel. |
+| Why orchestration? | Keep many replaceable workloads scheduled, scaled, networked, and reconciled toward desired state. |
+| Kubernetes API entry point | `kube-apiserver` |
+| Durable Kubernetes API state | `etcd` |
+| Picking a node for an unscheduled Pod | `kube-scheduler` |
+| Continuously repairing desired state | controllers, commonly in `kube-controller-manager` |
+| Making assigned Pods run on a node | `kubelet` |
+| Creating/stopping containers | the container runtime, reached through CRI |
+| Pod network setup | a CNI implementation |
+| Cluster DNS | commonly CoreDNS |
+
+The most useful exam habit is to ask **who decides, who executes, and where the state lives**.
+
+```text
+kubectl / client
+      │
+      ▼
+kube-apiserver ──► etcd
+      │             stores API state
+      ├── watched by controllers
+      ├── watched by scheduler
+      └── watched/reported to by kubelets
+                         │
+                         ▼
+                  container runtime
+```
+
+## Containers: the distinctions worth remembering
+
+An **image** is a packaged filesystem plus metadata used as input to create a container. A **container** is a runtime instance whose main process is executing in an isolated environment. Containers normally isolate processes with Linux namespaces and constrain resources with cgroups; they do not each boot a separate guest kernel like a virtual machine.
+
+| Term | What it means | Common trap |
+| --- | --- | --- |
+| Image | Read-only packaged input for container creation | It is not a running process. |
+| Container | Runtime environment around one or more processes | It is not a tiny VM. |
+| Container runtime | Software that manages container lifecycle | Kubernetes talks to supported runtimes through CRI. |
+| CRI | Kubernetes' container runtime interface | It is an API boundary, not a runtime implementation itself. |
+| containerd | A common high-level container runtime | Kubernetes can use it directly through CRI. |
+| runc | Low-level OCI runtime commonly used to create/run containers | It is below containerd in the usual stack. |
+| Docker Engine | Developer/container platform that itself uses containerd | Removing dockershim did not mean Kubernetes stopped supporting containers built with Docker. |
+
+The Docker/Kubernetes historical trap is simple: Kubernetes removed the built-in **dockershim** integration. Kubernetes still runs OCI-compatible container images. Modern clusters commonly use CRI-compatible runtimes such as containerd or CRI-O.
+
+## Why Kubernetes exists
+
+Running one container is a runtime problem. Running hundreds of replaceable workloads across machines introduces scheduling, failure recovery, service discovery, rollouts, configuration, storage, and capacity problems. Kubernetes gives you an API for desired state plus controllers that keep reconciling actual state toward it.
+
+```text
+desired state in API
+       │
+       ▼
+controller observes drift
+       │
+       ▼
+new/changed API objects
+       │
+       ▼
+scheduler chooses placement
+       │
+       ▼
+kubelet + runtime execute on node
+       │
+       ▼
+status returns through API
+```
+
+This is why a deleted controller-managed Pod can come back: the controller notices that actual state no longer matches desired state.
+
+## Component ownership table
+
+| Component | Own this sentence in your head |
+| --- | --- |
+| `kube-apiserver` | "All normal Kubernetes API coordination goes through me." |
+| `etcd` | "I persist the control plane's API state." |
+| `kube-scheduler` | "I choose a node for a Pod that has no node assignment." |
+| `kube-controller-manager` | "I run control loops that repair desired-state drift for built-in resources." |
+| `kubelet` | "I make the Pods assigned to my node run and report their status." |
+| container runtime | "I pull/create/start/stop containers when the kubelet asks." |
+| CNI implementation | "I provide the Pod networking behavior required by the cluster design." |
+| CoreDNS | "I commonly provide DNS-based discovery inside the cluster." |
+
+### High-value eliminations
+
+- The scheduler **does not start containers**. It records/chooses placement.
+- The API server **does not SSH into nodes** to start workloads.
+- `etcd` **does not schedule or reconcile**. It stores API state.
+- The kubelet **does not decide Deployment replica count**. It executes Pods already assigned to its node.
+- Controllers **do not directly run application processes**. They change desired/API objects; node-side components execute.
+
+## What happens after `kubectl apply`?
+
+`kubectl` sends an API request. The API server authenticates, authorizes, runs admission, validates the object, and persists accepted API state. Controllers observe that state. For a workload that needs a new Pod, a controller creates the relevant Pod object, the scheduler chooses a node, the kubelet on that node observes the assignment, and the runtime starts the containers.
+
+If a quiz option jumps directly from `kubectl` to "the scheduler starts the container," it has collapsed several ownership layers.
+
+## Quiz traps to rehearse
+
+1. **Pod versus container:** Kubernetes schedules Pods. A Pod can contain one or more containers that share its network namespace and declared volumes.
+2. **Desired versus observed:** `spec` commonly expresses desired state; `status` commonly reports observed state.
+3. **Control plane versus worker:** scheduler/controllers make cluster-level decisions; kubelet/runtime perform node-side execution.
+4. **Docker versus containerd:** Docker is not required by Kubernetes. Docker-built OCI images still work with compatible runtimes.
+5. **Runtime versus CRI:** CRI is the interface Kubernetes uses to talk to runtimes; containerd and CRI-O are runtime implementations.
+6. **A running workload during control-plane trouble:** already-running containers may continue even when new scheduling or reconciliation is impaired.
+
+## Command cues
+
+| Command | What it proves |
+| --- | --- |
+| `kubectl get nodes` | Nodes known through the Kubernetes API and their summary state. |
+| `kubectl get pods -o wide` | Pod summary plus placement/IP information. |
+| `kubectl describe pod <name>` | Pod conditions, events, ownership, container state clues. |
+| `kubectl get pod <name> -o yaml` | Detailed live API object including `spec`, `status`, and metadata. |
+
+None of these alone proves that a real user request succeeds. Keep configuration proof and end-to-end behavior separate.
+
+## Before you answer a fundamentals MCQ
+
+Ask three things in order:
+
+1. Is the question asking about **stored intent/state**, **a control decision**, or **runtime execution**?
+2. Which component owns that layer?
+3. Does the option describe the component's real responsibility, or does it make that component perform somebody else's job?
+
+---
+
+# KCNA Kubernetes Resources quiz companion
+
+Canonical ID: fpp:kcna-kubernetes-resources-review
+
+# KCNA Kubernetes Resources quiz companion
+
+This is the compact companion for the Kubernetes Resources module: Pods, YAML, ReplicaSets, Deployments, rollout/rollback, imperative versus declarative management, `kubectl explain`, `kubectl apply`, and namespaces.
+
+## 30-second scan
+
+| Resource/concept | Remember this first |
+| --- | --- |
+| Pod | Smallest Kubernetes scheduling unit; one or more co-located containers sharing Pod networking and declared volumes. |
+| ReplicaSet | Maintains a desired number of Pods matching a selector. |
+| Deployment | Manages ReplicaSets and rollout history for replaceable application Pods. |
+| Label | Key/value metadata. |
+| Selector | Membership rule that selects objects by labels. |
+| `spec` | Desired state you request. |
+| `status` | Observed state reported by Kubernetes components. |
+| `kubectl apply` | Declaratively merges/applies intended fields into the live API object. |
+| `kubectl explain` | Reads API schema/help for resource fields. |
+| Namespace | API naming/scope boundary for namespaced resources; not automatic network/security isolation. |
+
+Keep the ownership chain visible:
+
+```text
+Deployment
+  │ manages rollout / ReplicaSets
+  ▼
+ReplicaSet
+  │ maintains desired matching Pod count
+  ▼
+Pod
+  │ scheduled to one node
+  ▼
+containers
+```
+
+## Pods
+
+A Pod is the unit the scheduler places on a node. Containers inside the same Pod are co-located, share the Pod's network namespace, and can share declared volumes. The Pod is replaceable; do not treat it as a durable machine.
+
+High-value distinctions:
+
+- **Container restart:** the kubelet may restart a failed container inside the same Pod.
+- **Pod replacement:** a controller creates a new Pod object with a new UID, potentially a new node and IP.
+- **Pod phase:** `Pending`, `Running`, `Succeeded`, `Failed`, `Unknown` are coarse phases.
+- **`CrashLoopBackOff`:** a kubectl-visible restart/backoff condition, not a Pod phase.
+
+If a node dies, Kubernetes does not live-migrate that Pod object. A controller can create a replacement Pod that gets scheduled elsewhere.
+
+## YAML / object anatomy
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27
+```
+
+| Field | Meaning |
+| --- | --- |
+| `apiVersion` | API group/version used for this object. |
+| `kind` | Resource type. |
+| `metadata` | Identity/organization: name, namespace, labels, annotations, UID, etc. |
+| `spec` | Desired state for resources that expose a spec. |
+| `status` | Current observed state written by Kubernetes components. |
+
+Kubernetes does not "run YAML." YAML is a serialization of an API request. API acceptance proves that the object was accepted, not that the workload became healthy.
+
+## ReplicaSets, labels, and selectors
+
+A ReplicaSet's selector decides which Pods count toward its desired replica number. Its Pod template says what newly created Pods should look like.
+
+```text
+desired replicas = 3
+selector = app=web
+
+2 matching Pods → controller creates 1
+3 matching Pods → converged
+4 matching Pods → controller removes 1
+```
+
+The selector and the Pod template labels must agree. Deleting a selected Pod does not change the ReplicaSet's desired count, so the controller normally creates another one.
+
+Quiz trap: labels provide metadata and selection. A namespace provides namespaced API scope. Neither concept should be substituted for the other.
+
+## Deployments and rollouts
+
+A Deployment manages ReplicaSets. Changing the Pod template, such as the image, causes a new ReplicaSet/revision to represent the new template. During a rolling update, replicas move from the old ReplicaSet to the new one.
+
+```text
+Deployment
+   ├── RS old ── old Pods ↓
+   └── RS new ── new Pods ↑
+```
+
+For `RollingUpdate`:
+
+- `maxSurge` limits temporary replicas above the desired count.
+- `maxUnavailable` limits how many desired replicas may be unavailable during the update.
+
+Changing `.spec.replicas` changes capacity. Changing `.spec.template` creates a rollout because the desired Pod template changed.
+
+A rollback restores an earlier Deployment Pod-template revision. It does not roll back database contents, migrations, external state, or application side effects.
+
+## Imperative versus declarative
+
+| Style | Mental model | Example use |
+| --- | --- | --- |
+| Imperative | "Perform this action." | Quick create/scale/delete/debug action. |
+| Declarative | "This is the configuration I want." | Versioned, reproducible desired state with `kubectl apply`. |
+
+The useful KCNA point is not that one style is always correct. Declarative configuration is especially useful when the file/repository is intended to remain the durable source of desired state.
+
+## `kubectl explain`
+
+`kubectl explain` uses the Kubernetes API schema information to describe resources and fields. It is useful when you cannot remember whether a field belongs at one path or another.
+
+```text
+kubectl explain pod
+kubectl explain pod.spec
+kubectl explain deployment.spec.strategy
+```
+
+Quiz cue: use `explain` for **resource/field schema help**, not for live object events or runtime diagnosis.
+
+## `kubectl apply`
+
+Keep three states separate:
+
+```text
+file on disk  ──apply──► live API object ──reconciliation──► runtime reality
+```
+
+`kubectl apply` updates the live API object according to apply semantics and field ownership. A successful `configured` message says the API operation succeeded. It does not prove that Pods scheduled, images pulled, readiness passed, or users can reach the app.
+
+For troubleshooting, walk downstream:
+
+```text
+apply accepted
+  → live Deployment spec
+  → ReplicaSet state
+  → Pod scheduling/readiness/events
+  → Service/endpoints/networking
+  → real request
+```
+
+## Namespaces
+
+Namespaces scope the names of many Kubernetes resources. `Deployment/web` in `team-a` and `Deployment/web` in `team-b` are different namespaced objects.
+
+Common namespaced resources include Pods, Deployments, Services, ConfigMaps, and Secrets. Nodes and Namespaces are cluster-scoped.
+
+Creating a namespace alone does not automatically provide network isolation, RBAC isolation, or resource quotas. Those come from mechanisms such as NetworkPolicy, RBAC, ResourceQuota, LimitRange, and security controls.
+
+## Fast command table
+
+| Goal | Command cue |
+| --- | --- |
+| List Pods with node/IP | `kubectl get pods -o wide` |
+| Read events/conditions/owner | `kubectl describe pod <pod>` |
+| Inspect full live object | `kubectl get <kind> <name> -o yaml` |
+| See ReplicaSets behind Deployment | `kubectl get rs` |
+| Follow rollout | `kubectl rollout status deployment/<name>` |
+| View rollout history | `kubectl rollout history deployment/<name>` |
+| Roll back Deployment revision | `kubectl rollout undo deployment/<name>` |
+| API field help | `kubectl explain <resource>[.<field>]` |
+| Work in explicit namespace | `kubectl get pods -n <namespace>` |
+
+## Quiz traps to rehearse
+
+1. A Deployment manages ReplicaSets; the ReplicaSet directly maintains matching Pod count.
+2. Deleting a Pod does not reduce desired replicas when a controller still wants the old count.
+3. A new Deployment Pod template produces a new ReplicaSet; Kubernetes replaces Pods instead of editing existing Pod containers in place.
+4. `status` is observed state. You normally express intent in `spec`.
+5. A successful apply proves API acceptance/update, not application health.
+6. Namespace is scope/organization, not automatic traffic or access isolation.
+7. Labels and selectors define membership; labels alone do not create ownership or security.
+8. `CrashLoopBackOff` is not one of the Pod phases.
+
+## Before you answer a resources MCQ
+
+Trace the object ownership first. Then ask whether the question changed **desired state** or only **observed state**. Finally, distinguish an API-level success from runtime proof. Those three checks eliminate a large fraction of plausible wrong answers.
+
+---
+
+# kubectl apply and live state
+
+Canonical ID: fpp:kubernetes-apply-live-state
+
+# kubectl apply and live state
+
+`kubectl apply` is a declarative object-management workflow. You provide configuration describing fields you want, kubectl sends an API request, and Kubernetes stores the resulting live object. Controllers then react to that live desired state.
+
+The key is to separate three things that are easy to mentally collapse:
+
+```text
+local file              live API object             runtime reality
+-----------             ---------------             ---------------
+what you intend   ───►  what cluster stores   ───►  what controllers/nodes made real
+app.yaml                spec + metadata + status    Pods, IPs, mounts, processes, traffic
+```
+
+These can diverge for legitimate reasons. The API adds defaults and metadata. Controllers update status. Other actors may update fields. The runtime can fail to converge even while the desired object is valid.
+
+## Imperative and declarative are control styles
+
+An imperative command describes an action: create this object, scale this Deployment, delete that Pod. A declarative workflow describes a target configuration and repeatedly applies it.
+
+Neither word automatically means good or bad. The important difference is what becomes the durable source of intent.
+
+For reproducible application delivery, versioned declarative configuration is useful because you can review the intended state, diff changes, and reapply it. For exploration or one-off inspection, imperative commands can be efficient.
+
+## Apply is field-aware update behavior
+
+Apply is not equivalent to blindly replacing the entire object with the contents of your file. Kubernetes object-management mechanisms track field ownership/management so multiple actors can update different parts of an object. Modern Kubernetes also provides Server-Side Apply, where the API server manages this field ownership explicitly.
+
+For KCNA understanding, keep the higher-level model:
+
+- your configuration declares fields you intend to manage;
+- the API merges/validates that intent into the live object according to apply semantics;
+- other Kubernetes components can own or update other fields, especially status;
+- conflicts can happen when actors try to manage the same field incompatibly.
+
+## "configured" is an API result, not an availability result
+
+Suppose this succeeds:
+
+```text
+deployment.apps/web configured
+```
+
+That tells you the apply operation completed for the Deployment object. It does not tell you:
+
+- the new ReplicaSet reached desired replicas;
+- Pods scheduled;
+- images pulled;
+- containers stayed running;
+- readiness passed;
+- Service endpoints selected the Pods;
+- external traffic reached the Service.
+
+Use the ownership/request path to choose the next proof rather than rerunning `apply` and hoping.
+
+## Drift can exist at several layers
+
+"Drift" is not one thing:
+
+1. **File versus live object:** someone changed the API object after your file was written.
+2. **Desired versus observed state:** the live spec asks for three replicas but status shows only two available.
+3. **Kubernetes versus application behavior:** Kubernetes sees Ready Pods, but a downstream dependency or business check still fails.
+
+Each drift needs different evidence.
+
+## Read before changing
+
+When an apply did not produce the expected result:
+
+1. Read the live object.
+2. Compare the fields you intended to change.
+3. Inspect conditions and events.
+4. Follow owner references into controllers and Pods.
+5. Continue into Services/networking/application probes if necessary.
+
+The durable skill is not command recall. It is knowing where declared intent lives, which control loop consumes it, and what observation proves the next state transition.
+
+---
+
+# Kubernetes components and the API request path
+
+Canonical ID: fpp:kubernetes-architecture-components
+
+# Kubernetes components and the API request path
+
+Kubernetes is easier to understand when each component has one primary responsibility in your mental model.
+
+| Component | Responsibility |
+| --- | --- |
+| kube-apiserver | Front door for the Kubernetes API; authenticates/authorizes/admission-processes requests and exposes cluster state |
+| etcd | Durable key-value store used by the control plane for API state |
+| kube-scheduler | Chooses a feasible node for an unscheduled Pod |
+| kube-controller-manager | Runs controllers that reconcile many built-in resources |
+| kubelet | Node agent that makes assigned Pod containers run and reports node/Pod status |
+| container runtime | Pulls images and creates/starts/stops containers through the runtime interface |
+| CNI implementation | Establishes Pod networking according to the cluster network design |
+| CoreDNS | Common cluster DNS implementation for Service/workload discovery |
+| Service dataplane | kube-proxy or another implementation programs Service forwarding behavior |
+
+The table is a responsibility map, not a promise that every cluster uses the same implementation. Managed Kubernetes may hide control-plane processes, and some clusters replace kube-proxy with an eBPF dataplane.
+
+## Trace one Deployment change
+
+Suppose you run `kubectl apply -f deployment.yaml`.
+
+```text
+kubectl
+  -> kube-apiserver
+      -> authentication / authorization / admission
+      -> API state persisted
+          -> Deployment controller observes desired state
+              -> ReplicaSet is created/updated
+                  -> Pods are created
+                      -> scheduler selects nodes
+                          -> Pod bindings appear in API state
+                              -> kubelet on each chosen node observes assignment
+                                  -> runtime starts containers
+                                  -> networking is prepared
+                                  -> status flows back through the API
+```
+
+The API server is central to coordination, but it does not SSH into a node and start the process. The scheduler selects a node but does not launch the container. The controller creates or updates API objects but does not directly run them. The kubelet is the node-side executor for assigned Pods.
+
+## Control plane failure is not one thing
+
+If the scheduler is temporarily unavailable, already-running Pods can continue to run. New unscheduled Pods may remain `Pending` because no component is assigning them to nodes.
+
+If a controller is unavailable, existing workload processes can continue, but desired-state drift may stop being repaired. If the API server is unreachable, clients and components lose the shared coordination surface, even though existing containers do not instantly vanish.
+
+This distinction is useful both for KCNA questions and incident diagnosis: ask whether the failure affects **new decisions**, **reconciliation**, or the **live data plane**.
+
+## API state versus runtime state
+
+Kubernetes components continuously report status through the API. That makes the API an important source of observed state, but it is still not a perfect substitute for a real user request.
+
+Useful proof points include:
+
+- `kubectl get` for current API-level summary state;
+- `kubectl describe` for conditions and events;
+- `kubectl get pod -o wide` for placement and Pod IP;
+- container logs and previous termination state for process behavior;
+- an actual network request for end-to-end service proof.
+
+When a question asks "what happens next?", follow the ownership chain instead of memorizing a component list.
+
+---
+
 # Kubernetes API and control loops
 
 Canonical ID: fpp:kubernetes-control-loop
@@ -351,6 +1194,669 @@ Managed Kubernetes changes ownership, not the API model. EKS operates the
 control-plane infrastructure across availability zones, while you still own
 workloads, identities, add-ons, network design, capacity, and application
 reliability.
+
+---
+
+# Deployments, rollouts, and rollbacks
+
+Canonical ID: fpp:kubernetes-deployments-rollouts
+
+# Deployments, rollouts, and rollbacks
+
+A Deployment is a higher-level controller for replaceable application replicas. It does not directly keep a fixed number of Pods alive. Instead, it manages ReplicaSets, and the active ReplicaSet manages Pods.
+
+```text
+Deployment/web
+   │ desired Pod template + rollout strategy
+   ▼
+ReplicaSet/web-abc123
+   │ desired replica count
+   ▼
+Pods
+```
+
+This ownership chain explains most Deployment behavior.
+
+## Why an image change creates a new ReplicaSet
+
+The Pod template is the recipe for new Pods. When a field inside `.spec.template` changes, such as the container image, the Deployment now wants a different Pod template than the one represented by the current ReplicaSet.
+
+Rather than mutating existing Pods in place, the Deployment creates a new ReplicaSet for the new template and shifts replicas between old and new ReplicaSets according to the rollout strategy.
+
+```text
+before
+Deployment → RS-v1 → Pod v1, Pod v1, Pod v1
+
+after image change
+Deployment ─┬→ RS-v1 → old Pods gradually reduced
+            └→ RS-v2 → new Pods gradually increased
+```
+
+This replacement model gives Kubernetes a history of rollout revisions and a controlled way to move from one template to another.
+
+## RollingUpdate is controlled overlap
+
+For the common `RollingUpdate` strategy, `maxUnavailable` limits how many desired replicas may be unavailable during the update, while `maxSurge` limits how many extra replicas may exist above the desired count.
+
+You do not need to memorize every rounding rule to understand the control intent. Ask:
+
+- How much temporary capacity may be added?
+- How much availability may be lost at once?
+- Are new Pods becoming Ready quickly enough for the rollout to advance?
+
+If new Pods never become Ready, the Deployment can stop making useful progress even though the new ReplicaSet and Pods were created successfully.
+
+## Rollout status is not end-to-end application proof
+
+`kubectl rollout status deployment/web` is valuable because it follows Deployment rollout conditions. A successful rollout tells you that the Deployment reached its rollout criteria. It does not automatically prove external DNS, Ingress routing, Service selectors, downstream dependencies, or business behavior.
+
+Keep the proof ladder:
+
+```text
+Deployment accepted
+  ↓
+new ReplicaSet created
+  ↓
+new Pods created and Ready
+  ↓
+rollout completes
+  ↓
+Service endpoints include healthy Pods
+  ↓
+real request succeeds
+```
+
+## Rollback changes desired template history
+
+A rollback asks the Deployment to return to a previous revision's Pod template. The controller then performs another reconciliation toward that earlier template. Rollback is not a time machine for application data, external databases, migrations, or side effects.
+
+That is why production rollback safety depends on more than Kubernetes. A technically valid Deployment rollback can still be unsafe if the application made incompatible schema changes or external side effects.
+
+## Scale and rollout are different dimensions
+
+Changing `.spec.replicas` changes desired capacity. Changing `.spec.template` changes the desired Pod template and triggers a rollout. This difference is useful when reading diffs:
+
+- replica count change → same template, different count;
+- template change → new ReplicaSet/revision;
+- metadata outside the Pod template may update the Deployment without creating a new ReplicaSet.
+
+## Observable proof
+
+For one rollout, inspect:
+
+1. Deployment generation and conditions.
+2. Old and new ReplicaSets plus their desired/current counts.
+3. Pod labels and owner references showing which ReplicaSet owns each Pod.
+4. Pod readiness and events.
+5. Service endpoints and an application request if availability matters.
+
+The KCNA-level understanding is not "run `kubectl rollout undo`." It is: **the Deployment changes desired Pod-template history, creates/manages ReplicaSets, and the cluster converges by replacing Pods rather than editing them in place.**
+
+---
+
+# Labels, selectors, and ReplicaSets
+
+Canonical ID: fpp:kubernetes-labels-replicasets
+
+# Labels, selectors, and ReplicaSets
+
+Labels are key/value metadata attached to Kubernetes objects. Their important role is not decoration. Labels let other objects and commands select sets of resources without hard-coding each resource name.
+
+That makes a selector a **membership rule**.
+
+```text
+Pod A labels: app=web, tier=frontend   ┐
+Pod B labels: app=web, tier=frontend   ├─ selector app=web → selected set
+Pod C labels: app=worker               ┘
+```
+
+ReplicaSets use this idea to express which Pods count toward their desired replica count.
+
+## ReplicaSet as a control loop
+
+A ReplicaSet is not "three Pods in a YAML file." It is a controller-backed desired state:
+
+```text
+desired replicas = 3
+selector = app=web
+
+controller counts matching Pods
+        │
+        ├─ actual = 2 → create one Pod
+        ├─ actual = 3 → do nothing
+        └─ actual = 4 → remove one Pod
+```
+
+The ReplicaSet's Pod template describes what new Pods should look like. Existing Pods are separate API objects. The controller continuously compares desired membership/count to the live selected set.
+
+This is why deleting a Pod from a ReplicaSet does not "scale it down." You changed actual state, not desired state. The controller notices the drift and recreates the missing capacity.
+
+## Selector and template labels must agree
+
+In a normal ReplicaSet or Deployment, the controller selector must match the labels placed on Pods created from the template. Otherwise the controller would create Pods that do not satisfy its own membership rule.
+
+The selector is therefore part of controller identity and ownership semantics, not merely a convenient query filter.
+
+## Adoption is why selectors deserve respect
+
+ReplicaSets can recognize matching Pods that were not originally created from their template. Depending on ownership state and compatibility, a controller can adopt matching Pods. This is one reason careless selector overlap is dangerous: two controllers should not be designed to compete for the same Pod population.
+
+For normal application delivery, let Deployments manage ReplicaSets rather than creating ReplicaSets directly. The ReplicaSet still matters because it is the layer that directly maintains a stable set of replaceable Pods.
+
+## Labels are not namespaces
+
+Labels organize and select objects. They do not create an API scope, isolation boundary, or security boundary. A namespace changes the naming/scope context for namespaced resources. A label is metadata used for grouping and selection.
+
+These concepts are often combined:
+
+```text
+namespace: payments
+label: app=api
+label: environment=staging
+```
+
+The namespace narrows object scope. The labels describe properties and selectable membership inside or across queries that include that scope.
+
+## Observable proof
+
+When investigating a ReplicaSet, connect the membership rule to live objects:
+
+- Inspect `.spec.replicas` for desired count.
+- Inspect `.spec.selector` for the membership rule.
+- Inspect `.spec.template.metadata.labels` for labels assigned to new Pods.
+- List Pods with the same selector and count them.
+- Inspect owner references to see which ReplicaSet owns a Pod.
+
+The mental model is simple: **a ReplicaSet is a reconciler over a selected set of Pods**. If you understand the selected set, you can predict the controller.
+
+---
+
+# Kubernetes manifests and API objects
+
+Canonical ID: fpp:kubernetes-manifests
+
+# Kubernetes manifests and API objects
+
+Kubernetes does not execute YAML. It exposes an API. A manifest is one convenient way to describe an API object that you want stored in that API.
+
+Keep this model in your head:
+
+```text
+manifest on disk
+    │ kubectl sends a request
+    ▼
+API server ── validates/admission ──► object stored as cluster state
+                                         │
+                                         ▼
+                                  controllers observe it
+                                         │
+                                         ▼
+                                  real resources change
+```
+
+That separation matters because `kubectl apply -f app.yaml` can succeed even when the application later fails. A successful write proves that the API accepted the object. It does not prove that a Pod was scheduled, an image was pulled, a readiness probe passed, or a Service can reach the Pod.
+
+## Read the object before reading the YAML syntax
+
+A typical object has a few recurring fields:
+
+- `apiVersion` selects an API group and version understood by the server.
+- `kind` selects the object type, such as `Pod`, `Deployment`, or `Service`.
+- `metadata` gives the object identity and organization data such as name, namespace, labels, and annotations.
+- `spec` describes desired state for objects that expose a spec.
+- `status` is normally written by Kubernetes components to report observed state.
+
+For learning, the important split is **intent versus observation**. You usually write `spec`; controllers and other cluster components update `status`.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27
+```
+
+Do not memorize this as a block of text. Trace ownership. The Deployment object says it wants three replicas whose Pod template carries `app: web`. The Deployment controller interprets that request and manages lower-level objects that make the desired replica count real.
+
+## Names, UIDs, and identity
+
+An object name identifies one object of a resource kind within its scope. The API also assigns a UID. If you delete `Deployment/web` and create another object with the same name, humans see the same name but Kubernetes sees a different object identity because the UID changed.
+
+This distinction becomes important when you inspect owner references and garbage collection: controllers own specific object instances, not merely strings that happen to reuse the same name.
+
+## YAML is only a serialization format
+
+Kubernetes accepts JSON at the API boundary; YAML is commonly used because it is easier for people to author. Indentation, lists, strings, numbers, and booleans matter because they change the data sent to the API. The API schema then decides whether those fields are valid for the selected resource version.
+
+When a manifest feels confusing, ask four questions instead of staring at indentation:
+
+1. What object am I asking the API to store?
+2. Which fields describe desired state?
+3. Which controller or component should react to it?
+4. What observation would prove that reaction happened?
+
+## Proof ladder
+
+Use evidence in layers:
+
+```text
+kubectl apply succeeded
+  ↓ proves API write succeeded
+kubectl get <object>
+  ↓ proves object exists and exposes summary state
+kubectl describe <object>
+  ↓ reveals conditions, ownership, events, scheduling or rollout clues
+kubectl get ... -o yaml
+  ↓ exposes detailed live spec/status/metadata
+logs / endpoints / application request
+  ↓ prove increasingly downstream behavior
+```
+
+The core KCNA habit is to avoid jumping from "the YAML looks right" to "the system works." Kubernetes is a set of APIs and control loops. Your job is to connect declared intent to observable state.
+
+---
+
+# Kubernetes namespaces and API scope
+
+Canonical ID: fpp:kubernetes-namespaces-scope
+
+# Kubernetes namespaces and API scope
+
+A Kubernetes namespace partitions the names of many API resources inside one cluster. It is primarily an API scope and organizational boundary.
+
+For a namespaced resource, identity includes the namespace:
+
+```text
+Deployment/web in namespace team-a
+Deployment/web in namespace team-b
+```
+
+Those are different objects even though both are named `web`.
+
+## Namespaced versus cluster-scoped
+
+Many everyday workload objects are namespaced: Pods, Deployments, Services, ConfigMaps, and Secrets. Other resources describe cluster-wide infrastructure or policy and are cluster-scoped, such as Nodes and Namespaces themselves.
+
+You can ask the API which resources are namespaced instead of memorizing a giant table. Conceptually, the important question is: **does this object's identity include a namespace, or does it exist once at cluster scope?**
+
+This changes how you query and troubleshoot. `kubectl get pods` operates in the current namespace unless you specify another namespace or all namespaces. If you look in the wrong namespace, "not found" can be a scope mistake rather than absence from the cluster.
+
+## Namespace is not a complete security boundary
+
+Creating two namespaces does not automatically prevent traffic between them, prevent users from reading each other's objects, or impose compute quotas.
+
+Those properties come from separate mechanisms, for example:
+
+- RBAC for API authorization;
+- NetworkPolicy for network traffic policy when supported by the network implementation;
+- ResourceQuota and LimitRange for resource governance;
+- Pod security controls and workload hardening for execution constraints.
+
+Namespaces give those policies a useful scope, but the namespace alone is not the policy.
+
+## Namespace and label solve different problems
+
+Use this distinction:
+
+```text
+namespace → API naming/scope boundary for namespaced resources
+label     → metadata used for grouping and selection
+```
+
+An application can be in namespace `payments` and carry labels such as `app=api` and `environment=staging`. The namespace decides where its namespaced API identity lives; labels allow Services, controllers, policies, and queries to select sets of objects.
+
+## Default namespace is still a namespace
+
+When you omit `metadata.namespace` for a namespaced object and your client context does not choose another namespace, you commonly end up working in `default`. That convenience can hide the scope from beginners.
+
+Make namespace explicit while learning:
+
+```text
+kubectl get pods -n payments
+kubectl get deployment web -n payments
+```
+
+The goal is not command memorization; it is to keep scope visible in your mental model.
+
+## Namespaces and DNS names
+
+Kubernetes service discovery also reflects namespace. A Service called `api` in namespace `payments` can be referred to with a namespace-qualified service DNS name such as `api.payments` from other namespaces, with the full cluster DNS suffix available when needed.
+
+This is a useful reminder that namespace is not just a UI folder. It participates in namespaced object identity and common discovery conventions.
+
+## Observable proof
+
+When an object appears missing or a reference resolves incorrectly:
+
+1. Check the current namespace in your kubectl context.
+2. Query the explicit namespace.
+3. Determine whether the resource type is namespaced or cluster-scoped.
+4. Inspect labels separately from namespace.
+5. If the problem is access or traffic isolation, inspect the relevant RBAC or network policy rather than assuming namespace isolation.
+
+The durable KCNA rule: **namespace tells you where a namespaced API object lives; policy tells you what actors or traffic are allowed to do.**
+
+---
+
+# Kubernetes networking request path
+
+Canonical ID: fpp:kubernetes-networking-request-path
+
+# Kubernetes networking request path
+
+Kubernetes networking becomes manageable when you stop treating "networking" as one component.
+
+Four responsibilities are commonly involved:
+
+1. **Pod connectivity** — a CNI-compatible network implementation gives Pods usable network interfaces and routes/connectivity according to the cluster design.
+2. **Service discovery and selection** — DNS gives a stable name; a Service selects matching backends; EndpointSlices hold concrete endpoint addresses and readiness information.
+3. **Service forwarding** — kube-proxy or another dataplane programs how traffic for a Service address reaches eligible endpoints.
+4. **North-south HTTP routing and policy** — an Ingress/Gateway implementation handles configured external routing; NetworkPolicy can restrict allowed Pod traffic when the network implementation enforces it.
+
+## Why Pod IPs matter
+
+Assigning only node IP addresses would force every application replica to share a node-level identity and require extra port mapping or proxy indirection for all Pod-to-Pod communication. The Kubernetes networking model instead gives each Pod its own network identity within the cluster network model.
+
+That does not make Pod IPs durable. A replacement Pod may receive a different IP. Stable discovery therefore lives one layer above the Pod through Services and DNS.
+
+## Trace one in-cluster request
+
+Assume a client Pod calls `http://catalog.default.svc.cluster.local:8080`.
+
+```text
+client Pod
+  -> DNS lookup through cluster DNS
+  -> Service name resolves to a stable Service address
+  -> Service dataplane matches that destination
+  -> one ready endpoint from EndpointSlice is selected
+  -> cluster network carries packets to the destination Pod IP
+  -> application process listening on targetPort handles the request
+  -> response returns to the client
+```
+
+Several things can break independently:
+
+- DNS may fail even while the Service and endpoints are correct.
+- A Service selector may match zero Pods.
+- Pods may match but be unready, leaving no usable endpoints.
+- `port` and `targetPort` may disagree with the process listener.
+- NetworkPolicy may deny the flow.
+- The application may accept TCP but return an HTTP error.
+
+## External HTTP adds another routing layer
+
+Ingress and Gateway API resources describe HTTP/TLS routing intent. A controller or managed integration translates that intent into a proxy or load balancer configuration. The API object itself is not the live proxy.
+
+```text
+external client
+  -> DNS / public address
+  -> load balancer or ingress/gateway dataplane
+  -> host/path rule
+  -> Service
+  -> ready endpoint
+  -> Pod
+```
+
+The exact implementation matters. A cloud load balancer may target nodes, Pod IPs, or another proxy depending on the controller and configuration.
+
+## NetworkPolicy is allowed-connectivity intent
+
+NetworkPolicy selects Pods and describes allowed ingress and/or egress flows. Policies only have effect when the cluster network implementation supports enforcement. A namespace boundary alone is not a network firewall.
+
+When debugging, inspect from stable intent toward concrete execution: DNS result → Service → EndpointSlice → Pod IP/readiness → policy → listener → real request.
+
+---
+
+# Pod model, lifecycle, and ownership
+
+Canonical ID: fpp:kubernetes-pod-model
+
+# Pod model, lifecycle, and ownership
+
+A Pod is the unit Kubernetes schedules onto a node. It is not a tiny virtual machine and it is not usually the durable thing you manage directly.
+
+Think of a Pod as an **execution record for one placement decision**. Its containers are co-located on one node, share the Pod network identity, and may share declared volumes. The Pod has an identity and lifecycle of its own.
+
+## Restart is not replacement
+
+This is one of the most useful distinctions in Kubernetes:
+
+```text
+container process exits
+    │
+    ├─ kubelet may restart the container inside the same Pod
+    │     same Pod UID, same scheduled node
+    │
+    └─ Pod itself is deleted/lost
+          controller may create a different Pod
+          new Pod UID, possibly a different node and IP
+```
+
+The kubelet runs on the node and is responsible for keeping the containers of an assigned Pod consistent with the Pod specification. A container restart can therefore happen without creating a new Pod.
+
+By contrast, a Deployment or ReplicaSet does not repair a dead process inside the old Pod. Its control loop cares that the desired number of matching Pods exists. If a Pod disappears, the controller can create another Pod object.
+
+## Pod phase is a coarse summary
+
+The Pod `status.phase` is a high-level lifecycle summary such as `Pending`, `Running`, `Succeeded`, `Failed`, or `Unknown`. It is not a complete health diagnosis.
+
+A Pod can be `Running` while an application container is repeatedly crashing, because "Running" mainly tells you that the Pod has been bound to a node and at least one container is running, starting, or restarting. To understand the failure, inspect container states, restart counts, conditions, and events.
+
+`CrashLoopBackOff` is a common troubleshooting label shown by kubectl for repeated container restart backoff. Treat it as a clue about a container lifecycle loop, not as a Pod phase you should memorize alongside `Pending` and `Running`.
+
+## The node matters
+
+Once a Pod is scheduled, that Pod is tied to its node. Kubernetes does not live-migrate the Pod object to another node. If the node becomes unusable and the workload is controller-managed, replacement means creating another Pod, which can then be scheduled elsewhere.
+
+This explains several consequences:
+
+- Pod IPs are normally disposable.
+- Files stored only in the container writable layer are disposable with the Pod.
+- A stable Service name is more appropriate for reaching replaceable application replicas.
+- Persistent data needs storage semantics independent of one disposable Pod instance.
+
+## Ownership tells you who should fix drift
+
+When a Pod is managed by a controller, inspect `metadata.ownerReferences` or use `kubectl describe` to find the owner chain.
+
+```text
+Deployment
+   owns desired rollout
+      ↓
+ReplicaSet
+   owns desired replica count
+      ↓
+Pods
+   execute on nodes
+```
+
+If you manually delete one Pod from a healthy three-replica Deployment, the interesting event is not the deletion. The interesting event is what notices the missing replica and what creates the replacement.
+
+Answer: the ReplicaSet controller observes that actual matching Pods fell below its desired replica count and creates a replacement Pod. The Deployment sits one level higher, managing ReplicaSets and rollout intent.
+
+## Observable proof
+
+When learning Pods, inspect the same event at several layers:
+
+1. `kubectl get pod -o wide` — identity, phase, node, IP.
+2. `kubectl describe pod` — ownership, conditions, container states, events.
+3. `kubectl get pod -o yaml` — detailed status and owner references.
+4. `kubectl get rs` and `kubectl get deployment` — upstream desired counts and rollout ownership.
+
+The goal is not to memorize output columns. It is to answer: **who owns this state, what should happen next, and what evidence would show that it happened?**
+
+---
+
+# Kubernetes scheduling and placement constraints
+
+Canonical ID: fpp:kubernetes-scheduling-placement
+
+# Kubernetes scheduling and placement constraints
+
+The scheduler does not ask "which node looks emptiest right now?" It evaluates declared constraints and available schedulable capacity, filters out infeasible nodes, scores feasible choices, and records a placement decision.
+
+## Requests are scheduling promises
+
+CPU and memory **requests** are important inputs to scheduling. A node can show low real-time utilization while still being unable to accept a Pod if the node's allocatable capacity is already committed by existing requests.
+
+Limits answer a different runtime question. CPU limits can throttle execution and memory limits can contribute to OOM termination, but limits are not a substitute for requests when the scheduler decides whether a node has room.
+
+## Several placement mechanisms answer different questions
+
+- `nodeSelector` is a simple hard requirement for matching node labels.
+- **Node affinity** expresses required or preferred relationships to node labels with richer operators.
+- **Pod affinity/anti-affinity** expresses relationships to other Pods, often to co-locate or separate workloads.
+- **Taints** mark nodes with effects that repel Pods; **tolerations** allow a Pod to remain eligible for a matching taint. A toleration does not force placement onto that node.
+- **Topology spread constraints** express how replicas should be distributed across topology domains such as zones or nodes.
+
+These mechanisms do not replace resource feasibility. A Pod can tolerate a taint and match an affinity rule but still remain unschedulable because its resource request cannot fit.
+
+## DaemonSet is controller intent, not a scheduler replacement
+
+A DaemonSet is useful when you want one Pod on all or selected eligible nodes, for example a log collector, node monitoring agent, storage/node plugin, or networking component.
+
+The DaemonSet controller creates Pods for eligible nodes. Those Pods still participate in Kubernetes placement semantics; the controller is expressing per-node desired state rather than becoming the node-side process executor.
+
+## Read Pending as a decision failure
+
+If a Pod remains `Pending`, inspect events before changing random settings. Common scheduling reasons include:
+
+- insufficient requested CPU or memory capacity;
+- node selector or required affinity that matches no node;
+- untolerated taints;
+- volume topology constraints;
+- topology spread constraints that cannot be satisfied;
+- other admission or scheduling policy constraints.
+
+`kubectl describe pod` often exposes scheduler events describing why no node was feasible. The useful question is not merely "is it Pending?" but **which constraint eliminated every candidate node?**
+
+## Predict before touching the cluster
+
+Given a Pod and three nodes, write down each hard constraint first. Eliminate nodes that fail one requirement. Only after a feasible set exists should preferred rules and scoring affect the final choice.
+
+This makes scheduling questions mechanical: **hard constraints determine possibility; preferences influence choice among possible nodes.**
+
+---
+
+# Kubernetes identity, authorization, admission, and workload boundaries
+
+Canonical ID: fpp:kubernetes-security-access
+
+# Kubernetes identity, authorization, admission, and workload boundaries
+
+Kubernetes security is not one permission check. A useful model follows an API request and then asks which controls still matter after the workload is running.
+
+## API request path
+
+```text
+client request
+  -> authentication: who is the caller?
+  -> authorization: may that identity perform this verb on this resource?
+  -> admission: is the proposed object allowed or should it be mutated?
+  -> persist accepted API state
+```
+
+**Authentication** establishes identity. A kubeconfig may carry a client certificate, token, or information used with an external identity provider. Having credentials does not automatically mean the caller may do everything.
+
+**Authorization** answers whether the authenticated identity may perform an action. RBAC is a common Kubernetes authorization model. A `Role` or `ClusterRole` defines allowed operations; a `RoleBinding` or `ClusterRoleBinding` connects those permissions to users, groups, or ServiceAccounts.
+
+**Admission** evaluates requests after authentication and authorization but before accepted objects are persisted. Admission can validate or mutate objects. Pod Security Admission is one example that can enforce Pod Security Standards at namespace scope.
+
+## Workload identity is not a human kubeconfig
+
+Pods commonly receive a **ServiceAccount** identity. That identity can be bound to RBAC permissions for Kubernetes API access. Give workloads only the permissions they require; do not treat the default ServiceAccount as an all-purpose application identity.
+
+Cloud workload identity is a separate integration boundary. A Kubernetes ServiceAccount may be mapped to a cloud identity mechanism, but the Kubernetes object itself is not an AWS IAM role, Google service account, or Azure managed identity.
+
+## Secrets need multiple controls
+
+A Kubernetes `Secret` is a distinct API resource intended for sensitive data, but ordinary manifest values are base64-encoded rather than inherently encrypted. Protect Secrets with API authorization, encryption at rest, restricted mounts, short-lived identity where possible, and careful logging.
+
+Avoid assuming that "inside a namespace" means "private." Namespace scope helps organize API objects and RBAC bindings, but it is not by itself a process isolation, network firewall, or secret-encryption boundary.
+
+## Pod and network controls answer different questions
+
+Pod Security Standards define increasingly restrictive workload-security profiles. Pod Security Admission can enforce those profiles. These controls are about what a Pod is allowed to request: privileges, host namespaces, capabilities, and related settings.
+
+NetworkPolicy instead describes which network flows are allowed for selected Pods, when the network implementation supports enforcement. RBAC controls API actions; NetworkPolicy controls traffic; Pod security controls workload privileges. None substitutes for the others.
+
+## A practical least-privilege checklist
+
+For a workload that only needs to read one ConfigMap and call one backend:
+
+1. Give it a dedicated ServiceAccount.
+2. Bind only the required API read permission, if API access is actually needed.
+3. Avoid mounting unrelated Secrets.
+4. Apply an appropriate Pod security profile.
+5. Restrict network ingress/egress where the cluster dataplane enforces policy.
+6. Verify the workload can perform its required transaction and cannot perform a nearby forbidden action.
+
+Security evidence includes both positive and negative tests: prove the intended action works and the disallowed action fails.
+
+---
+
+# Kubernetes persistent storage lifecycle
+
+Canonical ID: fpp:kubernetes-storage-lifecycle
+
+# Kubernetes persistent storage lifecycle
+
+Containers and Pods are replaceable, so durable data needs a lifecycle that is not tied to one container writable layer.
+
+## Separate request, policy, resource, and executor
+
+```text
+Pod references PVC
+  -> PVC requests capacity/access characteristics
+      -> StorageClass selects a provisioning policy
+          -> CSI driver/provisioner talks to the storage system
+              -> PV represents the bound storage resource
+                  -> node-side CSI operations make it usable by the Pod
+```
+
+A **PersistentVolumeClaim (PVC)** is the workload-side request. A **PersistentVolume (PV)** represents storage made available to the cluster. A **StorageClass** describes a class/provisioning policy. A **CSI driver** is the integration that performs storage-system operations supported by that provider.
+
+The API objects express intent and state; they do not themselves create a cloud disk or mount a filesystem.
+
+## Dynamic provisioning
+
+With dynamic provisioning, a PVC references or selects a StorageClass and the associated provisioner can create suitable backing storage. A PVC that stays `Pending` is therefore not automatically a scheduler problem. Inspect the StorageClass, provisioner/CSI driver, requested access mode and capacity, topology, events, and quotas.
+
+Some StorageClasses use `WaitForFirstConsumer` volume binding. That intentionally delays provisioning or binding until a Pod exists so storage topology can be chosen consistently with Pod scheduling.
+
+## Access mode is not a performance tier
+
+Access modes describe supported mount access such as `ReadWriteOnce`, `ReadOnlyMany`, and `ReadWriteMany`. They do not tell you latency, IOPS, backup policy, replication, or whether the storage survives a zone failure.
+
+Choose storage using application semantics: durability, sharing model, latency, backup/restore, consistency, topology, and recovery requirements.
+
+## Replacement does not mean universal reattachment
+
+If a Pod using a PVC is replaced, Kubernetes can schedule a new Pod that references the same claim only where the underlying storage can be attached or accessed.
+
+A zonal block volume is a useful example: a replacement Pod may move to another node in the same zone, but the same zonal volume cannot simply appear in another availability zone. The scheduler and storage integration must respect topology.
+
+## Reclaim policy controls what happens after the claim
+
+PV reclaim policy affects the backing resource after the claim is released. `Delete` may remove dynamically provisioned storage; `Retain` keeps the resource for manual recovery or reuse workflow. Do not confuse reclaim behavior with backup.
+
+## StatefulSet adds stable claim identity
+
+StatefulSets can use `volumeClaimTemplates` so each Pod identity receives its own PVC. Replacing `db-0` can preserve the claim associated with that ordinal while the Pod object itself is recreated.
+
+The durable mental model is: **Pod lifecycle and storage lifecycle intersect, but they are not the same lifecycle.**
 
 ---
 

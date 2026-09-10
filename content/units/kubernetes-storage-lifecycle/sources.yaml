@@ -1,0 +1,31 @@
+schema_version: 1
+unit_id: fpp:kubernetes-storage-lifecycle
+sources:
+  - id: source:kubernetes-storage-lifecycle-persistent-volumes
+    title: Persistent Volumes
+    url: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: PVC/PV lifecycle, access modes, reclaim policy, and binding behavior.
+  - id: source:kubernetes-storage-classes
+    title: Storage Classes
+    url: https://kubernetes.io/docs/concepts/storage/storage-classes/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Dynamic provisioning, provisioners, binding modes, and class semantics.
+  - id: source:kubernetes-csi
+    title: CSI Volume Cloning
+    url: https://kubernetes.io/docs/concepts/storage/volume-pvc-datasource/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream CSI-backed volume feature context and PVC data-source behavior.
+  - id: source:kubernetes-statefulset-storage
+    title: StatefulSets
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Stable identity and volumeClaimTemplates for stateful workloads.

@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-pod-model
+slug: kubernetes-pod-model
+title: Pod model, lifecycle, and ownership
+summary: Reason about Pods as disposable execution records with one scheduled node, shared network identity, lifecycle phases, and controller ownership.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 21
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:kubernetes-manifests, fpp:container-lifecycle]
+objectives:
+  - id: fpp:kubernetes-pod-model/lifecycle
+    title: Distinguish Pod phase, container state, restart behavior, and replacement
+    critical: true
+  - id: fpp:kubernetes-pod-model/ownership
+    title: Trace who owns and replaces a Pod instead of treating the Pod as a durable machine
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

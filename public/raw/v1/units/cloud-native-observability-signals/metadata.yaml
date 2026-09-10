@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:cloud-native-observability-signals
+slug: cloud-native-observability-signals
+title: Metrics, logs, traces, events, and observability
+summary: Use metrics, logs, traces, Kubernetes events, and end-to-end probes as complementary evidence rather than treating one monitoring tool as complete observability.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: operations
+estimated_minutes: 26
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:troubleshoot-process-to-pod]
+objectives:
+  - id: fpp:cloud-native-observability-signals/signals
+    title: Distinguish metrics, logs, traces, events, and synthetic or user-visible probes by the questions they answer
+    critical: true
+  - id: fpp:cloud-native-observability-signals/tools
+    title: Explain the roles of Prometheus and OpenTelemetry without treating them as interchangeable monitoring products
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [cloud-native-architecture]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

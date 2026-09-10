@@ -1,0 +1,45 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-resources-review
+sources:
+  - id: source:kcna-resources-pods
+    title: Pods
+    url: https://kubernetes.io/docs/concepts/workloads/pods/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official Pod model and lifecycle reference.
+  - id: source:kcna-resources-replicasets
+    title: ReplicaSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official ReplicaSet, selector, and replica reconciliation reference.
+  - id: source:kcna-resources-deployments
+    title: Deployments
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official Deployment rollout and rollback reference.
+  - id: source:kcna-resources-declarative
+    title: Declarative Management of Kubernetes Objects Using Configuration Files
+    url: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official declarative object-management and apply reference.
+  - id: source:kcna-resources-namespaces
+    title: Namespaces
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official namespace scope reference.
+  - id: source:kcna-resources-kodekloud-context
+    title: KCNA Kubernetes Resources module
+    url: https://learn.kodekloud.com/learn/courses/kubernetes-and-cloud-native-associate-kcna/module/509501a0-727a-41b9-b9a5-e022735c098e/lesson/faad5e02-0ff1-409c-ae1e-63441469657a
+    publisher: KodeKloud
+    type: reference
+    verified_at: 2026-09-10
+    note: Study-context link for the owner's completed module; the learning content here is independently authored.

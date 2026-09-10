@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kubernetes-deployments-rollouts
+practices:
+  - id: fpp:kubernetes-deployments-rollouts/p-watch-rollout
+    title: Watch a Deployment create a new ReplicaSet
+    mode: guided_markdown
+    prompt: In a disposable namespace, change one Deployment image and trace the ownership chain before, during, and after the rollout.
+    steps:
+      - Record the Deployment and current ReplicaSet names, revisions, and replica counts.
+      - Change the Pod-template image and watch Deployments, ReplicaSets, and Pods together.
+      - Explain which old and new ReplicaSet counts changed and verify one new Pod owner reference.
+    success_checks:
+      - A new ReplicaSet is connected to the changed Pod template.
+      - The explanation separates Deployment rollout ownership from ReplicaSet replica ownership.
+    safety:
+      - Use a disposable namespace or test cluster rather than a production workload.

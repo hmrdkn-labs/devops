@@ -1,0 +1,10 @@
+schema_version: 1
+unit_id: fpp:kubernetes-deployments-rollouts
+sources:
+  - id: source:kubernetes-deployments
+    title: Deployments
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream Deployment, rollout strategy, revision, rollback, and ReplicaSet ownership reference.

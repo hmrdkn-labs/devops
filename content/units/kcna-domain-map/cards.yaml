@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kcna-domain-map
+revision: 1
+cards:
+  - id: fpp:kcna-domain-map/c-weight
+    type: short
+    front: What is the largest current KCNA domain and its weight?
+    back: Kubernetes Fundamentals, 44%.
+    critical_points: []
+    objective_ids: [fpp:kcna-domain-map/domains]
+  - id: fpp:kcna-domain-map/c-orchestration
+    type: short
+    front: Which KCNA domain contains networking, security, troubleshooting, and storage?
+    back: Container Orchestration, weighted at 28%.
+    critical_points: []
+    objective_ids: [fpp:kcna-domain-map/domains]
+  - id: fpp:kcna-domain-map/c-layers
+    type: short
+    front: What five layers are useful for reasoning through a cloud-native behavior?
+    back: Intent/configuration, control/reconciliation, execution/data plane, workload/state, and feedback/proof.
+    critical_points: []
+    objective_ids: [fpp:kcna-domain-map/layers]
+  - id: fpp:kcna-domain-map/c-controller
+    type: prompt
+    front: Explain why a controller and an executor should not be treated as the same thing.
+    back: A controller observes desired and current state and decides or records what should change. An executor such as a kubelet, runtime, proxy, or network dataplane actually performs the work.
+    critical_points: [Decision/reconciliation is distinct from execution]
+    objective_ids: [fpp:kcna-domain-map/layers]
+  - id: fpp:kcna-domain-map/c-proof
+    type: scenario
+    front: A manifest was accepted by the API server. Does that prove the application is serving users?
+    back: No. API acceptance proves the intent was accepted, not that controllers reconciled it, Pods became ready, networking selected them, or a real request succeeded.
+    critical_points: [Accepted intent is not runtime proof]
+    objective_ids: [fpp:kcna-domain-map/layers]

@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-storage-lifecycle
+slug: kubernetes-storage-lifecycle
+title: Kubernetes persistent storage lifecycle
+summary: Trace durable storage from a workload claim through StorageClass and CSI provisioning to a bound volume, mounted Pod, topology constraints, and reclaim behavior.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 27
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:config-secrets-storage, fpp:kubernetes-pod-model]
+objectives:
+  - id: fpp:kubernetes-storage-lifecycle/claim
+    title: Trace PVC, StorageClass, CSI driver, PV, and Pod mount responsibilities
+    critical: true
+  - id: fpp:kubernetes-storage-lifecycle/failure-domain
+    title: Reason about access modes, topology, reclaim policy, and Pod replacement without assuming storage is globally movable
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

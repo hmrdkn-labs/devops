@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-namespaces-scope
+sources:
+  - id: source:kubernetes-namespaces
+    title: Namespaces
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream namespace scope, default namespaces, and namespace-usage reference.
+  - id: source:kubernetes-dns-services
+    title: DNS for Services and Pods
+    url: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream service and Pod DNS naming behavior, including namespace-qualified service names.

@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-apply-live-state
+revision: 1
+questions:
+  - id: fpp:kubernetes-apply-live-state/q-configured
+    kind: scenario
+    prompt: kubectl apply returns configured after you change an image, but the application remains unavailable. What should you conclude before running any more commands?
+    model_answer: Conclude only that the Deployment API update succeeded. The next hypothesis is whether the Deployment and new ReplicaSet reconciled, then whether Pods became Ready and networking selected them. Read live state and follow the ownership/request path instead of treating apply as end-to-end proof.
+    critical_points:
+      - configured proves the API update, not application availability.
+      - Choose the next observation from the control and request path.
+    objective_ids: [fpp:kubernetes-apply-live-state/live-state]
+  - id: fpp:kubernetes-apply-live-state/q-three-states
+    kind: explain
+    prompt: Why should you distinguish a local manifest, the live API object, and runtime reality when using declarative Kubernetes configuration?
+    model_answer: The file is authored intent, the live object is the API's current desired/observed record with defaults and updates from multiple actors, and runtime reality is what controllers and nodes actually achieved. A failure or drift can exist between any two of those layers.
+    critical_points:
+      - Local configuration and live object are not automatically identical.
+      - Live desired state and runtime convergence are separate layers.
+    objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]

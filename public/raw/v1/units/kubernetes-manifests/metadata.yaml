@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-manifests
+slug: kubernetes-manifests
+title: Kubernetes manifests and API objects
+summary: Read a Kubernetes manifest as a request to the API, separate desired spec from observed status, and prove what the cluster accepted.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 18
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:git-yaml-declarative, fpp:kubernetes-control-loop]
+objectives:
+  - id: fpp:kubernetes-manifests/object-shape
+    title: Explain apiVersion, kind, metadata, spec, and status as API object fields
+    critical: true
+  - id: fpp:kubernetes-manifests/proof-boundary
+    title: Distinguish API acceptance from successful workload execution
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

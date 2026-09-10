@@ -1,0 +1,18 @@
+schema_version: 1
+unit_id: fpp:cloud-native-release-debugging
+practices:
+  - id: fpp:cloud-native-release-debugging/p-failed-release
+    title: Localize a failed release without random edits
+    mode: guided_markdown
+    prompt: Use a disposable Deployment or a recorded incident and build a proof ledger from artifact identity to user request.
+    steps:
+      - Verify the desired image digest or tag for the target revision.
+      - Inspect rollout status, ReplicaSets, and Pod events.
+      - Inspect container state and current/previous logs if a restart occurred.
+      - Verify readiness and EndpointSlice membership.
+      - Make the same request a user or upstream service would make.
+    success_checks:
+      - The first broken boundary is named before a fix is proposed.
+      - Running, Ready, endpoint membership, and successful request are treated as different evidence.
+    safety:
+      - Prefer a disposable namespace and read-only inspection before any rollout change.

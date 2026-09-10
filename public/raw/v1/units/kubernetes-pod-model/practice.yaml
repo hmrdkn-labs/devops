@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kubernetes-pod-model
+practices:
+  - id: fpp:kubernetes-pod-model/p-delete-watch
+    title: Watch ownership repair a deleted Pod
+    mode: guided_markdown
+    prompt: Use any disposable test cluster with a three-replica Deployment and trace one manual Pod deletion.
+    steps:
+      - Record the Deployment, ReplicaSet, and three Pod names and UIDs.
+      - Delete one Pod and watch Pods and ReplicaSets change.
+      - Compare the deleted and replacement Pod UID, node, and IP, then inspect owner references.
+    success_checks:
+      - The replacement is identified as a new Pod object.
+      - The ReplicaSet is named as the direct replica-count owner.
+    safety:
+      - Use a disposable namespace or test cluster rather than production.

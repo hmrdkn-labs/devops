@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-scheduling-placement
+revision: 1
+cards:
+  - id: fpp:kubernetes-scheduling-placement/c-request
+    type: short
+    front: Which resource value is a primary scheduling input, request or current usage?
+    back: The declared resource request, together with node allocatable capacity and other constraints.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-scheduling-placement/feasibility]
+  - id: fpp:kubernetes-scheduling-placement/c-selector
+    type: short
+    front: What does nodeSelector express?
+    back: A simple hard requirement that a node's labels match the Pod's specified labels.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy]
+  - id: fpp:kubernetes-scheduling-placement/c-taint
+    type: short
+    front: What is the relationship between a taint and a toleration?
+    back: A taint repels Pods with an effect; a matching toleration allows a Pod to remain eligible despite that taint.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy]
+  - id: fpp:kubernetes-scheduling-placement/c-hard-soft
+    type: prompt
+    front: Explain the difference between a required placement rule and a preferred placement rule.
+    back: A required rule can make a node infeasible if it is not satisfied. A preferred rule influences scoring among otherwise feasible nodes but does not by itself make a nonmatching node impossible.
+    critical_points: [Hard constraints filter; preferences score]
+    objective_ids: [fpp:kubernetes-scheduling-placement/feasibility]
+  - id: fpp:kubernetes-scheduling-placement/c-daemonset
+    type: scenario
+    front: You need a node log collector on every eligible node. Which controller pattern is designed for this?
+    back: A DaemonSet, which maintains a Pod on each eligible node according to its selection and scheduling constraints.
+    critical_points: [DaemonSet expresses per-node desired replicas]
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy]

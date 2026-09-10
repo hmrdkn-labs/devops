@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:cncf-ecosystem-community
+practices:
+  - id: fpp:cncf-ecosystem-community/p-project-map
+    title: Map projects to responsibility and interface
+    mode: guided_markdown
+    prompt: Choose five unfamiliar CNCF projects and classify each by responsibility before reading implementation details.
+    steps:
+      - For each project, write one sentence describing the problem it solves.
+      - Mark whether it is mainly control plane, data plane, runtime, delivery, or observability tooling.
+      - Identify one interface or upstream/downstream component it interacts with.
+      - Record whether the project is needed by Kubernetes itself or is an optional ecosystem choice.
+    success_checks:
+      - No project is classified only by logo or landscape category.
+      - Optional ecosystem tools are not described as mandatory Kubernetes components.
+    safety: []

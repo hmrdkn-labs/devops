@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-resources-review
+practices:
+  - id: fpp:kcna-kubernetes-resources-review/p-trace
+    title: Trace one Deployment from YAML to replacement Pod
+    mode: guided_markdown
+    prompt: Start with a three-replica Deployment manifest, then describe what happens after one Pod is manually deleted and after the image is changed.
+    steps:
+      - Identify the desired replica count, selector, and Pod template.
+      - Explain which controller replaces the manually deleted Pod and why.
+      - Explain why changing the image creates a new ReplicaSet instead of editing existing Pods in place.
+      - Name one API-level observation and one end-to-end observation for each change.
+    success_checks:
+      - ReplicaSet is identified as the direct Pod-count reconciler.
+      - Deployment is identified as the rollout/ReplicaSet owner.
+      - API success is not treated as proof that a real request succeeds.
+    safety: []

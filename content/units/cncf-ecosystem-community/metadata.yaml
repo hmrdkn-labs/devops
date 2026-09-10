@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:cncf-ecosystem-community
+slug: cncf-ecosystem-community
+title: CNCF ecosystem, projects, standards, and community
+summary: Place Kubernetes within the CNCF ecosystem, recognize common project responsibilities, and distinguish open interfaces, project maturity, community governance, and the landscape catalog.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: architecture
+estimated_minutes: 28
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:kcna-domain-map, fpp:cloud-native-architecture-principles]
+objectives:
+  - id: fpp:cncf-ecosystem-community/projects
+    title: Match major cloud-native projects and interfaces to their responsibilities without treating the CNCF Landscape as one required stack
+    critical: true
+  - id: fpp:cncf-ecosystem-community/community
+    title: Explain CNCF and Kubernetes collaboration structures and why open governance and interfaces matter
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [cloud-native-architecture]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

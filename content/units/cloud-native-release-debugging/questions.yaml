@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:cloud-native-release-debugging
+revision: 1
+questions:
+  - id: fpp:cloud-native-release-debugging/q-canary
+    kind: explain
+    prompt: Why is running one Pod with the new version not enough by itself to call a release a canary?
+    model_answer: Canary delivery requires controlled exposure of a subset of traffic or users plus observation criteria that decide whether to expand or abort. One new Pod without known traffic allocation and measured outcomes is merely a mixed-version workload.
+    critical_points:
+      - Canary is defined by controlled traffic exposure and measurement.
+      - The traffic-routing executor must be identified.
+    objective_ids: [fpp:cloud-native-release-debugging/strategy]
+  - id: fpp:cloud-native-release-debugging/q-ready
+    kind: scenario
+    prompt: New Pods are Running but never appear in the Service EndpointSlice as ready backends. What should you investigate before blaming the Service dataplane?
+    model_answer: Inspect the Pods' readiness probes and conditions, application listener/port, startup state, and Service selector. A Running Pod can still be unready and therefore excluded from ready Service endpoints.
+    critical_points:
+      - Running is not the same as ready for traffic.
+      - Endpoint eligibility should be proved before debugging packet forwarding.
+    objective_ids: [fpp:cloud-native-release-debugging/evidence]

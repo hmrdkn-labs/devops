@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kubernetes-namespaces-scope
+practices:
+  - id: fpp:kubernetes-namespaces-scope/p-scope
+    title: Prove object scope explicitly
+    mode: guided_markdown
+    prompt: Create or inspect two disposable namespaces and compare namespaced and cluster-scoped lookups.
+    steps:
+      - List the same resource kind in each namespace and identify namespace-qualified object identity.
+      - Query a cluster-scoped resource and explain why a namespace flag does not define its identity.
+      - Write which additional mechanism you would inspect for API authorization and for network isolation.
+    success_checks:
+      - Namespaced and cluster-scoped identity are distinguished correctly.
+      - RBAC and network policy are not conflated with namespace creation.
+    safety:
+      - Use disposable namespaces or read-only inspection in shared clusters.

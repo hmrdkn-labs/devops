@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:cloud-native-architecture-principles
+slug: cloud-native-architecture-principles
+title: Cloud-native architecture principles
+summary: Understand cloud-native systems as loosely coupled, declarative, observable, resilient, automated systems rather than as applications that merely happen to run in a cloud.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: architecture
+estimated_minutes: 26
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:container-lifecycle, fpp:kubernetes-control-loop]
+objectives:
+  - id: fpp:cloud-native-architecture-principles/properties
+    title: Explain the architectural properties that make cloud-native systems adaptable and resilient
+    critical: true
+  - id: fpp:cloud-native-architecture-principles/scale
+    title: Distinguish replication, autoscaling, elasticity, and serverless execution without treating them as synonyms
+    critical: false
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [cloud-native-architecture]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-pod-model
+sources:
+  - id: source:kubernetes-pods-detailed
+    title: Pods
+    url: https://kubernetes.io/docs/concepts/workloads/pods/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream Pod model, lifecycle boundary, and controller-ownership overview.
+  - id: source:kubernetes-pod-lifecycle
+    title: Pod Lifecycle
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream Pod phases, container states, restart behavior, and termination reference.

@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kubernetes-apply-live-state
+practices:
+  - id: fpp:kubernetes-apply-live-state/p-compare
+    title: Compare authored, live, and observed state
+    mode: guided_markdown
+    prompt: Apply one Deployment in a disposable namespace, then compare the local file with the live API object and runtime evidence.
+    steps:
+      - Apply the manifest and record only what the command result actually proves.
+      - Fetch the live Deployment as YAML and identify fields added or updated by the cluster.
+      - Compare desired replicas with available replicas and then inspect the owning ReplicaSet and Pods.
+    success_checks:
+      - The write result is not described as proof of application health.
+      - At least one difference between authored configuration and live/observed state is identified.
+    safety:
+      - Use a disposable namespace or test cluster rather than production.

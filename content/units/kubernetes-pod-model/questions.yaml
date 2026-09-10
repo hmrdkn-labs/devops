@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-pod-model
+revision: 1
+questions:
+  - id: fpp:kubernetes-pod-model/q-delete
+    kind: predict
+    prompt: A Deployment has three healthy Pods. You delete one Pod manually. Who replaces it, and what changes about the replacement?
+    model_answer: The ReplicaSet controller detects that the number of matching Pods fell below its desired replica count and creates a new Pod. The replacement is a new Pod object with a new UID and potentially a different node and Pod IP.
+    critical_points:
+      - ReplicaSet reconciles the replica count.
+      - Replacement creates a new Pod identity rather than reviving the deleted Pod.
+    objective_ids: [fpp:kubernetes-pod-model/ownership]
+  - id: fpp:kubernetes-pod-model/q-running
+    kind: scenario
+    prompt: A Pod shows phase Running, but the application is unusable and the restart count keeps increasing. Why is that not contradictory?
+    model_answer: Pod phase is a coarse lifecycle summary. A Pod can remain Running while one container repeatedly exits and the kubelet restarts it. Inspect container state, last termination reason, restart count, conditions, events, and logs for the actual failure.
+    critical_points:
+      - Pod phase is not a complete health signal.
+      - Container restart can occur inside the same Pod identity.
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle]

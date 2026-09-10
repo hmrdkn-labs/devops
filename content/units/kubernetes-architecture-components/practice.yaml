@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-architecture-components
+practices:
+  - id: fpp:kubernetes-architecture-components/p-trace
+    title: Trace a Deployment from intent to node execution
+    mode: guided_markdown
+    prompt: In a disposable cluster, create or reuse one Deployment and collect evidence at each ownership boundary.
+    steps:
+      - Record the Deployment and ReplicaSet owner relationship.
+      - Record one Pod owner reference and assigned node.
+      - Inspect Pod events to identify scheduling and container-start transitions.
+      - Compare API status with one real request to the running workload.
+    success_checks:
+      - Deployment, ReplicaSet, scheduler placement, kubelet/runtime execution, and request proof are described as separate boundaries.
+      - The final proof is stronger than merely showing that the manifest exists.
+    safety:
+      - Use a disposable namespace or test cluster for creation and deletion.

@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-storage-lifecycle
+revision: 1
+cards:
+  - id: fpp:kubernetes-storage-lifecycle/c-pvc
+    type: short
+    front: What does a PersistentVolumeClaim represent?
+    back: A workload-side request for persistent storage with requested capacity and access characteristics.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim]
+  - id: fpp:kubernetes-storage-lifecycle/c-storageclass
+    type: short
+    front: What is the role of a StorageClass?
+    back: It describes a storage class/provisioning policy and the provisioner used to satisfy matching claims.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim]
+  - id: fpp:kubernetes-storage-lifecycle/c-csi
+    type: short
+    front: Which integration commonly performs provisioning, attach, mount, snapshot, or expansion operations for external storage?
+    back: A CSI driver and its controller/node components, according to the provider's supported operations.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim]
+  - id: fpp:kubernetes-storage-lifecycle/c-pod-lifecycle
+    type: prompt
+    front: Explain why deleting a Pod does not necessarily delete its persistent data.
+    back: Pod identity and PVC/PV lifecycle are separate. A replacement Pod can reference the same claim, subject to storage access and topology constraints; deletion behavior depends on claim and reclaim policy, not merely Pod deletion.
+    critical_points: [Pod lifecycle is distinct from persistent volume lifecycle]
+    objective_ids: [fpp:kubernetes-storage-lifecycle/failure-domain]
+  - id: fpp:kubernetes-storage-lifecycle/c-rwo
+    type: scenario
+    front: Does ReadWriteOnce mean a volume is automatically replicated across availability zones?
+    back: No. Access mode describes mount access semantics, not replication, backup, latency, or failure-domain behavior.
+    critical_points: [Access mode is not durability topology]
+    objective_ids: [fpp:kubernetes-storage-lifecycle/failure-domain]

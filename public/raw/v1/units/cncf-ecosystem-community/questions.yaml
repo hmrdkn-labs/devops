@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:cncf-ecosystem-community
+revision: 1
+questions:
+  - id: fpp:cncf-ecosystem-community/q-landscape
+    kind: explain
+    prompt: Why should you not interpret the CNCF Landscape as a single recommended stack that every Kubernetes cluster must install?
+    model_answer: The Landscape is a catalog of a broad ecosystem across many categories and maturity/commercial relationships. Kubernetes can use different implementations and does not require every listed project. Study the responsibilities and interfaces rather than treating the catalog as one architecture.
+    critical_points:
+      - Landscape inclusion is not a requirement to install the project.
+      - Responsibilities and interfaces are more important than memorizing logos.
+    objective_ids: [fpp:cncf-ecosystem-community/projects]
+  - id: fpp:cncf-ecosystem-community/q-cni
+    kind: scenario
+    prompt: Someone says "CNI routes our packets." What small adjustment makes that statement more precise?
+    model_answer: CNI is an interface/convention used by network implementations to configure container or Pod networking. The actual plugin/dataplane implementation, routes, eBPF programs, bridges, or other mechanisms execute connectivity and forwarding.
+    critical_points:
+      - Interface/specification is distinct from implementation.
+      - The concrete network dataplane executes packet handling.
+    objective_ids: [fpp:cncf-ecosystem-community/projects]

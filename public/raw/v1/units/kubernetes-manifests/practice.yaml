@@ -1,0 +1,15 @@
+schema_version: 1
+unit_id: fpp:kubernetes-manifests
+practices:
+  - id: fpp:kubernetes-manifests/p-read-object
+    title: Read a manifest as an API request
+    mode: guided_markdown
+    prompt: Pick one Deployment manifest and explain it without relying on memorized YAML blocks.
+    steps:
+      - Identify apiVersion, kind, object name, namespace, labels, and desired fields.
+      - State which component should react after the API stores the object.
+      - Write one command or observation for API acceptance and one for runtime convergence.
+    success_checks:
+      - The explanation separates desired state from observed state.
+      - At least one downstream proof is named beyond kubectl apply.
+    safety: []

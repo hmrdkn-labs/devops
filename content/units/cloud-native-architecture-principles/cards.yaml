@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:cloud-native-architecture-principles
+revision: 1
+cards:
+  - id: fpp:cloud-native-architecture-principles/c-declarative
+    type: short
+    front: What does a declarative operating model specify?
+    back: The desired state to achieve rather than only a sequence of imperative steps to execute.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-architecture-principles/properties]
+  - id: fpp:cloud-native-architecture-principles/c-immutable
+    type: short
+    front: What is the key operational idea behind immutable infrastructure?
+    back: Replace instances with newly built versioned artifacts rather than repeatedly modifying unique running machines in place.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-architecture-principles/properties]
+  - id: fpp:cloud-native-architecture-principles/c-elastic
+    type: short
+    front: What is elasticity?
+    back: The ability to expand and contract resource capacity as demand or policy changes.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/c-serverless
+    type: prompt
+    front: Explain why serverless does not literally mean there are no servers.
+    back: Servers still execute the workload, but the platform abstracts and manages much more of the server provisioning, scaling, and lifecycle so the application owner operates at a higher-level execution boundary.
+    critical_points: [Infrastructure lifecycle is delegated, not eliminated]
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/c-portable
+    type: scenario
+    front: An app runs in containers on Kubernetes but depends on a provider-specific database API. Is it perfectly portable between clouds?
+    back: No. Containers and Kubernetes reduce some host/platform coupling, but provider-specific managed-service dependencies still create portability constraints.
+    critical_points: [Portability is a spectrum and depends on external interfaces]
+    objective_ids: [fpp:cloud-native-architecture-principles/properties]

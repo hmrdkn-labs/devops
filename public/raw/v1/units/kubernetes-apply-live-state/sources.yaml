@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:kubernetes-apply-live-state
+sources:
+  - id: source:kubernetes-declarative-management
+    title: Declarative Management of Kubernetes Objects Using Configuration Files
+    url: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream declarative object-management and apply workflow reference.
+  - id: source:kubectl-apply
+    title: kubectl apply
+    url: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_apply/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-09
+    note: Upstream kubectl apply command reference.
+  - id: source:kubernetes-server-side-apply
+    title: Server-Side Apply
+    url: https://kubernetes.io/docs/reference/using-api/server-side-apply/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream field-management and field-ownership reference for modern apply behavior.

@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-scheduling-placement
+practices:
+  - id: fpp:kubernetes-scheduling-placement/p-predict
+    title: Predict feasible nodes before scheduling
+    mode: guided_markdown
+    prompt: Use a disposable cluster with at least two nodes or reason from a recorded node inventory and one hypothetical Pod specification.
+    steps:
+      - Record node labels, taints, and allocatable CPU and memory.
+      - Write the Pod's requests and hard placement requirements.
+      - Eliminate every node that fails one hard condition and explain why.
+      - Compare the predicted feasible set with scheduler events or the actual assigned node.
+    success_checks:
+      - Resource requests and hard constraints are evaluated before preferences.
+      - A toleration is not described as a force-placement rule.
+    safety:
+      - Prefer read-only inspection or a disposable scheduling exercise.

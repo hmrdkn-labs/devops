@@ -1,0 +1,31 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-fundamentals-review
+sources:
+  - id: source:kcna-fundamentals-kubernetes-components
+    title: Kubernetes Components
+    url: https://kubernetes.io/docs/concepts/overview/components/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official component responsibility reference.
+  - id: source:kcna-fundamentals-cri
+    title: Container Runtime Interface (CRI)
+    url: https://kubernetes.io/docs/concepts/architecture/cri/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official CRI architecture reference.
+  - id: source:kcna-fundamentals-container-runtimes
+    title: Container Runtimes
+    url: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-10
+    note: Official runtime integration and CRI reference.
+  - id: source:kcna-fundamentals-kodekloud-context
+    title: KCNA Kubernetes Fundamentals module
+    url: https://learn.kodekloud.com/learn/courses/kubernetes-and-cloud-native-associate-kcna/module/8403f56b-91f8-42f9-89e9-5c27a7438ef2/lesson/690c3950-12e6-4bbe-9b9b-10f512ec92a4
+    publisher: KodeKloud
+    type: reference
+    verified_at: 2026-09-10
+    note: Study-context link for the owner's completed module; the learning content here is independently authored.

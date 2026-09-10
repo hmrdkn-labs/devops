@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-networking-request-path
+slug: kubernetes-networking-request-path
+title: Kubernetes networking request path
+summary: Trace a request from DNS through a Service and EndpointSlice to a Pod while separating CNI connectivity, Service forwarding, ingress routing, and policy.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: networking
+estimated_minutes: 30
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:ip-subnets, fpp:ports-sockets-dns, fpp:services-dns-ingress, fpp:kubernetes-pod-model]
+objectives:
+  - id: fpp:kubernetes-networking-request-path/service-path
+    title: Trace Service discovery, endpoint selection, and data-plane forwarding to a ready Pod
+    critical: true
+  - id: fpp:kubernetes-networking-request-path/boundaries
+    title: Separate CNI Pod connectivity, Service forwarding, ingress or Gateway routing, and NetworkPolicy enforcement
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [container-orchestration]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-namespaces-scope
+revision: 1
+cards:
+  - id: fpp:kubernetes-namespaces-scope/c-pod
+    type: short
+    front: Are Pods namespaced or cluster-scoped?
+    back: Namespaced.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]
+  - id: fpp:kubernetes-namespaces-scope/c-node
+    type: short
+    front: Are Nodes namespaced or cluster-scoped?
+    back: Cluster-scoped.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]
+  - id: fpp:kubernetes-namespaces-scope/c-security
+    type: short
+    front: Does a namespace by itself block Pod traffic to another namespace?
+    back: No. Network isolation requires network policy or another explicit mechanism.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-namespaces-scope/boundary]
+  - id: fpp:kubernetes-namespaces-scope/c-explain
+    type: prompt
+    front: Explain namespace versus label in one sentence each.
+    back: A namespace provides API naming/scope for namespaced resources; a label is metadata used to group and select objects.
+    critical_points: [Scope and selection are different concepts]
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]
+  - id: fpp:kubernetes-namespaces-scope/c-scenario
+    type: scenario
+    front: kubectl says Pod api is not found, but a teammate can see it. What scope mistake should you check first?
+    back: Check whether your kubectl context or command is using the wrong namespace.
+    critical_points: [Namespaced lookup depends on namespace context]
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]

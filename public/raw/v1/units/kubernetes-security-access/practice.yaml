@@ -1,0 +1,18 @@
+schema_version: 1
+unit_id: fpp:kubernetes-security-access
+practices:
+  - id: fpp:kubernetes-security-access/p-can-i
+    title: Prove one allowed and one denied API action
+    mode: guided_markdown
+    prompt: In a disposable namespace, inspect one ServiceAccount or test identity and reason about two API actions with different required permissions.
+    steps:
+      - Identify the subject and the Role or ClusterRole bindings that apply to it.
+      - Use an authorization check such as kubectl auth can-i for one intended action.
+      - Check a nearby action that should not be allowed.
+      - Record which result is authentication evidence and which is authorization evidence.
+    success_checks:
+      - The allowed action and denied action are both verified.
+      - Identity establishment is not confused with RBAC permission.
+    safety:
+      - Do not grant broader permissions just to make the negative test pass.
+      - Use a disposable namespace or read-only authorization checks.

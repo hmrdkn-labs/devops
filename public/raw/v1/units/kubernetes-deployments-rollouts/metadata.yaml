@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-deployments-rollouts
+slug: kubernetes-deployments-rollouts
+title: Deployments, rollouts, and rollbacks
+summary: Trace how a Deployment manages ReplicaSets, why template changes create rollout revisions, and how rollout evidence differs from application health.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 22
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:kubernetes-labels-replicasets]
+objectives:
+  - id: fpp:kubernetes-deployments-rollouts/ownership-chain
+    title: Trace Deployment to ReplicaSet to Pod ownership during a rollout
+    critical: true
+  - id: fpp:kubernetes-deployments-rollouts/revision
+    title: Predict rollout and rollback behavior after Pod-template changes
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

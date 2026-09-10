@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-pod-model
+revision: 1
+cards:
+  - id: fpp:kubernetes-pod-model/c-schedule
+    type: short
+    front: What Kubernetes object does the scheduler place onto a node?
+    back: A Pod.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle]
+  - id: fpp:kubernetes-pod-model/c-restart
+    type: short
+    front: Can a container restart without creating a new Pod?
+    back: Yes. The kubelet can restart a container inside the same Pod according to restart policy.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle]
+  - id: fpp:kubernetes-pod-model/c-owner
+    type: short
+    front: In a Deployment, which controller directly maintains the desired Pod replica count?
+    back: The ReplicaSet controller.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-pod-model/ownership]
+  - id: fpp:kubernetes-pod-model/c-explain
+    type: prompt
+    front: Explain the difference between restarting a container and replacing a Pod.
+    back: A container restart happens inside the existing Pod on its assigned node; Pod replacement creates a new Pod object with a new identity that may be scheduled elsewhere.
+    critical_points: [Same Pod UID for a restart; new Pod UID for replacement]
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle]
+  - id: fpp:kubernetes-pod-model/c-scenario
+    type: scenario
+    front: A controller-managed Pod disappears with its node. Should Kubernetes move that Pod object to another node?
+    back: No. The old Pod is not live-migrated; the controller creates a replacement Pod that can be scheduled on another eligible node.
+    critical_points: [Replacement is creation of a new Pod identity]
+    objective_ids: [fpp:kubernetes-pod-model/ownership]

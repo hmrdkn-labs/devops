@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-security-access
+revision: 1
+cards:
+  - id: fpp:kubernetes-security-access/c-authn
+    type: short
+    front: What question does authentication answer?
+    back: Who is making the request?
+    critical_points: []
+    objective_ids: [fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/c-authz
+    type: short
+    front: What question does authorization answer?
+    back: May this authenticated identity perform this action on this resource?
+    critical_points: []
+    objective_ids: [fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/c-binding
+    type: short
+    front: In RBAC, what attaches Role or ClusterRole permissions to subjects?
+    back: A RoleBinding or ClusterRoleBinding.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/c-secret
+    type: prompt
+    front: Why is base64 in a Kubernetes Secret not the same as encryption?
+    back: Base64 is reversible encoding. Secret confidentiality depends on authorization, encryption at rest, transport protection, careful delivery, and preventing accidental exposure.
+    critical_points: [Encoding does not provide confidentiality]
+    objective_ids: [fpp:kubernetes-security-access/workload]
+  - id: fpp:kubernetes-security-access/c-namespace
+    type: scenario
+    front: Two teams use separate namespaces. Does that automatically block network traffic between their Pods?
+    back: No. Namespace separation is API scope and organization; network isolation requires applicable policy enforced by the cluster network implementation.
+    critical_points: [Namespace is not automatically a network firewall]
+    objective_ids: [fpp:kubernetes-security-access/workload]

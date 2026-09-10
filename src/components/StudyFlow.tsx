@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createResource, createSignal } from 'solid-js';
+import { For, Show, createMemo, createResource, createSignal, onMount } from 'solid-js';
 
 interface Question {
   id: string;
@@ -57,6 +57,7 @@ interface Me {
 }
 
 export default function StudyFlow(props: Props) {
+  const [hydrated, setHydrated] = createSignal(false);
   const [questionIndex, setQuestionIndex] = createSignal(0);
   const [answer, setAnswer] = createSignal('');
   const [revealed, setRevealed] = createSignal(false);
@@ -74,6 +75,8 @@ export default function StudyFlow(props: Props) {
   });
   const question = createMemo(() => props.unit.questions[questionIndex()]);
   const progress = createMemo(() => ((questionIndex() + (finished() ? 1 : 0)) / props.unit.questions.length) * 100);
+
+  onMount(() => setHydrated(true));
 
   async function reveal() {
     if (!answer().trim()) return;
@@ -202,13 +205,14 @@ export default function StudyFlow(props: Props) {
               <label class="answer-label" for="private-answer">Your explanation</label>
               <textarea
                 id="private-answer"
+                disabled={!hydrated()}
                 value={answer()}
                 onInput={(event) => setAnswer(event.currentTarget.value)}
                 placeholder="Reason it through in your own words. Accuracy comes after retrieval."
                 rows={8}
               />
               <div class="stage-actions">
-                <button class="button primary" disabled={!answer().trim() || saving()} onClick={reveal}>
+                <button class="button primary" disabled={!hydrated() || !answer().trim() || saving()} onClick={reveal}>
                   {saving() ? 'Saving…' : 'Save privately & reveal'}
                 </button>
                 <span class="microcopy">No AI grading. You compare the reasoning yourself.</span>

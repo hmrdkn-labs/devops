@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-storage-lifecycle
+revision: 1
+questions:
+  - id: fpp:kubernetes-storage-lifecycle/q-pending
+    kind: scenario
+    prompt: A PVC remains Pending even though the cluster has worker nodes with free CPU and memory. Why can that happen?
+    model_answer: PVC binding/provisioning is a storage control path, not a CPU scheduling decision. The StorageClass or CSI provisioner may be missing or misconfigured, the requested access mode/capacity may be unsupported, topology may prevent binding, or WaitForFirstConsumer may intentionally delay binding until scheduling context exists.
+    critical_points:
+      - Storage provisioning is a separate control path from compute availability.
+      - StorageClass, CSI, topology, access mode, and events are relevant evidence.
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim]
+  - id: fpp:kubernetes-storage-lifecycle/q-zone
+    kind: predict
+    prompt: A Pod using a zonal block volume is lost with its node. Can a replacement Pod always reattach that exact volume in any other availability zone?
+    model_answer: No. A zonal volume is constrained to its zone. A replacement can use another suitable node in that zone, but cross-zone recovery requires storage with different semantics or an application/backup replication strategy.
+    critical_points:
+      - Pod replacement does not erase storage topology constraints.
+      - Durable recovery requirements must match the storage failure domain.
+    objective_ids: [fpp:kubernetes-storage-lifecycle/failure-domain]

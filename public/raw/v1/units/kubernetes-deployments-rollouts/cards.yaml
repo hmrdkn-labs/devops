@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-deployments-rollouts
+revision: 1
+cards:
+  - id: fpp:kubernetes-deployments-rollouts/c-owner
+    type: short
+    front: What object does a Deployment directly create and manage for replaceable replicas?
+    back: ReplicaSets.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-deployments-rollouts/ownership-chain]
+  - id: fpp:kubernetes-deployments-rollouts/c-trigger
+    type: short
+    front: What class of Deployment change triggers a new rollout revision?
+    back: A change to the Pod template in spec.template.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-deployments-rollouts/revision]
+  - id: fpp:kubernetes-deployments-rollouts/c-scale
+    type: short
+    front: Does changing only spec.replicas require a new Pod-template revision?
+    back: No. It changes desired capacity without changing the Pod template.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-deployments-rollouts/revision]
+  - id: fpp:kubernetes-deployments-rollouts/c-explain
+    type: prompt
+    front: Explain Deployment → ReplicaSet → Pod ownership in one control-loop story.
+    back: The Deployment reconciles rollout intent by managing ReplicaSets; each ReplicaSet reconciles its desired count by creating or deleting matching Pods.
+    critical_points: [Two controller layers with different desired-state responsibilities]
+    objective_ids: [fpp:kubernetes-deployments-rollouts/ownership-chain]
+  - id: fpp:kubernetes-deployments-rollouts/c-scenario
+    type: scenario
+    front: A rollback restores an older image successfully. Does that automatically reverse a database migration performed by the application?
+    back: No. Deployment rollback changes Kubernetes Pod-template desired state, not external application side effects or data migrations.
+    critical_points: [Kubernetes rollout history is not application-data history]
+    objective_ids: [fpp:kubernetes-deployments-rollouts/revision]

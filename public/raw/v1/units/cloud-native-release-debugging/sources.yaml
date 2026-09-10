@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:cloud-native-release-debugging
+sources:
+  - id: source:kubernetes-deployment-rollout
+    title: Deployments
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Native rolling update and rollback behavior for Deployments.
+  - id: source:kubernetes-debug-application
+    title: Troubleshooting Applications
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream application and Pod troubleshooting guidance.
+  - id: source:cloud-native-release-debugging-probes
+    title: Configure Liveness, Readiness and Startup Probes
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Probe semantics and runtime behavior.

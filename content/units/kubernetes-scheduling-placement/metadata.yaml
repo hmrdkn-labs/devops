@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-scheduling-placement
+slug: kubernetes-scheduling-placement
+title: Kubernetes scheduling and placement constraints
+summary: Predict where a Pod can run by separating resource requests, node selection, affinity, taints and tolerations, topology spreading, and controller intent.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 27
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:scheduling-resources-health, fpp:kubernetes-architecture-components]
+objectives:
+  - id: fpp:kubernetes-scheduling-placement/feasibility
+    title: Explain how resource requests and hard placement constraints determine feasible nodes
+    critical: true
+  - id: fpp:kubernetes-scheduling-placement/policy
+    title: Distinguish node selection, affinity, taints and tolerations, topology spread, and DaemonSet placement intent
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

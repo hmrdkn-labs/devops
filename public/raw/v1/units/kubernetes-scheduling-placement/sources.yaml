@@ -1,0 +1,31 @@
+schema_version: 1
+unit_id: fpp:kubernetes-scheduling-placement
+sources:
+  - id: source:kubernetes-scheduler-concepts
+    title: Kubernetes Scheduler
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Scheduling workflow, feasible nodes, scoring, and binding concepts.
+  - id: source:kubernetes-assign-pods-nodes
+    title: Assigning Pods to Nodes
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: nodeSelector and affinity placement mechanisms.
+  - id: source:kubernetes-taints
+    title: Taints and Tolerations
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Node taint effects and Pod toleration semantics.
+  - id: source:kubernetes-daemonset
+    title: DaemonSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Per-node workload controller behavior and common use cases.

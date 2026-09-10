@@ -1,0 +1,66 @@
+schema_version: 1
+id: path:kcna
+slug: kcna
+title: KCNA Learning Path
+summary: Build KCNA-ready Kubernetes and cloud-native understanding from networking and containers through Kubernetes resources, delivery, operations, and troubleshooting.
+revision: 3
+status: published
+units:
+  - unit_id: fpp:kcna-domain-map
+    weight: 1
+  - unit_id: fpp:ip-subnets
+    weight: 1
+  - unit_id: fpp:ports-sockets-dns
+    weight: 1
+  - unit_id: fpp:container-lifecycle
+    weight: 1
+  - unit_id: fpp:git-yaml-declarative
+    weight: 2
+  - unit_id: fpp:kubernetes-control-loop
+    weight: 2
+  - unit_id: fpp:kubernetes-manifests
+    weight: 2
+  - unit_id: fpp:kubernetes-architecture-components
+    weight: 2
+  - unit_id: fpp:kcna-kubernetes-fundamentals-review
+    weight: 1
+  - unit_id: fpp:kubernetes-pod-model
+    weight: 2
+  - unit_id: fpp:pods-workloads
+    weight: 2
+  - unit_id: fpp:kubernetes-labels-replicasets
+    weight: 2
+  - unit_id: fpp:kubernetes-deployments-rollouts
+    weight: 2
+  - unit_id: fpp:kubernetes-apply-live-state
+    weight: 2
+  - unit_id: fpp:kubernetes-namespaces-scope
+    weight: 2
+  - unit_id: fpp:kcna-kubernetes-resources-review
+    weight: 1
+  - unit_id: fpp:services-dns-ingress
+    weight: 2
+  - unit_id: fpp:kubernetes-networking-request-path
+    weight: 2
+  - unit_id: fpp:scheduling-resources-health
+    weight: 2
+  - unit_id: fpp:kubernetes-scheduling-placement
+    weight: 2
+  - unit_id: fpp:config-secrets-storage
+    weight: 1
+  - unit_id: fpp:kubernetes-storage-lifecycle
+    weight: 2
+  - unit_id: fpp:kubernetes-security-access
+    weight: 2
+  - unit_id: fpp:cloud-native-delivery-gitops
+    weight: 1
+  - unit_id: fpp:troubleshoot-process-to-pod
+    weight: 2
+  - unit_id: fpp:cloud-native-release-debugging
+    weight: 2
+  - unit_id: fpp:cloud-native-observability-signals
+    weight: 1
+  - unit_id: fpp:cloud-native-architecture-principles
+    weight: 1
+  - unit_id: fpp:cncf-ecosystem-community
+    weight: 1

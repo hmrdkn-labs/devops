@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kcna-domain-map
+practices:
+  - id: fpp:kcna-domain-map/p-classify
+    title: Classify one Kubernetes behavior by layer
+    mode: guided_markdown
+    prompt: Pick a familiar action such as applying a Deployment or reaching a Service and write one sentence for each of the five reasoning layers.
+    steps:
+      - Name the desired-state object or request.
+      - Name the controller or decision-maker that reacts to it.
+      - Name the process or dataplane that executes the action.
+      - Name the resulting workload or runtime state.
+      - Name one observation that would prove the result and one that would only prove configuration.
+    success_checks:
+      - The controller is not incorrectly described as the live packet or process executor.
+      - At least one runtime proof is distinguished from static configuration.
+    safety: []

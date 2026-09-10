@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:cloud-native-observability-signals
+practices:
+  - id: fpp:cloud-native-observability-signals/p-evidence
+    title: Match each signal to one investigation question
+    mode: guided_markdown
+    prompt: Choose one application failure and write the smallest useful metric, log, trace, Kubernetes event, and end-to-end probe for it.
+    steps:
+      - Define the user-visible symptom and time window.
+      - Name one metric that would quantify the symptom.
+      - Name one trace span or path that would localize the slow/failing boundary.
+      - Name one component log or Kubernetes event that could explain the local cause.
+      - Define one end-to-end request that proves recovery.
+    success_checks:
+      - Each signal answers a different investigation question.
+      - Recovery is verified at the user or service boundary rather than only from telemetry ingestion.
+    safety: []

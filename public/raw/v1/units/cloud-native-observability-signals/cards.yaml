@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:cloud-native-observability-signals
+revision: 1
+cards:
+  - id: fpp:cloud-native-observability-signals/c-metrics
+    type: short
+    front: What question are metrics especially good at answering?
+    back: How a numeric property changes over time, such as rate, errors, latency distribution, saturation, or capacity.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-observability-signals/signals]
+  - id: fpp:cloud-native-observability-signals/c-trace
+    type: short
+    front: What is a distributed trace made of?
+    back: Related spans representing units of work along one request or operation.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-observability-signals/signals]
+  - id: fpp:cloud-native-observability-signals/c-event
+    type: short
+    front: What are Kubernetes events especially useful for?
+    back: Explaining recent control-plane and node transitions such as scheduling, image pull, probe, or volume failures.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-observability-signals/signals]
+  - id: fpp:cloud-native-observability-signals/c-otel
+    type: prompt
+    front: Explain the role of the OpenTelemetry Collector.
+    back: It receives telemetry, can process or transform it, and exports it to one or more backends. It is telemetry plumbing rather than the final storage/query UI by definition.
+    critical_points: [Collection/export pipeline is distinct from telemetry backend]
+    objective_ids: [fpp:cloud-native-observability-signals/tools]
+  - id: fpp:cloud-native-observability-signals/c-scrape
+    type: scenario
+    front: Prometheus reports a target as successfully scraped. Does that prove checkout requests succeed end to end?
+    back: No. It proves the configured metrics endpoint was reachable and scrapeable, not that the complete checkout transaction and all dependencies are healthy.
+    critical_points: [Monitoring-path health is not user-path proof]
+    objective_ids: [fpp:cloud-native-observability-signals/signals]

@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-architecture-components
+revision: 1
+questions:
+  - id: fpp:kubernetes-architecture-components/q-scheduler
+    kind: predict
+    prompt: The scheduler is unavailable for several minutes while existing Pods are healthy. What should you expect for existing Pods and newly created unscheduled Pods?
+    model_answer: Existing Pods can continue running on their nodes because the scheduler is not their runtime executor. Newly created Pods that need placement can remain Pending until a scheduler chooses nodes for them.
+    critical_points:
+      - Scheduler selects placement rather than running containers.
+      - Existing runtime execution can continue during a scheduler outage.
+    objective_ids: [fpp:kubernetes-architecture-components/roles]
+  - id: fpp:kubernetes-architecture-components/q-apply
+    kind: explain
+    prompt: After the API server accepts a new Deployment, which components are responsible for turning that intent into running containers?
+    model_answer: A Deployment controller reconciles the Deployment into a ReplicaSet, the ReplicaSet controller creates Pods, the scheduler selects nodes for unscheduled Pods, and the kubelet on each chosen node asks the container runtime to start the containers and reports status back through the API.
+    critical_points:
+      - Controllers create/reconcile API objects.
+      - Scheduler chooses nodes and kubelet/runtime execute on those nodes.
+    objective_ids: [fpp:kubernetes-architecture-components/request-path]

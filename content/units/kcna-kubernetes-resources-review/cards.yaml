@@ -1,0 +1,52 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-resources-review
+revision: 1
+cards:
+  - id: fpp:kcna-kubernetes-resources-review/c-pod
+    type: short
+    front: What is the smallest scheduling unit in Kubernetes?
+    back: A Pod.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-resources-review/ownership]
+  - id: fpp:kcna-kubernetes-resources-review/c-rs
+    type: short
+    front: Which controller directly maintains a desired number of Pods matching a selector?
+    back: ReplicaSet.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-resources-review/ownership]
+  - id: fpp:kcna-kubernetes-resources-review/c-deployment
+    type: short
+    front: What does a Deployment directly manage during a normal rollout?
+    back: ReplicaSets; those ReplicaSets manage the Pods.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-resources-review/ownership]
+  - id: fpp:kcna-kubernetes-resources-review/c-spec-status
+    type: prompt
+    front: Distinguish `spec` and `status` in a Kubernetes object.
+    back: "`spec` commonly expresses desired state; `status` reports observed state produced by Kubernetes components."
+    critical_points: [desired state and observed state are distinct]
+    objective_ids: [fpp:kcna-kubernetes-resources-review/api-objects]
+  - id: fpp:kcna-kubernetes-resources-review/c-selector
+    type: short
+    front: What is a Kubernetes selector conceptually?
+    back: A membership rule that chooses objects by their labels.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-resources-review/api-objects]
+  - id: fpp:kcna-kubernetes-resources-review/c-rollout
+    type: scenario
+    front: Why does changing a Deployment container image normally create a new ReplicaSet?
+    back: The image is part of the Deployment's Pod template. Changing the Pod template defines a new desired revision, so the Deployment creates a new ReplicaSet and shifts replicas toward it.
+    critical_points: [Pod-template change drives a new rollout revision]
+    objective_ids: [fpp:kcna-kubernetes-resources-review/ownership]
+  - id: fpp:kcna-kubernetes-resources-review/c-explain
+    type: short
+    front: When should `kubectl explain` come to mind?
+    back: When you need API schema/help for a resource or field path.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-resources-review/api-objects]
+  - id: fpp:kcna-kubernetes-resources-review/c-namespace
+    type: prompt
+    front: What does a Kubernetes namespace provide, and what does it not automatically provide?
+    back: It provides API naming/scope for namespaced resources. It does not by itself enforce network isolation, RBAC isolation, or quotas.
+    critical_points: [scope is distinct from policy]
+    objective_ids: [fpp:kcna-kubernetes-resources-review/api-objects]

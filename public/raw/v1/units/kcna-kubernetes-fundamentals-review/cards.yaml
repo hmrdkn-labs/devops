@@ -1,0 +1,52 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-fundamentals-review
+revision: 1
+cards:
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-apiserver
+    type: short
+    front: What is the front door for the Kubernetes API?
+    back: kube-apiserver.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-etcd
+    type: short
+    front: What stores Kubernetes control-plane API state durably?
+    back: etcd.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-scheduler
+    type: short
+    front: Who chooses a node for an unscheduled Pod?
+    back: kube-scheduler.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-kubelet
+    type: short
+    front: Which node agent makes assigned Pods run and reports their status?
+    back: kubelet.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-cri
+    type: short
+    front: What does CRI represent in Kubernetes?
+    back: The Container Runtime Interface, the API boundary kubelet uses to work with compatible container runtimes.
+    critical_points: []
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-containerd-runc
+    type: prompt
+    front: Distinguish containerd from runc in one sentence.
+    back: containerd manages higher-level container lifecycle and can serve Kubernetes through CRI, while runc is a lower-level OCI runtime commonly used underneath it to create and run containers.
+    critical_points: [containerd and runc occupy different layers]
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-control-loop
+    type: scenario
+    front: A controller-managed Pod is deleted manually. Why can another Pod appear?
+    back: Desired state still requires that capacity. The controller observes fewer matching Pods than desired and creates a replacement; the scheduler and node-side components then place and execute it.
+    critical_points: [Deletion changed observed state, not desired state]
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-dockershim
+    type: prompt
+    front: What changed when Kubernetes removed dockershim?
+    back: Kubernetes stopped carrying the built-in Docker Engine shim. It continued using OCI container images through CRI-compatible runtimes such as containerd and CRI-O.
+    critical_points: [dockershim removal did not remove OCI image support]
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]

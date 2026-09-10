@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kcna-kubernetes-fundamentals-review
+slug: kcna-kubernetes-fundamentals-review
+title: KCNA Kubernetes Fundamentals quiz companion
+summary: A fast review of containers, orchestration, Kubernetes architecture, CRI, and container runtimes for use beside the KCNA fundamentals quiz.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: architecture
+estimated_minutes: 12
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:container-lifecycle, fpp:kubernetes-control-loop, fpp:kubernetes-architecture-components]
+objectives:
+  - id: fpp:kcna-kubernetes-fundamentals-review/ownership
+    title: Identify which Kubernetes component owns each control-plane and node-side responsibility
+    critical: true
+  - id: fpp:kcna-kubernetes-fundamentals-review/runtime
+    title: Distinguish images, containers, container runtimes, CRI, Docker, containerd, and runc
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals, container-orchestration]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-10

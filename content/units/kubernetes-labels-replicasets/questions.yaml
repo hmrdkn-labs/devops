@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-labels-replicasets
+revision: 1
+questions:
+  - id: fpp:kubernetes-labels-replicasets/q-delete
+    kind: predict
+    prompt: A ReplicaSet wants three Pods with app=web. You delete one matching Pod but do not change the ReplicaSet. What should happen next and why?
+    model_answer: The ReplicaSet controller observes only two matching Pods while the desired count remains three, so it creates a new Pod from the template to restore the selected set to three.
+    critical_points:
+      - Desired replica count did not change.
+      - The controller reconciles the selected live set back to desired count.
+    objective_ids: [fpp:kubernetes-labels-replicasets/reconciliation]
+  - id: fpp:kubernetes-labels-replicasets/q-label
+    kind: explain
+    prompt: Why is a ReplicaSet selector more important than a convenient kubectl filtering expression?
+    model_answer: The selector defines which Pods count as members of the ReplicaSet's controlled set. Reconciliation, possible adoption, scale decisions, and ownership behavior depend on that membership rule.
+    critical_points:
+      - Selector defines controller membership.
+      - Template labels must produce Pods that satisfy the selector.
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection]

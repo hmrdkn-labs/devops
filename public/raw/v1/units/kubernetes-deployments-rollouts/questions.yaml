@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-deployments-rollouts
+revision: 1
+questions:
+  - id: fpp:kubernetes-deployments-rollouts/q-new-rs
+    kind: predict
+    prompt: You change only the container image inside a Deployment Pod template. Why should you expect a new ReplicaSet instead of the existing Pods being edited in place?
+    model_answer: A Pod-template change represents a new desired template revision. The Deployment creates a new ReplicaSet for that template and gradually shifts replicas from the old ReplicaSet to the new one, replacing Pods rather than mutating their running containers in place.
+    critical_points:
+      - Pod-template change creates a new rollout revision.
+      - Deployment manages ReplicaSets; ReplicaSets manage Pods.
+    objective_ids: [fpp:kubernetes-deployments-rollouts/ownership-chain, fpp:kubernetes-deployments-rollouts/revision]
+  - id: fpp:kubernetes-deployments-rollouts/q-rollout-proof
+    kind: scenario
+    prompt: kubectl rollout status reports success, but users still receive connection errors. What does rollout success prove, and where do you investigate next?
+    model_answer: It proves the Deployment reached its rollout criteria for the desired replica/template state. Continue downstream through Pod readiness, Service selector and endpoints, Ingress or load-balancer routing, DNS, and the application request path.
+    critical_points:
+      - Deployment convergence is not end-to-end reachability.
+      - Continue evidence gathering downstream of the controller.
+    objective_ids: [fpp:kubernetes-deployments-rollouts/revision]

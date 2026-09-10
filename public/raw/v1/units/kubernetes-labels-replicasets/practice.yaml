@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kubernetes-labels-replicasets
+practices:
+  - id: fpp:kubernetes-labels-replicasets/p-membership
+    title: Prove the ReplicaSet membership rule
+    mode: guided_markdown
+    prompt: Inspect one controller-managed ReplicaSet and connect its selector to the Pods that count toward desired replicas.
+    steps:
+      - Record desired replicas, selector, and Pod-template labels from the ReplicaSet.
+      - List Pods using the same selector and compare actual count with desired count.
+      - Inspect one Pod owner reference and predict what happens if that Pod is deleted.
+    success_checks:
+      - The selected set is derived from labels rather than Pod names.
+      - The prediction identifies the ReplicaSet control loop.
+    safety:
+      - Delete a Pod only in a disposable namespace or test cluster.

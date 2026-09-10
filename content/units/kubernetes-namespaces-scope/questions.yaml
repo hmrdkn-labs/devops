@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-namespaces-scope
+revision: 1
+questions:
+  - id: fpp:kubernetes-namespaces-scope/q-same-name
+    kind: explain
+    prompt: How can two Deployments both be named web in one Kubernetes cluster without referring to the same object?
+    model_answer: Deployments are namespaced resources, so their identity includes namespace. Deployment/web in team-a and Deployment/web in team-b are distinct API objects.
+    critical_points:
+      - Deployment is namespaced.
+      - Namespace participates in object identity for namespaced resources.
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]
+  - id: fpp:kubernetes-namespaces-scope/q-security
+    kind: scenario
+    prompt: Two teams are placed in separate namespaces. Can you now assume their Pods cannot communicate and their users cannot read each other's objects?
+    model_answer: No. Namespace alone does not provide those guarantees. API access requires appropriate RBAC or other authorization controls, and Pod-to-Pod traffic isolation requires NetworkPolicy or another network-policy mechanism supported by the cluster.
+    critical_points:
+      - Namespace is not automatic authorization.
+      - Namespace is not automatic network isolation.
+    objective_ids: [fpp:kubernetes-namespaces-scope/boundary]

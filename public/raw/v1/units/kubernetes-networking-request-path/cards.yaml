@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-networking-request-path
+revision: 1
+cards:
+  - id: fpp:kubernetes-networking-request-path/c-cni
+    type: short
+    front: What responsibility does a CNI-compatible implementation primarily provide?
+    back: "Pod network connectivity: interfaces, addressing, and connectivity/routing according to the cluster network design."
+    critical_points: []
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/c-endpointslice
+    type: short
+    front: Which Kubernetes resource records concrete Service backend addresses and readiness information?
+    back: EndpointSlice.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-networking-request-path/service-path]
+  - id: fpp:kubernetes-networking-request-path/c-service-dataplane
+    type: short
+    front: Does the Service API object itself forward packets?
+    back: No. A dataplane such as kube-proxy or an alternative implementation programs the forwarding behavior.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/c-trace
+    type: prompt
+    front: Trace an in-cluster request from a Service DNS name to the application process.
+    back: DNS resolves the Service name, traffic reaches the Service address, the Service dataplane selects a ready EndpointSlice backend, the cluster network reaches the Pod IP, and the process listening on the target port handles the request.
+    critical_points: [DNS, Service selection, dataplane forwarding, Pod connectivity, and application listener are distinct]
+    objective_ids: [fpp:kubernetes-networking-request-path/service-path]
+  - id: fpp:kubernetes-networking-request-path/c-policy
+    type: scenario
+    front: A NetworkPolicy exists but traffic is still unrestricted. What key implementation question should you ask?
+    back: Whether the cluster network plugin/dataplane supports and enforces NetworkPolicy for that traffic.
+    critical_points: [Policy intent requires an enforcing implementation]
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]

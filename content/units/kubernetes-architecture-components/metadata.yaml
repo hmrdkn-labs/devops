@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-architecture-components
+slug: kubernetes-architecture-components
+title: Kubernetes components and the API request path
+summary: Trace a Kubernetes change from kubectl through the API, control-plane reconciliation, scheduling, kubelet execution, runtime, and status feedback.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 26
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:kubernetes-control-loop, fpp:kubernetes-manifests]
+objectives:
+  - id: fpp:kubernetes-architecture-components/roles
+    title: Assign API server, etcd, scheduler, controller manager, kubelet, runtime, DNS, and network components to their responsibilities
+    critical: true
+  - id: fpp:kubernetes-architecture-components/request-path
+    title: Trace one workload change from submitted intent to running containers and returned status
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

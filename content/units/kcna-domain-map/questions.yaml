@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kcna-domain-map
+revision: 1
+questions:
+  - id: fpp:kcna-domain-map/q-service
+    kind: explain
+    prompt: Why is the statement "a Kubernetes Service forwards traffic to Pods" useful shorthand but an incomplete mental model?
+    model_answer: A Service object defines stable addressing and endpoint selection, while a data-plane implementation such as kube-proxy or an eBPF-based dataplane programs the actual forwarding behavior. The Service expresses intent and selection; another component executes packet handling.
+    critical_points:
+      - Separate the API object from the packet-forwarding executor.
+      - Identify endpoint selection as distinct from forwarding.
+    objective_ids: [fpp:kcna-domain-map/layers]
+  - id: fpp:kcna-domain-map/q-weight
+    kind: scenario
+    prompt: You have limited KCNA study time. Why should Kubernetes Fundamentals receive more attention without ignoring Container Orchestration?
+    model_answer: Kubernetes Fundamentals is 44% of the current exam, the largest domain, while Container Orchestration is still 28% and contains networking, security, troubleshooting, and storage that explain many real Kubernetes behaviors. Study time should roughly respect the weights while preserving prerequisites and cross-domain dependencies.
+    critical_points:
+      - Kubernetes Fundamentals is the largest current domain.
+      - Exam weights guide emphasis but do not replace prerequisite order.
+    objective_ids: [fpp:kcna-domain-map/domains]

@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:cloud-native-delivery-gitops
+sources:
+  - id: source:opengitops-principles
+    title: OpenGitOps Principles
+    url: https://opengitops.dev/
+    publisher: OpenGitOps
+    type: standard
+    verified_at: 2026-09-09
+    note: Vendor-neutral GitOps principles for declarative, versioned, pulled, continuously reconciled state.
+  - id: source:kubernetes-declarative-config
+    title: Declarative Management of Kubernetes Objects Using Configuration Files
+    url: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Kubernetes declarative object-management model and apply workflow.
+  - id: source:kubernetes-deployment-delivery
+    title: Deployments
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Deployment rollout behavior beneath a delivery system.

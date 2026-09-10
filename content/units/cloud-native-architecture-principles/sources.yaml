@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:cloud-native-architecture-principles
+sources:
+  - id: source:cncf-cloud-native-definition
+    title: Cloud Native Definition
+    url: https://github.com/cncf/toc/blob/main/DEFINITION.md
+    publisher: CNCF
+    type: reference
+    verified_at: 2026-09-09
+    note: CNCF definition of cloud-native technologies and their architectural goals.
+  - id: source:kubernetes-hpa
+    title: Horizontal Pod Autoscaling
+    url: https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Kubernetes workload autoscaling control-loop behavior.
+  - id: source:cncf-glossary-serverless
+    title: Serverless
+    url: https://glossary.cncf.io/serverless/
+    publisher: CNCF
+    type: reference
+    verified_at: 2026-09-09
+    note: Vendor-neutral cloud-native definition of serverless computing.

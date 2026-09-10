@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:cloud-native-architecture-principles
+revision: 1
+questions:
+  - id: fpp:cloud-native-architecture-principles/q-cloud
+    kind: explain
+    prompt: Why is moving an unchanged, manually configured application server from an on-premises VM to a cloud VM not enough by itself to call the system cloud-native?
+    model_answer: The hosting location changed, but the operating model may still depend on mutable individual servers, manual recovery, tight coupling, and weak observability. Cloud-native architecture emphasizes automation, declarative control, replaceable artifacts, explicit interfaces, resilience, and observable runtime behavior in dynamic environments.
+    critical_points:
+      - Cloud hosting and cloud-native architecture are not synonyms.
+      - Operating model and system properties matter more than provider location.
+    objective_ids: [fpp:cloud-native-architecture-principles/properties]
+  - id: fpp:cloud-native-architecture-principles/q-scale
+    kind: scenario
+    prompt: A Deployment always runs ten replicas even at night. Is that automatically an example of elasticity?
+    model_answer: No. It is replication at a fixed desired capacity. Elasticity means capacity can expand and contract with demand or policy; an autoscaler is one mechanism that can change the desired replica count to support elasticity.
+    critical_points:
+      - Replication does not automatically imply elasticity.
+      - Autoscaling changes desired capacity based on signals or policy.
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]

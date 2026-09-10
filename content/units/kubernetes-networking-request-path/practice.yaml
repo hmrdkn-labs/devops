@@ -1,0 +1,18 @@
+schema_version: 1
+unit_id: fpp:kubernetes-networking-request-path
+practices:
+  - id: fpp:kubernetes-networking-request-path/p-service-trace
+    title: Trace one Service request end to end
+    mode: guided_markdown
+    prompt: In a disposable namespace, trace one Service from DNS name to a real backend response without changing networking components.
+    steps:
+      - Record the Service name, ClusterIP, ports, and selector.
+      - Record the matching EndpointSlice addresses and readiness.
+      - Match one endpoint address to a Pod and inspect its node and Pod IP.
+      - From a client Pod, resolve the Service name and make one request.
+      - If it fails, identify the first layer where expected evidence diverges.
+    success_checks:
+      - DNS, Service selection, endpoint readiness, Pod network identity, and application response are evidenced separately.
+      - A failed request is localized to the earliest unsupported hop rather than described as generic networking failure.
+    safety:
+      - Use a disposable namespace or test cluster.

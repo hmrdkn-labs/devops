@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:cloud-native-release-debugging
+slug: cloud-native-release-debugging
+title: Release strategies and application debugging
+summary: Distinguish rolling, blue-green, and canary release ideas and debug a failed Kubernetes release from artifact through rollout, readiness, endpoints, and user traffic.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: delivery
+estimated_minutes: 28
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:kubernetes-deployments-rollouts, fpp:troubleshoot-process-to-pod, fpp:cloud-native-delivery-gitops]
+objectives:
+  - id: fpp:cloud-native-release-debugging/strategy
+    title: Compare rolling, blue-green, and canary release strategies by traffic and risk boundaries
+    critical: true
+  - id: fpp:cloud-native-release-debugging/evidence
+    title: Trace a failed release from artifact and Pod state through readiness, endpoints, and real traffic
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [cloud-native-application-delivery]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

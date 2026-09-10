@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:cloud-native-observability-signals
+revision: 1
+questions:
+  - id: fpp:cloud-native-observability-signals/q-latency
+    kind: scenario
+    prompt: An API's p95 latency metric suddenly rises, but the metric alone does not show which downstream service is slow. Which signal is best suited to follow individual requests across service boundaries?
+    model_answer: Distributed traces are best suited to follow individual operations across services and show which spans consumed time. Metrics establish the population-level symptom; traces can localize a request path; logs can then explain a component-specific cause.
+    critical_points:
+      - Metrics and traces answer different questions.
+      - Traces connect causal work across service boundaries.
+    objective_ids: [fpp:cloud-native-observability-signals/signals]
+  - id: fpp:cloud-native-observability-signals/q-otel
+    kind: explain
+    prompt: Why is OpenTelemetry not simply a replacement name for Prometheus?
+    model_answer: OpenTelemetry is a vendor-neutral instrumentation and telemetry pipeline ecosystem for traces, metrics, and logs, including the Collector. Prometheus is primarily a metrics monitoring system with a time-series data model, scraping/querying, and alert-rule evaluation. They can integrate rather than replace each other one-for-one.
+    critical_points:
+      - OpenTelemetry focuses on generating/processing/exporting telemetry across signal types.
+      - Prometheus is a metrics-oriented monitoring and query system.
+    objective_ids: [fpp:cloud-native-observability-signals/tools]

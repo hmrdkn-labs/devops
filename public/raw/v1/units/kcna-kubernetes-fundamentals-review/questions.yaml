@@ -1,0 +1,21 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-fundamentals-review
+revision: 1
+questions:
+  - id: fpp:kcna-kubernetes-fundamentals-review/q-request-path
+    kind: scenario
+    prompt: A new Pod object exists but has no node assignment. Which component should make the next placement decision, and which component will eventually start its containers?
+    model_answer: The kube-scheduler chooses a suitable node for the unscheduled Pod. After the assignment is visible through the API, the kubelet on that node asks the container runtime to create and start the Pod's containers.
+    critical_points:
+      - Scheduler chooses placement.
+      - Kubelet and runtime execute on the chosen node.
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership]
+  - id: fpp:kcna-kubernetes-fundamentals-review/q-runtime
+    kind: explain
+    prompt: Why is "Kubernetes removed Docker support" an inaccurate description of the dockershim removal?
+    model_answer: Kubernetes removed its built-in dockershim integration with Docker Engine. Kubernetes still runs OCI-compatible images and communicates with CRI-compatible runtimes such as containerd or CRI-O. Docker-built images remain usable when they conform to the supported image format.
+    critical_points:
+      - Dockershim was an integration layer.
+      - OCI-compatible images still run.
+      - Kubernetes uses CRI-compatible runtimes.
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]

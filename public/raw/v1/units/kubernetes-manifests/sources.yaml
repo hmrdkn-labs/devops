@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-manifests
+sources:
+  - id: source:kubernetes-objects
+    title: Objects In Kubernetes
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream object model, spec, status, and object-management reference.
+  - id: source:kubernetes-object-names
+    title: Object Names and IDs
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream names, namespaces, and UID identity reference.

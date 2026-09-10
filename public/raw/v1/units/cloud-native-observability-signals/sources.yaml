@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:cloud-native-observability-signals
+sources:
+  - id: source:kubernetes-observability
+    title: Observability
+    url: https://kubernetes.io/docs/concepts/cluster-administration/observability/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Kubernetes observability concepts and cluster signal context.
+  - id: source:prometheus-overview
+    title: Prometheus Overview
+    url: https://prometheus.io/docs/introduction/overview/
+    publisher: Prometheus
+    type: documentation
+    verified_at: 2026-09-09
+    note: Prometheus metrics model, scraping, querying, and alerting architecture.
+  - id: source:opentelemetry-overview
+    title: What is OpenTelemetry?
+    url: https://opentelemetry.io/docs/what-is-opentelemetry/
+    publisher: OpenTelemetry
+    type: documentation
+    verified_at: 2026-09-09
+    note: Vendor-neutral telemetry signals, APIs, SDKs, and Collector concepts.

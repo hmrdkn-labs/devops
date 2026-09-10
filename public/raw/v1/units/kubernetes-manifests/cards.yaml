@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-manifests
+revision: 1
+cards:
+  - id: fpp:kubernetes-manifests/c-kind
+    type: short
+    front: Which manifest field selects the Kubernetes object type?
+    back: kind.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-manifests/object-shape]
+  - id: fpp:kubernetes-manifests/c-spec
+    type: short
+    front: In one phrase, what does spec represent?
+    back: Desired state.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-manifests/object-shape]
+  - id: fpp:kubernetes-manifests/c-status
+    type: short
+    front: In one phrase, what does status represent?
+    back: Observed state reported by Kubernetes components.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-manifests/object-shape]
+  - id: fpp:kubernetes-manifests/c-explain
+    type: prompt
+    front: Explain why a successful kubectl apply is not proof that an application works.
+    back: Apply proves an API write was accepted; scheduling, image pull, probes, networking, and application behavior are downstream reconciliation steps requiring separate evidence.
+    critical_points: [Separate API acceptance from runtime convergence]
+    objective_ids: [fpp:kubernetes-manifests/proof-boundary]
+  - id: fpp:kubernetes-manifests/c-scenario
+    type: scenario
+    front: A manifest has the right YAML indentation but the API rejects an unknown field. What layer rejected it?
+    back: Kubernetes API schema validation for that resource/version, not YAML parsing alone.
+    critical_points: [Serialization validity and Kubernetes API validity are different checks]
+    objective_ids: [fpp:kubernetes-manifests/object-shape]

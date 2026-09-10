@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:cloud-native-delivery-gitops
+slug: cloud-native-delivery-gitops
+title: CI, CD, declarative delivery, and GitOps
+summary: Distinguish artifact creation from release reconciliation and explain how GitOps turns version-controlled desired state into continuously reconciled application delivery.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: delivery
+estimated_minutes: 25
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:git-yaml-declarative, fpp:kubernetes-apply-live-state, fpp:kubernetes-deployments-rollouts]
+objectives:
+  - id: fpp:cloud-native-delivery-gitops/pipeline
+    title: Separate CI artifact creation from CD release and runtime reconciliation
+    critical: true
+  - id: fpp:cloud-native-delivery-gitops/gitops
+    title: Explain GitOps desired state, continuous reconciliation, drift correction, and rollback boundaries
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [cloud-native-application-delivery]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

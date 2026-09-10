@@ -1,0 +1,31 @@
+schema_version: 1
+unit_id: fpp:kubernetes-networking-request-path
+sources:
+  - id: source:kubernetes-cluster-networking
+    title: Cluster Networking
+    url: https://kubernetes.io/docs/concepts/cluster-administration/networking/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream Kubernetes networking model and implementation boundaries.
+  - id: source:kubernetes-service
+    title: Service
+    url: https://kubernetes.io/docs/concepts/services-networking/service/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Service types, selectors, EndpointSlices, and virtual addressing.
+  - id: source:kubernetes-dns-service
+    title: DNS for Services and Pods
+    url: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Cluster DNS names and Service/Pod discovery behavior.
+  - id: source:kubernetes-network-policy
+    title: Network Policies
+    url: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: NetworkPolicy selection, ingress/egress semantics, and enforcement requirements.

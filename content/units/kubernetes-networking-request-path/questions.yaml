@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-networking-request-path
+revision: 1
+questions:
+  - id: fpp:kubernetes-networking-request-path/q-node-ip
+    kind: explain
+    prompt: Why is assigning only an IP address to each worker node not enough for the Kubernetes Pod networking model?
+    model_answer: Multiple Pods and replicas need distinct network identities independent of the node they happen to run on. Pod IPs let workloads communicate without treating every Pod as a node-port mapping, while Services provide a stable identity above replaceable Pod IPs.
+    critical_points:
+      - Pod identity is separate from node identity.
+      - Stable client discovery belongs at the Service layer because Pod IPs are replaceable.
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/q-no-endpoints
+    kind: scenario
+    prompt: Service DNS resolves correctly, but the EndpointSlice has no ready endpoints. Which layers are already proven and what should you inspect next?
+    model_answer: DNS and the existence of the Service are proven, but backend selection/readiness is not. Inspect the Service selector, Pod labels, Pod readiness, and target application state before blaming cluster routing.
+    critical_points:
+      - DNS success does not prove backend availability.
+      - Endpoint selection depends on selectors and readiness.
+    objective_ids: [fpp:kubernetes-networking-request-path/service-path]

@@ -1,13 +1,134 @@
 {
   "schema_version": 1,
   "content_version": "2026.08.1",
-  "generated_at": "2026-08-27T00:00:00.000Z",
+  "generated_at": "2026-09-10T00:00:00.000Z",
   "canonical_base_url": "https://devops.hamardikan.com",
   "licenses": {
     "prose_and_diagrams": "CC-BY-SA-4.0",
     "application_and_examples": "MIT"
   },
   "units": [
+    {
+      "id": "fpp:cloud-native-architecture-principles",
+      "slug": "cloud-native-architecture-principles",
+      "title": "Cloud-native architecture principles",
+      "summary": "Understand cloud-native systems as loosely coupled, declarative, observable, resilient, automated systems rather than as applications that merely happen to run in a cloud.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "architecture",
+      "prerequisites": [
+        "fpp:container-lifecycle",
+        "fpp:kubernetes-control-loop"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:cloud-native-architecture-principles/properties": "d0b58063b5434b3cf1668c35ef5e14ffda2df8e0b7ad68f7601c4355713328bf",
+        "fpp:cloud-native-architecture-principles/scale": "b4acca5d2330751a94987167b115bbeee35da6b6a9cf5e5a90de8f6c50828f7d"
+      },
+      "mastery_hash": "6809e60585999db8deeb3b27140203929150c73e7fd15bee2e5c9a3d5a52e3d7",
+      "enrichment_hash": "2c4048e3549f04a43b06d409c850049f17f5c9fb78302a76172064ed298de157",
+      "editorial_hash": "c6e6cf790a28d35d10fa26920dc2b6d9df351843b98446f594ad0fd486138ec7",
+      "content_hash": "beb0220589ea9bb8227fadea0aa99e707dc82cc045bb8fdb3925d0b71a3480d8",
+      "raw_markdown_url": "/raw/v1/units/cloud-native-architecture-principles/unit.md"
+    },
+    {
+      "id": "fpp:cloud-native-delivery-gitops",
+      "slug": "cloud-native-delivery-gitops",
+      "title": "CI, CD, declarative delivery, and GitOps",
+      "summary": "Distinguish artifact creation from release reconciliation and explain how GitOps turns version-controlled desired state into continuously reconciled application delivery.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "delivery",
+      "prerequisites": [
+        "fpp:git-yaml-declarative",
+        "fpp:kubernetes-apply-live-state",
+        "fpp:kubernetes-deployments-rollouts"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:cloud-native-delivery-gitops/pipeline": "52a91e3fd5f26c44252129564ceebeb0b51ff72abf230893d23896ad0bc08a74",
+        "fpp:cloud-native-delivery-gitops/gitops": "9dd041e59f18cd30f62a31dc80471b033f08408bd3832a637e6aa50ce25abed8"
+      },
+      "mastery_hash": "165a47dfa5ddf58c4fa0cc26a57462eb155ed1593b84ad89ef85949220b575dc",
+      "enrichment_hash": "607d223d367273d5a73e49baf41a534ce3428148e973beb99616f390bac558b3",
+      "editorial_hash": "4af9bb8142c1cf641a805f0cc9f9fab5fb0c9dfab7603d7f48b87ba2686744d5",
+      "content_hash": "98eadba93a4fd6e728f860a5bce917ff215f625ee44c97c393ddf63914090d0e",
+      "raw_markdown_url": "/raw/v1/units/cloud-native-delivery-gitops/unit.md"
+    },
+    {
+      "id": "fpp:cloud-native-observability-signals",
+      "slug": "cloud-native-observability-signals",
+      "title": "Metrics, logs, traces, events, and observability",
+      "summary": "Use metrics, logs, traces, Kubernetes events, and end-to-end probes as complementary evidence rather than treating one monitoring tool as complete observability.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "operations",
+      "prerequisites": [
+        "fpp:troubleshoot-process-to-pod"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:cloud-native-observability-signals/signals": "cae5dd31a3a9040deb265778345ba472665944dd36554febab808c4e0e6f920e",
+        "fpp:cloud-native-observability-signals/tools": "6cfcffd3480f0d98530dd64bfb8c1f3e18ef2c16baa20519c70bef09f34b4ff9"
+      },
+      "mastery_hash": "467826666219b8c1eb785aeed271448c1f80b98a6f8a35531ac29cfaaf84f2ba",
+      "enrichment_hash": "321d4341662642592b2958d6d0d17be2b66c5ae2d50d7dc348c18ae6d9cb530e",
+      "editorial_hash": "37763aecab8ae6f497304b8128a60530108a88d2dc522c8b72d529d6b50ad1b3",
+      "content_hash": "87292fefef9f8a62d858f18f45a6c7b3c83e7c5f647d88683d600be66681e427",
+      "raw_markdown_url": "/raw/v1/units/cloud-native-observability-signals/unit.md"
+    },
+    {
+      "id": "fpp:cloud-native-release-debugging",
+      "slug": "cloud-native-release-debugging",
+      "title": "Release strategies and application debugging",
+      "summary": "Distinguish rolling, blue-green, and canary release ideas and debug a failed Kubernetes release from artifact through rollout, readiness, endpoints, and user traffic.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "delivery",
+      "prerequisites": [
+        "fpp:kubernetes-deployments-rollouts",
+        "fpp:troubleshoot-process-to-pod",
+        "fpp:cloud-native-delivery-gitops"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:cloud-native-release-debugging/strategy": "d1c67be080bf6ae5fd88ec28e39880667daf2a5309958ef48c6cd0377e043030",
+        "fpp:cloud-native-release-debugging/evidence": "514b0b4db926d406f9b4e60db1c5cd5be599a0b520cbd540fc2bf1dbb48f8ed7"
+      },
+      "mastery_hash": "3b78d8def65df795a7215593f8430326cef4c001840247fa3646dbfb9f5da57f",
+      "enrichment_hash": "f389cc56189431bd4f9e60073fc8e39ab74d1151a881f3329ff60b598bf6b10b",
+      "editorial_hash": "f7576d2bb9be7fc0fc8775875b4b8f3107d9ec6a8e454de51868eb9c948c7175",
+      "content_hash": "58437f732085f862c8791d0e9a25f467e4e9d8c506c4fe672e20e6d1e518a044",
+      "raw_markdown_url": "/raw/v1/units/cloud-native-release-debugging/unit.md"
+    },
+    {
+      "id": "fpp:cncf-ecosystem-community",
+      "slug": "cncf-ecosystem-community",
+      "title": "CNCF ecosystem, projects, standards, and community",
+      "summary": "Place Kubernetes within the CNCF ecosystem, recognize common project responsibilities, and distinguish open interfaces, project maturity, community governance, and the landscape catalog.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "architecture",
+      "prerequisites": [
+        "fpp:kcna-domain-map",
+        "fpp:cloud-native-architecture-principles"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:cncf-ecosystem-community/projects": "ba98f63220b30643f900a7a33197aefedcfea012cfb151c09eba962651673195",
+        "fpp:cncf-ecosystem-community/community": "e0a69d5d8b6d79a04f4abd142eb6ab2fe3c3dac68fcc32aa013b645ff4324407"
+      },
+      "mastery_hash": "ff79eec388f1b9965fd452e43dc4b2ac311364c3c36523323731a81dd2d9d620",
+      "enrichment_hash": "4c1dada978fb2939a0e0c514f2d82006d259f9fa3d30beaf2f323b7d8a994ad4",
+      "editorial_hash": "4ae212d60562b4ed3965f850345972774646f5f1df9bb67ab24a9ae360b1f72d",
+      "content_hash": "113ee319275ef6aacd90a3d8c70696af64b11364b4e51cc63b2b9398dbfcecff",
+      "raw_markdown_url": "/raw/v1/units/cncf-ecosystem-community/unit.md"
+    },
     {
       "id": "fpp:config-secrets-storage",
       "slug": "config-secrets-storage",
@@ -200,6 +321,128 @@
       "raw_markdown_url": "/raw/v1/units/ip-subnets/unit.md"
     },
     {
+      "id": "fpp:kcna-domain-map",
+      "slug": "kcna-domain-map",
+      "title": "KCNA domain map and reasoning strategy",
+      "summary": "Map the current KCNA blueprint to a small set of Kubernetes and cloud-native mental models so study is driven by reasoning rather than isolated terms.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "architecture",
+      "prerequisites": [],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kcna-domain-map/domains": "2434cf8c5ccb787a3553f0610bf21a7a3c5eb8b58e140e9117c6ada2cfd64867",
+        "fpp:kcna-domain-map/layers": "5110df1215c507111cbfdbc1f89e5f6a0fa5e6251c78e7f7de9015e90f15dd40"
+      },
+      "mastery_hash": "8ddcfe585d750568a7799cbcc82f1075fc2259e7919f3e5001d16d06c2c9498a",
+      "enrichment_hash": "13e054c7aa1f0da56853e4cd14a832b87c237add8a504f40919cfa0fda367afc",
+      "editorial_hash": "89cc3e24b4d02cedeed4a4b7b40cfdd0bdcbfffeaa37f26f457bfece64651319",
+      "content_hash": "a79e07b87f2a3fd1934a230217e7d793067d044c2025546b6d5b06af3182ffab",
+      "raw_markdown_url": "/raw/v1/units/kcna-domain-map/unit.md"
+    },
+    {
+      "id": "fpp:kcna-kubernetes-fundamentals-review",
+      "slug": "kcna-kubernetes-fundamentals-review",
+      "title": "KCNA Kubernetes Fundamentals quiz companion",
+      "summary": "A fast review of containers, orchestration, Kubernetes architecture, CRI, and container runtimes for use beside the KCNA fundamentals quiz.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "architecture",
+      "prerequisites": [
+        "fpp:container-lifecycle",
+        "fpp:kubernetes-control-loop",
+        "fpp:kubernetes-architecture-components"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kcna-kubernetes-fundamentals-review/ownership": "7f4b8a90468bcff29e40624de4cd1c854d01150fd1591c08f0ce674446abacc5",
+        "fpp:kcna-kubernetes-fundamentals-review/runtime": "da2ffe4cedd47c55d670027da361d3474816f83c73baf834b75e787443ec88ad"
+      },
+      "mastery_hash": "2b963753b0382aa14138ef0b1cf1fee2f1e3634901fbb7a0b14b89e8e7c7a8c6",
+      "enrichment_hash": "99f2b9f2fa7c522e42e4abd1ff1fd455d8c82db1d033566168562eb6c476e6dc",
+      "editorial_hash": "bb83c206523ce7a69462a256fd26697c44c31df10088c7bbe4d3a6cc47523eca",
+      "content_hash": "6a6a616e00aa8fb44f81c6afe3197400a4cffc7c302aadffa521f5d2b0bde502",
+      "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/unit.md"
+    },
+    {
+      "id": "fpp:kcna-kubernetes-resources-review",
+      "slug": "kcna-kubernetes-resources-review",
+      "title": "KCNA Kubernetes Resources quiz companion",
+      "summary": "A compact review of Pods, YAML objects, ReplicaSets, Deployments, rollouts, apply, imperative versus declarative management, kubectl explain, and namespaces.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-manifests",
+        "fpp:kubernetes-pod-model",
+        "fpp:kubernetes-labels-replicasets",
+        "fpp:kubernetes-deployments-rollouts",
+        "fpp:kubernetes-apply-live-state",
+        "fpp:kubernetes-namespaces-scope"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kcna-kubernetes-resources-review/ownership": "f0d21774953f1586708a9a8412173364f750015f7bb88a5942c1b3016e6b0361",
+        "fpp:kcna-kubernetes-resources-review/api-objects": "8aa7fa5bd060607e87ec35e2f23af9a82ebacf9b6a52abbb252febd69b1184c4"
+      },
+      "mastery_hash": "18533f47a1770c40de4313ea5772879658e36830278684ed4edc35029d513cf3",
+      "enrichment_hash": "60fb0e66d29196e6240d4d0de69f7d9ac2ae0af85c3440b34a9941718fe8e675",
+      "editorial_hash": "f71506c53f96168957c71780c9778834b7ed4a95ed4d497f30ffc0f721f29d4a",
+      "content_hash": "1fa81fc9d5518281473f3164ca279ecf096f9a0e57d1b8ab3437308652bfe226",
+      "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-resources-review/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-apply-live-state",
+      "slug": "kubernetes-apply-live-state",
+      "title": "kubectl apply and live state",
+      "summary": "Treat kubectl apply as declarative API reconciliation, compare local intent with live state, and understand why successful configuration is only one proof layer.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-manifests",
+        "fpp:kubernetes-deployments-rollouts"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-apply-live-state/declarative": "6ff46cf7dc6699b709e66c79d4f5a35d8df4f640369cafd304b8d3f6d0a8b3c8",
+        "fpp:kubernetes-apply-live-state/live-state": "df12cac8cb1a79f240ea9f986dc9a6cd2a31ef489b967eb45495c80b6e53cec9"
+      },
+      "mastery_hash": "66356c1893657ad2ed02e6da89b7011350ed6001458a66bda6232cea658e4fd5",
+      "enrichment_hash": "5205c120c96aadc2585f1a07c98990bad2edc5699c727acc1816788fc835b004",
+      "editorial_hash": "bbb895d776896617bf578813d770b8286d125f790bcf67b94a5fbac6d04a22e1",
+      "content_hash": "7a1c2b34ffe5a33f488b45b5a6ab6da959c3654d0d37175589766af14f6d7790",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-apply-live-state/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-architecture-components",
+      "slug": "kubernetes-architecture-components",
+      "title": "Kubernetes components and the API request path",
+      "summary": "Trace a Kubernetes change from kubectl through the API, control-plane reconciliation, scheduling, kubelet execution, runtime, and status feedback.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-control-loop",
+        "fpp:kubernetes-manifests"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-architecture-components/roles": "74f4e2c5f4dab13f8423c591b3397bbcddded9ce81d609f8a619b19b7f4f772c",
+        "fpp:kubernetes-architecture-components/request-path": "226ce92ab8306dc66a7a9a606ca85be7c4706444f6799e757143bedd6f513a45"
+      },
+      "mastery_hash": "7e351113b11d97335a37502cff3566c2bea0bdabe0fe3ea002fbb0bb73027e04",
+      "enrichment_hash": "f25e76b01a7cffa484a578eef4eca9557ab58e36cd9021e5f4e2b6c87b35d8c0",
+      "editorial_hash": "ffe9f400e5def70953493d3c54963e0ee08f6cfc199831d0ecf2a1195247dd92",
+      "content_hash": "ddb06cbd16d194c432d2ffa35adb9af0ab47d9ced66d1a03f06c8d9054b21f74",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-architecture-components/unit.md"
+    },
+    {
       "id": "fpp:kubernetes-control-loop",
       "slug": "kubernetes-control-loop",
       "title": "Kubernetes API and control loops",
@@ -222,6 +465,223 @@
       "editorial_hash": "fb8d1c25fab6c49772667c0e3627cdae0f4dc241379056a5854b71bb0e5f3d7a",
       "content_hash": "538a5f441e62e23f4e65d55b1f95a168585ee049a6171650e7fb63e896f90f04",
       "raw_markdown_url": "/raw/v1/units/kubernetes-control-loop/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-deployments-rollouts",
+      "slug": "kubernetes-deployments-rollouts",
+      "title": "Deployments, rollouts, and rollbacks",
+      "summary": "Trace how a Deployment manages ReplicaSets, why template changes create rollout revisions, and how rollout evidence differs from application health.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-labels-replicasets"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-deployments-rollouts/ownership-chain": "8eabba8b1d5b045fd4859399b23df6ce4844261ada65d03992e549eb1a3c85b2",
+        "fpp:kubernetes-deployments-rollouts/revision": "8d2039d7a25c1e799146ee3916fa01f4f7fd4b6598f9e072e2c1649a33bb32b1"
+      },
+      "mastery_hash": "261268b285690dcb22bfcf7b140b075eb0e8cd15e9e030b94fadb3db0eaab3de",
+      "enrichment_hash": "d8f3b82f4ccc14c4c09720abb4d514819df10e8e17d6d458ab60ec4a9726ddf4",
+      "editorial_hash": "63cb55fb6afbf717d1568b54d34079ad5d143d58e8856d348a243d74526cdb37",
+      "content_hash": "1dc53d8cc778adf8bdf28c6872a54efb748da343acf799d155ad82cb8518a980",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-deployments-rollouts/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-labels-replicasets",
+      "slug": "kubernetes-labels-replicasets",
+      "title": "Labels, selectors, and ReplicaSets",
+      "summary": "Connect label-based selection to ReplicaSet ownership and explain how a controller continuously repairs replica-count drift.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-pod-model",
+        "fpp:pods-workloads"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-labels-replicasets/selection": "6c3608ad666dc2026d04c405c742ae1296033033a1efc6cafbaa3412fbc340a0",
+        "fpp:kubernetes-labels-replicasets/reconciliation": "03a89ffe3e0514040fa301abf64480296c98c835a1e8e4a54caa02c698d6e6de"
+      },
+      "mastery_hash": "52f0831aaa83df3c628fc82c7bda2b03a0a282b026d068f6597bda6f9fde68c2",
+      "enrichment_hash": "02dce946419048161b0cfad3e4942e4ebafb5d227c5eb601975bef5603957056",
+      "editorial_hash": "81941966196ad5ef89b16342ba4632e9a89a2996a3f3b21dff0bdfab14c32e20",
+      "content_hash": "f8708ae120a59742ecb89633d86384d50b3cb886eb704a15d1c5bb8507d7d5f3",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-labels-replicasets/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-manifests",
+      "slug": "kubernetes-manifests",
+      "title": "Kubernetes manifests and API objects",
+      "summary": "Read a Kubernetes manifest as a request to the API, separate desired spec from observed status, and prove what the cluster accepted.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:git-yaml-declarative",
+        "fpp:kubernetes-control-loop"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-manifests/object-shape": "27c8fac3acd7bb543cc705a8b9f0fe99951214d39e8096460872662ee57fe8b7",
+        "fpp:kubernetes-manifests/proof-boundary": "9e6292d282bfb324af70f8727f84ed752b0df6aae1c17b4519650e210ab1b098"
+      },
+      "mastery_hash": "78ac5f25cff003ee590198b4eecdbf151db27a9264c48791753269b5cd9c3ab0",
+      "enrichment_hash": "c013041bbea11d5ca39fe8bdb08a15f9579385018df02a44fa6ce0c0f2c11c32",
+      "editorial_hash": "0ee5ea210405a10ca3d4b914f00f4fa91649f302bc3129418c035b62df12ee76",
+      "content_hash": "852d4a2f64095b9c4e5530393a3d89784169cc9c6d1f46ea970fb4b3489e132f",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-manifests/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-namespaces-scope",
+      "slug": "kubernetes-namespaces-scope",
+      "title": "Kubernetes namespaces and API scope",
+      "summary": "Use namespaces as namespaced API scope and organizational boundaries while avoiding the common mistake of treating a namespace as automatic security isolation.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-manifests",
+        "fpp:kubernetes-labels-replicasets"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-namespaces-scope/scope": "22428f1d03d9cea08626517f91d7ab10f22c54f3408eccc848719f5aa97673b1",
+        "fpp:kubernetes-namespaces-scope/boundary": "5b62ba3b66dd43128b5f2c3fcbfcdd7dde9ea6ae1fcd95fe135f4f0a4a8cde51"
+      },
+      "mastery_hash": "70c5a2911a38b1a5dbe329494cbd870a3fe1c99f73bf617329c909230058859e",
+      "enrichment_hash": "346843f74ee2f492625a39b770f0e120208ee09a7a8bf0c7cb861092f9a4a1b7",
+      "editorial_hash": "68e6744aab696b7f89b8ae31e0bb9545523725c5a02cb2b8d19ca82857391892",
+      "content_hash": "9a3e47d9ca679ce31b670ebe99ac42a3b6bfc7ff380fcca98277b34d1646ca81",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-namespaces-scope/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-networking-request-path",
+      "slug": "kubernetes-networking-request-path",
+      "title": "Kubernetes networking request path",
+      "summary": "Trace a request from DNS through a Service and EndpointSlice to a Pod while separating CNI connectivity, Service forwarding, ingress routing, and policy.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "networking",
+      "prerequisites": [
+        "fpp:ip-subnets",
+        "fpp:ports-sockets-dns",
+        "fpp:services-dns-ingress",
+        "fpp:kubernetes-pod-model"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-networking-request-path/service-path": "0ad6b7fe1f31cbd149a7701d60184bbef79db45bd35383d012d3d31186eb4189",
+        "fpp:kubernetes-networking-request-path/boundaries": "14ac54d3d5faf99d69273a3335cfb2118e5add6f32476688dc354304d352849f"
+      },
+      "mastery_hash": "7125d7134a3bc090db475f0651bbcf18e22482c7a673598e0fa3a2464d9d0c9b",
+      "enrichment_hash": "760375ceeeb2c5a309946db2ad4ba21dd587b70596766f25273fb023ff731cc6",
+      "editorial_hash": "2116bf34e7627d32bf386f797a69fcc98edeb00778bbb7defba4206a9c17eb21",
+      "content_hash": "bcb68bb456ee870e54b773004d0e27006bd998961f6cb055ab8937930eff9f98",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-networking-request-path/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-pod-model",
+      "slug": "kubernetes-pod-model",
+      "title": "Pod model, lifecycle, and ownership",
+      "summary": "Reason about Pods as disposable execution records with one scheduled node, shared network identity, lifecycle phases, and controller ownership.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-manifests",
+        "fpp:container-lifecycle"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-pod-model/lifecycle": "71173f9f1266d6c9656a7b0659097c2bafd9729a11dd965de84ee54181d05342",
+        "fpp:kubernetes-pod-model/ownership": "7ac56f42485cb4d7e757745fbcd010a57214ee58a49e38dbc2cd4ce99be33fbe"
+      },
+      "mastery_hash": "1dccca6b7c84362847656cb255d92739e84c3f7b027948276a85fdcce0122909",
+      "enrichment_hash": "1adfd1434966972cbe24552cf9bbc819c636e8483c420794ca17bdf2da4c0955",
+      "editorial_hash": "53b9d743d11b85675c55931f396069939a05f4b03036871495a7827ba7294257",
+      "content_hash": "3ed49ff33540516633732b3b06f64e2cf39fa65f6fe191b3b82db327073d064a",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-pod-model/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-scheduling-placement",
+      "slug": "kubernetes-scheduling-placement",
+      "title": "Kubernetes scheduling and placement constraints",
+      "summary": "Predict where a Pod can run by separating resource requests, node selection, affinity, taints and tolerations, topology spreading, and controller intent.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:scheduling-resources-health",
+        "fpp:kubernetes-architecture-components"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-scheduling-placement/feasibility": "6e50fa7a2cd50efabc0ac12bd5b61f1d9ef25c7b5155a5067936775ce0867d80",
+        "fpp:kubernetes-scheduling-placement/policy": "791098654c391da55afa66e84bbddb2ce279d62ed6b5e971509b5930ee2e6bc3"
+      },
+      "mastery_hash": "a0b3794da3c0eb5912d089a660a3fb9b1cfbc7cd356d1a47b52aad9b10282665",
+      "enrichment_hash": "6e9c8ada846244111d95014038146d9de6c2f1652aaf2c2c710ca383dc0d201a",
+      "editorial_hash": "4afee044a670fe1b9e76a2641b53396ea9fb9ef730a3adb786315b7decc2191c",
+      "content_hash": "626f5187c365c3d2a922d979c0c67c30734fb50aa33a7f630bac8eb46d609167",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-scheduling-placement/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-security-access",
+      "slug": "kubernetes-security-access",
+      "title": "Kubernetes identity, authorization, admission, and workload boundaries",
+      "summary": "Separate authentication, RBAC authorization, admission, workload identity, Secret handling, Pod security, and network segmentation into clear security boundaries.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-architecture-components",
+        "fpp:kubernetes-namespaces-scope"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-security-access/request": "eb18e45e540bf2b94f8c6c4969143e658d5975935df6e11009dd7e539fa212e9",
+        "fpp:kubernetes-security-access/workload": "85190ba4541816812443b4f70c2a91a0f1252388acce1231bed9f6002333262c"
+      },
+      "mastery_hash": "0966226b46c91aca3ec27aefe402026e0f12f7f444128a3a67a840fe2b7d82f0",
+      "enrichment_hash": "2b45cca7a5e73838c08542679b215bfad198af7acb7ba40aa0ca91c92b5b51c4",
+      "editorial_hash": "6527bf51c6c1df5302f9bf2fbaaf2c0e87b8541db3e74c471d89732abde328ce",
+      "content_hash": "75aecc5c9a1d054975618116505dbccf7a0df2840048967e67cbf89457f02b14",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-security-access/unit.md"
+    },
+    {
+      "id": "fpp:kubernetes-storage-lifecycle",
+      "slug": "kubernetes-storage-lifecycle",
+      "title": "Kubernetes persistent storage lifecycle",
+      "summary": "Trace durable storage from a workload claim through StorageClass and CSI provisioning to a bound volume, mounted Pod, topology constraints, and reclaim behavior.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:config-secrets-storage",
+        "fpp:kubernetes-pod-model"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-storage-lifecycle/claim": "c975a657e1870366f9e869322579c73586b5937c335f6ef80837511d6bf958b8",
+        "fpp:kubernetes-storage-lifecycle/failure-domain": "3762af04817b517124f30d43864494933c9f4b6e552c6902c96bfc83af550f71"
+      },
+      "mastery_hash": "718cf201550757cb39b308ff30ac91dfb381d71c5292ad479cd9874feb1c750b",
+      "enrichment_hash": "6b724c6021a2440c4938b856dad16bbcaa2fcdbe4c831448824c2f02e95965b0",
+      "editorial_hash": "ff474a9bff7c1c21c0530ee8cd0a2d2884584a695b4319974556a74c37dbcc3a",
+      "content_hash": "924a8a15ab8347dc2d292d54448a6e1c2830080d4ccd401c9615ee5f444fdbf6",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-storage-lifecycle/unit.md"
     },
     {
       "id": "fpp:namespaces-cgroups",
@@ -521,6 +981,133 @@
           "weight": 2
         }
       ]
+    },
+    {
+      "schema_version": 1,
+      "id": "path:kcna",
+      "slug": "kcna",
+      "title": "KCNA Learning Path",
+      "summary": "Build KCNA-ready Kubernetes and cloud-native understanding from networking and containers through Kubernetes resources, delivery, operations, and troubleshooting.",
+      "revision": 3,
+      "status": "published",
+      "units": [
+        {
+          "unit_id": "fpp:kcna-domain-map",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:ip-subnets",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:ports-sockets-dns",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:container-lifecycle",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:git-yaml-declarative",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-control-loop",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-manifests",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-architecture-components",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:kubernetes-pod-model",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:pods-workloads",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-labels-replicasets",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-deployments-rollouts",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-apply-live-state",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-namespaces-scope",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kcna-kubernetes-resources-review",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:services-dns-ingress",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-networking-request-path",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:scheduling-resources-health",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-scheduling-placement",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:config-secrets-storage",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:kubernetes-storage-lifecycle",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kubernetes-security-access",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:cloud-native-delivery-gitops",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:troubleshoot-process-to-pod",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:cloud-native-release-debugging",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:cloud-native-observability-signals",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:cloud-native-architecture-principles",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:cncf-ecosystem-community",
+          "weight": 1
+        }
+      ]
     }
   ],
   "certifications": {
@@ -569,5 +1156,5 @@
       }
     ]
   },
-  "manifest_sha256": "36e619e0601808bc39370b5b3b8b7f7fdaf8634b748076d290abeb0e460d7802"
+  "manifest_sha256": "a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b"
 }

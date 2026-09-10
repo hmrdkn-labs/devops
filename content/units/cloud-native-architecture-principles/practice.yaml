@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:cloud-native-architecture-principles
+practices:
+  - id: fpp:cloud-native-architecture-principles/p-compare
+    title: Compare two operating models
+    mode: guided_markdown
+    prompt: Compare a manually maintained single VM application with a declaratively deployed replicated service and identify the exact properties that change.
+    steps:
+      - Describe how each design records desired configuration.
+      - Describe how each design replaces a failed instance.
+      - Describe how each design deploys a new version.
+      - Describe what runtime evidence is available.
+      - Identify one shared failure mode that replication alone would not solve.
+    success_checks:
+      - The comparison uses concrete operating properties rather than only the word cloud-native.
+      - Replication is not treated as sufficient proof of resilience or elasticity.
+    safety: []

@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:cloud-native-delivery-gitops
+revision: 1
+cards:
+  - id: fpp:cloud-native-delivery-gitops/c-ci
+    type: short
+    front: What is the primary boundary of CI in a container delivery flow?
+    back: Integrating and validating code changes and producing a tested, identifiable artifact such as a container image.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-delivery-gitops/pipeline]
+  - id: fpp:cloud-native-delivery-gitops/c-gitops
+    type: short
+    front: In GitOps, what is Git primarily storing?
+    back: Version-controlled declarative desired state, not the live executor itself.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
+  - id: fpp:cloud-native-delivery-gitops/c-reconciler
+    type: short
+    front: What turns GitOps desired state into changes in the target system?
+    back: A GitOps reconciler/controller that continuously compares desired and observed state.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
+  - id: fpp:cloud-native-delivery-gitops/c-chain
+    type: prompt
+    front: Trace a source commit to a Kubernetes rollout without collapsing CI, delivery, and Kubernetes reconciliation into one step.
+    back: Source enters CI, CI validates and produces an immutable artifact, desired deployment state is changed, a delivery/GitOps system applies or reconciles it through the Kubernetes API, Kubernetes controllers roll out Pods, and runtime/service checks prove the release.
+    critical_points: [Artifact creation, desired-state delivery, Kubernetes reconciliation, and runtime proof are separate]
+    objective_ids: [fpp:cloud-native-delivery-gitops/pipeline]
+  - id: fpp:cloud-native-delivery-gitops/c-revert
+    type: scenario
+    front: Does reverting a GitOps manifest automatically undo a database schema migration performed by the newer release?
+    back: No. Reverting desired application state does not automatically reverse external side effects or data migrations; rollback compatibility must be designed separately.
+    critical_points: [Deployment rollback is not universal state rollback]
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]

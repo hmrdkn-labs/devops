@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kcna-domain-map
+sources:
+  - id: source:kcna-current
+    title: Kubernetes and Cloud Native Associate (KCNA)
+    url: https://www.cncf.io/training/certification/kcna/
+    publisher: CNCF
+    type: reference
+    verified_at: 2026-09-09
+    note: Current KCNA purpose, exam domains, competencies, and weights.
+  - id: source:kcna-program-changes-2025
+    title: Kubernetes and Cloud Native Associate (KCNA) Program Changes
+    url: https://training.linuxfoundation.org/kcna-program-changes/
+    publisher: Linux Foundation
+    type: reference
+    verified_at: 2026-09-09
+    note: Official record of the post-November-2025 KCNA blueprint update.

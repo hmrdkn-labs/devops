@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-security-access
+revision: 1
+questions:
+  - id: fpp:kubernetes-security-access/q-kubeconfig
+    kind: scenario
+    prompt: A user has a valid kubeconfig credential for a cluster but receives Forbidden when listing Secrets. Is authentication broken?
+    model_answer: Not necessarily. Successful authentication can establish the user's identity while authorization denies the requested action. Inspect RBAC or the configured authorization policy rather than treating a valid credential as proof of permission.
+    critical_points:
+      - Authentication and authorization are separate checks.
+      - A valid identity does not imply permission to every resource.
+    objective_ids: [fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/q-controls
+    kind: explain
+    prompt: Why can RBAC, Pod Security Admission, and NetworkPolicy all be required for the same application?
+    model_answer: They protect different boundaries. RBAC limits Kubernetes API operations, Pod Security Admission constrains the privileges and host access a Pod may request, and NetworkPolicy constrains allowed network flows when supported by the dataplane.
+    critical_points:
+      - API permissions, workload privilege, and network connectivity are distinct control planes.
+      - One control does not replace the other two.
+    objective_ids: [fpp:kubernetes-security-access/workload]

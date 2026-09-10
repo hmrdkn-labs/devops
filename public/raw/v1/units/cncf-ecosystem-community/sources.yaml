@@ -1,0 +1,31 @@
+schema_version: 1
+unit_id: fpp:cncf-ecosystem-community
+sources:
+  - id: source:cncf-projects
+    title: CNCF Projects
+    url: https://www.cncf.io/projects/
+    publisher: CNCF
+    type: reference
+    verified_at: 2026-09-09
+    note: Current CNCF-hosted project catalog and maturity information.
+  - id: source:cncf-landscape
+    title: Cloud Native Landscape
+    url: https://landscape.cncf.io/
+    publisher: CNCF
+    type: reference
+    verified_at: 2026-09-09
+    note: Ecosystem catalog used to understand categories and representative technologies.
+  - id: source:kubernetes-community
+    title: Kubernetes Community
+    url: https://kubernetes.io/community/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-09
+    note: Contributor, SIG, and community collaboration entry point.
+  - id: source:oci-specs
+    title: Open Container Initiative Specifications
+    url: https://opencontainers.org/
+    publisher: Open Container Initiative
+    type: specification
+    verified_at: 2026-09-09
+    note: Open container image, runtime, and distribution specification ecosystem.

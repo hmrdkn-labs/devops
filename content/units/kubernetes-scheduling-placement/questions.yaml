@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-scheduling-placement
+revision: 1
+questions:
+  - id: fpp:kubernetes-scheduling-placement/q-low-usage
+    kind: scenario
+    prompt: A node is using only 20% CPU in a monitoring dashboard, but a new Pod is rejected for insufficient CPU. How can both observations be true?
+    model_answer: Scheduling is based on allocatable capacity and declared Pod requests, not only current utilization. Existing Pods may already reserve most schedulable CPU through requests even while their instantaneous CPU usage is low.
+    critical_points:
+      - Resource requests drive scheduling feasibility.
+      - Current utilization and committed requested capacity are different measurements.
+    objective_ids: [fpp:kubernetes-scheduling-placement/feasibility]
+  - id: fpp:kubernetes-scheduling-placement/q-toleration
+    kind: explain
+    prompt: Does adding a toleration for a tainted GPU node guarantee that the Pod will be scheduled onto that GPU node?
+    model_answer: No. The toleration only removes the matching taint as a reason to reject the Pod. Other nodes may still be feasible, and explicit node selection or affinity plus resource requirements may be needed to express where the Pod should run.
+    critical_points:
+      - Toleration permits eligibility; it does not force placement.
+      - Other constraints and scheduler scoring still apply.
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy]

@@ -1,0 +1,29 @@
+schema_version: 1
+id: fpp:kubernetes-labels-replicasets
+slug: kubernetes-labels-replicasets
+title: Labels, selectors, and ReplicaSets
+summary: Connect label-based selection to ReplicaSet ownership and explain how a controller continuously repairs replica-count drift.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 20
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: 1.31-1.37
+prerequisites: [fpp:kubernetes-pod-model, fpp:pods-workloads]
+objectives:
+  - id: fpp:kubernetes-labels-replicasets/selection
+    title: Explain how labels and selectors form the membership rule for a controller
+    critical: true
+  - id: fpp:kubernetes-labels-replicasets/reconciliation
+    title: Predict ReplicaSet behavior when matching replica count drifts from desired state
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-09

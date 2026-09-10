@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:cncf-ecosystem-community
+revision: 1
+cards:
+  - id: fpp:cncf-ecosystem-community/c-prometheus
+    type: short
+    front: Which CNCF project is strongly associated with metrics monitoring and time-series querying?
+    back: Prometheus.
+    critical_points: []
+    objective_ids: [fpp:cncf-ecosystem-community/projects]
+  - id: fpp:cncf-ecosystem-community/c-envoy
+    type: short
+    front: What role is Envoy commonly used for?
+    back: A programmable L4/L7 proxy/data plane, often used by gateways and service meshes.
+    critical_points: []
+    objective_ids: [fpp:cncf-ecosystem-community/projects]
+  - id: fpp:cncf-ecosystem-community/c-helm
+    type: short
+    front: What problem does Helm primarily solve?
+    back: Packaging, templating, installing, and managing sets of Kubernetes resources as charts/releases.
+    critical_points: []
+    objective_ids: [fpp:cncf-ecosystem-community/projects]
+  - id: fpp:cncf-ecosystem-community/c-interface
+    type: prompt
+    front: Explain the difference between CSI and a storage backend.
+    back: CSI is an interface for Kubernetes storage integrations; a CSI driver implements that interface for a concrete storage system, which provides the actual volumes and storage behavior.
+    critical_points: [Interface, driver, and storage system are separate layers]
+    objective_ids: [fpp:cncf-ecosystem-community/projects]
+  - id: fpp:cncf-ecosystem-community/c-sig
+    type: scenario
+    front: A Kubernetes networking design discussion belongs to a community ownership group focused on networking. What kind of Kubernetes group is this likely to be?
+    back: A Special Interest Group (SIG), such as SIG Network, which organizes contributors around a technical area.
+    critical_points: [Community ownership is organized by technical responsibility]
+    objective_ids: [fpp:cncf-ecosystem-community/community]

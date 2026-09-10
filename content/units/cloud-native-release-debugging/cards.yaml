@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:cloud-native-release-debugging
+revision: 1
+cards:
+  - id: fpp:cloud-native-release-debugging/c-rolling
+    type: short
+    front: Which release strategy is built into a normal Kubernetes Deployment?
+    back: RollingUpdate, where a new ReplicaSet scales up while the old one scales down according to rollout settings.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-release-debugging/strategy]
+  - id: fpp:cloud-native-release-debugging/c-bluegreen
+    type: short
+    front: What is the core traffic idea in blue-green delivery?
+    back: Keep old and new environments/versions available, validate the new one, then switch traffic between them.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-release-debugging/strategy]
+  - id: fpp:cloud-native-release-debugging/c-canary
+    type: short
+    front: What makes a canary release a canary?
+    back: Controlled partial exposure to a new version plus measured criteria for expansion or abort.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-release-debugging/strategy]
+  - id: fpp:cloud-native-release-debugging/c-readiness
+    type: prompt
+    front: Explain the release-debugging difference between readiness and liveness.
+    back: Readiness determines whether a Pod should receive Service traffic; liveness determines whether kubelet should restart the container. A Pod can be running but unready without needing a restart.
+    critical_points: [Traffic eligibility and restart decisions are separate]
+    objective_ids: [fpp:cloud-native-release-debugging/evidence]
+  - id: fpp:cloud-native-release-debugging/c-green-pipeline
+    type: scenario
+    front: The delivery pipeline is green but users receive 503 responses. What does the green pipeline fail to prove?
+    back: It does not prove ready endpoints exist, routing selects them, the application serves the expected path, or the end-to-end user transaction succeeds.
+    critical_points: [Delivery status is not end-to-end runtime proof]
+    objective_ids: [fpp:cloud-native-release-debugging/evidence]

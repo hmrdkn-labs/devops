@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-labels-replicasets
+revision: 1
+cards:
+  - id: fpp:kubernetes-labels-replicasets/c-label
+    type: short
+    front: What do Kubernetes selectors operate on?
+    back: Labels attached to objects.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection]
+  - id: fpp:kubernetes-labels-replicasets/c-desired
+    type: short
+    front: Who restores a ReplicaSet from two matching Pods back to desired three?
+    back: The ReplicaSet controller.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-labels-replicasets/reconciliation]
+  - id: fpp:kubernetes-labels-replicasets/c-template
+    type: short
+    front: Why must ReplicaSet template labels match its selector?
+    back: New Pods must belong to the set the ReplicaSet is responsible for reconciling.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection]
+  - id: fpp:kubernetes-labels-replicasets/c-explain
+    type: prompt
+    front: Explain why deleting one Pod is different from scaling a ReplicaSet down by one.
+    back: Deleting a Pod changes actual state only, so the controller replaces it. Scaling changes desired replicas, so the controller converges to a lower count.
+    critical_points: [Separate actual-state mutation from desired-state mutation]
+    objective_ids: [fpp:kubernetes-labels-replicasets/reconciliation]
+  - id: fpp:kubernetes-labels-replicasets/c-scenario
+    type: scenario
+    front: Two controllers are intentionally configured with overlapping selectors. What risk should you investigate first?
+    back: Conflicting ownership or adoption of the same Pod population; controller selectors should define unambiguous intended membership.
+    critical_points: [Selectors participate in controller ownership semantics]
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection]

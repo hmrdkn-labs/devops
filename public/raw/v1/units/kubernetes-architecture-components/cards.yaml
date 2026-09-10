@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kubernetes-architecture-components
+revision: 1
+cards:
+  - id: fpp:kubernetes-architecture-components/c-etcd
+    type: short
+    front: What is etcd's primary role in Kubernetes?
+    back: It is the durable key-value store used by the control plane for Kubernetes API state.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-architecture-components/roles]
+  - id: fpp:kubernetes-architecture-components/c-scheduler
+    type: short
+    front: What does the scheduler do with an unscheduled Pod?
+    back: It selects a feasible node and records/binds that placement through the API.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-architecture-components/roles]
+  - id: fpp:kubernetes-architecture-components/c-kubelet
+    type: short
+    front: Which component is the node-side agent responsible for assigned Pods?
+    back: The kubelet.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-architecture-components/roles]
+  - id: fpp:kubernetes-architecture-components/c-trace
+    type: prompt
+    front: Explain why the API server and scheduler do not directly start application containers.
+    back: The API server coordinates and stores API state, while the scheduler chooses placement. The kubelet on the selected node is the node-side executor and asks the container runtime to create and start containers.
+    critical_points: [API coordination, placement, and node execution are separate responsibilities]
+    objective_ids: [fpp:kubernetes-architecture-components/request-path]
+  - id: fpp:kubernetes-architecture-components/c-controller-down
+    type: scenario
+    front: A controller manager is temporarily unavailable. Must every existing application container stop immediately?
+    back: No. Existing containers can continue running, but controllers may stop repairing drift or creating/updating objects needed to reach desired state.
+    critical_points: [Reconciliation failure is different from immediate data-plane failure]
+    objective_ids: [fpp:kubernetes-architecture-components/roles]

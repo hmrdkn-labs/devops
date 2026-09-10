@@ -1,0 +1,16 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-fundamentals-review
+practices:
+  - id: fpp:kcna-kubernetes-fundamentals-review/p-ownership
+    title: Component ownership speed drill
+    mode: guided_markdown
+    prompt: Without looking back, map API entry, durable state, placement, reconciliation, node execution, and container creation to the responsible Kubernetes component.
+    steps:
+      - Write the six responsibilities as separate rows.
+      - Fill in kube-apiserver, etcd, kube-scheduler, controller manager/controllers, kubelet, and container runtime.
+      - Add one sentence describing what each component does not do.
+    success_checks:
+      - Scheduler is not described as starting containers.
+      - Kubelet is not described as selecting cluster-wide desired replica counts.
+      - etcd is identified as state storage rather than a controller.
+    safety: []

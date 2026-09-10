@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:kubernetes-architecture-components
+sources:
+  - id: source:kubernetes-architecture-components-overview
+    title: Kubernetes Components
+    url: https://kubernetes.io/docs/concepts/overview/components/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream responsibility overview for control-plane and node components.
+  - id: source:kubernetes-cluster-architecture
+    title: Cluster Architecture
+    url: https://kubernetes.io/docs/concepts/architecture/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream architecture and control-plane concepts.
+  - id: source:kubernetes-api-overview
+    title: The Kubernetes API
+    url: https://kubernetes.io/docs/concepts/overview/kubernetes-api/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: API model and resource interaction reference.

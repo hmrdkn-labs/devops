@@ -1,6 +1,6 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-01 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-10 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
@@ -18,6 +18,19 @@ implementation record is in [`docs/UI-REDESIGN-PLAN.md`](docs/UI-REDESIGN-PLAN.m
 The release passed local typecheck, content checks, unit tests, D1 tests,
 desktop/mobile E2E and accessibility checks, production build, and protected
 route verification.
+
+The detailed **KCNA Learning Path** is now release-ready in the source tree.
+It reuses portable prerequisite/foundation units and adds **19 independently
+written KCNA-specific units**: 17 detailed topical units plus two compact quiz
+companions for Kubernetes Fundamentals and Kubernetes Resources. The review
+pages add 30-second scans, ownership maps, common MCQ traps, command cues, and
+fast reasoning checks while linking back to the deeper units. The guided KCNA
+path now contains **29 units**. The canonical corpus is **37 units, 2 paths,
+74 question-first prompts, 37 guided practices, and 191 FSRS cards**. Content
+validation, typecheck, 19 unit/privacy tests, D1 checks, production build,
+revision classification, `git diff --check`, and all 6 desktop/mobile
+E2E/accessibility tests pass. The public production site is still on the
+previous release until this KCNA commit goes through the protected deployment.
 
 The Google-only owner rollout is live. The Google OAuth client,
 `BETTER_AUTH_SECRET`, and stable owner allowlist are stored in the private
@@ -70,13 +83,16 @@ and is not part of production.
 ## Progress at a glance
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
-`✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `🔄 Owner beta gate`
+`✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
+`🔄 KCNA protected release` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
 | Product contract | ✅ Complete | Learning flow, mastery, portability, privacy, and rollout rules are documented. |
 | Learning app | ✅ Complete | Astro 7/Solid application, question-first study flow, review scheduling, notes, readiness, search, and export are implemented. |
-| Initial content | ✅ Complete | 18 reviewed **From Process to Pod** units, 36 explain/predict prompts, and 90 cards are published. |
+| Initial content | ✅ Complete | 37 reviewed portable units, 2 paths, 74 explain/predict/scenario prompts, 37 guided practices, and 191 cards are generated. |
+| Detailed KCNA module | ✅ Release-ready | `/paths/kcna` sequences 29 units, including 17 detailed KCNA topical units plus 2 quiz companions, and is generated into search, raw Markdown, `llms*`, manifest, feed, references, and the downloadable archive. |
+| KCNA protected release | 🔄 Next | Commit/push the verified public source, deploy that exact commit through `hamardikan/hamardikan-infra`, then verify the live KCNA path, unit pages, raw exports, health, and manifest SHA. |
 | Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
@@ -194,6 +210,45 @@ and was not modified while this application was built.
   owner secrets without logging values, and verified `/`, `/library`,
   `/search`, `/map`, `/references`, a learning route, raw Markdown,
   `/api/health`, and `/api/auth/get-session`.
+- **2026-09-09 — KCNA path and Kubernetes Resources slice implemented:** added
+  `/paths/kcna` and six independently written learning units for manifests/API
+  objects, Pod lifecycle/ownership, labels/selectors/ReplicaSets, Deployment
+  rollouts/rollbacks, `kubectl apply` versus live state, and namespaces/API
+  scope. Each unit includes objectives, question-first model answers and
+  critical points, a 60/20/20-style short/prompt/scenario card mix, guided
+  practice, and official Kubernetes references. Generated raw Markdown,
+  search, reference catalog, feed, `llms.txt`, `llms-full.txt`, manifest, and
+  content archive now include the new path. Local `npm run check`, production
+  build, revision classification, `git diff --check`, and 6/6 desktop/mobile
+  E2E/accessibility tests pass.
+- **2026-09-09 — detailed KCNA module completed for release:** expanded the
+  guided path to 27 units by adding 11 KCNA-specific modules for the current
+  exam-domain map, Kubernetes component/API request paths, networking,
+  scheduling/placement, security/access boundaries, persistent-storage
+  lifecycle, CI/CD and GitOps, release debugging, observability signals,
+  cloud-native architecture principles, and the CNCF ecosystem/community.
+  The overall portable corpus is now 35 units, 70 question-first prompts,
+  35 guided practices, and 175 FSRS cards. Current KCNA weights and competency
+  groupings were rechecked against the CNCF/Linux Foundation blueprint dated
+  2026-09-09. Validation also exposed and fixed three duplicate global source
+  IDs.
+- **2026-09-09 — study-flow hydration race fixed:** the larger validation run
+  exposed a browser race where a very fast guest could type into the
+  server-rendered textarea before the Solid island hydrated, then lose that
+  transient value. The answer input and reveal button now remain disabled
+  until hydration completes. `npm run check`, production build,
+  `npm run revision:check`, `git diff --check`, and all 6 desktop/mobile E2E
+  and accessibility tests pass after the fix.
+- **2026-09-10 — KCNA quiz companions added:** added compact, independently
+  authored review units for the completed Kubernetes Fundamentals and
+  Kubernetes Resources course modules. They summarize component ownership,
+  container-runtime/CRI distinctions, Pods, ReplicaSets, Deployments,
+  rollouts, API-object anatomy, declarative apply, namespaces, common quiz
+  traps, and command cues, with original question-first prompts, FSRS cards,
+  guided practice, official Kubernetes references, and links back to the
+  relevant KodeKloud module pages for study context. The corpus now validates
+  at 37 units, 2 paths, 74 prompts, 37 practices, and 191 cards; the KCNA path
+  contains 29 units.
 
 ## Completed
 
@@ -232,11 +287,11 @@ and was not modified while this application was built.
 The following completed successfully from a clean dependency install:
 
 ```text
-npm ci
-npm run check       # 18 units, 1 path, 90 cards; 19 unit/privacy tests
-npm run build
+npm run check       # 37 units, 2 paths, 191 cards; 19 unit/privacy tests
+npm run build       # generated the 29-unit /paths/kcna and portable exports
+npm run revision:check
 npm run test:e2e    # 6/6 desktop and mobile browser tests
-npm audit           # 0 vulnerabilities
+git diff --check
 ```
 
 Additional checks passed for an empty D1 migration, indexed due-review query,
@@ -294,7 +349,7 @@ https://devops.hamardikan.com/api/auth/callback/google
 
 - The owner-beta success gate (ten real focus sessions over seven days,
   scheduled recall, one revision revalidation, and a validated export)
-- Expansion from 18 units toward the 70–100-unit pre-KCNA curriculum
+- Expansion from the current 35 units toward the broader 70–100-unit DevOps curriculum; the detailed KCNA-specific domain coverage is now implemented, while later content growth can deepen prerequisites and add post-KCNA paths without changing the content contract
 - Restore, ranked retrieval, digest email, optional public profile,
   diagnostics, and freshness monitoring
 - Formal executable lab provisioning and a lab CLI
@@ -305,9 +360,11 @@ implementation.
 
 ## Safe resume order
 
-1. Run the owner-beta success gate: ten real focus sessions over seven days,
+1. Publish and production-verify the new KCNA path/content release.
+2. Run the owner-beta success gate: ten real focus sessions over seven days,
    scheduled recall, one content revalidation, and a full export.
-2. Grow the independent curriculum toward the 70–100-unit pre-KCNA target.
+3. Review learning evidence from the beta, then deepen weak KCNA topics or
+   begin the next certification path as a content-only increment.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or
 production deployment permissions in this public repository.

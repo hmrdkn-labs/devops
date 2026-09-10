@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:kubernetes-labels-replicasets
+sources:
+  - id: source:kubernetes-labels
+    title: Labels and Selectors
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream label syntax, selector semantics, and object-selection reference.
+  - id: source:kubernetes-replicaset
+    title: ReplicaSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-09
+    note: Upstream ReplicaSet reconciliation, selector, template, ownership, and adoption reference.

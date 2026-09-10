@@ -1,0 +1,18 @@
+schema_version: 1
+unit_id: fpp:kubernetes-storage-lifecycle
+practices:
+  - id: fpp:kubernetes-storage-lifecycle/p-claim-trace
+    title: Trace one claim from PVC to mounted workload
+    mode: guided_markdown
+    prompt: In a disposable cluster that already has a working StorageClass, trace one small PVC and Pod without relying on provider-console assumptions.
+    steps:
+      - Inspect available StorageClasses and identify the provisioner and volume binding mode.
+      - Create or reuse a PVC and observe its events and bound PV.
+      - Mount the claim in a test Pod and write a harmless marker file.
+      - Replace the Pod while preserving the claim and verify whether the marker remains.
+      - Record any topology or access-mode constraints shown by the objects.
+    success_checks:
+      - PVC, StorageClass, CSI/provisioner, PV, and Pod mount responsibilities are separated.
+      - Data persistence is verified across Pod replacement rather than inferred from object existence.
+    safety:
+      - Use disposable storage and remove it according to the StorageClass reclaim behavior after the exercise.

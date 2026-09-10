@@ -1,0 +1,17 @@
+schema_version: 1
+unit_id: fpp:cloud-native-delivery-gitops
+practices:
+  - id: fpp:cloud-native-delivery-gitops/p-release-ledger
+    title: Build a release evidence ledger
+    mode: guided_markdown
+    prompt: Use a real or hypothetical Kubernetes release and identify the smallest evidence at each boundary from artifact creation to user-visible behavior.
+    steps:
+      - Record the immutable artifact identity produced by CI.
+      - Record the desired-state revision that references the artifact.
+      - Name the delivery or GitOps reconciler and what healthy state means for it.
+      - Record Kubernetes rollout evidence and ready replicas.
+      - Define one end-to-end request that proves the released behavior.
+    success_checks:
+      - A green CI result is not used as the final deployment proof.
+      - Each boundary has a distinct observation or status signal.
+    safety: []

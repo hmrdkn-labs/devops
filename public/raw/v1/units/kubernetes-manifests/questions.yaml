@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:kubernetes-manifests
+revision: 1
+questions:
+  - id: fpp:kubernetes-manifests/q-apply-proof
+    kind: scenario
+    prompt: kubectl apply reports that a Deployment was configured, but the application is unavailable. What has been proven, and what still needs evidence?
+    model_answer: The successful apply proves the API accepted the requested object update. It does not prove reconciliation succeeded. Verify the live Deployment and ReplicaSet state, Pod scheduling and readiness, events, logs, Service endpoints, and finally an application request as needed.
+    critical_points:
+      - API acceptance is not workload success.
+      - Follow the control loop and collect downstream evidence.
+    objective_ids: [fpp:kubernetes-manifests/proof-boundary]
+  - id: fpp:kubernetes-manifests/q-spec-status
+    kind: explain
+    prompt: Why is the distinction between spec and status useful when troubleshooting a Kubernetes object?
+    model_answer: Spec expresses the desired state the user or controller requested, while status reports what Kubernetes has observed. Comparing them exposes whether reconciliation has converged or where desired and observed state still differ.
+    critical_points:
+      - Spec is intent.
+      - Status is observed state and convergence evidence.
+    objective_ids: [fpp:kubernetes-manifests/object-shape]

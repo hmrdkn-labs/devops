@@ -1,0 +1,21 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-resources-review
+revision: 1
+questions:
+  - id: fpp:kcna-kubernetes-resources-review/q-delete-pod
+    kind: scenario
+    prompt: A three-replica Deployment is healthy. You manually delete one of its Pods. Why does a replacement appear even though you did not run scale?
+    model_answer: Deleting the Pod changed observed state, not the Deployment's desired replica count. The ReplicaSet controller sees that the number of matching Pods is below its desired count and creates a replacement; the scheduler and node-side components then place and execute it.
+    critical_points:
+      - Desired replicas remained three.
+      - ReplicaSet directly maintains matching Pod count.
+      - Replacement is a new Pod object.
+    objective_ids: [fpp:kcna-kubernetes-resources-review/ownership]
+  - id: fpp:kcna-kubernetes-resources-review/q-apply
+    kind: explain
+    prompt: "`kubectl apply` returns `deployment.apps/web configured`. What does that prove, and what important things does it not prove?"
+    model_answer: It proves the apply operation updated or accepted the live Deployment API object. It does not prove that the rollout completed, Pods scheduled, containers remained healthy, readiness passed, Service endpoints selected the Pods, or a real user request succeeded.
+    critical_points:
+      - API acceptance is distinct from reconciliation.
+      - Runtime and end-to-end behavior need downstream evidence.
+    objective_ids: [fpp:kcna-kubernetes-resources-review/api-objects]

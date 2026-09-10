@@ -1,0 +1,20 @@
+schema_version: 1
+unit_id: fpp:cloud-native-delivery-gitops
+revision: 1
+questions:
+  - id: fpp:cloud-native-delivery-gitops/q-ci
+    kind: explain
+    prompt: A CI job successfully builds and pushes image digest sha256:abc. What does that prove, and what does it not prove about production?
+    model_answer: It proves the pipeline produced that artifact and completed its configured checks. It does not prove production desired state references the digest, the delivery controller applied it, Kubernetes completed a rollout, or users can successfully reach the new version.
+    critical_points:
+      - Artifact creation is distinct from environment deployment.
+      - Runtime proof requires reconciliation and service-level evidence.
+    objective_ids: [fpp:cloud-native-delivery-gitops/pipeline]
+  - id: fpp:cloud-native-delivery-gitops/q-drift
+    kind: scenario
+    prompt: A GitOps-managed Deployment is manually edited in the cluster and then changes back a minute later. What is the most likely explanation?
+    model_answer: The GitOps reconciler detected drift between live state and the version-controlled desired state and reconciled the cluster back to the declared version.
+    critical_points:
+      - Git contains desired state while the GitOps controller performs reconciliation.
+      - Manual live edits may be temporary under continuous reconciliation.
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
