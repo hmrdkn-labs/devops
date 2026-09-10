@@ -2,12 +2,27 @@ import { expect, test } from '@playwright/test';
 
 const primarySurfaces = [
   ['home', '/'],
+  ['kcna-focus', '/kcna'],
   ['kcna-path', '/paths/kcna'],
   ['study', '/learn/kcna-kubernetes-resources-review'],
   ['library', '/library'],
   ['search', '/search'],
   ['map', '/map'],
 ] as const;
+
+test('KCNA focus isolates the certification curriculum', async ({ page }) => {
+  await page.goto('/kcna');
+
+  await expect(page.getByRole('heading', { name: 'Stay inside the KCNA lane.' })).toBeVisible();
+  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText('KCNA');
+  await expect(page.locator('.kcna-checkpoint')).toHaveCount(4);
+  await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(29);
+  await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
+  const quickReview = page.locator('.kcna-quick-review');
+  await expect(quickReview.getByText('Kubernetes Fundamentals quiz companion', { exact: true })).toBeVisible();
+  await expect(quickReview.getByText('Kubernetes Resources quiz companion', { exact: true })).toBeVisible();
+});
 
 test('UI v3 primary surfaces stay compact, readable, and overflow-free', async ({ page }, testInfo) => {
   for (const theme of ['light', 'dark'] as const) {

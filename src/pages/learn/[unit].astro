@@ -1,7 +1,7 @@
 ---
 import StudyFlow from '@/components/StudyFlow';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { units } from '@/lib/content/catalog';
+import { paths, units } from '@/lib/content/catalog';
 import { renderMarkdown } from '@/lib/content/render';
 
 export const prerender = true;
@@ -14,6 +14,8 @@ export function getStaticPaths() {
 }
 
 const { unit } = Astro.props;
+const kcnaPath = paths.find((path) => path.slug === 'kcna');
+const isKcnaUnit = kcnaPath?.units.some((entry) => entry.unit_id === unit.metadata.id) ?? false;
 const payload = {
   id: unit.metadata.id,
   revision: unit.metadata.revision,
@@ -34,6 +36,11 @@ const payload = {
   description={unit.metadata.summary}
   canonicalPath={'/learn/' + unit.metadata.slug}
   pageClass="unit-page"
+  activeSection={isKcnaUnit ? 'kcna' : undefined}
 >
-  <StudyFlow unit={payload} client:load />
+  <StudyFlow
+    unit={payload}
+    focus={isKcnaUnit ? { href: '/kcna', label: 'KCNA focus' } : undefined}
+    client:load
+  />
 </BaseLayout>

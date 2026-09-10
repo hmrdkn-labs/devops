@@ -459,6 +459,104 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .path-badges .critical-badge { color: var(--warning); font-family: var(--sans); font-weight: 700; }
 .path-arrow { color: var(--faint) !important; font-size: .8rem !important; }
 
+/* KCNA focus */
+.kcna-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, .65fr);
+  gap: clamp(2rem, 7vw, 6rem);
+  align-items: end;
+  padding: 3rem 0 1.6rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.kcna-hero-copy { max-width: 720px; }
+.kcna-hero h1 {
+  margin: .4rem 0 .55rem;
+  font-size: clamp(2rem, 3.2vw, 2.5rem);
+  letter-spacing: -.045em;
+}
+.kcna-hero .lede { margin: 0; }
+.kcna-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+.kcna-stats > div { padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.kcna-stats > div:nth-child(odd) { padding-right: 1rem; }
+.kcna-stats dt { color: var(--muted); font-size: .68rem; font-weight: 650; }
+.kcna-stats dd { margin: .12rem 0 0; font: 650 .92rem var(--mono); }
+.kcna-focus-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 4.5rem);
+  align-items: start;
+  padding: 1.3rem 0 5rem;
+}
+.kcna-focus-rail {
+  position: sticky;
+  top: 72px;
+  display: grid;
+  gap: 1.35rem;
+}
+.kcna-focus-rail > section { border-bottom: 1px solid var(--line); padding-bottom: 1rem; }
+.kcna-focus-rail .guest-progress { margin-top: .45rem; padding: .7rem 0; border: 0; border-radius: 0; }
+.kcna-focus-rail .readiness-hero { padding-top: .45rem; }
+.kcna-quick-review { display: grid; gap: 0; }
+.kcna-quick-review > .section-kicker { margin-bottom: .35rem; }
+.kcna-quick-review a {
+  display: grid;
+  gap: .12rem;
+  padding: .65rem 0;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+}
+.kcna-quick-review a:last-child { border-bottom: 1px solid var(--line); }
+.kcna-quick-review a:hover strong { color: var(--accent); }
+.kcna-quick-review strong { font-size: .78rem; line-height: 1.35; }
+.kcna-quick-review span { color: var(--muted); font: .61rem var(--mono); }
+.kcna-secondary-link { color: var(--muted); font-size: .72rem; }
+.kcna-secondary-link:hover { color: var(--ink); }
+.kcna-curriculum { min-width: 0; }
+.kcna-checkpoint { scroll-margin-top: 76px; margin-bottom: 2.2rem; }
+.kcna-checkpoint > header {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  gap: .9rem;
+  align-items: start;
+  padding: .4rem 0 .8rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.kcna-checkpoint > header > span { padding-top: .15rem; color: var(--faint); font: .67rem var(--mono); }
+.kcna-checkpoint > header h2 { margin: .1rem 0 .2rem; font-size: 1.2rem; letter-spacing: -.02em; }
+.kcna-checkpoint > header p:last-child { max-width: 70ch; margin: 0; color: var(--muted); font-size: .78rem; }
+.kcna-checkpoint > header > small { padding-top: .15rem; color: var(--muted); font: .64rem var(--mono); white-space: nowrap; }
+.kcna-checkpoint ol { margin: 0; padding: 0; list-style: none; }
+.kcna-checkpoint li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  gap: .9rem;
+  align-items: start;
+  padding: .78rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.kcna-unit-number { padding-top: .1rem; color: var(--faint); font: .64rem var(--mono); }
+.kcna-checkpoint li > a { display: grid; gap: .08rem; min-width: 0; text-decoration: none; }
+.kcna-checkpoint li > a:hover strong { color: var(--accent); }
+.kcna-checkpoint li strong { font-size: .92rem; line-height: 1.35; }
+.kcna-checkpoint li > a > small {
+  display: -webkit-box;
+  margin-top: .13rem;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .74rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+.kcna-unit-meta { display: flex; gap: .4rem; align-items: center; padding-top: .08rem; }
+.kcna-unit-meta span { color: var(--muted); font: .62rem var(--mono); white-space: nowrap; }
+.kcna-unit-meta .critical-badge { color: var(--warning); font-family: var(--sans); font-weight: 700; }
+
 /* Library and search */
 .library-groups, .reference-groups { padding: 1.5rem 0 5rem; }
 .library-groups > section, .reference-groups > section { margin-bottom: 2.2rem; }
@@ -549,6 +647,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .unit-heading > p { max-width: 72ch; margin: 0; color: var(--muted); font-size: .88rem; }
 .unit-meta { display: flex; flex-wrap: wrap; gap: .3rem .8rem; }
 .unit-meta span { padding: 0; border: 0; }
+.unit-focus-link {
+  color: var(--accent);
+  font: 650 .64rem var(--mono);
+  text-decoration: none;
+}
+.unit-focus-link::after { content: ' →'; }
+.unit-focus-link:hover { color: var(--accent-strong); }
 .study-layout {
   display: grid;
   grid-template-columns: 170px minmax(0, 760px);
@@ -669,6 +774,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   .owner-chip { max-width: 150px; }
   .learning-loop, .home-progress { gap: 2.5rem; }
   .path-layout { grid-template-columns: 190px minmax(0, 1fr); gap: 2.5rem; }
+  .kcna-focus-grid { grid-template-columns: 190px minmax(0, 1fr); gap: 2.5rem; }
   .library-card, .search-result { grid-template-columns: 110px minmax(180px, .8fr) minmax(220px, 1.2fr); }
 }
 
@@ -697,6 +803,20 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 
   .page-hero { padding: 2rem 0 1.2rem; }
   .page-hero h1 { font-size: 2rem; }
+  .kcna-hero { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 2rem; }
+  .kcna-hero h1 { font-size: 2rem; }
+  .kcna-focus-grid { grid-template-columns: 1fr; gap: 1.4rem; }
+  .kcna-focus-rail { position: static; }
+  .kcna-focus-rail > section:first-child { display: none; }
+  .kcna-quick-review { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1rem; }
+  .kcna-quick-review > .section-kicker { grid-column: 1 / -1; }
+  .kcna-secondary-link { margin-top: -.45rem; }
+  .kcna-checkpoint > header,
+  .kcna-checkpoint li { grid-template-columns: 1.6rem minmax(0, 1fr); gap: .65rem; }
+  .kcna-checkpoint > header > small,
+  .kcna-unit-meta { grid-column: 2; }
+  .kcna-unit-meta { padding-top: 0; }
+  .kcna-checkpoint li > a > small { -webkit-line-clamp: 2; }
   .path-layout { grid-template-columns: 1fr; gap: 1rem; }
   .path-layout > .progress-compact, .study-rail { position: static; }
   .path-timeline li { grid-template-columns: 1.7rem minmax(0, 1fr); }

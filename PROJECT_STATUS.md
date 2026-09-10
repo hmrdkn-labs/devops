@@ -11,6 +11,16 @@ public source `205044b85a30b3fc6561a7b81531e18f720563ad`. Protected owner run
 preserved Google owner authentication, and passed its route/manifest checks.
 Public CI run `34456854247` is green for the same SHA.
 
+**KCNA focus workspace is implemented locally:** `/kcna` isolates the existing
+29-unit KCNA path into four study checkpoints—Kubernetes Fundamentals,
+Kubernetes Resources, Cluster Behavior, and Cloud-Native Context—without
+duplicating canonical Markdown. It also surfaces the two quiz companions,
+filters the readiness widget to `path:kcna`, makes KCNA a first-class primary
+navigation destination, and gives mapped learning units a direct return link
+to the KCNA focus space. Local content/type/unit/D1/build checks pass; the
+expanded browser matrix passes with 22 tests and 2 intentional mobile-only
+skips. Deployment is still pending at this point in the log.
+
 The accepted compact developer-learning workspace is now production: a `<H>`
 monogram/wordmark, restrained terminal-green identity, 40px display-title
 ceiling, flatter ruled surfaces, dense KCNA/library/search/map rows, and a
@@ -107,7 +117,7 @@ and is not part of production.
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
-`✅ KCNA protected release` → `✅ UI v3 release` → `🔄 Owner beta gate`
+`✅ KCNA protected release` → `✅ UI v3 release` → `🔄 KCNA focus workspace` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -121,6 +131,7 @@ and is not part of production.
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
 | UI reset | ✅ Complete | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, focused study/review workspace, responsive surfaces, and accessibility fixes are deployed in protected run `33487216904` for source `190e0e5`. |
 | UI v3 refinement | ✅ Live | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size light/dark browser evidence are live from source `205044b`; public CI `34456854247` and protected deploy `34457036278` passed. |
+| KCNA focus workspace | 🔄 Release candidate | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Local checks and 22/24 browser cases pass; the two skips are the intentional non-mobile instances of the mobile touch-target test. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`

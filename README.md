@@ -50,6 +50,12 @@ Generated public interfaces include stable raw Markdown URLs, a versioned
 manifest, exact-search index, reference catalog, Atom feed, `llms.txt`,
 `llms-full.txt`, and a downloadable ZIP archive.
 
+For focused certification study, `/kcna` is the dedicated KCNA workspace. It
+renders only the 29-unit KCNA path, grouped into four checkpoints, with the
+Kubernetes Fundamentals and Kubernetes Resources quiz companions surfaced as
+quick-review material. The underlying units remain the same portable Markdown
+source used by the wider knowledge base.
+
 The private KodeKloud collection is not a dependency, submodule, build input,
 or deployment artifact. This repository contains independently written prose,
 diagrams, questions, and examples. External course titles and links may be

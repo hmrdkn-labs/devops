@@ -36,6 +36,10 @@ interface Source {
 }
 
 interface Props {
+  focus?: {
+    href: string;
+    label: string;
+  };
   unit: {
     id: string;
     revision: number;
@@ -169,6 +173,9 @@ export default function StudyFlow(props: Props) {
     <div class="study-flow">
       <header class="unit-heading shell narrow">
         <div class="unit-meta">
+          <Show when={props.focus}>
+            {(focus) => <a class="unit-focus-link" href={focus().href}>{focus().label}</a>}
+          </Show>
           <span>{props.unit.layer}</span>
           <span>{props.unit.estimatedMinutes} min</span>
           <span>revision {props.unit.revision}</span>

@@ -12,7 +12,7 @@ interface Progress {
   }>;
 }
 
-export default function ProgressClient(props: { compact?: boolean }) {
+export default function ProgressClient(props: { compact?: boolean; pathId?: string }) {
   const [progress] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/progress', { credentials: 'include' });
     if (!response.ok) return null;
@@ -28,7 +28,7 @@ export default function ProgressClient(props: { compact?: boolean }) {
     }>
       {(data) => (
         <div class={props.compact ? 'progress-compact' : 'progress-dashboard'}>
-          <For each={data().paths}>{(path) => (
+          <For each={props.pathId ? data().paths.filter((path) => path.id === props.pathId) : data().paths}>{(path) => (
             <section class="readiness-hero">
               <div>
                 <p class="section-kicker">readiness-v1</p>

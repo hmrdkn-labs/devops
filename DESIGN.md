@@ -110,12 +110,16 @@ than layout animation, and disappear or simplify for reduced-motion users.
 ## Verification contract
 
 Every visual release is checked at 375×812, 768×1024, and 1440×1000 in light
-and dark themes. The browser suite captures the home, KCNA path, representative
-study unit, library, search, and map at each target project size and asserts
+and dark themes. The browser suite captures the home, focused KCNA workspace,
+plain KCNA path, representative study unit, library, search, and map at each target project size and asserts
 that they do not horizontally overflow. It also enforces the 40px display-type
 ceiling, initial-viewport question visibility, and 44px mobile-header touch
 targets. These screenshots are CI evidence rather than pixel-perfect golden
 files so system-font rasterization differences do not create false failures.
+
+Certification focus pages may isolate a subset of the portable curriculum for
+attention, but they must not fork or duplicate canonical unit content. A focus
+page is an index and navigation layer over existing path/unit IDs.
 
 The study flow, review queue, search, settings, and auth menu must remain
 keyboard-complete. Check focus visibility, contrast, empty/error/loading

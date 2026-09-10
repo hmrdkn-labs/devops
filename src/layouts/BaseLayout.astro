@@ -8,6 +8,7 @@ interface Props {
   description?: string;
   canonicalPath?: string;
   pageClass?: string;
+  activeSection?: 'kcna';
 }
 
 const {
@@ -15,16 +16,18 @@ const {
   description = 'Build durable DevOps understanding from process to production.',
   canonicalPath = Astro.url.pathname,
   pageClass = '',
+  activeSection,
 } = Astro.props;
 const pageTitle = title === 'DevOps by hmrdkn-labs' ? title : `${title} · DevOps by hmrdkn-labs`;
 const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
 const navigation = [
-  { href: '/paths/kcna', label: 'Learn', prefixes: ['/paths/', '/learn/'] },
+  { id: 'kcna', href: '/kcna', label: 'KCNA', prefixes: ['/kcna', '/paths/kcna'] },
   { href: '/review', label: 'Review', prefixes: ['/review'] },
   { href: '/library', label: 'Library' },
   { href: '/map', label: 'Map' },
 ];
 const isCurrent = (item: typeof navigation[number]) => {
+  if ('id' in item && item.id === activeSection) return true;
   if ('prefixes' in item && item.prefixes?.some((prefix) => Astro.url.pathname.startsWith(prefix))) return true;
   return Astro.url.pathname === item.href || Astro.url.pathname.startsWith(item.href + '/');
 };
