@@ -228,13 +228,16 @@ function xml(value: string) {
 
 async function collectArchiveFiles(directory: string, prefix = ''): Promise<Zippable> {
   const files: Zippable = {};
+  // ZIP stores a timezone-less DOS timestamp. Constructing the epoch as a
+  // local calendar date keeps the emitted header identical in every CI TZ.
+  const archiveMtime = new Date(1980, 0, 1, 0, 0, 0, 0);
   for (const entry of await readdir(directory)) {
     const absolute = path.join(directory, entry);
     const relative = path.join(prefix, entry);
     if ((await stat(absolute)).isDirectory()) {
       Object.assign(files, await collectArchiveFiles(absolute, relative));
     } else {
-      files[relative] = [strToU8(await readFile(absolute, 'utf8')), { mtime: 315_532_800_000 }];
+      files[relative] = [strToU8(await readFile(absolute, 'utf8')), { mtime: archiveMtime }];
     }
   }
   return files;

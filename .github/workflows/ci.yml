@@ -64,4 +64,5 @@ jobs:
         run: |
           test ! -e .github/workflows/deploy.yml
           ! grep --line-number -E 'database_id|client_secret' wrangler.jsonc
-          ! grep -R --line-number -E 'wrangler deploy|cloudflare/wrangler-action' .github/workflows
+          deployment_pattern='wrangler de''ploy|cloudflare/wrangler-''action'
+          ! grep -R --line-number -E "$deployment_pattern" .github/workflows
