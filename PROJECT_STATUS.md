@@ -5,20 +5,20 @@
 
 ## Read this first
 
-**Bottom line:** the learning application is built, tested, and deployed on
-the production Cloudflare Worker. The protected guest release completed
-successfully after the deployment token was added to GitHub. The public route,
-D1 health, manifest, raw Markdown, and study pages are live and verified.
+**Bottom line:** UI v3 is live on the production Cloudflare Worker from exact
+public source `205044b85a30b3fc6561a7b81531e18f720563ad`. Protected owner run
+`34457036278` rebuilt that SHA, applied D1 migrations, deployed the Worker,
+preserved Google owner authentication, and passed its route/manifest checks.
+Public CI run `34456854247` is green for the same SHA.
 
-**UI v3 release candidate:** the public repository now has the accepted compact
-developer-learning workspace implemented locally: a `<H>` monogram/wordmark,
-restrained terminal-green identity, 40px display-title ceiling, flatter ruled
-surfaces, dense KCNA/library/search/map rows, and a question-first study layout.
-The representative KCNA question is visible before scrolling on both desktop
-and 375px mobile. Browser QA now covers 1440×1000, 768×1024, and 375×812 with
-captured evidence, overflow checks, mobile 44px touch-target checks, and type
-scale guards. This v3 candidate is **not yet recorded as production**; protected
-deployment and live verification follow the final local test pass.
+The accepted compact developer-learning workspace is now production: a `<H>`
+monogram/wordmark, restrained terminal-green identity, 40px display-title
+ceiling, flatter ruled surfaces, dense KCNA/library/search/map rows, and a
+question-first study layout. The representative KCNA question is visible
+before scrolling on desktop and 375px mobile. Browser QA covers 1440×1000,
+768×1024, and 375×812 in light and dark themes with captured evidence,
+overflow checks, mobile 44px touch-target checks, type-scale guards, and the
+expanded accessibility sweep.
 
 The visual reset is now live on the public app: the content contract, routes,
 learning behavior, and privacy boundaries stayed unchanged while the
@@ -91,6 +91,13 @@ viewed or recorded.
    commit `423fab951459a29d7033d6adece2e12ddf40e084`, applied D1 migrations,
    preserved Google owner authentication, and verified the KCNA production
    content and manifest without logging secret values.
+6. ✅ Completed: UI v3 exact source
+   `205044b85a30b3fc6561a7b81531e18f720563ad` passed public CI run
+   `34456854247` and protected owner deployment run `34457036278`. Independent
+   live probes returned 200 for home, KCNA, study, review, library, search, map,
+   references, and the auth session route; D1 reports `ready`, and the live
+   content archive SHA-256 is
+   `93e876b1f24b7f69b4918be8e3362a21b4431029dc928d6d2792c729aa7f5f1a`.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -100,7 +107,7 @@ and is not part of production.
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
-`✅ KCNA protected release` → `🔄 UI v3 release candidate` → `🔄 Owner beta gate`
+`✅ KCNA protected release` → `✅ UI v3 release` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -113,7 +120,7 @@ and is not part of production.
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
 | UI reset | ✅ Complete | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, focused study/review workspace, responsive surfaces, and accessibility fixes are deployed in protected run `33487216904` for source `190e0e5`. |
-| UI v3 refinement | 🔄 Release candidate | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size browser evidence are implemented locally. Production still points to the previous protected KCNA source until the v3 release is deployed and verified. |
+| UI v3 refinement | ✅ Live | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size light/dark browser evidence are live from source `205044b`; public CI `34456854247` and protected deploy `34457036278` passed. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -275,7 +282,7 @@ and was not modified while this application was built.
   pages, search, references, and `/api/health`; production reports D1 `ready`
   and manifest SHA `a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`,
   matching the released source artifact.
-- **2026-09-10 — UI v3 release candidate validated:** replaced the remaining
+- **2026-09-10 — UI v3 released:** replaced the remaining
   oversized/card-heavy visual treatment with the accepted compact workspace,
   `<H>` identity, restrained terminal-green action/state color, flat ruled
   browse surfaces, and a question-first study composition. The expanded
@@ -285,7 +292,12 @@ and was not modified while this application was built.
   touch-target contracts. The broader accessibility sweep also found and fixed
   a low-contrast metadata token and an invalid ARIA-labelled progress strip;
   final local verification passes with 19 browser checks and 2 intentional
-  non-mobile skips. Protected production deployment is the next step.
+  non-mobile skips. Public CI run `34456854247` is green for exact source
+  `205044b85a30b3fc6561a7b81531e18f720563ad`, and protected owner run
+  `34457036278` deployed it successfully. Independent production checks
+  returned 200 for every primary route and owner-auth session endpoint; health
+  reports D1 `ready` with manifest SHA
+  `a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`.
 
 ## Completed
 
@@ -397,12 +409,12 @@ implementation.
 
 ## Safe resume order
 
-1. Deploy and production-verify the validated UI v3 public source through the
-   protected private workflow.
-2. Run the owner-beta success gate: ten real focus sessions over seven days,
+1. Run the owner-beta success gate: ten real focus sessions over seven days,
    scheduled recall, one content revalidation, and a full export.
-3. Review learning evidence from the beta, then deepen weak KCNA topics or
+2. Review learning evidence from the beta, then deepen weak KCNA topics or
    begin the next certification path as a content-only increment.
+3. Keep UI changes inside the v3 design contract and use the browser evidence
+   matrix to catch hierarchy, accessibility, and responsive regressions.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or
 production deployment permissions in this public repository.
