@@ -1,5 +1,12 @@
 # UI reset and study-workspace plan
 
+> **v3 implementation record · 2026-09-10:** the reset below is now
+> implemented as a compact developer-learning workspace. The release keeps the
+> original content/application contracts while replacing the remaining
+> marketing/card-heavy presentation with dense lists, ruled document sections,
+> a `<H>` identity, restrained terminal-green state/action color, and a
+> question-first study viewport.
+
 ## Scope
 
 Replace the visual treatment of the Astro/Solid application while preserving
@@ -19,8 +26,9 @@ keeps the notebook voice but turns it into a focused workspace.
 
 ### Shared shell
 
-- Compact header with brand, active route, search/review access, theme, and
-  owner menu.
+- Compact 56px header with the `<H>` mark, `DevOps / hmrdkn-labs` wordmark,
+  active Learn/Review/Library/Map navigation, Search utility, theme control,
+  and owner menu.
 - Desktop navigation with a clear current location; mobile navigation becomes
   an accessible disclosure rather than an overflowing row.
 - Consistent page context row for section, revision, layer, and status.
@@ -28,7 +36,8 @@ keeps the notebook voice but turns it into a focused workspace.
 
 ### Home
 
-- Keep the typographic opening, but reduce vertical padding and headline scale.
+- Use a compact learning-workspace opening rather than a marketing hero; cap
+  the display title at 40px.
 - Put “Continue learning” and current path progress in the first viewport.
 - Present the four-part learning loop as a compact sequence, not a second hero.
 - Turn the path preview into a clear progression rail.
@@ -37,6 +46,8 @@ keeps the notebook voice but turns it into a focused workspace.
 
 - Treat the question stage as the primary workspace.
 - Desktop: sticky context/progress rail plus a 68ch question and lesson column.
+- Mobile and desktop: the current question must be fully visible before the
+  first scroll on the representative KCNA review unit.
 - Make answer, reveal, critical self-check, and rating states unmistakable.
 - Keep lesson, guided practice, cards, notes, and sources as clear follow-on
   sections with consistent disclosure surfaces.
@@ -49,8 +60,9 @@ keeps the notebook voice but turns it into a focused workspace.
 
 ### Path, map, library, search, dashboard, settings, references
 
-- Use stepper/timeline language for path and map relationships.
-- Use compact list/grid cards with status chips and fewer repeated borders.
+- Use dense ordered rows for the path and layer/edge language for map
+  relationships.
+- Use flat lists, document sections, and data rows instead of card walls.
 - Make search controls command-like: one strong field, a layer filter, result
   count, and a useful empty state.
 - Make dashboard evidence-oriented: readiness summary, due reviews, unit
@@ -71,6 +83,19 @@ keeps the notebook voice but turns it into a focused workspace.
    screenshot checks at the three target widths and both themes.
 6. **Release:** commit the exact public source, deploy through the existing
    protected Worker workflow, and verify the live routes.
+
+## v3 verification additions
+
+- Playwright now runs exact desktop (1440×1000), tablet (768×1024), and mobile
+  (375×812) viewport projects.
+- Six primary surfaces are captured as browser-test evidence at every project
+  size: home, KCNA path, study, library, search, and map.
+- Geometry assertions fail on unexpected horizontal overflow, display headings
+  above 40px, a study question pushed below the initial viewport, or mobile
+  header controls below 44px.
+- Pixel-perfect cross-platform golden screenshots are intentionally avoided;
+  the application uses system UI fonts, whose rasterization differs between
+  macOS development and Ubuntu CI.
 
 ## Non-goals
 

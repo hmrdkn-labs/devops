@@ -12,6 +12,22 @@ character. The interface should make the next learning action obvious, keep
 reading comfortable, and make evidence feel trustworthy. It should not feel
 like a generic SaaS dashboard or a marketing page wrapped around a quiz.
 
+## Identity
+
+- The primary mark is the compact `<H>` monogram: angle brackets communicate
+  code/configuration, while `H` ties the product to hmrdkn-labs. Use the mark
+  with the `DevOps` wordmark and the quiet `hmrdkn-labs` signature in the
+  application shell. Do not create route-specific logo variants.
+- Terminal green is the identity accent, not a decorative headline color.
+  Reserve it for the primary action, active navigation, focus, progress, and
+  meaningful saved/success state. Display headings stay neutral ink.
+- Light and dark modes use the same hierarchy: neutral canvas, neutral ink,
+  thin rules, and one green accent. No gradients, glow, neon backgrounds, or
+  multi-accent dashboard palettes.
+- The favicon and header mark are the same symbol. Identity changes therefore
+  remain visible even when the learning content is consumed outside the home
+  page.
+
 ## Visual principles
 
 1. **Content before chrome.** A learner's question, answer, explanation, or
@@ -40,6 +56,25 @@ like a generic SaaS dashboard or a marketing page wrapped around a quiz.
 - Primary controls have at least a 44px touch target.
 - Mobile pages must not require horizontal scrolling except for code or data
   tables with an explicit scroll container.
+- A learning unit must show its active question completely in the initial
+  1440×1000 and 375×812 viewport. Unit title/summary context cannot consume the
+  first screen and force the learner to scroll before answering.
+
+## Type, density, and surface guardrails
+
+- System sans is the UI and reading face. Monospace is limited to code,
+  commands, immutable IDs, revision/time metadata, and numeric evidence.
+- Home and standard page display headings cap at 40px on desktop. Unit titles
+  cap at roughly 39px, section headings at 22–28px, normal reading text at
+  15–17px, and metadata at roughly 10–13px.
+- Static document sections should be separated by spacing and 1px rules before
+  adding a bordered container. Repeated rounded cards are not a page-layout
+  primitive.
+- Controls use the small control radius; elevated/overlay surfaces may use the
+  larger surface radius. Shadows are legal for floating popovers/menus only,
+  not for ordinary lesson, path, library, dashboard, or search content.
+- Pills/chips indicate an actual state, filter, or compact step. Do not use
+  them as decoration or as a substitute for hierarchy.
 
 ## Token contract
 
@@ -74,9 +109,16 @@ than layout animation, and disappear or simplify for reduced-motion users.
 
 ## Verification contract
 
-Every visual release is checked at 375px, 768px, and 1440px in light and dark
-themes. The study flow, review queue, search, settings, and auth menu must be
+Every visual release is checked at 375×812, 768×1024, and 1440×1000 in light
+and dark themes. The browser suite captures the home, KCNA path, representative
+study unit, library, search, and map at each target project size and asserts
+that they do not horizontally overflow. It also enforces the 40px display-type
+ceiling, initial-viewport question visibility, and 44px mobile-header touch
+targets. These screenshots are CI evidence rather than pixel-perfect golden
+files so system-font rasterization differences do not create false failures.
+
+The study flow, review queue, search, settings, and auth menu must remain
 keyboard-complete. Check focus visibility, contrast, empty/error/loading
 states, no layout shift, and no unintended horizontal overflow. Existing
-content, type, privacy, D1, and end-to-end tests remain the source of truth
-for behavior.
+content, type, privacy, D1, and end-to-end tests remain the source of truth for
+behavior.

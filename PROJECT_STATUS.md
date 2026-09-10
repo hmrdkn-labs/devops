@@ -10,6 +10,16 @@ the production Cloudflare Worker. The protected guest release completed
 successfully after the deployment token was added to GitHub. The public route,
 D1 health, manifest, raw Markdown, and study pages are live and verified.
 
+**UI v3 release candidate:** the public repository now has the accepted compact
+developer-learning workspace implemented locally: a `<H>` monogram/wordmark,
+restrained terminal-green identity, 40px display-title ceiling, flatter ruled
+surfaces, dense KCNA/library/search/map rows, and a question-first study layout.
+The representative KCNA question is visible before scrolling on both desktop
+and 375px mobile. Browser QA now covers 1440×1000, 768×1024, and 375×812 with
+captured evidence, overflow checks, mobile 44px touch-target checks, and type
+scale guards. This v3 candidate is **not yet recorded as production**; protected
+deployment and live verification follow the final local test pass.
+
 The visual reset is now live on the public app: the content contract, routes,
 learning behavior, and privacy boundaries stayed unchanged while the
 interface moved from a marketing-like notebook page to a focused study
@@ -90,7 +100,7 @@ and is not part of production.
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
-`✅ KCNA protected release` → `🔄 Owner beta gate`
+`✅ KCNA protected release` → `🔄 UI v3 release candidate` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -103,6 +113,7 @@ and is not part of production.
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
 | UI reset | ✅ Complete | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, focused study/review workspace, responsive surfaces, and accessibility fixes are deployed in protected run `33487216904` for source `190e0e5`. |
+| UI v3 refinement | 🔄 Release candidate | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size browser evidence are implemented locally. Production still points to the previous protected KCNA source until the v3 release is deployed and verified. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -264,6 +275,17 @@ and was not modified while this application was built.
   pages, search, references, and `/api/health`; production reports D1 `ready`
   and manifest SHA `a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`,
   matching the released source artifact.
+- **2026-09-10 — UI v3 release candidate validated:** replaced the remaining
+  oversized/card-heavy visual treatment with the accepted compact workspace,
+  `<H>` identity, restrained terminal-green action/state color, flat ruled
+  browse surfaces, and a question-first study composition. The expanded
+  Playwright matrix now checks 1440×1000, 768×1024, and 375×812 in both light
+  and dark themes, captures six primary surfaces per viewport/theme, and
+  enforces overflow, type-scale, initial-question visibility, and mobile
+  touch-target contracts. The broader accessibility sweep also found and fixed
+  a low-contrast metadata token and an invalid ARIA-labelled progress strip;
+  final local verification passes with 19 browser checks and 2 intentional
+  non-mobile skips. Protected production deployment is the next step.
 
 ## Completed
 
@@ -305,7 +327,7 @@ The following completed successfully from a clean dependency install:
 npm run check       # 37 units, 2 paths, 191 cards; 19 unit/privacy tests
 npm run build       # generated the 29-unit /paths/kcna and portable exports
 npm run revision:check
-npm run test:e2e    # 6/6 desktop and mobile browser tests
+npm run test:e2e    # 19 passed, 2 intentional skips; desktop/tablet/mobile, light/dark
 git diff --check
 ```
 
@@ -375,7 +397,8 @@ implementation.
 
 ## Safe resume order
 
-1. Publish and production-verify the new KCNA path/content release.
+1. Deploy and production-verify the validated UI v3 public source through the
+   protected private workflow.
 2. Run the owner-beta success gate: ten real focus sessions over seven days,
    scheduled recall, one content revalidation, and a full export.
 3. Review learning evidence from the beta, then deepen weak KCNA topics or

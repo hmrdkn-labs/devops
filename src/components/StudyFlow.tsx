@@ -196,8 +196,15 @@ export default function StudyFlow(props: Props) {
 
         <div class="study-main">
           <section class="question-stage" aria-labelledby="question-title">
-            <div class="stage-progress" aria-label={'Question progress ' + Math.round(progress()) + '%'}>
-              <span style={{ width: progress() + '%' }} />
+            <div
+              class="stage-progress"
+              role="progressbar"
+              aria-label="Question progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={Math.round(progress())}
+            >
+              <span aria-hidden="true" style={{ width: progress() + '%' }} />
             </div>
             <p class="section-kicker">Think before the lesson · {questionIndex() + 1}/{props.unit.questions.length}</p>
             <h2 id="question-title">{question().prompt}</h2>

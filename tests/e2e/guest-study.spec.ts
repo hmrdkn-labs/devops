@@ -28,9 +28,19 @@ test('public search finds exact canonical content', async ({ page }) => {
 });
 
 test('primary public pages have no serious automated accessibility violations', async ({ page }) => {
-  for (const route of ['/', '/paths/from-process-to-pod', '/map', '/library', '/search']) {
-    await page.goto(route);
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations.filter((violation) => ['critical', 'serious'].includes(violation.impact ?? ''))).toEqual([]);
+  const routes = ['/', '/paths/kcna', '/learn/kcna-kubernetes-resources-review', '/review', '/map', '/library', '/search'];
+
+  for (const theme of ['light', 'dark'] as const) {
+    await page.goto('/');
+    await page.evaluate((nextTheme) => localStorage.setItem('hmrdkn-theme', nextTheme), theme);
+
+    for (const route of routes) {
+      await page.goto(route);
+      const results = await new AxeBuilder({ page }).analyze();
+      expect(
+        results.violations.filter((violation) => ['critical', 'serious'].includes(violation.impact ?? '')),
+        `${route} (${theme}) should have no serious or critical automated accessibility violations`,
+      ).toEqual([]);
+    }
   }
 });

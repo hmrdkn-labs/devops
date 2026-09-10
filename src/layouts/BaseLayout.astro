@@ -19,13 +19,15 @@ const {
 const pageTitle = title === 'DevOps by hmrdkn-labs' ? title : `${title} · DevOps by hmrdkn-labs`;
 const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
 const navigation = [
-  { href: '/paths/from-process-to-pod', label: 'Focus' },
-  { href: '/map', label: 'Map' },
+  { href: '/paths/kcna', label: 'Learn', prefixes: ['/paths/', '/learn/'] },
+  { href: '/review', label: 'Review', prefixes: ['/review'] },
   { href: '/library', label: 'Library' },
-  { href: '/search', label: 'Search' },
-  { href: '/review', label: 'Review' },
+  { href: '/map', label: 'Map' },
 ];
-const isCurrent = (href: string) => Astro.url.pathname === href || Astro.url.pathname.startsWith(href + '/');
+const isCurrent = (item: typeof navigation[number]) => {
+  if ('prefixes' in item && item.prefixes?.some((prefix) => Astro.url.pathname.startsWith(prefix))) return true;
+  return Astro.url.pathname === item.href || Astro.url.pathname.startsWith(item.href + '/');
+};
 ---
 
 <!doctype html>
@@ -34,8 +36,8 @@ const isCurrent = (href: string) => Astro.url.pathname === href || Astro.url.pat
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f8f5" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1512" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f7f5" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1210" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -56,23 +58,25 @@ const isCurrent = (href: string) => Astro.url.pathname === href || Astro.url.pat
     <header class="site-header">
       <div class="site-header-inner">
         <a class="brand" href="/" aria-label="DevOps by hmrdkn-labs home">
-          <span class="brand-mark" aria-hidden="true">hm</span>
-          <span>DevOps <small>by hmrdkn-labs</small></span>
+          <img class="brand-mark" src="/favicon.svg" alt="" width="30" height="30" />
+          <span class="brand-name">DevOps <small>hmrdkn-labs</small></span>
         </a>
         <nav class="site-nav" aria-label="Primary navigation">
           {navigation.map((item) => (
-            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+            <a href={item.href} aria-current={isCurrent(item) ? 'page' : undefined}>{item.label}</a>
           ))}
         </nav>
         <div class="header-tools">
+          <a class="header-search" href="/search" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>Search</a>
           <ThemeToggle client:load />
           <AuthMenu client:load />
           <details class="mobile-nav">
             <summary class="quiet-button" aria-label="Open navigation">Menu</summary>
             <nav class="mobile-nav-panel" aria-label="Mobile navigation">
               {navigation.map((item) => (
-                <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+                <a href={item.href} aria-current={isCurrent(item) ? 'page' : undefined}>{item.label}</a>
               ))}
+              <a href="/search" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>Search</a>
             </nav>
           </details>
         </div>

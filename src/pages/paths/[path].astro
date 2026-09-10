@@ -21,7 +21,7 @@ const pathUnits = path.units.flatMap((entry, index) => {
 
 <BaseLayout title={path.title} description={path.summary} canonicalPath={'/paths/' + path.slug}>
   <header class="page-hero shell">
-    <p class="eyebrow">Guided focus path · revision {path.revision}</p>
+    <p class="eyebrow">Learning path · revision {path.revision}</p>
     <h1>{path.title}</h1>
     <p class="lede">{path.summary}</p>
   </header>
@@ -37,8 +37,9 @@ const pathUnits = path.units.flatMap((entry, index) => {
             <p>{unit.metadata.summary}</p>
           </div>
           <div class="path-badges">
-            {weight === 2 && <span>critical prerequisite</span>}
+            {weight === 2 && <span class="critical-badge">Critical</span>}
             <span>{unit.metadata.estimated_minutes} min</span>
+            <span class="path-arrow" aria-hidden="true">→</span>
           </div>
         </li>
       ))}
