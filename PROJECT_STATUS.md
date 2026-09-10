@@ -19,7 +19,7 @@ The release passed local typecheck, content checks, unit tests, D1 tests,
 desktop/mobile E2E and accessibility checks, production build, and protected
 route verification.
 
-The detailed **KCNA Learning Path** is now release-ready in the source tree.
+The detailed **KCNA Learning Path** is now live in production.
 It reuses portable prerequisite/foundation units and adds **19 independently
 written KCNA-specific units**: 17 detailed topical units plus two compact quiz
 companions for Kubernetes Fundamentals and Kubernetes Resources. The review
@@ -29,8 +29,10 @@ path now contains **29 units**. The canonical corpus is **37 units, 2 paths,
 74 question-first prompts, 37 guided practices, and 191 FSRS cards**. Content
 validation, typecheck, 19 unit/privacy tests, D1 checks, production build,
 revision classification, `git diff --check`, and all 6 desktop/mobile
-E2E/accessibility tests pass. The public production site is still on the
-previous release until this KCNA commit goes through the protected deployment.
+E2E/accessibility tests pass. Public commit
+`423fab951459a29d7033d6adece2e12ddf40e084` was deployed through protected
+owner run `34452917734`; the KCNA path, both quiz-companion pages, raw
+Markdown, search, references, D1 health, and manifest SHA were verified live.
 
 The Google-only owner rollout is live. The Google OAuth client,
 `BETTER_AUTH_SECRET`, and stable owner allowlist are stored in the private
@@ -75,6 +77,10 @@ viewed or recorded.
 4. ✅ Completed: `deploy-devops-learning` ran in **guest** mode with the apply
    and route confirmations enabled. It applied migrations, deployed the
    Worker, and verified the public route without logging response bodies.
+5. ✅ Completed: protected **owner** run `34452917734` deployed exact public
+   commit `423fab951459a29d7033d6adece2e12ddf40e084`, applied D1 migrations,
+   preserved Google owner authentication, and verified the KCNA production
+   content and manifest without logging secret values.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -84,15 +90,15 @@ and is not part of production.
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
-`🔄 KCNA protected release` → `🔄 Owner beta gate`
+`✅ KCNA protected release` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
 | Product contract | ✅ Complete | Learning flow, mastery, portability, privacy, and rollout rules are documented. |
 | Learning app | ✅ Complete | Astro 7/Solid application, question-first study flow, review scheduling, notes, readiness, search, and export are implemented. |
 | Initial content | ✅ Complete | 37 reviewed portable units, 2 paths, 74 explain/predict/scenario prompts, 37 guided practices, and 191 cards are generated. |
-| Detailed KCNA module | ✅ Release-ready | `/paths/kcna` sequences 29 units, including 17 detailed KCNA topical units plus 2 quiz companions, and is generated into search, raw Markdown, `llms*`, manifest, feed, references, and the downloadable archive. |
-| KCNA protected release | 🔄 Next | Commit/push the verified public source, deploy that exact commit through `hamardikan/hamardikan-infra`, then verify the live KCNA path, unit pages, raw exports, health, and manifest SHA. |
+| Detailed KCNA module | ✅ Live | `/paths/kcna` sequences 29 units, including 17 detailed KCNA topical units plus 2 quiz companions, and is available through search, raw Markdown, `llms*`, manifest, feed, references, and the downloadable archive. |
+| KCNA protected release | ✅ Complete | Public source `423fab9` was deployed in owner mode by protected run `34452917734`; the live path, review pages, raw exports, health, and manifest SHA were verified. |
 | Production boundary | ✅ Ready | D1 `hmrdkn-devops`, private Worker config, guarded workflow, validators, and rollback metadata are prepared. |
 | Guest release | ✅ Complete | Run `33137237808` applied D1 migrations, deployed the Worker and route, and passed all public health/content checks for public commit `45e3209`. |
 | Owner beta | 🔄 In progress | Google-only release is deployed and the first allowlisted sign-in works; the ten-session success gate and scheduled-recall evidence remain. |
@@ -249,6 +255,15 @@ and was not modified while this application was built.
   relevant KodeKloud module pages for study context. The corpus now validates
   at 37 units, 2 paths, 74 prompts, 37 practices, and 191 cards; the KCNA path
   contains 29 units.
+- **2026-09-10 — detailed KCNA release deployed:** public commit
+  `423fab951459a29d7033d6adece2e12ddf40e084` was pushed to `hmrdkn-labs/devops`
+  and deployed through protected owner run `34452917734`. The workflow passed
+  exact-source build validation, D1 migration, Worker deployment, owner-secret
+  installation, and production verification. Direct checks confirmed the KCNA
+  path, both Kubernetes Fundamentals/Resources review pages, both raw Markdown
+  pages, search, references, and `/api/health`; production reports D1 `ready`
+  and manifest SHA `a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`,
+  matching the released source artifact.
 
 ## Completed
 
@@ -349,7 +364,7 @@ https://devops.hamardikan.com/api/auth/callback/google
 
 - The owner-beta success gate (ten real focus sessions over seven days,
   scheduled recall, one revision revalidation, and a validated export)
-- Expansion from the current 35 units toward the broader 70–100-unit DevOps curriculum; the detailed KCNA-specific domain coverage is now implemented, while later content growth can deepen prerequisites and add post-KCNA paths without changing the content contract
+- Expansion from the current 37 units toward the broader 70–100-unit DevOps curriculum; the detailed KCNA-specific domain coverage is now implemented, while later content growth can deepen prerequisites and add post-KCNA paths without changing the content contract
 - Restore, ranked retrieval, digest email, optional public profile,
   diagnostics, and freshness monitoring
 - Formal executable lab provisioning and a lab CLI
