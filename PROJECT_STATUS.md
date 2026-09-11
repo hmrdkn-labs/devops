@@ -5,8 +5,10 @@
 
 ## Read this first
 
-**Learning-progress v5 is release-ready locally:** learning completion and
-understanding are now deliberately separate signals. Units track durable
+**Learning-progress v5 is live:** exact public source
+`8e63ad1d4a49fb41df49a8f2482527cc2e9e8e0f` passed public CI run
+`34584535362` and protected owner deployment run `34584744823`. Learning
+completion and understanding are now deliberately separate signals. Units track durable
 `Not started → In progress → Learned → Completed` task progress from answered
 questions, an explicit lesson-read marker, and guided-practice completion,
 while understanding remains evidence-derived as `Introduced → Understands
@@ -19,8 +21,11 @@ compact two-axis status rail and explicit lesson/practice controls, and learner
 export v2 includes task-progress records. Guest completion remains memory-only.
 Local content/type/unit/D1/build checks pass, including revision-carry tests;
 the browser matrix passes with **25 tests and 2 intentional skips** across
-desktop, tablet, and mobile. This release is currently awaiting the protected
-production deployment.
+desktop, tablet, and mobile. Independent production probes returned 200 for
+`/api/health`, `/kcna/`, the KCNA Resources review unit, KCNA-scoped review,
+and the auth-session route; the new progress endpoint correctly returned 401
+without owner authentication. D1 reports `ready` with manifest SHA
+`a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`.
 
 **Learning-experience v4 is live:** exact public source
 `abc2d69bc950507ed2b8b72fe6ee586b485a6959` passed public CI run
@@ -160,6 +165,15 @@ viewed or recorded.
    hints, Learn-first Encountered-only evidence, private correction capture,
    and next-unit handoff. Independent live probes verified the new KCNA and
    study surfaces plus D1 and auth health.
+9. ✅ Completed: learning-progress v5 exact source
+   `8e63ad1d4a49fb41df49a8f2482527cc2e9e8e0f` passed public CI run
+   `34584535362` and protected owner deployment run `34584744823`. The release
+   applied the `unit_task_progress` D1 migration, separates durable completion
+   from evidence-derived understanding, preserves stable task completion across
+   content revisions, exports the new progress records, and exposes both signals
+   in KCNA and study surfaces. Independent probes verified D1 health, KCNA,
+   study/review routes, auth, the new unit-progress authorization boundary, and
+   the unchanged canonical content manifest.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -170,7 +184,7 @@ and is not part of production.
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
-`✅ Adaptive learning v4` → `🟡 Learning progress v5 release` → `🔄 Owner beta gate`
+`✅ Adaptive learning v4` → `✅ Learning progress v5` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -186,7 +200,7 @@ and is not part of production.
 | UI v3 refinement | ✅ Live | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size light/dark browser evidence are live from source `205044b`; public CI `34456854247` and protected deploy `34457036278` passed. |
 | KCNA focus workspace | ✅ Live | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Public CI `34459708536`, protected owner deploy `34459923972`, and independent live probes all passed for exact source `0cf0d32`. |
 | Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
-| Learning progress v5 | 🟡 Release-ready | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Local checks, D1 migration/regression checks, build, and the 25-pass browser matrix are green; protected production deployment is next. |
+| Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -197,6 +211,12 @@ and was not modified while this application was built.
 
 ## Progress log
 
+- **2026-09-11 — learning progress v5 released:** exact source `8e63ad1` adds
+  durable question/lesson/practice completion alongside the existing
+  evidence-derived understanding model. Public CI `34584535362` passed;
+  protected owner deployment `34584744823` applied the D1 migration and
+  promoted the Worker. Independent probes verified the new markers, D1-ready
+  health, owner-auth route, and unauthenticated rejection of progress writes.
 - **2026-08-27 — resumed deployment work:** the agreed Astro-on-Cloudflare
   Worker route remains the production architecture; the incompatible Sites
   preview is optional and not on the production path.
