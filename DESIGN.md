@@ -145,6 +145,15 @@ next unencountered unit, checkpoint disclosure defaults to the current segment,
 and readiness is explainable through Encountered, Recall, Applied, and Retained
 dimensions. Weak-spot labels are evidence diagnostics, not grades.
 
+KCNA MCQ practice is a separate refresher surface, not a mastery shortcut. It
+may use single-select, multi-select, command-recognition, and scenario
+questions, but checking an answer must explain every option rather than only
+revealing the correct choice. The question bank remains canonical portable
+YAML, guest/session state stays memory-only, and MCQ scores do not modify
+readiness or FSRS evidence. On mobile, answer rows and session controls must
+retain the same 44px minimum interaction target as the rest of the learning
+shell.
+
 The study flow, review queue, search, settings, and auth menu must remain
 keyboard-complete. Check focus visibility, contrast, empty/error/loading
 states, no layout shift, and no unintended horizontal overflow. Existing

@@ -93,6 +93,65 @@ export const practiceFileSchema = z.object({
   })).default([]),
 });
 
+const mcqOptionSchema = z.object({
+  id,
+  text: z.string().min(2),
+  rationale: z.string().min(10),
+  code: z.boolean().default(false),
+});
+
+const mcqQuestionSchema = z.object({
+  id,
+  checkpoint: z.enum(['fundamentals', 'resources', 'cluster-behavior', 'cloud-native']),
+  category: z.enum(['concept', 'kubectl', 'scenario']),
+  select: z.enum(['single', 'multiple']),
+  prompt: z.string().min(10),
+  options: z.array(mcqOptionSchema).min(3).max(6),
+  answer_ids: z.array(id).min(1),
+  explanation: z.string().min(20),
+  unit_ids: z.array(id).min(1),
+}).superRefine((question, context) => {
+  const optionIds = new Set(question.options.map((option) => option.id));
+  if (optionIds.size !== question.options.length) {
+    context.addIssue({ code: 'custom', path: ['options'], message: 'option IDs must be unique within a question' });
+  }
+  const answerIds = new Set(question.answer_ids);
+  if (answerIds.size !== question.answer_ids.length) {
+    context.addIssue({ code: 'custom', path: ['answer_ids'], message: 'answer IDs must be unique' });
+  }
+  for (const answerId of question.answer_ids) {
+    if (!optionIds.has(answerId)) {
+      context.addIssue({ code: 'custom', path: ['answer_ids'], message: `unknown answer option ${answerId}` });
+    }
+  }
+  if (question.select === 'single' && question.answer_ids.length !== 1) {
+    context.addIssue({ code: 'custom', path: ['answer_ids'], message: 'single-select questions require exactly one answer' });
+  }
+  if (question.select === 'multiple' && question.answer_ids.length < 2) {
+    context.addIssue({ code: 'custom', path: ['answer_ids'], message: 'multi-select questions require at least two answers' });
+  }
+});
+
+export const practiceSetSchema = z.object({
+  schema_version: z.literal(1),
+  id,
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  title: z.string().min(3),
+  summary: z.string().min(20),
+  revision: z.number().int().positive(),
+  certification: id,
+  verified_at: isoDate,
+  questions: z.array(mcqQuestionSchema).min(1),
+}).superRefine((set, context) => {
+  const questionIds = new Set<string>();
+  for (const [index, question] of set.questions.entries()) {
+    if (questionIds.has(question.id)) {
+      context.addIssue({ code: 'custom', path: ['questions', index, 'id'], message: `duplicate question ID ${question.id}` });
+    }
+    questionIds.add(question.id);
+  }
+});
+
 export const pathSchema = z.object({
   schema_version: z.literal(1),
   id,
@@ -125,6 +184,7 @@ export type QuestionFile = z.infer<typeof questionFileSchema>;
 export type CardFile = z.infer<typeof cardFileSchema>;
 export type SourceFile = z.infer<typeof sourceFileSchema>;
 export type PracticeFile = z.infer<typeof practiceFileSchema>;
+export type PracticeSet = z.infer<typeof practiceSetSchema>;
 export type LearningPath = z.infer<typeof pathSchema>;
 export type CertificationRegistry = z.infer<typeof certificationRegistrySchema>;
 

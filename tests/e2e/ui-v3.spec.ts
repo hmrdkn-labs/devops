@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 const primarySurfaces = [
   ['home', '/'],
   ['kcna-focus', '/kcna'],
+  ['kcna-mcq', '/practice/kcna'],
   ['kcna-path', '/paths/kcna'],
   ['study', '/learn/kcna-kubernetes-resources-review'],
   ['library', '/library'],
@@ -22,9 +23,28 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Review KCNA only' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /MCQ practice/ })).toBeVisible();
   const quickReview = page.locator('.kcna-quick-review');
   await expect(quickReview.getByText('Kubernetes Fundamentals quiz companion', { exact: true })).toBeVisible();
   await expect(quickReview.getByText('Kubernetes Resources quiz companion', { exact: true })).toBeVisible();
+});
+
+test('KCNA MCQ refresher explains every option after checking', async ({ page }) => {
+  await page.goto('/practice/kcna');
+
+  await expect(page.getByRole('heading', { name: 'Practice the decision, not the wording.' })).toBeVisible();
+  await expect(page.getByText('Question 1 / 12')).toBeVisible();
+  await expect(page.getByText('Select one', { exact: true })).toBeVisible();
+
+  await page.getByText('kube-scheduler', { exact: true }).click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+
+  await expect(page.getByText('Not quite', { exact: true })).toBeVisible();
+  await expect(page.getByText(/The API server is the front door/)).toBeVisible();
+  await expect(page.getByText(/The scheduler chooses a feasible node/)).toBeVisible();
+  await expect(page.getByText(/Controllers reconcile desired and observed state/)).toBeVisible();
+  await expect(page.getByText(/The kubelet is a node agent/)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Next question/ })).toBeVisible();
 });
 
 test('UI v3 primary surfaces stay compact, readable, and overflow-free', async ({ page }, testInfo) => {

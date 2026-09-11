@@ -1,0 +1,616 @@
+schema_version: 1
+id: practice:kcna
+slug: kcna-mcq
+title: KCNA MCQ refresher
+summary: Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.
+revision: 1
+certification: cncf:kcna
+verified_at: 2026-09-11
+questions:
+  - id: practice:kcna/q-api-entry
+    checkpoint: fundamentals
+    category: concept
+    select: single
+    prompt: A kubectl request reaches the Kubernetes control plane. Which component is the API entry point that authenticates, authorizes, validates, and persists the request?
+    options:
+      - id: a
+        text: kube-apiserver
+        rationale: The API server is the front door for Kubernetes API requests and coordinates authentication, authorization, admission, validation, and persistence.
+      - id: b
+        text: kube-scheduler
+        rationale: The scheduler chooses a feasible node for unscheduled Pods; it is not the general API entry point.
+      - id: c
+        text: kube-controller-manager
+        rationale: Controllers reconcile desired and observed state through the API, but they do not terminate every client API request.
+      - id: d
+        text: kubelet
+        rationale: The kubelet is a node agent that drives Pod execution on one node and reports status back through the API.
+    answer_ids: [a]
+    explanation: Treat the API server as the control-plane boundary that every normal Kubernetes object operation crosses before other control-plane components react.
+    unit_ids: [fpp:kubernetes-architecture-components]
+
+  - id: practice:kcna/q-scheduler
+    checkpoint: fundamentals
+    category: scenario
+    select: single
+    prompt: A newly created Pod has no nodeName and is waiting for placement. Which component normally decides which eligible node should run it?
+    options:
+      - id: a
+        text: kube-scheduler
+        rationale: The scheduler evaluates unscheduled Pods against node constraints and preferences, then records a binding to the selected node.
+      - id: b
+        text: kube-proxy
+        rationale: kube-proxy implements Service traffic forwarding on nodes; it does not perform Pod placement.
+      - id: c
+        text: CoreDNS
+        rationale: CoreDNS provides cluster DNS resolution and does not select nodes for Pods.
+      - id: d
+        text: container runtime
+        rationale: The runtime starts containers after node-level execution has been requested; it does not choose the node.
+    answer_ids: [a]
+    explanation: Placement is a control-plane scheduling decision. Execution begins later when the kubelet on the selected node observes the assigned Pod.
+    unit_ids: [fpp:kubernetes-architecture-components, fpp:kubernetes-scheduling-placement]
+
+  - id: practice:kcna/q-etcd
+    checkpoint: fundamentals
+    category: concept
+    select: single
+    prompt: Which component is the strongly consistent key-value store used by the Kubernetes control plane for cluster state?
+    options:
+      - id: a
+        text: etcd
+        rationale: etcd is the persistent distributed key-value store Kubernetes uses for control-plane state.
+      - id: b
+        text: CoreDNS
+        rationale: CoreDNS serves DNS records for service discovery; it is not the Kubernetes state database.
+      - id: c
+        text: containerd
+        rationale: containerd is a container runtime and does not store the authoritative Kubernetes API state.
+      - id: d
+        text: kubelet
+        rationale: The kubelet manages node-side Pod execution and reports status, but it is not the cluster state store.
+    answer_ids: [a]
+    explanation: Kubernetes control-plane state is persisted in etcd through the API server rather than being owned independently by each controller.
+    unit_ids: [fpp:kubernetes-architecture-components]
+
+  - id: practice:kcna/q-kubelet-runtime
+    checkpoint: fundamentals
+    category: concept
+    select: single
+    prompt: On a worker node, which component watches assigned Pod specifications and asks the container runtime to create or stop containers?
+    options:
+      - id: a
+        text: kubelet
+        rationale: The kubelet is the node agent that reconciles assigned Pod specifications with node-level execution using the container runtime.
+      - id: b
+        text: kube-controller-manager
+        rationale: The controller manager runs control-plane controllers and does not directly manage container processes on every node.
+      - id: c
+        text: kube-scheduler
+        rationale: The scheduler chooses a node but does not start the containers on that node.
+      - id: d
+        text: etcd
+        rationale: etcd persists control-plane state and never acts as the node execution agent.
+    answer_ids: [a]
+    explanation: "Keep placement and execution separate: the scheduler selects a node, while the kubelet on that node drives execution through the runtime."
+    unit_ids: [fpp:kubernetes-architecture-components, fpp:container-lifecycle]
+
+  - id: practice:kcna/q-interfaces
+    checkpoint: fundamentals
+    category: concept
+    select: multiple
+    prompt: Which interface-to-responsibility mappings are correct? Select all that apply.
+    options:
+      - id: a
+        text: CRI → container runtime integration
+        rationale: CRI defines the kubelet-facing runtime interface used to manage containers and Pod sandboxes.
+      - id: b
+        text: CNI → Pod network connectivity
+        rationale: CNI plugins configure container or Pod network interfaces and connectivity.
+      - id: c
+        text: CSI → storage integration
+        rationale: CSI standardizes how storage systems integrate with container orchestrators such as Kubernetes.
+      - id: d
+        text: CSI → Service load balancing
+        rationale: CSI is for storage, while Service forwarding and load-balancing behavior belongs to networking components.
+    answer_ids: [a, b, c]
+    explanation: CRI, CNI, and CSI deliberately separate runtime, networking, and storage integration so Kubernetes can use interchangeable implementations.
+    unit_ids: [fpp:kubernetes-architecture-components, fpp:kubernetes-networking-request-path, fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-control-loop
+    checkpoint: fundamentals
+    category: concept
+    select: single
+    prompt: What best describes a Kubernetes controller's core job?
+    options:
+      - id: a
+        text: Continuously compare desired and observed state and act to reduce the difference
+        rationale: Reconciliation loops repeatedly observe state, compare it with intent, and make changes toward the declared target.
+      - id: b
+        text: Execute every kubectl command directly on a worker node
+        rationale: kubectl sends API requests; controllers react to persisted state rather than forwarding commands directly to nodes.
+      - id: c
+        text: Store every container image used by the cluster
+        rationale: Images live in registries and node caches; controllers do not act as image registries.
+      - id: d
+        text: Replace the Linux kernel scheduler
+        rationale: Kubernetes scheduling chooses nodes for Pods and does not replace the operating system's CPU scheduler.
+    answer_ids: [a]
+    explanation: The reconciliation model is the unifying mental model behind Kubernetes self-healing and declarative desired state.
+    unit_ids: [fpp:kubernetes-control-loop]
+
+  - id: practice:kcna/q-delete-pod
+    checkpoint: resources
+    category: scenario
+    select: single
+    prompt: A Deployment has three healthy replicas. You delete one selected Pod manually. Why does another Pod appear without running kubectl scale?
+    options:
+      - id: a
+        text: The ReplicaSet still desires three matching Pods and reconciles the missing replica
+        rationale: Deleting the Pod changes observed state, while the ReplicaSet's desired replica count remains three.
+      - id: b
+        text: The Service notices the missing Pod and creates a replacement
+        rationale: A Service selects and routes to endpoints; it does not own or create Pods.
+      - id: c
+        text: CoreDNS recreates Pods whenever their DNS records disappear
+        rationale: DNS resolution does not own workload lifecycle or replacement behavior.
+      - id: d
+        text: The scheduler keeps a permanent copy of every deleted Pod
+        rationale: The scheduler assigns new Pods to nodes but does not restore deleted objects from a private copy.
+    answer_ids: [a]
+    explanation: Deployment owns ReplicaSets, and the ReplicaSet directly maintains the desired count of matching Pods.
+    unit_ids: [fpp:kubernetes-labels-replicasets, fpp:kubernetes-deployments-rollouts]
+
+  - id: practice:kcna/q-spec-status
+    checkpoint: resources
+    category: concept
+    select: multiple
+    prompt: Which statements correctly distinguish spec and status on Kubernetes API objects? Select all that apply.
+    options:
+      - id: a
+        text: spec usually expresses desired state
+        rationale: For resources that expose a spec, it is where users and controllers express the intended configuration.
+      - id: b
+        text: status usually reports observed state
+        rationale: Status is generally written by Kubernetes components to describe what has actually been observed.
+      - id: c
+        text: status is the normal place to request a new replica count
+        rationale: Desired replica count belongs in spec, not status.
+      - id: d
+        text: API acceptance of spec changes does not prove the workload became healthy
+        rationale: The API operation can succeed before scheduling, startup, readiness, routing, or end-to-end requests succeed.
+    answer_ids: [a, b, d]
+    explanation: Keeping desired state, observed state, and runtime proof separate prevents a large class of Kubernetes reasoning mistakes.
+    unit_ids: [fpp:kubernetes-manifests, fpp:kubernetes-apply-live-state]
+
+  - id: practice:kcna/q-explain-command
+    checkpoint: resources
+    category: kubectl
+    select: single
+    prompt: You cannot remember the fields under a Deployment strategy. Which command is the best schema-oriented lookup?
+    options:
+      - id: a
+        text: kubectl explain deployment.spec.strategy
+        code: true
+        rationale: kubectl explain reads Kubernetes API schema information and is designed for resource and field help.
+      - id: b
+        text: kubectl logs deployment/web
+        code: true
+        rationale: Logs show application output and do not document API field structure.
+      - id: c
+        text: kubectl rollout undo deployment/web
+        code: true
+        rationale: Rollout undo changes Deployment state rather than explaining its schema.
+      - id: d
+        text: kubectl get nodes -o wide
+        code: true
+        rationale: Listing nodes provides cluster inventory and does not explain Deployment fields.
+    answer_ids: [a]
+    explanation: Use kubectl explain when the problem is “what field exists and where does it belong?” rather than “what is happening at runtime?”
+    unit_ids: [fpp:kcna-kubernetes-resources-review, fpp:kubernetes-manifests]
+
+  - id: practice:kcna/q-rollout-status
+    checkpoint: resources
+    category: kubectl
+    select: single
+    prompt: You changed a Deployment image and want kubectl to follow whether the rollout reaches its Deployment-level completion condition. Which command fits best?
+    options:
+      - id: a
+        text: kubectl rollout status deployment/web
+        code: true
+        rationale: rollout status watches the rollout state of the named workload controller.
+      - id: b
+        text: kubectl explain deployment/web
+        code: true
+        rationale: kubectl explain expects a resource or field path, not an object name, and provides schema help rather than rollout progress.
+      - id: c
+        text: kubectl get namespace web
+        code: true
+        rationale: A Namespace lookup does not report the Deployment rollout state.
+      - id: d
+        text: kubectl exec deployment/web -- rollout
+        code: true
+        rationale: kubectl exec runs a process inside a container; it is not how Deployment rollout state is observed.
+    answer_ids: [a]
+    explanation: Rollout status is controller-level evidence. It is useful, but it still does not prove that an external user request succeeds end to end.
+    unit_ids: [fpp:kubernetes-deployments-rollouts]
+
+  - id: practice:kcna/q-rollout-undo
+    checkpoint: resources
+    category: kubectl
+    select: single
+    prompt: A new Deployment revision is bad and you want Kubernetes to restore the previous Pod-template revision. Which command is designed for that action?
+    options:
+      - id: a
+        text: kubectl rollout undo deployment/web
+        code: true
+        rationale: rollout undo changes the Deployment back to a previous recorded rollout revision.
+      - id: b
+        text: kubectl delete pod --all
+        code: true
+        rationale: Deleting Pods causes the controller to recreate Pods from the current desired template; it does not restore an older revision.
+      - id: c
+        text: kubectl get deployment web -o yaml
+        code: true
+        rationale: This inspects live state but does not perform a rollback.
+      - id: d
+        text: kubectl explain deployment.spec
+        code: true
+        rationale: Schema help is read-only and does not change the Deployment revision.
+    answer_ids: [a]
+    explanation: A Kubernetes rollout rollback restores controller configuration; it does not reverse database migrations or external application side effects.
+    unit_ids: [fpp:kubernetes-deployments-rollouts]
+
+  - id: practice:kcna/q-namespace-command
+    checkpoint: resources
+    category: kubectl
+    select: single
+    prompt: You need to list Pods specifically in the payments namespace without changing your current kubectl context. Which command is the clearest choice?
+    options:
+      - id: a
+        text: kubectl get pods -n payments
+        code: true
+        rationale: The -n or --namespace flag explicitly scopes this command to the payments namespace.
+      - id: b
+        text: kubectl get pods --node payments
+        code: true
+        rationale: Namespace and node placement are different dimensions; this is not the namespace flag.
+      - id: c
+        text: kubectl namespace payments get pods
+        code: true
+        rationale: kubectl does not use this command shape for namespaced reads.
+      - id: d
+        text: kubectl get namespace/pod/payments
+        code: true
+        rationale: This does not represent a valid resource reference for listing Pods in a namespace.
+    answer_ids: [a]
+    explanation: Namespace scope is explicit API scope; using -n keeps the operation local to one command and avoids hidden context changes.
+    unit_ids: [fpp:kubernetes-namespaces-scope]
+
+  - id: practice:kcna/q-describe-pending
+    checkpoint: cluster-behavior
+    category: kubectl
+    select: single
+    prompt: A Pod is Pending and you want conditions plus recent scheduling events that explain why no node was selected. Which command is the strongest first choice?
+    options:
+      - id: a
+        text: kubectl describe pod api-7d9c
+        code: true
+        rationale: describe combines object details with conditions and related events, which commonly reveal scheduler rejection reasons.
+      - id: b
+        text: kubectl logs pod/api-7d9c
+        code: true
+        rationale: A Pending Pod may not have a running container with useful logs, and logs do not expose scheduler feasibility events.
+      - id: c
+        text: kubectl rollout undo pod/api-7d9c
+        code: true
+        rationale: Pods do not have Deployment rollout history and rollout undo is not a scheduling diagnostic.
+      - id: d
+        text: kubectl explain pod/api-7d9c
+        code: true
+        rationale: kubectl explain documents resource schema rather than the events for one live Pod.
+    answer_ids: [a]
+    explanation: For placement failures, inspect evidence from the scheduler path before debugging application code that has not started yet.
+    unit_ids: [fpp:kubernetes-scheduling-placement]
+
+  - id: practice:kcna/q-wide-pods
+    checkpoint: cluster-behavior
+    category: kubectl
+    select: single
+    prompt: Which command quickly shows Pods with extra placement and network columns such as node name and Pod IP?
+    options:
+      - id: a
+        text: kubectl get pods -o wide
+        code: true
+        rationale: Wide output adds useful columns such as Pod IP and node placement to the normal Pod listing.
+      - id: b
+        text: kubectl get pods -o name
+        code: true
+        rationale: Name output intentionally returns only resource names and removes most diagnostic columns.
+      - id: c
+        text: kubectl explain pods.wide
+        code: true
+        rationale: Wide is an output mode, not an API field path for kubectl explain.
+      - id: d
+        text: kubectl logs pods --wide
+        code: true
+        rationale: Logs read container output and do not use wide table output for placement information.
+    answer_ids: [a]
+    explanation: Wide output is a fast observation step when you need to correlate a Pod with its node and Pod-network identity.
+    unit_ids: [fpp:kubernetes-pod-model, fpp:kubernetes-networking-request-path]
+
+  - id: practice:kcna/q-service-path
+    checkpoint: cluster-behavior
+    category: concept
+    select: multiple
+    prompt: Which statements about a normal Kubernetes Service request path are correct? Select all that apply.
+    options:
+      - id: a
+        text: A Service gives clients a stable virtual identity while backend Pods may change
+        rationale: Service discovery decouples clients from the churn of individual Pod identities.
+      - id: b
+        text: EndpointSlices represent the selected backend endpoints for Services
+        rationale: EndpointSlices are the scalable API representation of network endpoints associated with Services.
+      - id: c
+        text: CoreDNS normally creates replacement Pods when a Service endpoint disappears
+        rationale: DNS resolves names; workload controllers, not CoreDNS, own Pod replacement.
+      - id: d
+        text: A NetworkPolicy can constrain allowed Pod traffic independently of Service discovery
+        rationale: NetworkPolicy is a policy layer; it is distinct from DNS naming and Service endpoint selection.
+    answer_ids: [a, b, d]
+    explanation: Separate naming, stable service identity, endpoint selection, forwarding, and policy into different layers when tracing Kubernetes networking.
+    unit_ids: [fpp:services-dns-ingress, fpp:kubernetes-networking-request-path]
+
+  - id: practice:kcna/q-requests-limits
+    checkpoint: cluster-behavior
+    category: concept
+    select: multiple
+    prompt: Which statements about CPU or memory requests and limits are correct? Select all that apply.
+    options:
+      - id: a
+        text: Requests influence scheduler placement decisions
+        rationale: The scheduler uses requested resources when evaluating whether a node has sufficient allocatable capacity.
+      - id: b
+        text: CPU limits can cause throttling at runtime
+        rationale: CPU limits can be enforced by the runtime and kernel through cgroup CPU controls, which can throttle execution.
+      - id: c
+        text: Memory limits can contribute to OOM termination
+        rationale: Exceeding an enforced memory limit can cause the container to be terminated for out-of-memory behavior.
+      - id: d
+        text: Limits are the only values the scheduler uses to decide whether a Pod fits
+        rationale: Scheduling feasibility is primarily based on requests, so limits cannot simply replace requests in the placement model.
+    answer_ids: [a, b, c]
+    explanation: Requests answer “where can this fit?” while limits constrain runtime consumption; mixing those purposes produces bad scheduling reasoning.
+    unit_ids: [fpp:scheduling-resources-health, fpp:kubernetes-scheduling-placement]
+
+  - id: practice:kcna/q-probes
+    checkpoint: cluster-behavior
+    category: concept
+    select: multiple
+    prompt: Which probe-to-purpose mappings are correct? Select all that apply.
+    options:
+      - id: a
+        text: Readiness → whether the Pod should receive Service traffic
+        rationale: A failing readiness probe removes the Pod from ready endpoints without necessarily restarting its container.
+      - id: b
+        text: Liveness → whether the container should be restarted because it is unhealthy
+        rationale: Repeated liveness failure can trigger container restart by the kubelet.
+      - id: c
+        text: Startup → delay liveness/readiness behavior for slow-starting applications
+        rationale: A startup probe protects slow-starting containers from premature liveness failure until startup succeeds.
+      - id: d
+        text: Readiness → reserve CPU on a node before scheduling
+        rationale: Resource requests, not readiness probes, participate in scheduler capacity calculations.
+    answer_ids: [a, b, c]
+    explanation: Readiness, liveness, and startup probes answer different health questions; none replaces resource requests or end-to-end monitoring.
+    unit_ids: [fpp:scheduling-resources-health]
+
+  - id: practice:kcna/q-security-boundaries
+    checkpoint: cluster-behavior
+    category: concept
+    select: multiple
+    prompt: A team creates a namespace named payments. Which additional mechanisms may still be needed for actual isolation or governance? Select all that apply.
+    options:
+      - id: a
+        text: RBAC for API authorization
+        rationale: Namespace existence does not automatically restrict which identities may perform API operations there.
+      - id: b
+        text: NetworkPolicy for Pod traffic restrictions
+        rationale: A namespace alone does not automatically isolate network traffic between Pods or namespaces.
+      - id: c
+        text: ResourceQuota for aggregate namespace resource governance
+        rationale: ResourceQuota can limit aggregate resource consumption in a namespace and is not implied by namespace creation.
+      - id: d
+        text: Nothing else; a namespace is a complete security boundary by itself
+        rationale: Namespace primarily provides namespaced API scope and organization, not automatic network, authorization, or quota isolation.
+    answer_ids: [a, b, c]
+    explanation: Treat namespace as an API scope boundary, then add the security and governance mechanisms required by the threat and resource model.
+    unit_ids: [fpp:kubernetes-namespaces-scope, fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-live-yaml
+    checkpoint: cluster-behavior
+    category: kubectl
+    select: single
+    prompt: You want to inspect the full live Deployment object, including fields populated by the API and controllers. Which command is most direct?
+    options:
+      - id: a
+        text: kubectl get deployment web -o yaml
+        code: true
+        rationale: This retrieves the live API object and serializes it as YAML for inspection.
+      - id: b
+        text: kubectl apply -f deployment.yaml
+        code: true
+        rationale: apply changes or reconciles live desired state and is not a read-only inspection command.
+      - id: c
+        text: kubectl rollout undo deployment/web
+        code: true
+        rationale: rollout undo mutates the Deployment revision instead of inspecting the current object.
+      - id: d
+        text: kubectl logs deployment/web -o yaml
+        code: true
+        rationale: Logs expose container output and do not serialize the Deployment API object.
+    answer_ids: [a]
+    explanation: Inspecting the live object is useful for separating what is actually stored in the API from what exists only in a local manifest file.
+    unit_ids: [fpp:kubernetes-apply-live-state]
+
+  - id: practice:kcna/q-gitops
+    checkpoint: cloud-native
+    category: concept
+    select: single
+    prompt: What is the most important distinguishing idea in a GitOps delivery model?
+    options:
+      - id: a
+        text: Version-controlled desired state is reconciled continuously by automation
+        rationale: GitOps combines declarative desired state in version control with an automated reconciliation loop toward that state.
+      - id: b
+        text: Engineers must SSH to every node and apply changes manually
+        rationale: Manual node-by-node mutation conflicts with the declarative, reconciled GitOps operating model.
+      - id: c
+        text: Every deployment must build its image inside the Kubernetes API server
+        rationale: Image build and desired-state reconciliation are separate concerns; the API server is not an image build engine.
+      - id: d
+        text: Git replaces observability because commit history explains runtime health
+        rationale: Version history explains intended changes, but runtime observability is still required to prove actual behavior.
+    answer_ids: [a]
+    explanation: GitOps is not merely “using Git”; its core is declarative, versioned intent plus automated reconciliation and observable convergence.
+    unit_ids: [fpp:cloud-native-delivery-gitops]
+
+  - id: practice:kcna/q-observability-signals
+    checkpoint: cloud-native
+    category: concept
+    select: multiple
+    prompt: Which observability signal mappings are useful and generally correct? Select all that apply.
+    options:
+      - id: a
+        text: Metrics → numeric behavior over time
+        rationale: Metrics summarize measurements such as rates, counts, durations, and resource usage as time series.
+      - id: b
+        text: Logs → discrete application or system event records
+        rationale: Logs record timestamped messages or structured events that help explain specific behavior.
+      - id: c
+        text: Traces → causal path and timing across distributed requests
+        rationale: Distributed traces connect spans across services to show where a request traveled and how long work took.
+      - id: d
+        text: Kubernetes events → guaranteed long-term audit archive
+        rationale: Kubernetes events are useful operational clues but should not be treated as a durable, complete audit-history system.
+    answer_ids: [a, b, c]
+    explanation: Observability comes from combining complementary evidence; no single signal fully proves system behavior across every layer.
+    unit_ids: [fpp:cloud-native-observability-signals]
+
+  - id: practice:kcna/q-release-proof
+    checkpoint: cloud-native
+    category: scenario
+    select: single
+    prompt: kubectl rollout status reports a Deployment completed successfully. What is the strongest conclusion you can safely make?
+    options:
+      - id: a
+        text: The Deployment met its rollout completion conditions, but end-to-end user success still needs separate proof
+        rationale: Controller-level rollout success is valuable evidence but does not prove DNS, routing, dependencies, or real user requests.
+      - id: b
+        text: Every external user in every region can reach the application successfully
+        rationale: Rollout status cannot observe all network paths, dependencies, or external client experiences.
+      - id: c
+        text: The database migration was correct and reversible
+        rationale: Deployment rollout state does not validate application data migrations or external side effects.
+      - id: d
+        text: No application error can occur until the next Deployment revision
+        rationale: Runtime failures can happen after a successful rollout and need ongoing health and observability evidence.
+    answer_ids: [a]
+    explanation: Move from desired state to controller convergence to Pod health to routing and finally a real request; each layer proves something different.
+    unit_ids: [fpp:kubernetes-deployments-rollouts, fpp:cloud-native-release-debugging]
+
+  - id: practice:kcna/q-canary
+    checkpoint: cloud-native
+    category: concept
+    select: single
+    prompt: Which release idea deliberately exposes a new version to a limited portion of traffic or users before broader rollout?
+    options:
+      - id: a
+        text: Canary release
+        rationale: Canary delivery limits initial exposure so operators can compare behavior before increasing the new version's share.
+      - id: b
+        text: Backup restore
+        rationale: Backup restore recovers data or system state and is not a progressive traffic-release strategy.
+      - id: c
+        text: Vertical scaling
+        rationale: Vertical scaling changes resource capacity and does not define how versions receive traffic.
+      - id: d
+        text: Static linking
+        rationale: Static linking is a build technique unrelated to progressive application release exposure.
+    answer_ids: [a]
+    explanation: Canary, blue-green, and rolling releases differ mainly in how versions coexist and how traffic or replica exposure changes over time.
+    unit_ids: [fpp:cloud-native-release-debugging]
+
+  - id: practice:kcna/q-logs-command
+    checkpoint: cloud-native
+    category: kubectl
+    select: single
+    prompt: A running Pod named api-7d9c has one container and you want its application stdout/stderr. Which command is the direct starting point?
+    options:
+      - id: a
+        text: kubectl logs api-7d9c
+        code: true
+        rationale: kubectl logs retrieves container log output for the selected Pod and is the direct read path for stdout/stderr.
+      - id: b
+        text: kubectl explain api-7d9c
+        code: true
+        rationale: kubectl explain expects resource schema paths and does not read a Pod's runtime logs.
+      - id: c
+        text: kubectl rollout status api-7d9c
+        code: true
+        rationale: A Pod is not a rollout controller and rollout status does not retrieve application log output.
+      - id: d
+        text: kubectl get api-7d9c --stdout
+        code: true
+        rationale: kubectl get reads API resources and does not expose container stdout with this command form.
+    answer_ids: [a]
+    explanation: Logs are application-process evidence. If the container never started, move earlier in the evidence ladder to Pod state, events, image pull, or scheduling.
+    unit_ids: [fpp:troubleshoot-process-to-pod, fpp:cloud-native-observability-signals]
+
+  - id: practice:kcna/q-exec-command
+    checkpoint: cloud-native
+    category: kubectl
+    select: single
+    prompt: A running Pod named api-7d9c contains a shell and you need an interactive shell inside its container for a short diagnostic. Which command shape is correct?
+    options:
+      - id: a
+        text: kubectl exec -it api-7d9c -- sh
+        code: true
+        rationale: kubectl exec runs a command in a running container; -it requests an interactive terminal and -- separates kubectl flags from the command.
+      - id: b
+        text: kubectl logs -it api-7d9c -- sh
+        code: true
+        rationale: kubectl logs reads container output and does not execute a shell in the container.
+      - id: c
+        text: kubectl apply -it api-7d9c -- sh
+        code: true
+        rationale: kubectl apply reconciles declarative API configuration and cannot open an interactive process this way.
+      - id: d
+        text: kubectl explain -it api-7d9c -- sh
+        code: true
+        rationale: kubectl explain is schema documentation and does not run commands inside containers.
+    answer_ids: [a]
+    explanation: kubectl exec is a runtime diagnostic tool. It should complement, not replace, reproducible configuration and observable application behavior.
+    unit_ids: [fpp:troubleshoot-process-to-pod]
+
+  - id: practice:kcna/q-debug-order
+    checkpoint: cloud-native
+    category: scenario
+    select: single
+    prompt: kubectl apply succeeded but users still receive errors. Which troubleshooting approach best preserves the evidence chain?
+    options:
+      - id: a
+        text: Verify live desired state, rollout and Pod state, endpoints or routing, then a real request
+        rationale: This follows the system from API acceptance through reconciliation and networking to user-visible behavior, localizing the first failing layer.
+      - id: b
+        text: Reapply the same manifest repeatedly until the error disappears
+        rationale: Repeating a successful API operation without new evidence can hide the actual failing downstream layer.
+      - id: c
+        text: Delete every Pod before checking any status or events
+        rationale: Destructive changes erase useful evidence and may create additional churn before the failure is understood.
+      - id: d
+        text: Assume API acceptance proves the application and its dependencies are healthy
+        rationale: API success only proves an API operation; many downstream runtime and network failures can still occur.
+    answer_ids: [a]
+    explanation: Good debugging moves layer by layer and uses observable proof at each transition instead of guessing or mutating the system prematurely.
+    unit_ids: [fpp:troubleshoot-process-to-pod, fpp:cloud-native-release-debugging]

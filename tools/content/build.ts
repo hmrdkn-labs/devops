@@ -16,12 +16,14 @@ import {
   cardFileSchema,
   certificationRegistrySchema,
   pathSchema,
+  practiceSetSchema,
   practiceFileSchema,
   questionFileSchema,
   sourceFileSchema,
   unitMetadataSchema,
   type LearningPath,
   type LearningUnit,
+  type PracticeSet,
 } from '../../src/lib/content/schema';
 
 const root = process.cwd();
@@ -163,6 +165,30 @@ export function validateGraph(units: LearningUnit[], paths: LearningPath[], cert
   }
 }
 
+export function validatePracticeSets(
+  practiceSets: PracticeSet[],
+  units: LearningUnit[],
+  certificationIds: Set<string>,
+) {
+  const setIds = new Set<string>();
+  const slugs = new Set<string>();
+  const unitIds = new Set(units.map((unit) => unit.metadata.id));
+  for (const set of practiceSets) {
+    if (setIds.has(set.id)) throw new Error(`Duplicate practice-set ID: ${set.id}`);
+    if (slugs.has(set.slug)) throw new Error(`Duplicate practice-set slug: ${set.slug}`);
+    setIds.add(set.id);
+    slugs.add(set.slug);
+    if (!certificationIds.has(set.certification)) {
+      throw new Error(`${set.id}: unknown certification ${set.certification}`);
+    }
+    for (const question of set.questions) {
+      for (const unitId of question.unit_ids) {
+        if (!unitIds.has(unitId)) throw new Error(`${question.id}: unknown unit ${unitId}`);
+      }
+    }
+  }
+}
+
 export function manifestEntry(unit: LearningUnit) {
   const objectiveHashes = Object.fromEntries(unit.metadata.objectives.map((objective) => {
     const questions = unit.questions.filter((question) => question.objective_ids.includes(objective.id));
@@ -254,12 +280,20 @@ async function main() {
     path.join(contentRoot, 'certifications', 'registry.yaml'),
     certificationRegistrySchema,
   );
+  const practiceDir = path.join(contentRoot, 'practice');
+  const practiceFiles = (await readdir(practiceDir))
+    .filter((file) => file.endsWith('.yaml'))
+    .sort();
+  const practiceSets = await Promise.all(practiceFiles.map((file) =>
+    readYaml(path.join(practiceDir, file), practiceSetSchema)));
 
-  validateGraph(units, paths, new Set(certifications.certifications.map((item) => item.id)));
+  const certificationIds = new Set(certifications.certifications.map((item) => item.id));
+  validateGraph(units, paths, certificationIds);
+  validatePracticeSets(practiceSets, units, certificationIds);
   const entries = units.map(manifestEntry);
   const verifiedAt = units
     .map((unit) => unit.metadata.verified_at)
-    .concat(certifications.verified_at)
+    .concat(certifications.verified_at, ...practiceSets.map((set) => set.verified_at))
     .sort()
     .at(-1) as string;
   const manifestBody = {
@@ -274,6 +308,18 @@ async function main() {
     units: entries,
     paths,
     certifications,
+    practice_sets: practiceSets.map((set) => ({
+      id: set.id,
+      slug: set.slug,
+      title: set.title,
+      summary: set.summary,
+      revision: set.revision,
+      certification: set.certification,
+      verified_at: set.verified_at,
+      question_count: set.questions.length,
+      content_hash: sha256(set),
+      raw_url: `/raw/v1/practice/${set.slug}.yaml`,
+    })),
   };
   const manifest = {
     ...manifestBody,
@@ -281,7 +327,7 @@ async function main() {
   };
 
   if (checkOnly) {
-    console.log(`Validated ${units.length} units, ${paths.length} path, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
+    console.log(`Validated ${units.length} units, ${paths.length} path, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
     return;
   }
 

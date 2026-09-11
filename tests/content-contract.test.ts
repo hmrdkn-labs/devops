@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
-import { unitMetadataSchema, type LearningPath, type LearningUnit } from '../src/lib/content/schema';
+import { practiceSetSchema, unitMetadataSchema, type LearningPath, type LearningUnit } from '../src/lib/content/schema';
 import { validateGraph } from '../tools/content/build';
 
 function unit(
@@ -116,5 +116,38 @@ describe('content contract', () => {
     const unknownCertification = unit();
     unknownCertification.metadata.certification_mappings[0]!.certification = 'cncf:unknown';
     expect(() => validateGraph([unknownCertification], [pathFor([unknownCertification])], new Set(['cncf:kcna']))).toThrow('unknown certification');
+  });
+
+  it('validates MCQ answer contracts', () => {
+    const valid = {
+      schema_version: 1 as const,
+      id: 'practice:test',
+      slug: 'test-mcq',
+      title: 'Test MCQ practice',
+      summary: 'A complete MCQ practice fixture for validating answer and option invariants.',
+      revision: 1,
+      certification: 'cncf:kcna',
+      verified_at: '2026-09-11',
+      questions: [{
+        id: 'practice:test/q-one',
+        checkpoint: 'fundamentals' as const,
+        category: 'concept' as const,
+        select: 'multiple' as const,
+        prompt: 'Which options are deliberately marked as correct in this fixture?',
+        options: [
+          { id: 'a', text: 'Option A', rationale: 'Option A is correct for the deterministic fixture.', code: false },
+          { id: 'b', text: 'Option B', rationale: 'Option B is also correct for the deterministic fixture.', code: false },
+          { id: 'c', text: 'Option C', rationale: 'Option C is deliberately incorrect for this fixture.', code: false },
+        ],
+        answer_ids: ['a', 'b'],
+        explanation: 'The fixture needs two valid answers so the multi-select invariant is exercised.',
+        unit_ids: ['fpp:test'],
+      }],
+    };
+    expect(() => practiceSetSchema.parse(valid)).not.toThrow();
+    expect(() => practiceSetSchema.parse({
+      ...valid,
+      questions: [{ ...valid.questions[0], answer_ids: ['a', 'missing'] }],
+    })).toThrow('unknown answer option');
   });
 });

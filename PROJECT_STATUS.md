@@ -5,6 +5,23 @@
 
 ## Read this first
 
+**KCNA MCQ refresher v7 is release-ready:** `/practice/kcna` adds a portable
+YAML-backed bank of **26 independently authored questions** across Fundamentals,
+Resources, Cluster Behavior, and Cloud-Native Context. The bank includes **9
+kubectl command questions** and **7 multi-select questions**. Quick sessions use
+12 questions (three per checkpoint), while the full bank remains available on
+demand. Checking an answer explains **every option**, including distractors,
+and links back to the relevant canonical learning units. MCQ sessions are
+memory-only and deliberately do not write FSRS/readiness evidence. The KCNA
+focus workspace now exposes the MCQ bank directly. The content compiler validates
+practice-set IDs, answer-option integrity, certification mapping, and unit links,
+and publishes the practice set in the manifest/raw archive. Local content,
+type, unit, D1, build, desktop/tablet/mobile interaction, accessibility, and
+overflow checks pass; the browser matrix has **28 passed and 2 intentional
+skips**. A separate existing study hydration race was also fixed by keeping
+Hint/Learn-first controls disabled until their client handlers are attached.
+Awaiting public CI and protected owner deployment.
+
 **Learning-product UI v6 is live:** exact public source
 `a9ebfe1a9f8ca9384cccbbef5ba2a48205ffcfc3` passed public CI run
 `34588219031` and protected owner deployment run `34588405704`. The release keeps
@@ -205,7 +222,7 @@ and is not part of production.
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
 `✅ Adaptive learning v4` → `✅ Learning progress v5` → `✅ UI v6 live` →
-`🔄 Owner beta gate`
+`🔄 MCQ refresher v7 release` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -223,6 +240,7 @@ and is not part of production.
 | Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
 | Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
 | Learning-product UI v6 | ✅ Live | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Exact source `a9ebfe1` passed public CI `34588219031`, protected owner deploy `34588405704`, and independent production probes plus rendered mobile verification. |
+| KCNA MCQ refresher v7 | 🔄 Release-ready | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Local checks and the 28-pass browser matrix are green; public CI/deployment are pending. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -233,6 +251,15 @@ and was not modified while this application was built.
 
 ## Progress log
 
+- **2026-09-11 — KCNA MCQ refresher v7 prepared:** added a portable 26-question
+  practice set plus a dedicated `/practice/kcna` learning-product surface with
+  Quick 12/all-bank modes, command recognition, select-all questions, per-option
+  rationales, and canonical-unit review links. The practice schema is validated
+  and included in raw/archive/manifest outputs without changing readiness or
+  FSRS evidence. Browser QA passes with 28 tests and 2 intentional skips across
+  desktop, tablet, and mobile. Mobile layout was tightened until the active
+  question appears in the initial viewport, and an existing pre-hydration
+  Hint/Learn-first tap race was fixed. Awaiting public CI and protected deploy.
 - **2026-09-11 — learning-product UI v6 released:** exact source `a9ebfe1`
   passed public CI `34588219031` and protected owner deployment `34588405704`.
   Independent production probes verified the public KCNA/study/review/auth/health

@@ -3,12 +3,14 @@ import {
   cardFileSchema,
   certificationRegistrySchema,
   pathSchema,
+  practiceSetSchema,
   practiceFileSchema,
   questionFileSchema,
   sourceFileSchema,
   unitMetadataSchema,
   type CertificationRegistry,
   type LearningPath,
+  type PracticeSet,
   type LearningUnit,
 } from './schema';
 
@@ -18,7 +20,7 @@ const markdownModules = import.meta.glob('/content/units/*/unit.md', {
   query: '?raw',
 }) as Record<string, string>;
 
-const yamlModules = import.meta.glob('/content/{units,paths,certifications}/**/*.yaml', {
+const yamlModules = import.meta.glob('/content/{units,paths,certifications,practice}/**/*.yaml', {
   eager: true,
   import: 'default',
   query: '?raw',
@@ -57,6 +59,11 @@ export const paths: LearningPath[] = Object.keys(yamlModules)
   .filter((path) => path.startsWith('/content/paths/'))
   .sort()
   .map((path) => pathSchema.parse(parse(yamlModules[path])));
+
+export const practiceSets: PracticeSet[] = Object.keys(yamlModules)
+  .filter((path) => path.startsWith('/content/practice/'))
+  .sort()
+  .map((path) => practiceSetSchema.parse(parse(yamlModules[path])));
 
 export const certificationRegistry: CertificationRegistry = certificationRegistrySchema.parse(
   parse(yamlModules['/content/certifications/registry.yaml']),

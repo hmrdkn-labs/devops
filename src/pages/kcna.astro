@@ -1,7 +1,7 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { paths, unitsById } from '@/lib/content/catalog';
+import { paths, practiceSets, unitsById } from '@/lib/content/catalog';
 
 export const prerender = true;
 
@@ -13,9 +13,9 @@ const pathUnits = path.units.flatMap((entry, index) => {
   return unit ? [{ unit, index, weight: entry.weight }] : [];
 });
 
-const totalMinutes = pathUnits.reduce((sum, { unit }) => sum + unit.metadata.estimated_minutes, 0);
 const totalCards = pathUnits.reduce((sum, { unit }) => sum + unit.cards.length, 0);
 const totalQuestions = pathUnits.reduce((sum, { unit }) => sum + unit.questions.length, 0);
+const mcqPractice = practiceSets.find((set) => set.slug === 'kcna-mcq');
 
 const checkpoints = [
   {
@@ -78,9 +78,9 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
     </div>
     <dl class="kcna-stats" aria-label="KCNA study corpus">
       <div><dt>Units</dt><dd>{pathUnits.length}</dd></div>
-      <div><dt>Questions</dt><dd>{totalQuestions}</dd></div>
+      <div><dt>Explain prompts</dt><dd>{totalQuestions}</dd></div>
+      <div><dt>MCQ bank</dt><dd>{mcqPractice?.questions.length ?? 0}</dd></div>
       <div><dt>Review cards</dt><dd>{totalCards}</dd></div>
-      <div><dt>Guided time</dt><dd>≈{Math.round(totalMinutes / 60)} h</dd></div>
     </dl>
   </header>
 
@@ -90,6 +90,14 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
 
   <div class="shell kcna-focus-grid">
     <aside class="kcna-focus-rail" aria-label="KCNA focus tools">
+      <section class="kcna-practice-launch">
+        <p class="section-kicker">Refresher</p>
+        <a href="/practice/kcna">
+          <strong>MCQ practice</strong>
+          <span>{mcqPractice?.questions.length ?? 0} original questions · kubectl · select-all</span>
+          <b>Start a quick 12 →</b>
+        </a>
+      </section>
       <section class="kcna-quick-review">
         <p class="section-kicker">Quiz companions</p>
         {reviewUnits.map(({ unit }) => (

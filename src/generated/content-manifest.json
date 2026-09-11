@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "content_version": "2026.08.1",
-  "generated_at": "2026-09-10T00:00:00.000Z",
+  "generated_at": "2026-09-11T00:00:00.000Z",
   "canonical_base_url": "https://devops.hamardikan.com",
   "licenses": {
     "prose_and_diagrams": "CC-BY-SA-4.0",
@@ -1156,5 +1156,19 @@
       }
     ]
   },
-  "manifest_sha256": "a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b"
+  "practice_sets": [
+    {
+      "id": "practice:kcna",
+      "slug": "kcna-mcq",
+      "title": "KCNA MCQ refresher",
+      "summary": "Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.",
+      "revision": 1,
+      "certification": "cncf:kcna",
+      "verified_at": "2026-09-11",
+      "question_count": 26,
+      "content_hash": "822576b81bdad42f75d87290114fdb551530277ca2c55ea42570edb8c7e31d72",
+      "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
+    }
+  ],
+  "manifest_sha256": "e3f93027e121e9f2ca0a01b8a500089982b5b7492ca8ec91e0369fa593d1ce3b"
 }

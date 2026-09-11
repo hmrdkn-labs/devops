@@ -422,10 +422,10 @@ export default function StudyFlow(props: Props) {
                 <span class="microcopy">No AI grading. You compare the reasoning yourself.</span>
               </div>
               <div class="learning-assist-actions" aria-label="Learning assistance">
-                <button type="button" class="text-button" onClick={() => setShowHint((value) => !value)}>
+                <button type="button" class="text-button" disabled={!hydrated()} onClick={() => setShowHint((value) => !value)}>
                   {showHint() ? 'Hide hint' : 'Give me a hint'}
                 </button>
-                <button type="button" class="text-button" onClick={learnFirst}>I haven't learned this yet</button>
+                <button type="button" class="text-button" disabled={!hydrated()} onClick={learnFirst}>I haven't learned this yet</button>
               </div>
               <Show when={showHint()}>
                 <aside class="learning-hint" aria-live="polite">
