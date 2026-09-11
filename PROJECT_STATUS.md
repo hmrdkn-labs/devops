@@ -5,7 +5,9 @@
 
 ## Read this first
 
-**Learning-product UI v6 is release-ready:** the current local release keeps
+**Learning-product UI v6 is live:** exact public source
+`a9ebfe1a9f8ca9384cccbbef5ba2a48205ffcfc3` passed public CI run
+`34588219031` and protected owner deployment run `34588405704`. The release keeps
 the terminal-green identity and portable content contract while moving the
 primary learning surfaces toward proven Duolingo/Brilliant interaction
 patterns: one dominant next action, clearer progression, tactile question and
@@ -18,7 +20,10 @@ logic, or guest-persistence boundary changed. Local content/type/unit/D1/build
 checks pass, and the full browser matrix passes with **25 tests and 2
 intentional skips** across desktop, tablet, and mobile, including WCAG contrast,
 44px touch targets, initial-question visibility, and horizontal-overflow guards.
-The release is awaiting public CI and protected owner deployment.
+Independent production probes returned 200 for home, KCNA, the Kubernetes
+Resources quiz companion, KCNA-scoped review, auth session, and health; D1 is
+ready with the unchanged canonical manifest SHA. A rendered 375×812 production
+check confirmed the new KCNA session surface and persistent mobile learning dock.
 
 **Learning-progress v5 is live:** exact public source
 `8e63ad1d4a49fb41df49a8f2482527cc2e9e8e0f` passed public CI run
@@ -199,7 +204,7 @@ and is not part of production.
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
-`✅ Adaptive learning v4` → `✅ Learning progress v5` → `🟡 UI v6 release-ready` →
+`✅ Adaptive learning v4` → `✅ Learning progress v5` → `✅ UI v6 live` →
 `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
@@ -217,7 +222,7 @@ and is not part of production.
 | KCNA focus workspace | ✅ Live | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Public CI `34459708536`, protected owner deploy `34459923972`, and independent live probes all passed for exact source `0cf0d32`. |
 | Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
 | Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
-| Learning-product UI v6 | 🟡 Release-ready | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Full local checks and 25/27 browser scenarios pass; public CI and protected production promotion are next. |
+| Learning-product UI v6 | ✅ Live | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Exact source `a9ebfe1` passed public CI `34588219031`, protected owner deploy `34588405704`, and independent production probes plus rendered mobile verification. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -228,7 +233,12 @@ and was not modified while this application was built.
 
 ## Progress log
 
-- **2026-09-11 — learning-product UI v6 release-ready:** refreshed the design
+- **2026-09-11 — learning-product UI v6 released:** exact source `a9ebfe1`
+  passed public CI `34588219031` and protected owner deployment `34588405704`.
+  Independent production probes verified the public KCNA/study/review/auth/health
+  surfaces and D1 readiness, and a rendered 375×812 production check confirmed
+  the new session card and persistent mobile learning dock.
+- **2026-09-11 — learning-product UI v6 prepared:** refreshed the design
   contract and primary KCNA/study surfaces around proven learning-product
   patterns, added learned-path progress and a persistent mobile learning dock,
   and strengthened tactile/state hierarchy while preserving the existing
