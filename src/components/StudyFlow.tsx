@@ -40,6 +40,10 @@ interface Props {
     href: string;
     label: string;
   };
+  nextUnit?: {
+    href: string;
+    title: string;
+  };
   unit: {
     id: string;
     revision: number;
@@ -62,11 +66,15 @@ interface Me {
 
 export default function StudyFlow(props: Props) {
   const [hydrated, setHydrated] = createSignal(false);
+  const [mode, setMode] = createSignal<'study' | 'reference'>('study');
   const [questionIndex, setQuestionIndex] = createSignal(0);
   const [answer, setAnswer] = createSignal('');
   const [revealed, setRevealed] = createSignal(false);
   const [rated, setRated] = createSignal(false);
   const [finished, setFinished] = createSignal(false);
+  const [showHint, setShowHint] = createSignal(false);
+  const [learningFirst, setLearningFirst] = createSignal(false);
+  const [reflection, setReflection] = createSignal('');
   const [saving, setSaving] = createSignal(false);
   const [saveMessage, setSaveMessage] = createSignal('');
   const [checked, setChecked] = createSignal<string[]>([]);
@@ -80,7 +88,53 @@ export default function StudyFlow(props: Props) {
   const question = createMemo(() => props.unit.questions[questionIndex()]);
   const progress = createMemo(() => ((questionIndex() + (finished() ? 1 : 0)) / props.unit.questions.length) * 100);
 
-  onMount(() => setHydrated(true));
+  onMount(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'reference') setMode('reference');
+    setHydrated(true);
+  });
+
+  function switchMode(nextMode: 'study' | 'reference') {
+    setMode(nextMode);
+    const url = new URL(window.location.href);
+    if (nextMode === 'reference') url.searchParams.set('mode', 'reference');
+    else url.searchParams.delete('mode');
+    window.history.replaceState({}, '', url);
+  }
+
+  function hintFor(kind: Question['kind']) {
+    switch (kind) {
+      case 'scenario':
+        return 'Locate the failure layer first. Name the next observation that would prove or disprove your hypothesis.';
+      case 'predict':
+        return 'Name the rule or boundary that decides the outcome, then compare each value in the prompt against it.';
+      case 'objective':
+        return 'Identify the exact responsibility or relationship being tested before choosing the answer.';
+      default:
+        return 'Separate the components first: who owns the state, what changes, and what stays outside that component?';
+    }
+  }
+
+  async function learnFirst() {
+    setLearningFirst(true);
+    setShowHint(false);
+    setSaveMessage(me()?.authenticated
+      ? 'Marked as encountered only. No recall credit was created.'
+      : 'Guest mode: learn-first state stays on this page only.');
+    if (!me()?.authenticated) return;
+    const response = await fetch('/api/encounter', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        unitId: props.unit.id,
+        unitRevision: props.unit.revision,
+        questionId: question().id,
+        idempotencyKey: crypto.randomUUID(),
+      }),
+    });
+    if (!response.ok) setSaveMessage('Learn-first mode opened; encounter evidence could not be saved.');
+  }
 
   async function reveal() {
     if (!answer().trim()) return;
@@ -128,6 +182,18 @@ export default function StudyFlow(props: Props) {
         }),
       });
       if (!response.ok) setSaveMessage('Rating kept in memory; scheduling failed.');
+      if (reflection().trim()) {
+        const noteResponse = await fetch('/api/notes', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            unitId: props.unit.id,
+            markdown: `### Correction — ${question().prompt}\n\n${reflection().trim()}`,
+          }),
+        });
+        if (noteResponse.ok) setSaveMessage('Rating scheduled. Correction appended to your private notes.');
+      }
     }
     setSaving(false);
     setRated(true);
@@ -140,6 +206,9 @@ export default function StudyFlow(props: Props) {
       setRevealed(false);
       setRated(false);
       setChecked([]);
+      setReflection('');
+      setShowHint(false);
+      setLearningFirst(false);
       setSaveMessage('');
     } else {
       setFinished(true);
@@ -182,9 +251,14 @@ export default function StudyFlow(props: Props) {
         </div>
         <h1>{props.unit.title}</h1>
         <p>{props.unit.summary}</p>
+        <div class="study-mode-switch" role="group" aria-label="Learning mode">
+          <button type="button" aria-pressed={mode() === 'study'} onClick={() => switchMode('study')}>Study</button>
+          <button type="button" aria-pressed={mode() === 'reference'} onClick={() => switchMode('reference')}>Reference</button>
+          <span>{mode() === 'study' ? 'Retrieval first. Evidence is created only by your actions.' : 'Read directly. Reference mode creates no recall evidence.'}</span>
+        </div>
       </header>
 
-      <div class="study-layout shell">
+      <div class="study-layout shell" classList={{ 'is-reference': mode() === 'reference' }}>
         <aside class="study-rail" aria-label="Unit context">
           <div class="rail-card">
             <span class="section-kicker">Current unit</span>
@@ -202,6 +276,7 @@ export default function StudyFlow(props: Props) {
         </aside>
 
         <div class="study-main">
+          <Show when={mode() === 'study' && !learningFirst()}>
           <section class="question-stage" aria-labelledby="question-title">
             <div
               class="stage-progress"
@@ -231,6 +306,18 @@ export default function StudyFlow(props: Props) {
                 </button>
                 <span class="microcopy">No AI grading. You compare the reasoning yourself.</span>
               </div>
+              <div class="learning-assist-actions" aria-label="Learning assistance">
+                <button type="button" class="text-button" onClick={() => setShowHint((value) => !value)}>
+                  {showHint() ? 'Hide hint' : 'Give me a hint'}
+                </button>
+                <button type="button" class="text-button" onClick={learnFirst}>I haven't learned this yet</button>
+              </div>
+              <Show when={showHint()}>
+                <aside class="learning-hint" aria-live="polite">
+                  <strong>Directional hint</strong>
+                  <p>{hintFor(question().kind)}</p>
+                </aside>
+              </Show>
             </Show>
 
             <Show when={revealed()}>
@@ -258,6 +345,17 @@ export default function StudyFlow(props: Props) {
                   </label>
                 )}</For>
               </fieldset>
+              <label class="reflection-prompt" for="model-correction">
+                <span>What was missing or wrong in your model?</span>
+                <textarea
+                  id="model-correction"
+                  rows={3}
+                  value={reflection()}
+                  onInput={(event) => setReflection(event.currentTarget.value)}
+                  placeholder="Optional: write the correction you want your future self to remember."
+                />
+                <small>{me()?.authenticated ? 'Saved to your private unit notes when you rate this attempt.' : 'Guest mode keeps this correction only on this page.'}</small>
+              </label>
               <Show when={!rated()} fallback={
                 <div class="stage-actions">
                   <button class="button primary" onClick={next}>
@@ -278,10 +376,29 @@ export default function StudyFlow(props: Props) {
               </Show>
             </Show>
           </section>
+          </Show>
 
-          <Show when={finished()}>
+          <Show when={mode() === 'study' && learningFirst()}>
+            <section class="learn-first-panel" aria-labelledby="learn-first-title">
+              <p class="section-kicker">New concept · learn before recall</p>
+              <h2 id="learn-first-title">Build the model first.</h2>
+              <p class="learn-first-intro">This path records an encounter, not a failed recall attempt. Read the lesson, then return to the same question and answer it from memory.</p>
+              <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
+              <div class="stage-actions learn-first-return">
+                <button class="button primary" type="button" onClick={() => {
+                  setLearningFirst(false);
+                  setAnswer('');
+                  setSaveMessage('');
+                  queueMicrotask(() => document.querySelector<HTMLTextAreaElement>('#private-answer')?.focus());
+                }}>Try the question now</button>
+                <span class="save-status" role="status">{saveMessage()}</span>
+              </div>
+            </section>
+          </Show>
+
+          <Show when={finished() || mode() === 'reference'}>
             <article class="lesson">
-              <div class="lesson-divider"><span>Lesson revealed</span></div>
+              <div class="lesson-divider"><span>{mode() === 'reference' ? 'Reference lesson' : 'Lesson revealed'}</span></div>
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
             </article>
 
@@ -347,6 +464,15 @@ export default function StudyFlow(props: Props) {
               )}</For></ul>
               <a class="raw-link" href={'/raw/v1/units/' + props.unit.id.split(':')[1] + '/unit.md'}>Open raw Markdown</a>
             </footer>
+
+            <nav class="unit-next-actions" aria-label="Continue learning">
+              <Show when={props.focus}>
+                {(focus) => <a class="button" href={focus().href}>Back to {focus().label}</a>}
+              </Show>
+              <Show when={props.nextUnit}>
+                {(next) => <a class="button primary" href={next().href}>Next: {next().title} →</a>}
+              </Show>
+            </nav>
           </Show>
         </div>
       </div>

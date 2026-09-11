@@ -21,6 +21,14 @@ the retrieval as Again, Hard, Good, or Easy. Reviews mix approximately 60%
 short cards, 20% explanation prompts, and 20% troubleshooting/configuration
 scenarios.
 
+Study mode keeps retrieval-first as the default, but it no longer forces a
+learner to bluff through unseen material. `Give me a hint` supplies a
+directional cue without revealing the answer, while `I haven't learned this
+yet` records Encountered evidence only and opens the lesson before retrying the
+same question. Reference mode bypasses retrieval entirely for lookup use and
+creates no recall evidence. After comparison, an optional correction can be
+appended to the learner's private Markdown notes.
+
 Mastery progresses through `Encountered → Recalled → Applied → Retained`.
 `readiness-v1` weights current evidence as 15% encountered, 30% recall, 30%
 application, and 25% later-date retention. Evidence becomes stale over time;
@@ -54,7 +62,10 @@ For focused certification study, `/kcna` is the dedicated KCNA workspace. It
 renders only the 29-unit KCNA path, grouped into four checkpoints, with the
 Kubernetes Fundamentals and Kubernetes Resources quiz companions surfaced as
 quick-review material. The underlying units remain the same portable Markdown
-source used by the wider knowledge base.
+source used by the wider knowledge base. The workspace also builds a focused
+daily session from due KCNA reviews plus the next unencountered unit, exposes
+checkpoint state, separates the four readiness evidence dimensions, and
+surfaces weak objectives without introducing a second content tree.
 
 The private KodeKloud collection is not a dependency, submodule, build input,
 or deployment artifact. This repository contains independently written prose,

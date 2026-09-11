@@ -15,7 +15,11 @@ export function getStaticPaths() {
 
 const { unit } = Astro.props;
 const kcnaPath = paths.find((path) => path.slug === 'kcna');
-const isKcnaUnit = kcnaPath?.units.some((entry) => entry.unit_id === unit.metadata.id) ?? false;
+const kcnaIndex = kcnaPath?.units.findIndex((entry) => entry.unit_id === unit.metadata.id) ?? -1;
+const isKcnaUnit = kcnaIndex >= 0;
+const nextKcnaUnit = isKcnaUnit && kcnaPath && kcnaIndex + 1 < kcnaPath.units.length
+  ? units.find((candidate) => candidate.metadata.id === kcnaPath.units[kcnaIndex + 1]?.unit_id)
+  : null;
 const payload = {
   id: unit.metadata.id,
   revision: unit.metadata.revision,
@@ -41,6 +45,7 @@ const payload = {
   <StudyFlow
     unit={payload}
     focus={isKcnaUnit ? { href: '/kcna', label: 'KCNA focus' } : undefined}
+    nextUnit={nextKcnaUnit ? { href: `/learn/${nextKcnaUnit.metadata.slug}`, title: nextKcnaUnit.metadata.title } : undefined}
     client:load
   />
 </BaseLayout>

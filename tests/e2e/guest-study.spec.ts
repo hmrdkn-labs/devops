@@ -21,6 +21,29 @@ test('guest completes the question-first study flow without persistence', async 
   await expect(page.getByRole('heading', { name: 'Apply the model safely' })).toBeVisible();
 });
 
+test('new learners can learn first or use reference mode without faking recall', async ({ page }) => {
+  await page.goto('/learn/ip-subnets');
+
+  const reveal = page.getByRole('button', { name: 'Save privately & reveal' });
+  await expect(reveal).toBeDisabled();
+
+  await page.getByRole('button', { name: 'Give me a hint' }).click();
+  await expect(page.getByText('Directional hint')).toBeVisible();
+  await expect(reveal).toBeDisabled();
+
+  await page.getByRole('button', { name: "I haven't learned this yet" }).click();
+  await expect(page.getByRole('heading', { name: 'Build the model first.' })).toBeVisible();
+  await expect(page.getByLabel('Your explanation')).toBeHidden();
+  await page.getByRole('button', { name: 'Try the question now' }).click();
+  await expect(page.getByLabel('Your explanation')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Reference', exact: true }).click();
+  await expect(page.getByText('Reference lesson')).toBeVisible();
+  await expect(page.getByLabel('Your explanation')).toBeHidden();
+  await page.getByRole('button', { name: 'Study', exact: true }).click();
+  await expect(page.getByLabel('Your explanation')).toBeVisible();
+});
+
 test('public search finds exact canonical content', async ({ page }) => {
   await page.goto('/search');
   await page.getByRole('searchbox').fill('container network');

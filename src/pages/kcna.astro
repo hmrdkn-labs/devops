@@ -1,5 +1,5 @@
 ---
-import ProgressClient from '@/components/ProgressClient';
+import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { paths, unitsById } from '@/lib/content/catalog';
 
@@ -49,6 +49,18 @@ const checkpoints = [
 ].map((checkpoint) => ({ ...checkpoint, units: pathUnits.slice(checkpoint.start, checkpoint.end) }));
 
 const reviewUnits = pathUnits.filter(({ unit }) => unit.metadata.slug.startsWith('kcna-') && unit.metadata.slug.endsWith('-review'));
+const clientUnits = checkpoints.flatMap((checkpoint) => checkpoint.units.map(({ unit }) => ({
+  id: unit.metadata.id,
+  slug: unit.metadata.slug,
+  title: unit.metadata.title,
+  estimatedMinutes: unit.metadata.estimated_minutes,
+  checkpointId: checkpoint.id,
+})));
+const clientCheckpoints = checkpoints.map((checkpoint) => ({
+  id: checkpoint.id,
+  title: checkpoint.title,
+  unitIds: checkpoint.units.map(({ unit }) => unit.metadata.id),
+}));
 ---
 
 <BaseLayout
@@ -72,13 +84,12 @@ const reviewUnits = pathUnits.filter(({ unit }) => unit.metadata.slug.startsWith
     </dl>
   </header>
 
+  <div class="shell kcna-today-shell">
+    <KcnaFocusClient units={clientUnits} checkpoints={clientCheckpoints} client:load />
+  </div>
+
   <div class="shell kcna-focus-grid">
     <aside class="kcna-focus-rail" aria-label="KCNA focus tools">
-      <section>
-        <p class="section-kicker">Readiness</p>
-        <ProgressClient pathId="path:kcna" compact client:visible />
-      </section>
-
       <section class="kcna-quick-review">
         <p class="section-kicker">Quiz companions</p>
         {reviewUnits.map(({ unit }) => (
@@ -94,19 +105,22 @@ const reviewUnits = pathUnits.filter(({ unit }) => unit.metadata.slug.startsWith
 
     <main class="kcna-curriculum" aria-label="KCNA curriculum">
       {checkpoints.map((checkpoint, checkpointIndex) => (
-        <section id={checkpoint.id} class="kcna-checkpoint">
-          <header>
+        <details id={checkpoint.id} class="kcna-checkpoint" data-checkpoint={checkpoint.id} open={checkpointIndex === 0}>
+          <summary>
             <span>{String(checkpointIndex + 1).padStart(2, '0')}</span>
             <div>
               <p class="section-kicker">Checkpoint</p>
               <h2>{checkpoint.title}</h2>
               <p>{checkpoint.note}</p>
             </div>
-            <small>{checkpoint.units.length} units</small>
-          </header>
+            <div class="kcna-checkpoint-meta">
+              <span class="kcna-checkpoint-state" data-checkpoint-progress={checkpoint.id}>Not started</span>
+              <small>{checkpoint.units.length} units</small>
+            </div>
+          </summary>
           <ol>
             {checkpoint.units.map(({ unit, index, weight }) => (
-              <li>
+              <li data-unit-id={unit.metadata.id}>
                 <span class="kcna-unit-number">{String(index + 1).padStart(2, '0')}</span>
                 <a href={'/learn/' + unit.metadata.slug}>
                   <span class="unit-layer">{unit.metadata.layer}</span>
@@ -114,13 +128,14 @@ const reviewUnits = pathUnits.filter(({ unit }) => unit.metadata.slug.startsWith
                   <small>{unit.metadata.summary}</small>
                 </a>
                 <div class="kcna-unit-meta">
+                  <span class="kcna-evidence-state" data-unit-progress={unit.metadata.id}>Not started</span>
                   {weight === 2 && <span class="critical-badge">Critical</span>}
                   <span>{unit.metadata.estimated_minutes} min</span>
                 </div>
               </li>
             ))}
           </ol>
-        </section>
+        </details>
       ))}
     </main>
   </div>

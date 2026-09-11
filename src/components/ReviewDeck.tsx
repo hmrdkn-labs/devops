@@ -12,12 +12,20 @@ interface ReviewItem {
   unitTitle: string;
 }
 
-export default function ReviewDeck() {
+interface Props {
+  pathSlug?: string;
+  nextHref?: string;
+  nextLabel?: string;
+}
+
+export default function ReviewDeck(props: Props) {
   const [revealed, setRevealed] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
   const [completed, setCompleted] = createSignal(0);
   const [queue, { refetch }] = createResource(() => typeof window !== 'undefined', async () => {
-    const response = await fetch('/api/review?limit=20', { credentials: 'include' });
+    const params = new URLSearchParams({ limit: '20' });
+    if (props.pathSlug) params.set('path', props.pathSlug);
+    const response = await fetch('/api/review?' + params.toString(), { credentials: 'include' });
     if (!response.ok) return null;
     return (await response.json() as { queue: ReviewItem[] }).queue;
   });
@@ -59,14 +67,14 @@ export default function ReviewDeck() {
           <Show when={current()} fallback={
             <div class="empty-state">
               <strong>{completed() ? 'Review complete.' : 'Nothing is due.'}</strong>
-              <p>Study a learning unit or return when FSRS schedules the next review.</p>
-              <a class="button primary" href="/paths/from-process-to-pod">Continue focus path</a>
+              <p>{props.pathSlug ? 'This focused queue is clear. Continue with the next learning unit.' : 'Study a learning unit or return when FSRS schedules the next review.'}</p>
+              <a class="button primary" href={props.nextHref ?? '/paths/from-process-to-pod'}>{props.nextLabel ?? 'Continue focus path'}</a>
             </div>
           }>
             {(card) => (
               <>
                 <div class="review-meta" aria-label="Review context">
-                  <span>{card().type}</span>
+                  <span>{props.pathSlug ? `${props.pathSlug.toUpperCase()} · ${card().type}` : card().type}</span>
                   <span>{card().unitTitle}</span>
                   <span><strong>{cards().length}</strong> due · {completed()} done</span>
                 </div>

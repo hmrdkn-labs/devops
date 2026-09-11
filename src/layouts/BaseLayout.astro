@@ -27,7 +27,7 @@ const navigation = [
   { href: '/map', label: 'Map' },
 ];
 const isCurrent = (item: typeof navigation[number]) => {
-  if ('id' in item && item.id === activeSection) return true;
+  if (activeSection) return 'id' in item && item.id === activeSection;
   if ('prefixes' in item && item.prefixes?.some((prefix) => Astro.url.pathname.startsWith(prefix))) return true;
   return Astro.url.pathname === item.href || Astro.url.pathname.startsWith(item.href + '/');
 };

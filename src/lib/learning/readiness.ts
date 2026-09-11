@@ -19,11 +19,24 @@ function currentEvidence(score: number, at: number | null, halfLifeDays: number,
   return Math.max(0, Math.min(1, score * Math.pow(0.5, ageDays / halfLifeDays)));
 }
 
+export interface ReadinessBreakdown {
+  encountered: number;
+  recall: number;
+  application: number;
+  retention: number;
+}
+
+export function readinessBreakdownV1(evidence: EvidenceProjection, now = Date.now()): ReadinessBreakdown {
+  return {
+    encountered: evidence.encounteredAt ? 1 : 0,
+    recall: currentEvidence(evidence.recallScore, evidence.recalledAt, 60, now),
+    application: currentEvidence(evidence.applicationScore, evidence.appliedAt, 120, now),
+    retention: currentEvidence(evidence.retentionScore, evidence.retainedAt, 365, now),
+  };
+}
+
 export function readinessV1(evidence: EvidenceProjection, now = Date.now()) {
-  const encountered = evidence.encounteredAt ? 1 : 0;
-  const recall = currentEvidence(evidence.recallScore, evidence.recalledAt, 60, now);
-  const application = currentEvidence(evidence.applicationScore, evidence.appliedAt, 120, now);
-  const retention = currentEvidence(evidence.retentionScore, evidence.retainedAt, 365, now);
+  const { encountered, recall, application, retention } = readinessBreakdownV1(evidence, now);
   const score = 0.15 * encountered + 0.3 * recall + 0.3 * application + 0.25 * retention;
   return Math.max(0, Math.min(1, evidence.revalidationRequired ? score * 0.7 : score));
 }

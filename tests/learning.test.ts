@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mixedReviewQueue } from '../src/lib/learning/queue';
-import { masteryState, readinessV1, weightedPathReadiness } from '../src/lib/learning/readiness';
+import { masteryState, readinessBreakdownV1, readinessV1, weightedPathReadiness } from '../src/lib/learning/readiness';
 import { applyReview, normalizeRating, ratingEvidence } from '../src/lib/server/scheduler';
 
 describe('readiness-v1', () => {
@@ -32,6 +32,15 @@ describe('readiness-v1', () => {
 
   it('penalizes an objective awaiting revalidation', () => {
     expect(readinessV1({ ...complete, revalidationRequired: true }, now)).toBeCloseTo(0.7);
+  });
+
+  it('exposes the four evidence dimensions used by readiness-v1', () => {
+    expect(readinessBreakdownV1(complete, now)).toEqual({
+      encountered: 1,
+      recall: 1,
+      application: 1,
+      retention: 1,
+    });
   });
 });
 

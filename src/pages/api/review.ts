@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import manifest from '@/generated/content-manifest.json';
-import { units, unitsById } from '@/lib/content/catalog';
+import { paths, units, unitsById } from '@/lib/content/catalog';
 import { mixedReviewQueue } from '@/lib/learning/queue';
 import { json, requestJson, unauthorized, validIdempotencyKey } from '@/lib/server/api';
 import { database } from '@/lib/server/runtime';
@@ -29,11 +29,16 @@ const contentCards = new Map(units.flatMap((unit) =>
 export const GET: APIRoute = async ({ url, locals }) => {
   if (!locals.user) return unauthorized();
   const limit = Math.max(1, Math.min(50, Number(url.searchParams.get('limit') ?? 20)));
+  const pathSlug = url.searchParams.get('path')?.trim() || null;
+  const path = pathSlug ? paths.find((candidate) => candidate.slug === pathSlug) : null;
+  if (pathSlug && !path) return json({ error: 'unknown_path' }, { status: 400 });
+  const pathUnits = path ? new Set(path.units.map((entry) => entry.unit_id)) : null;
   const rows = await database().prepare(`SELECT card_id, unit_id, unit_revision, card_type, due_at
     FROM fsrs_card WHERE user_id = ? AND due_at <= ?
     ORDER BY due_at ASC LIMIT 200`).bind(locals.user.id, Date.now()).all<DueRow>();
+  const scopedRows = pathUnits ? rows.results.filter((row) => pathUnits.has(row.unit_id)) : rows.results;
   const queue = mixedReviewQueue(
-    rows.results.map((row) => ({ ...row, cardType: row.card_type, dueAt: row.due_at })),
+    scopedRows.map((row) => ({ ...row, cardType: row.card_type, dueAt: row.due_at })),
     limit,
   ).flatMap((row) => {
     const content = contentCards.get(row.card_id);
@@ -49,7 +54,12 @@ export const GET: APIRoute = async ({ url, locals }) => {
       unitTitle: content.unit.metadata.title,
     }] : [];
   });
-  return json({ queue, mix: { short: 0.6, prompt: 0.2, scenario: 0.2 } });
+  return json({
+    queue,
+    dueCount: scopedRows.length,
+    path: path ? { id: path.id, slug: path.slug, title: path.title } : null,
+    mix: { short: 0.6, prompt: 0.2, scenario: 0.2 },
+  });
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {

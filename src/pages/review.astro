@@ -1,13 +1,31 @@
 ---
 import ReviewDeck from '@/components/ReviewDeck';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { paths, unitsBySlug } from '@/lib/content/catalog';
+
+const requestedPath = Astro.url.searchParams.get('path');
+const path = requestedPath ? paths.find((candidate) => candidate.slug === requestedPath) : null;
+const nextSlug = Astro.url.searchParams.get('next');
+const nextUnit = nextSlug ? unitsBySlug.get(nextSlug) : null;
+const focused = path?.slug === 'kcna';
 ---
 
-<BaseLayout title="Review" description="A mixed FSRS review queue for recall, explanation, and troubleshooting.">
+<BaseLayout
+  title={focused ? 'KCNA Review' : 'Review'}
+  description="A mixed FSRS review queue for recall, explanation, and troubleshooting."
+  activeSection={focused ? 'kcna' : undefined}
+>
   <header class="page-hero shell compact-hero">
-    <p class="eyebrow">Review · FSRS</p>
+    <p class="eyebrow">{focused ? 'KCNA review · FSRS' : 'Review · FSRS'}</p>
     <h1>Retrieve before you reveal.</h1>
-    <p class="lede">Short recall, explanation, and troubleshooting are mixed into one due queue.</p>
+    <p class="lede">{focused ? 'Only due cards from the KCNA path are included in this session.' : 'Short recall, explanation, and troubleshooting are mixed into one due queue.'}</p>
   </header>
-  <section class="shell review-shell"><ReviewDeck client:load /></section>
+  <section class="shell review-shell">
+    <ReviewDeck
+      pathSlug={path?.slug}
+      nextHref={nextUnit ? `/learn/${nextUnit.metadata.slug}` : focused ? '/kcna' : undefined}
+      nextLabel={nextUnit ? `Continue: ${nextUnit.metadata.title}` : focused ? 'Back to KCNA focus' : undefined}
+      client:load
+    />
+  </section>
 </BaseLayout>

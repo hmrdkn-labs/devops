@@ -9,6 +9,11 @@ const updateSchema = z.object({
   markdown: z.string().max(100_000),
 });
 
+const appendSchema = z.object({
+  unitId: z.string(),
+  markdown: z.string().min(1).max(20_000),
+});
+
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
 export const GET: APIRoute = async ({ url, locals }) => {
@@ -54,6 +59,33 @@ export const PUT: APIRoute = async ({ request, locals }) => {
       VALUES (?, ?, ?, ?, ?)
       ON CONFLICT(user_id, unit_id) DO UPDATE SET
         markdown = excluded.markdown,
+        updated_at = excluded.updated_at`).bind(
+          locals.user.id,
+          body.unitId,
+          body.markdown,
+          now,
+          now,
+        ).run();
+    return json({ saved: true, updatedAt: now });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'invalid_request';
+    return json({ error: message }, { status: message === 'request_too_large' ? 413 : 400 });
+  }
+};
+
+export const POST: APIRoute = async ({ request, locals }) => {
+  if (!locals.user) return unauthorized();
+  try {
+    const body = appendSchema.parse(await requestJson(request, 30_000));
+    if (!unitsById.has(body.unitId)) return json({ error: 'unknown_unit' }, { status: 400 });
+    const now = Date.now();
+    await database().prepare(`INSERT INTO note (user_id, unit_id, markdown, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(user_id, unit_id) DO UPDATE SET
+        markdown = CASE
+          WHEN note.markdown = '' THEN excluded.markdown
+          ELSE note.markdown || '\n\n' || excluded.markdown
+        END,
         updated_at = excluded.updated_at`).bind(
           locals.user.id,
           body.unitId,

@@ -5,6 +5,19 @@
 
 ## Read this first
 
+**Learning-experience v4 is implemented locally and is the current release
+candidate:** KCNA now opens with one focused session action, KCNA-only due
+reviews hand off to the next learning unit, checkpoints expose state, unit rows
+show mastery state, readiness explains all four evidence dimensions, and the
+workspace surfaces weak objectives from current evidence plus Hard/Again
+history. Study units keep forced retrieval as the default but add directional
+hints, an explicit Learn-first path that records Encountered evidence only,
+Reference mode with no recall evidence, a correction-to-private-notes prompt,
+and a clear next-unit action. Local content/type/unit/D1 checks and production
+build pass; the expanded browser matrix passes with **25 tests and 2 intentional
+skips** across desktop, tablet, and mobile. Protected production deployment is
+the remaining release step.
+
 **Bottom line:** the dedicated KCNA focus workspace is live on the production
 Cloudflare Worker from exact public source
 `0cf0d32cb122ede36d8bd5c4ecfacdd6de04c951`. Public CI run `34459708536` is

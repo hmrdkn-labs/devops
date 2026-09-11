@@ -45,6 +45,11 @@ like a generic SaaS dashboard or a marketing page wrapped around a quiz.
    respect `prefers-reduced-motion`.
 6. **Progress is evidence.** Use compact, honest status chips and bars; never
    use celebratory streak mechanics or noisy gamification.
+7. **Retrieval is the default, not a trap.** Study mode asks for an answer
+   before explanation, but a learner seeing a concept for the first time may
+   explicitly choose Learn first. That action records Encountered evidence
+   only. Reference mode is a lookup surface and must never silently create
+   recall evidence.
 
 ## Layout contract
 
@@ -94,6 +99,8 @@ are:
 - buttons, quiet buttons, status chips, badges, and icon buttons;
 - bordered surfaces, callouts, empty states, skeletons, and inline status;
 - question/answer comparison, critical-point checklist, rating group;
+- study/reference mode switch, directional hint, learn-first escape hatch,
+  correction prompt, and explicit next-unit action;
 - progress/meter, timeline/stepper, filter row, search field, and note editor;
 - popover/menu with a visible trigger and a keyboard-safe focus path.
 
@@ -120,6 +127,12 @@ files so system-font rasterization differences do not create false failures.
 Certification focus pages may isolate a subset of the portable curriculum for
 attention, but they must not fork or duplicate canonical unit content. A focus
 page is an index and navigation layer over existing path/unit IDs.
+
+The focused KCNA workspace should answer "what do I do now?" before it asks the
+learner to browse. Its primary action assembles due KCNA review work before the
+next unencountered unit, checkpoint disclosure defaults to the current segment,
+and readiness is explainable through Encountered, Recall, Applied, and Retained
+dimensions. Weak-spot labels are evidence diagnostics, not grades.
 
 The study flow, review queue, search, settings, and auth menu must remain
 keyboard-complete. Check focus visibility, contrast, empty/error/loading
