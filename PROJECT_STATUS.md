@@ -1,12 +1,14 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-10 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-11 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
 
-**Learning-experience v4 is implemented locally and is the current release
-candidate:** KCNA now opens with one focused session action, KCNA-only due
+**Learning-experience v4 is live:** exact public source
+`abc2d69bc950507ed2b8b72fe6ee586b485a6959` passed public CI run
+`34581879391` and protected owner deployment run `34582116074`. KCNA now opens
+with one focused session action, KCNA-only due
 reviews hand off to the next learning unit, checkpoints expose state, unit rows
 show mastery state, readiness explains all four evidence dimensions, and the
 workspace surfaces weak objectives from current evidence plus Hard/Again
@@ -15,8 +17,11 @@ hints, an explicit Learn-first path that records Encountered evidence only,
 Reference mode with no recall evidence, a correction-to-private-notes prompt,
 and a clear next-unit action. Local content/type/unit/D1 checks and production
 build pass; the expanded browser matrix passes with **25 tests and 2 intentional
-skips** across desktop, tablet, and mobile. Protected production deployment is
-the remaining release step.
+skips** across desktop, tablet, and mobile. Independent production probes
+verified `/kcna/`, `/learn/ip-subnets/`, `/review?path=kcna`, D1 health, and the
+auth session route; the live study page contains the Hint, Learn-first, and
+Reference controls. D1 reports `ready` with manifest SHA
+`a88c46986674e9d91dd7d2bfdd6332bbe1ce07dfbc1d545887072b7ef3a27e0b`.
 
 **Bottom line:** the dedicated KCNA focus workspace is live on the production
 Cloudflare Worker from exact public source
@@ -130,6 +135,14 @@ viewed or recorded.
    `34459708536` and protected owner deployment run `34459923972`. Independent
    live probes verified the dedicated KCNA workspace, plain KCNA path,
    representative KCNA review unit, D1 health, and auth session route.
+8. ✅ Completed: adaptive KCNA learning exact source
+   `abc2d69bc950507ed2b8b72fe6ee586b485a6959` passed public CI run
+   `34581879391` and protected owner deployment run `34582116074`. The release
+   adds focused KCNA sessions, path-scoped reviews, checkpoint/mastery states,
+   explainable readiness and weak spots, Study/Reference modes, directional
+   hints, Learn-first Encountered-only evidence, private correction capture,
+   and next-unit handoff. Independent live probes verified the new KCNA and
+   study surfaces plus D1 and auth health.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -139,7 +152,8 @@ and is not part of production.
 
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
-`✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` → `🔄 Owner beta gate`
+`✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
+`✅ Adaptive learning v4` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -154,6 +168,7 @@ and is not part of production.
 | UI reset | ✅ Complete | Design contract and redesign plan are written; foundation, shared shell, homepage focus prompt, focused study/review workspace, responsive surfaces, and accessibility fixes are deployed in protected run `33487216904` for source `190e0e5`. |
 | UI v3 refinement | ✅ Live | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size light/dark browser evidence are live from source `205044b`; public CI `34456854247` and protected deploy `34457036278` passed. |
 | KCNA focus workspace | ✅ Live | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Public CI `34459708536`, protected owner deploy `34459923972`, and independent live probes all passed for exact source `0cf0d32`. |
+| Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
