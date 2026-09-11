@@ -7,10 +7,12 @@ learning calculations.
 
 ## Product posture
 
-DevOps by hmrdkn-labs is a focused study workspace with a technical-notebook
-character. The interface should make the next learning action obvious, keep
-reading comfortable, and make evidence feel trustworthy. It should not feel
-like a generic SaaS dashboard or a marketing page wrapped around a quiz.
+DevOps by hmrdkn-labs is a focused study workspace with a technical learning
+product character. The interface should make the next learning action obvious,
+keep reading comfortable, and make evidence feel trustworthy. The product may
+borrow proven interaction ideas from modern learning tools—one dominant action,
+clear progression, tactile controls, and mobile-first navigation—without using
+streak pressure, decorative gamification, or obscuring the evidence model.
 
 ## Identity
 
@@ -32,11 +34,15 @@ like a generic SaaS dashboard or a marketing page wrapped around a quiz.
 
 1. **Content before chrome.** A learner's question, answer, explanation, or
    review card gets the strongest hierarchy on its page.
-2. **Quiet technical notebook.** Use a neutral paper/canvas, dark ink, one
-   unmistakable terminal accent, thin structural rules, and very restrained
-   elevation. Avoid gradients, decorative textures, and competing accents.
-3. **Readable density.** Keep prose near 68ch, use a compact 8px-derived
-   spacing scale, and remove empty vertical space that hides the next action.
+2. **Calm, tactile learning surfaces.** Use a neutral canvas, dark ink, one
+   unmistakable terminal accent, and bounded surfaces that make interactive
+   regions obvious. Cards and restrained elevation are appropriate for the
+   current task, progress, checkpoints, questions, and reviews; long-form
+   reading remains quieter.
+3. **Readable density with obvious targets.** Keep prose near 68ch, use a
+   compact 8px-derived spacing scale, and give primary decisions enough space
+   and contrast to be recognized immediately. Density must never make mobile
+   controls or progress states ambiguous.
 4. **States are part of the design.** Hover, focus, pressed, selected,
    disabled, loading, empty, error, guest, owner, due, and revalidation states
    must be visually distinct without depending on color alone.
@@ -72,12 +78,14 @@ like a generic SaaS dashboard or a marketing page wrapped around a quiz.
 - Home and standard page display headings cap at 40px on desktop. Unit titles
   cap at roughly 39px, section headings at 22–28px, normal reading text at
   15–17px, and metadata at roughly 10–13px.
-- Static document sections should be separated by spacing and 1px rules before
-  adding a bordered container. Repeated rounded cards are not a page-layout
-  primitive.
-- Controls use the small control radius; elevated/overlay surfaces may use the
-  larger surface radius. Shadows are legal for floating popovers/menus only,
-  not for ordinary lesson, path, library, dashboard, or search content.
+- Static document sections should still prefer spacing and rules, but
+  task-oriented sections may use repeated bounded surfaces when the grouping
+  communicates interaction or progression. Avoid wrapping every paragraph in
+  a card.
+- Controls use the control radius; active learning surfaces use the larger
+  surface radius. A restrained shared card shadow is permitted for primary
+  interactive surfaces and floating navigation. It must come from a semantic
+  token rather than one-off component shadows.
 - Pills/chips indicate an actual state, filter, or compact step. Do not use
   them as decoration or as a substitute for hierarchy.
 
@@ -97,12 +105,15 @@ are:
 
 - shell/header/navigation and breadcrumb/context row;
 - buttons, quiet buttons, status chips, badges, and icon buttons;
-- bordered surfaces, callouts, empty states, skeletons, and inline status;
+- tactile learning cards, bounded surfaces, callouts, empty states, skeletons,
+  and inline status;
 - question/answer comparison, critical-point checklist, rating group;
 - study/reference mode switch, directional hint, learn-first escape hatch,
   correction prompt, and explicit next-unit action;
 - progress/meter, timeline/stepper, filter row, search field, and note editor;
 - popover/menu with a visible trigger and a keyboard-safe focus path.
+- a four-destination mobile learning dock for Home, KCNA, Review, and Library;
+  less frequent navigation stays in the header menu.
 
 Do not add a React/Tailwind component dependency solely for styling this
 Astro/Solid application. Borrow interaction patterns and copy only the small

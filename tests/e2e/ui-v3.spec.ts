@@ -82,4 +82,13 @@ test('mobile header actions meet the 44px touch-target contract', async ({ page 
     expect(box!.width, `${selector} width`).toBeGreaterThanOrEqual(44);
     expect(box!.height, `${selector} height`).toBeGreaterThanOrEqual(44);
   }
+
+  const dock = page.locator('.mobile-dock');
+  await expect(dock).toBeVisible();
+  await expect(dock.getByRole('link')).toHaveCount(4);
+  for (const link of await dock.getByRole('link').all()) {
+    const box = await link.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.height, 'mobile dock target height').toBeGreaterThanOrEqual(44);
+  }
 });

@@ -5,6 +5,21 @@
 
 ## Read this first
 
+**Learning-product UI v6 is release-ready:** the current local release keeps
+the terminal-green identity and portable content contract while moving the
+primary learning surfaces toward proven Duolingo/Brilliant interaction
+patterns: one dominant next action, clearer progression, tactile question and
+checkpoint surfaces, stronger state hierarchy, and a persistent four-item
+mobile learning dock. KCNA now shows an explicit learned-path meter and a more
+prominent Today's Session card; study units expose the Retrieval → Explain →
+Practice loop and a clearer question-stage treatment. Long-form/reference
+content remains visually quieter, and no canonical Markdown, mastery/evidence
+logic, or guest-persistence boundary changed. Local content/type/unit/D1/build
+checks pass, and the full browser matrix passes with **25 tests and 2
+intentional skips** across desktop, tablet, and mobile, including WCAG contrast,
+44px touch targets, initial-question visibility, and horizontal-overflow guards.
+The release is awaiting public CI and protected owner deployment.
+
 **Learning-progress v5 is live:** exact public source
 `8e63ad1d4a49fb41df49a8f2482527cc2e9e8e0f` passed public CI run
 `34584535362` and protected owner deployment run `34584744823`. Learning
@@ -184,7 +199,8 @@ and is not part of production.
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
-`✅ Adaptive learning v4` → `✅ Learning progress v5` → `🔄 Owner beta gate`
+`✅ Adaptive learning v4` → `✅ Learning progress v5` → `🟡 UI v6 release-ready` →
+`🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -201,6 +217,7 @@ and is not part of production.
 | KCNA focus workspace | ✅ Live | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Public CI `34459708536`, protected owner deploy `34459923972`, and independent live probes all passed for exact source `0cf0d32`. |
 | Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
 | Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
+| Learning-product UI v6 | 🟡 Release-ready | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Full local checks and 25/27 browser scenarios pass; public CI and protected production promotion are next. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -211,6 +228,13 @@ and was not modified while this application was built.
 
 ## Progress log
 
+- **2026-09-11 — learning-product UI v6 release-ready:** refreshed the design
+  contract and primary KCNA/study surfaces around proven learning-product
+  patterns, added learned-path progress and a persistent mobile learning dock,
+  and strengthened tactile/state hierarchy while preserving the existing
+  content and evidence model. Local checks pass; browser QA is 25 passed / 2
+  intentional skips across desktop, tablet, and mobile. Awaiting CI and
+  protected owner deployment.
 - **2026-09-11 — learning progress v5 released:** exact source `8e63ad1` adds
   durable question/lesson/practice completion alongside the existing
   evidence-derived understanding model. Public CI `34584535362` passed;

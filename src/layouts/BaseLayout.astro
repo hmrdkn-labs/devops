@@ -26,6 +26,12 @@ const navigation = [
   { href: '/library', label: 'Library' },
   { href: '/map', label: 'Map' },
 ];
+const mobileNavigation = [
+  { href: '/', label: 'Home' },
+  { id: 'kcna', href: '/kcna', label: 'KCNA', prefixes: ['/kcna', '/paths/kcna'] },
+  { href: '/review', label: 'Review', prefixes: ['/review'] },
+  { href: '/library', label: 'Library' },
+];
 const isCurrent = (item: typeof navigation[number]) => {
   if (activeSection) return 'id' in item && item.id === activeSection;
   if ('prefixes' in item && item.prefixes?.some((prefix) => Astro.url.pathname.startsWith(prefix))) return true;
@@ -39,7 +45,7 @@ const isCurrent = (item: typeof navigation[number]) => {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f7f5" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f6f4" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1210" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -86,6 +92,14 @@ const isCurrent = (item: typeof navigation[number]) => {
       </div>
     </header>
     <main id="main"><slot /></main>
+    <nav class="mobile-dock" aria-label="Primary mobile navigation">
+      {mobileNavigation.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item as typeof navigation[number]) ? 'page' : undefined}>
+          <span class="mobile-dock-mark" aria-hidden="true"></span>
+          <span>{item.label}</span>
+        </a>
+      ))}
+    </nav>
     <footer class="site-footer">
       <div>
         <strong>DevOps by hmrdkn-labs</strong>

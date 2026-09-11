@@ -397,7 +397,13 @@ export default function StudyFlow(props: Props) {
             >
               <span aria-hidden="true" style={{ width: progress() + '%' }} />
             </div>
-            <p class="section-kicker">Think before the lesson · {questionIndex() + 1}/{props.unit.questions.length}</p>
+            <div class="question-stage-label">
+              <span class="question-stage-number" aria-hidden="true">{questionIndex() + 1}</span>
+              <div>
+                <p class="section-kicker">Think before the lesson</p>
+                <small>{questionIndex() + 1} of {props.unit.questions.length} · {question().kind}</small>
+              </div>
+            </div>
             <h2 id="question-title">{question().prompt}</h2>
             <Show when={!revealed()}>
               <label class="answer-label" for="private-answer">Your explanation</label>

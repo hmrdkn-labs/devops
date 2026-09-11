@@ -141,6 +141,12 @@ export default function KcnaFocusClient(props: Props) {
     };
   });
 
+  const learnedProgress = createMemo(() => {
+    const summary = completionSummary();
+    if (!summary.total) return 0;
+    return (summary.completed + summary.learned) / summary.total;
+  });
+
   const understandingSummary = createMemo(() => {
     const units = props.units.map((unit) => progressByUnit().get(unit.id));
     return {
@@ -194,7 +200,10 @@ export default function KcnaFocusClient(props: Props) {
   return (
     <section class="kcna-today" aria-labelledby="kcna-today-title">
       <div class="kcna-today-main">
-        <p class="section-kicker">Today's session</p>
+        <div class="kcna-session-label">
+          <span class="kcna-session-orb" aria-hidden="true">→</span>
+          <p class="section-kicker">Today's session</p>
+        </div>
         <Show when={nextUnit()} fallback={<h2 id="kcna-today-title">KCNA path complete.</h2>}>
           {(unit) => (
             <>
@@ -220,6 +229,15 @@ export default function KcnaFocusClient(props: Props) {
       }>
         {(path) => (
           <div class="kcna-evidence-panel">
+            <div class="kcna-path-meter">
+              <div>
+                <span>Learning path</span>
+                <strong>{Math.round(learnedProgress() * 100)}%</strong>
+              </div>
+              <div class="kcna-path-meter-track" role="progressbar" aria-label="KCNA learned progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow={Math.round(learnedProgress() * 100)}>
+                <span style={{ width: `${learnedProgress() * 100}%` }} />
+              </div>
+            </div>
             <dl class="kcna-progress-summary" aria-label="KCNA learning progress">
               <div><dt>Completed</dt><dd>{completionSummary().completed}/{completionSummary().total}</dd></div>
               <div><dt>Learned</dt><dd>{completionSummary().learned}</dd></div>
