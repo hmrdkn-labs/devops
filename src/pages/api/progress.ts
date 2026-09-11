@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import manifest from '@/generated/content-manifest.json';
 import { paths, unitsById } from '@/lib/content/catalog';
+import { unitCompletion, type CompletionMark } from '@/lib/learning/completion';
 import {
   masteryState,
   readinessBreakdownV1,
@@ -35,6 +36,19 @@ interface RecentRow {
   happened_at: number;
 }
 
+interface AttemptProgressRow {
+  unit_id: string;
+  question_id: string;
+  completed_at: number;
+}
+
+interface TaskProgressRow {
+  unit_id: string;
+  task_type: 'lesson' | 'practice';
+  task_id: string;
+  completed_at: number;
+}
+
 const averageBreakdown = (items: Array<ReturnType<typeof readinessBreakdownV1>>) => {
   if (!items.length) return { encountered: 0, recall: 0, application: 0, retention: 0 };
   return {
@@ -48,17 +62,32 @@ const averageBreakdown = (items: Array<ReturnType<typeof readinessBreakdownV1>>)
 export const GET: APIRoute = async ({ locals }) => {
   if (!locals.user) return unauthorized();
   const db = database();
-  const [evidenceResult, reviewResult, recentAttemptResult, recentReviewResult] = await db.batch([
+  const [
+    evidenceResult,
+    reviewResult,
+    attemptProgressResult,
+    taskProgressResult,
+    recentAttemptResult,
+    recentReviewResult,
+    recentTaskResult,
+  ] = await db.batch([
     db.prepare(`SELECT unit_id, objective_id, objective_hash,
       encountered_at, recalled_at, recall_score, applied_at, application_score,
       retained_at, retention_score, revalidation_required
       FROM unit_evidence WHERE user_id = ?`).bind(locals.user.id),
     db.prepare(`SELECT objective_ids_json, rating FROM review_event
       WHERE user_id = ? ORDER BY reviewed_at DESC LIMIT 500`).bind(locals.user.id),
+    db.prepare(`SELECT unit_id, question_id, MAX(submitted_at) AS completed_at
+      FROM attempt WHERE user_id = ?
+      GROUP BY unit_id, question_id`).bind(locals.user.id),
+    db.prepare(`SELECT unit_id, task_type, task_id, completed_at
+      FROM unit_task_progress WHERE user_id = ?`).bind(locals.user.id),
     db.prepare(`SELECT unit_id, submitted_at AS happened_at FROM attempt
       WHERE user_id = ? ORDER BY submitted_at DESC LIMIT 1`).bind(locals.user.id),
     db.prepare(`SELECT unit_id, reviewed_at AS happened_at FROM review_event
       WHERE user_id = ? ORDER BY reviewed_at DESC LIMIT 1`).bind(locals.user.id),
+    db.prepare(`SELECT unit_id, updated_at AS happened_at FROM unit_task_progress
+      WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1`).bind(locals.user.id),
   ]);
   const rows = { results: evidenceResult.results as unknown as EvidenceRow[] };
   const struggleCounts = new Map<string, number>();
@@ -73,6 +102,18 @@ export const GET: APIRoute = async ({ locals }) => {
     }
   }
   const byObjective = new Map(rows.results.map((row) => [row.objective_id, row]));
+  const answeredByUnit = new Map<string, CompletionMark[]>();
+  for (const row of attemptProgressResult.results as unknown as AttemptProgressRow[]) {
+    const items = answeredByUnit.get(row.unit_id) ?? [];
+    items.push({ id: row.question_id, completedAt: row.completed_at });
+    answeredByUnit.set(row.unit_id, items);
+  }
+  const tasksByUnit = new Map<string, TaskProgressRow[]>();
+  for (const row of taskProgressResult.results as unknown as TaskProgressRow[]) {
+    const items = tasksByUnit.get(row.unit_id) ?? [];
+    items.push(row);
+    tasksByUnit.set(row.unit_id, items);
+  }
   const unitResults = manifest.units.map((entry) => {
     const unit = unitsById.get(entry.id);
     const projections = (unit?.metadata.objectives ?? []).map((objective) => {
@@ -108,12 +149,36 @@ export const GET: APIRoute = async ({ locals }) => {
         : score >= 0.38 ? 'Recalled'
           : score > 0 ? 'Encountered'
             : 'Not started';
+    const taskRows = tasksByUnit.get(entry.id) ?? [];
+    const completion = unitCompletion({
+      questionIds: unit?.questions.map((question) => question.id) ?? [],
+      answeredQuestions: answeredByUnit.get(entry.id) ?? [],
+      lessonCompletedAt: taskRows.find((task) => task.task_type === 'lesson' && task.task_id === 'lesson')?.completed_at ?? null,
+      practiceIds: unit?.practices.map((practice) => practice.id) ?? [],
+      completedPractices: taskRows
+        .filter((task) => task.task_type === 'practice')
+        .map((task) => ({ id: task.task_id, completedAt: task.completed_at })),
+    });
+    const needsRefresh = projections.some((objective) => objective.revalidationRequired);
+    const understandingState = needsRefresh ? 'Needs refresh'
+      : state === 'Retained' ? 'Strong / retained'
+        : state === 'Applied' ? 'Can apply'
+          : state === 'Recalled' ? 'Understands basics'
+            : state === 'Encountered' ? 'Introduced'
+              : 'No evidence';
     return {
       id: entry.id,
       slug: entry.slug,
       title: entry.title,
       score,
       state,
+      completion,
+      understanding: {
+        state: understandingState,
+        evidenceState: state,
+        score,
+        needsRefresh,
+      },
       breakdown: averageBreakdown(projections.map((objective) => objective.breakdown)),
       objectives: projections,
     };
@@ -151,6 +216,7 @@ export const GET: APIRoute = async ({ locals }) => {
   const recentCandidates = [
     recentAttemptResult.results[0] as unknown as RecentRow | undefined,
     recentReviewResult.results[0] as unknown as RecentRow | undefined,
+    recentTaskResult.results[0] as unknown as RecentRow | undefined,
   ].filter((row): row is RecentRow => Boolean(row));
   recentCandidates.sort((a, b) => b.happened_at - a.happened_at);
   return json({

@@ -64,6 +64,33 @@ interface Me {
   authConfigured: boolean;
 }
 
+interface UnitCompletionProgress {
+  state: 'Not started' | 'In progress' | 'Learned' | 'Completed';
+  percent: number;
+  answeredQuestionIds: string[];
+  questionsCompleted: number;
+  questionsTotal: number;
+  lessonCompleted: boolean;
+  completedPracticeIds: string[];
+  practicesCompleted: number;
+  practicesTotal: number;
+  completedAt: number | null;
+}
+
+interface UnitLearningProgress {
+  id: string;
+  completion: UnitCompletionProgress;
+  understanding: {
+    state: string;
+    score: number;
+    needsRefresh: boolean;
+  };
+}
+
+interface ProgressResponse {
+  units: UnitLearningProgress[];
+}
+
 export default function StudyFlow(props: Props) {
   const [hydrated, setHydrated] = createSignal(false);
   const [mode, setMode] = createSignal<'study' | 'reference'>('study');
@@ -81,12 +108,25 @@ export default function StudyFlow(props: Props) {
   const [note, setNote] = createSignal('');
   const [noteLoaded, setNoteLoaded] = createSignal(false);
   const [noteMessage, setNoteMessage] = createSignal('');
+  const [taskSaving, setTaskSaving] = createSignal<string | null>(null);
+  const [taskMessage, setTaskMessage] = createSignal('');
+  const [guestLessonCompleted, setGuestLessonCompleted] = createSignal(false);
+  const [guestPracticesCompleted, setGuestPracticesCompleted] = createSignal<string[]>([]);
   const [me] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/me', { credentials: 'include' });
     return response.json() as Promise<Me>;
   });
+  const [learningProgress, { refetch: refetchLearningProgress }] = createResource(
+    () => Boolean(me()?.authenticated),
+    async () => {
+      const response = await fetch('/api/progress', { credentials: 'include' });
+      if (!response.ok) return null;
+      return response.json() as Promise<ProgressResponse>;
+    },
+  );
   const question = createMemo(() => props.unit.questions[questionIndex()]);
   const progress = createMemo(() => ((questionIndex() + (finished() ? 1 : 0)) / props.unit.questions.length) * 100);
+  const unitLearningProgress = createMemo(() => learningProgress()?.units.find((unit) => unit.id === props.unit.id));
 
   onMount(() => {
     const params = new URLSearchParams(window.location.search);
@@ -134,6 +174,7 @@ export default function StudyFlow(props: Props) {
       }),
     });
     if (!response.ok) setSaveMessage('Learn-first mode opened; encounter evidence could not be saved.');
+    else void refetchLearningProgress();
   }
 
   async function reveal() {
@@ -154,6 +195,7 @@ export default function StudyFlow(props: Props) {
         }),
       });
       setSaveMessage(response.ok ? 'Private answer saved.' : 'Answer kept in memory; saving failed.');
+      if (response.ok) void refetchLearningProgress();
     } else {
       setSaveMessage('Guest answer kept in memory for this page only.');
     }
@@ -182,6 +224,7 @@ export default function StudyFlow(props: Props) {
         }),
       });
       if (!response.ok) setSaveMessage('Rating kept in memory; scheduling failed.');
+      else void refetchLearningProgress();
       if (reflection().trim()) {
         const noteResponse = await fetch('/api/notes', {
           method: 'POST',
@@ -197,6 +240,52 @@ export default function StudyFlow(props: Props) {
     }
     setSaving(false);
     setRated(true);
+  }
+
+  function taskIsCompleted(taskType: 'lesson' | 'practice', taskId: string) {
+    const persisted = unitLearningProgress()?.completion;
+    if (me()?.authenticated && persisted) {
+      return taskType === 'lesson'
+        ? persisted.lessonCompleted
+        : persisted.completedPracticeIds.includes(taskId);
+    }
+    return taskType === 'lesson'
+      ? guestLessonCompleted()
+      : guestPracticesCompleted().includes(taskId);
+  }
+
+  async function setTaskCompleted(taskType: 'lesson' | 'practice', taskId: string, completed: boolean) {
+    const key = `${taskType}:${taskId}`;
+    if (!me()?.authenticated) {
+      if (taskType === 'lesson') setGuestLessonCompleted(completed);
+      else setGuestPracticesCompleted((ids) => completed
+        ? [...new Set([...ids, taskId])]
+        : ids.filter((id) => id !== taskId));
+      setTaskMessage('Guest mode: completion stays in memory for this page only.');
+      return;
+    }
+
+    setTaskSaving(key);
+    setTaskMessage('Saving progress…');
+    const response = await fetch('/api/unit-progress', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        unitId: props.unit.id,
+        unitRevision: props.unit.revision,
+        taskType,
+        taskId,
+        completed,
+      }),
+    });
+    if (response.ok) {
+      await refetchLearningProgress();
+      setTaskMessage(completed ? 'Progress saved.' : 'Completion cleared.');
+    } else {
+      setTaskMessage('Could not save progress.');
+    }
+    setTaskSaving(null);
   }
 
   function next() {
@@ -276,6 +365,26 @@ export default function StudyFlow(props: Props) {
         </aside>
 
         <div class="study-main">
+          <Show when={unitLearningProgress()}>
+            {(unitProgress) => (
+              <section class="unit-learning-status" aria-label="Learning progress">
+                <div>
+                  <span>Learning</span>
+                  <strong>{unitProgress().completion.state} · {Math.round(unitProgress().completion.percent * 100)}%</strong>
+                  <small>
+                    Questions {unitProgress().completion.questionsCompleted}/{unitProgress().completion.questionsTotal}
+                    {' · '}Lesson {unitProgress().completion.lessonCompleted ? 'read' : 'open'}
+                    {' · '}Practice {unitProgress().completion.practicesCompleted}/{unitProgress().completion.practicesTotal}
+                  </small>
+                </div>
+                <div>
+                  <span>Understanding</span>
+                  <strong>{unitProgress().understanding.state} · {Math.round(unitProgress().understanding.score * 100)}%</strong>
+                  <small>{unitProgress().understanding.needsRefresh ? 'Content changed; refresh evidence is needed.' : 'Derived from your recall, application, and later review evidence.'}</small>
+                </div>
+              </section>
+            )}
+          </Show>
           <Show when={mode() === 'study' && !learningFirst()}>
           <section class="question-stage" aria-labelledby="question-title">
             <div
@@ -400,6 +509,18 @@ export default function StudyFlow(props: Props) {
             <article class="lesson">
               <div class="lesson-divider"><span>{mode() === 'reference' ? 'Reference lesson' : 'Lesson revealed'}</span></div>
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
+              <div class="completion-action">
+                <button
+                  type="button"
+                  class="completion-toggle"
+                  aria-pressed={taskIsCompleted('lesson', 'lesson')}
+                  disabled={taskSaving() === 'lesson:lesson'}
+                  onClick={() => setTaskCompleted('lesson', 'lesson', !taskIsCompleted('lesson', 'lesson'))}
+                >
+                  {taskIsCompleted('lesson', 'lesson') ? 'Lesson read ✓' : 'Mark lesson read'}
+                </button>
+                <span>{taskMessage()}</span>
+              </div>
             </article>
 
             <section class="depth-grid" aria-labelledby="practice-title">
@@ -418,6 +539,17 @@ export default function StudyFlow(props: Props) {
                     <h3>Safety boundary</h3>
                     <ul><For each={practice.safety}>{(item) => <li>{item}</li>}</For></ul>
                   </Show>
+                  <div class="completion-action practice-completion">
+                    <button
+                      type="button"
+                      class="completion-toggle"
+                      aria-pressed={taskIsCompleted('practice', practice.id)}
+                      disabled={taskSaving() === `practice:${practice.id}`}
+                      onClick={() => setTaskCompleted('practice', practice.id, !taskIsCompleted('practice', practice.id))}
+                    >
+                      {taskIsCompleted('practice', practice.id) ? 'Practice completed ✓' : 'Mark practice complete'}
+                    </button>
+                  </div>
                 </details>
               )}</For>
             </section>

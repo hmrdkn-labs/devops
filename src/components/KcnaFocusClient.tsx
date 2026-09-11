@@ -36,6 +36,21 @@ interface UnitProgress {
   title: string;
   score: number;
   state: string;
+  completion: {
+    state: 'Not started' | 'In progress' | 'Learned' | 'Completed';
+    percent: number;
+    questionsCompleted: number;
+    questionsTotal: number;
+    lessonCompleted: boolean;
+    practicesCompleted: number;
+    practicesTotal: number;
+  };
+  understanding: {
+    state: string;
+    evidenceState: string;
+    score: number;
+    needsRefresh: boolean;
+  };
   breakdown: Breakdown;
   objectives: ObjectiveProgress[];
 }
@@ -79,15 +94,15 @@ export default function KcnaFocusClient(props: Props) {
     if (recent) {
       const recentSpec = props.units.find((unit) => unit.id === recent);
       const recentProgress = byUnit.get(recent);
-      if (recentSpec && (!recentProgress || recentProgress.objectives.some((objective) => objective.state === 'Not started'))) {
+      if (recentSpec && (!recentProgress || ['Not started', 'In progress'].includes(recentProgress.completion.state))) {
         return recentSpec;
       }
     }
-    const unencountered = props.units.find((unit) => {
+    const unfinishedCore = props.units.find((unit) => {
       const unitProgress = byUnit.get(unit.id);
-      return !unitProgress || unitProgress.objectives.some((objective) => objective.state === 'Not started');
+      return !unitProgress || ['Not started', 'In progress'].includes(unitProgress.completion.state);
     });
-    if (unencountered) return unencountered;
+    if (unfinishedCore) return unfinishedCore;
     return [...props.units].sort((a, b) => (byUnit.get(a.id)?.score ?? 0) - (byUnit.get(b.id)?.score ?? 0))[0];
   });
 
@@ -95,12 +110,11 @@ export default function KcnaFocusClient(props: Props) {
     const byUnit = progressByUnit();
     return new Map(props.checkpoints.map((checkpoint) => {
       const units = checkpoint.unitIds.map((id) => byUnit.get(id));
-      const anyStarted = units.some((unit) => unit && unit.objectives.some((objective) => objective.state !== 'Not started'));
-      const allEncountered = units.every((unit) => unit && unit.objectives.every((objective) => objective.state !== 'Not started'));
-      const allApplied = units.every((unit) => unit && ['Applied', 'Retained'].includes(unit.state));
-      const average = units.reduce((sum, unit) => sum + (unit?.score ?? 0), 0) / Math.max(1, units.length);
-      const state = allApplied ? 'Passed'
-        : allEncountered && average >= 0.38 ? 'Ready for checkpoint'
+      const anyStarted = units.some((unit) => unit && unit.completion.state !== 'Not started');
+      const allLearned = units.every((unit) => unit && ['Learned', 'Completed'].includes(unit.completion.state));
+      const allApplied = units.every((unit) => unit && ['Applied', 'Retained'].includes(unit.understanding.evidenceState));
+      const state = allLearned && allApplied ? 'Passed'
+        : allLearned ? 'Learned'
           : anyStarted ? 'In progress'
             : 'Not started';
       return [checkpoint.id, state] as const;
@@ -117,14 +131,42 @@ export default function KcnaFocusClient(props: Props) {
       .slice(0, 3);
   });
 
+  const completionSummary = createMemo(() => {
+    const units = props.units.map((unit) => progressByUnit().get(unit.id));
+    return {
+      completed: units.filter((unit) => unit?.completion.state === 'Completed').length,
+      learned: units.filter((unit) => unit?.completion.state === 'Learned').length,
+      inProgress: units.filter((unit) => unit?.completion.state === 'In progress').length,
+      total: props.units.length,
+    };
+  });
+
+  const understandingSummary = createMemo(() => {
+    const units = props.units.map((unit) => progressByUnit().get(unit.id));
+    return {
+      introduced: units.filter((unit) => unit?.understanding.state === 'Introduced').length,
+      basics: units.filter((unit) => unit?.understanding.state === 'Understands basics').length,
+      applied: units.filter((unit) => unit?.understanding.state === 'Can apply').length,
+      retained: units.filter((unit) => unit?.understanding.state === 'Strong / retained').length,
+      refresh: units.filter((unit) => unit?.understanding.needsRefresh).length,
+    };
+  });
+
   createEffect(() => {
     const data = progress();
     if (!data) return;
     const byUnit = progressByUnit();
-    document.querySelectorAll<HTMLElement>('[data-unit-progress]').forEach((element) => {
-      const unit = byUnit.get(element.dataset.unitProgress ?? '');
-      element.textContent = unit?.state ?? 'Not started';
-      element.dataset.state = (unit?.state ?? 'Not started').toLowerCase().replaceAll(' ', '-');
+    document.querySelectorAll<HTMLElement>('[data-unit-completion]').forEach((element) => {
+      const unit = byUnit.get(element.dataset.unitCompletion ?? '');
+      const state = unit?.completion.state ?? 'Not started';
+      element.textContent = state;
+      element.dataset.state = state.toLowerCase().replaceAll(' ', '-');
+    });
+    document.querySelectorAll<HTMLElement>('[data-unit-understanding]').forEach((element) => {
+      const unit = byUnit.get(element.dataset.unitUnderstanding ?? '');
+      const state = unit?.understanding.state ?? 'No evidence';
+      element.textContent = state;
+      element.dataset.state = state.toLowerCase().replaceAll(/\s|\//g, '-');
     });
     const states = checkpointStates();
     document.querySelectorAll<HTMLElement>('[data-checkpoint-progress]').forEach((element) => {
@@ -178,6 +220,12 @@ export default function KcnaFocusClient(props: Props) {
       }>
         {(path) => (
           <div class="kcna-evidence-panel">
+            <dl class="kcna-progress-summary" aria-label="KCNA learning progress">
+              <div><dt>Completed</dt><dd>{completionSummary().completed}/{completionSummary().total}</dd></div>
+              <div><dt>Learned</dt><dd>{completionSummary().learned}</dd></div>
+              <div><dt>In progress</dt><dd>{completionSummary().inProgress}</dd></div>
+              <div><dt>Needs refresh</dt><dd>{understandingSummary().refresh}</dd></div>
+            </dl>
             <div class="kcna-readiness-total">
               <span>readiness-v1</span>
               <strong>{percent(path().readiness)}</strong>
@@ -187,6 +235,12 @@ export default function KcnaFocusClient(props: Props) {
               <div><dt>Recall</dt><dd>{percent(path().breakdown.recall)}</dd></div>
               <div><dt>Applied</dt><dd>{percent(path().breakdown.application)}</dd></div>
               <div><dt>Retained</dt><dd>{percent(path().breakdown.retention)}</dd></div>
+            </dl>
+            <dl class="kcna-understanding-summary" aria-label="Current understanding states">
+              <div><dt>Introduced</dt><dd>{understandingSummary().introduced}</dd></div>
+              <div><dt>Basics</dt><dd>{understandingSummary().basics}</dd></div>
+              <div><dt>Can apply</dt><dd>{understandingSummary().applied}</dd></div>
+              <div><dt>Retained</dt><dd>{understandingSummary().retained}</dd></div>
             </dl>
             <div class="kcna-weak-spots">
               <span class="section-kicker">Weak spots</span>

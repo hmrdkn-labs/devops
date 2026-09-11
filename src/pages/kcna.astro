@@ -128,7 +128,8 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
                   <small>{unit.metadata.summary}</small>
                 </a>
                 <div class="kcna-unit-meta">
-                  <span class="kcna-evidence-state" data-unit-progress={unit.metadata.id}>Not started</span>
+                  <span class="kcna-completion-state" data-unit-completion={unit.metadata.id}>Not started</span>
+                  <span class="kcna-understanding-state" data-unit-understanding={unit.metadata.id}>No evidence</span>
                   {weight === 2 && <span class="critical-badge">Critical</span>}
                   <span>{unit.metadata.estimated_minutes} min</span>
                 </div>

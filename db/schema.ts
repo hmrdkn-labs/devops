@@ -141,6 +141,19 @@ export const unitEvidence = sqliteTable('unit_evidence', {
   index('idx_evidence_user_unit').on(table.userId, table.unitId),
 ]);
 
+export const unitTaskProgress = sqliteTable('unit_task_progress', {
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  unitId: text('unit_id').notNull(),
+  unitRevision: integer('unit_revision').notNull(),
+  taskType: text('task_type').notNull(),
+  taskId: text('task_id').notNull(),
+  completedAt: integer('completed_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
+}, (table) => [
+  primaryKey({ columns: [table.userId, table.unitId, table.taskType, table.taskId] }),
+  index('idx_unit_task_progress_user_unit').on(table.userId, table.unitId),
+]);
+
 export const privateAnswers = sqliteTable('private_answer', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),

@@ -5,6 +5,23 @@
 
 ## Read this first
 
+**Learning-progress v5 is release-ready locally:** learning completion and
+understanding are now deliberately separate signals. Units track durable
+`Not started → In progress → Learned → Completed` task progress from answered
+questions, an explicit lesson-read marker, and guided-practice completion,
+while understanding remains evidence-derived as `Introduced → Understands
+basics → Can apply → Strong / retained`, with `Needs refresh` when content
+revalidation invalidates current evidence. Stable task IDs preserve completion
+across content revisions; revalidation may lower understanding without
+pretending the learner never completed the material. `/kcna` exposes both
+signals per unit plus completion/understanding summaries, study pages expose a
+compact two-axis status rail and explicit lesson/practice controls, and learner
+export v2 includes task-progress records. Guest completion remains memory-only.
+Local content/type/unit/D1/build checks pass, including revision-carry tests;
+the browser matrix passes with **25 tests and 2 intentional skips** across
+desktop, tablet, and mobile. This release is currently awaiting the protected
+production deployment.
+
 **Learning-experience v4 is live:** exact public source
 `abc2d69bc950507ed2b8b72fe6ee586b485a6959` passed public CI run
 `34581879391` and protected owner deployment run `34582116074`. KCNA now opens
@@ -153,7 +170,7 @@ and is not part of production.
 `✅ Product` → `✅ App` → `✅ Content` → `✅ Private deployment boundary` →
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
-`✅ Adaptive learning v4` → `🔄 Owner beta gate`
+`✅ Adaptive learning v4` → `🟡 Learning progress v5 release` → `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -169,6 +186,7 @@ and is not part of production.
 | UI v3 refinement | ✅ Live | New identity, restrained color system, compact type scale, flat browse surfaces, question-first viewport, and three-size light/dark browser evidence are live from source `205044b`; public CI `34456854247` and protected deploy `34457036278` passed. |
 | KCNA focus workspace | ✅ Live | `/kcna` isolates the 29-unit certification path into four checkpoints, surfaces both quiz companions, filters readiness to KCNA, and keeps canonical Markdown shared. Public CI `34459708536`, protected owner deploy `34459923972`, and independent live probes all passed for exact source `0cf0d32`. |
 | Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
+| Learning progress v5 | 🟡 Release-ready | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Local checks, D1 migration/regression checks, build, and the 25-pass browser matrix are green; protected production deployment is next. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`

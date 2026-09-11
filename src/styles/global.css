@@ -500,6 +500,19 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .kcna-session-guest strong { font-size: .82rem; }
 .kcna-session-guest p { margin: .28rem 0 0; color: var(--muted); font-size: .76rem; }
 .kcna-evidence-panel { display: grid; gap: .8rem; }
+.kcna-progress-summary,
+.kcna-understanding-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-block: 1px solid var(--line);
+}
+.kcna-progress-summary > div,
+.kcna-understanding-summary > div { padding: .5rem .5rem .5rem 0; }
+.kcna-progress-summary dt,
+.kcna-understanding-summary dt { color: var(--muted); font-size: .59rem; }
+.kcna-progress-summary dd,
+.kcna-understanding-summary dd { margin: .12rem 0 0; font: 650 .75rem var(--mono); }
 .kcna-readiness-total { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .kcna-readiness-total span { color: var(--muted); font: .64rem var(--mono); }
 .kcna-readiness-total strong { font: 650 1.35rem var(--mono); }
@@ -564,7 +577,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .kcna-checkpoint-meta small { color: var(--muted); font: .64rem var(--mono); white-space: nowrap; }
 .kcna-checkpoint-state { color: var(--muted); font: 650 .61rem var(--sans); white-space: nowrap; }
 .kcna-checkpoint-state[data-state='in-progress'],
-.kcna-checkpoint-state[data-state='ready-for-checkpoint'] { color: var(--accent); }
+.kcna-checkpoint-state[data-state='ready-for-checkpoint'],
+.kcna-checkpoint-state[data-state='learned'] { color: var(--accent); }
 .kcna-checkpoint-state[data-state='passed'] { color: var(--ink); }
 .kcna-checkpoint ol { margin: 0; padding: 0; list-style: none; }
 .kcna-checkpoint li {
@@ -589,14 +603,19 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
-.kcna-unit-meta { display: flex; gap: .4rem; align-items: center; padding-top: .08rem; }
+.kcna-unit-meta { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; align-items: center; padding-top: .08rem; }
 .kcna-unit-meta span { color: var(--muted); font: .62rem var(--mono); white-space: nowrap; }
 .kcna-unit-meta .critical-badge { color: var(--warning); font-family: var(--sans); font-weight: 700; }
-.kcna-unit-meta .kcna-evidence-state { font-family: var(--sans); font-weight: 650; }
-.kcna-evidence-state[data-state='encountered'],
-.kcna-evidence-state[data-state='recalled'],
-.kcna-evidence-state[data-state='applied'] { color: var(--accent); }
-.kcna-evidence-state[data-state='retained'] { color: var(--ink); }
+.kcna-unit-meta .kcna-completion-state,
+.kcna-unit-meta .kcna-understanding-state { font-family: var(--sans); font-weight: 650; }
+.kcna-completion-state[data-state='in-progress'],
+.kcna-completion-state[data-state='learned'] { color: var(--accent); }
+.kcna-completion-state[data-state='completed'] { color: var(--ink); }
+.kcna-understanding-state[data-state='introduced'],
+.kcna-understanding-state[data-state='understands-basics'],
+.kcna-understanding-state[data-state='can-apply'] { color: var(--accent); }
+.kcna-understanding-state[data-state='strong---retained'] { color: var(--ink); }
+.kcna-understanding-state[data-state='needs-refresh'] { color: var(--warning); }
 
 /* Library and search */
 .library-groups, .reference-groups { padding: 1.5rem 0 5rem; }
@@ -727,6 +746,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .rail-list li.is-active { color: var(--ink); font-weight: 700; }
 .rail-list li.is-active > span:first-child { color: var(--accent); }
 .study-main { min-width: 0; }
+.unit-learning-status {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+  padding: .65rem 0;
+  border-block: 1px solid var(--line);
+}
+.unit-learning-status > div { display: grid; gap: .12rem; }
+.unit-learning-status span { color: var(--muted); font: .58rem var(--mono); text-transform: uppercase; letter-spacing: .055em; }
+.unit-learning-status strong { font-size: .78rem; }
+.unit-learning-status small { color: var(--faint); font-size: .64rem; line-height: 1.4; }
 .question-stage { margin-bottom: 2rem; }
 .stage-progress { height: .24rem; margin-bottom: 1rem; overflow: hidden; background: var(--surface-subtle); }
 .question-stage h2 { max-width: 34ch; margin: .35rem 0 1rem; font-size: clamp(1.35rem, 2.5vw, 1.85rem); letter-spacing: -.025em; }
@@ -761,6 +792,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .rating-buttons button { background: transparent; }
 .rating-buttons button:first-child { border-color: color-mix(in srgb, var(--warning) 55%, var(--line)); }
 .lesson { padding-bottom: 2.6rem; }
+.completion-action { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-top: 1rem; }
+.completion-action > span { color: var(--muted); font-size: .68rem; }
+.completion-toggle { min-height: 34px; padding: .35rem .6rem; border: 1px solid var(--line); border-radius: var(--radius-control); background: transparent; color: var(--muted); font-size: .7rem; }
+.completion-toggle:hover { border-color: var(--line-strong); color: var(--ink); background: var(--surface-subtle); }
+.completion-toggle[aria-pressed='true'] { border-color: var(--accent); color: var(--ink); }
+.practice-completion { margin-top: .75rem; padding-top: .6rem; border-top: 1px solid var(--line); }
 .learn-first-panel { padding-bottom: 2rem; }
 .learn-first-panel > h2 { margin: .25rem 0 .4rem; font-size: 1.35rem; }
 .learn-first-intro { max-width: 68ch; margin: 0 0 1.4rem; color: var(--muted); font-size: .82rem; }
@@ -877,6 +914,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   .kcna-hero { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 2rem; }
   .kcna-hero h1 { font-size: 2rem; }
   .kcna-today-shell { padding-top: .7rem; }
+  .kcna-progress-summary,
+  .kcna-understanding-summary,
   .kcna-readiness-breakdown { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .kcna-focus-grid { grid-template-columns: 1fr; gap: 1.4rem; }
   .kcna-focus-rail { position: static; }
@@ -911,6 +950,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   .rail-list { display: flex; gap: .35rem; overflow-x: auto; margin-top: 0; padding-bottom: .35rem; border-top: 0; }
   .rail-list li { flex: 0 0 auto; grid-template-columns: auto auto; gap: .25rem; padding: .35rem .5rem; border: 1px solid var(--line); border-radius: var(--radius-control); }
   .question-stage h2 { font-size: 1.35rem; }
+  .unit-learning-status { grid-template-columns: 1fr; gap: .55rem; }
   .comparison { grid-template-columns: 1fr; }
   .comparison > div + div { padding-left: 0; border-top: 1px solid var(--line); border-left: 0; }
   .study-mode-switch > span { flex-basis: 100%; margin-left: 0; }

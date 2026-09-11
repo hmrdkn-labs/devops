@@ -29,8 +29,8 @@ try {
 
   run('d1', 'migrations', 'apply', 'DB', '--local', '--config', config, '--persist-to', persistence);
   const indexes = run('d1', 'execute', 'DB', '--local', '--config', config, '--persist-to', persistence,
-    '--command', "SELECT name FROM sqlite_master WHERE type='index' AND name IN ('idx_fsrs_due','idx_review_user_idempotency','idx_attempt_user_idempotency') ORDER BY name;");
-  for (const expected of ['idx_fsrs_due', 'idx_review_user_idempotency', 'idx_attempt_user_idempotency']) {
+    '--command', "SELECT name FROM sqlite_master WHERE type='index' AND name IN ('idx_fsrs_due','idx_review_user_idempotency','idx_attempt_user_idempotency','idx_unit_task_progress_user_unit') ORDER BY name;");
+  for (const expected of ['idx_fsrs_due', 'idx_review_user_idempotency', 'idx_attempt_user_idempotency', 'idx_unit_task_progress_user_unit']) {
     if (!indexes.includes(expected)) throw new Error(`Missing D1 index ${expected}`);
   }
 
@@ -46,6 +46,21 @@ try {
       VALUES ('review:2','owner','same-request','card:1','fpp:test',1,'[]','short',3,2,1,1,1,2);
       SELECT COUNT(*) AS event_count FROM review_event WHERE user_id='owner' AND idempotency_key='same-request';`);
   if (!idempotency.match(/event_count[\s\S]*?1/)) throw new Error('Review idempotency constraint did not suppress a duplicate');
+
+  const revisionCarry = run('d1', 'execute', 'DB', '--local', '--config', config, '--persist-to', persistence,
+    '--command', `INSERT INTO unit_task_progress (user_id,unit_id,unit_revision,task_type,task_id,completed_at,updated_at)
+      VALUES ('owner','fpp:test',1,'practice','practice:one',10,10);
+      INSERT INTO unit_task_progress (user_id,unit_id,unit_revision,task_type,task_id,completed_at,updated_at)
+      VALUES ('owner','fpp:test',2,'practice','practice:one',20,20)
+      ON CONFLICT(user_id,unit_id,task_type,task_id) DO UPDATE SET
+        unit_revision=excluded.unit_revision,
+        completed_at=unit_task_progress.completed_at,
+        updated_at=excluded.updated_at;
+      SELECT COUNT(*) AS task_count, MAX(unit_revision) AS current_revision, MIN(completed_at) AS original_completion
+      FROM unit_task_progress WHERE user_id='owner' AND unit_id='fpp:test' AND task_id='practice:one';`);
+  if (!revisionCarry.match(/task_count[\s\S]*?1/) || !revisionCarry.match(/current_revision[\s\S]*?2/) || !revisionCarry.match(/original_completion[\s\S]*?10/)) {
+    throw new Error('Stable task completion did not carry across content revisions');
+  }
 
   console.log('D1 migration, due index, and idempotency checks passed.');
 } finally {

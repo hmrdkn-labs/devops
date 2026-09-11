@@ -40,6 +40,13 @@ test('new learners can learn first or use reference mode without faking recall',
   await page.getByRole('button', { name: 'Reference', exact: true }).click();
   await expect(page.getByText('Reference lesson')).toBeVisible();
   await expect(page.getByLabel('Your explanation')).toBeHidden();
+  const lessonCompletion = page.getByRole('button', { name: 'Mark lesson read' });
+  await lessonCompletion.click();
+  await expect(page.getByRole('button', { name: 'Lesson read ✓' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText('Guest mode: completion stays in memory for this page only.')).toBeVisible();
+  await page.locator('.depth-card summary').first().click();
+  await page.getByRole('button', { name: 'Mark practice complete' }).first().click();
+  await expect(page.getByRole('button', { name: 'Practice completed ✓' }).first()).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Study', exact: true }).click();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
 });
