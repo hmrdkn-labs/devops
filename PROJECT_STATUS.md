@@ -5,7 +5,9 @@
 
 ## Read this first
 
-**Feedback clarity release is locally complete and awaiting protected release.**
+**Feedback clarity release is live:** exact public source
+`8afba99be47ce582f430b47cbc8e65ec2194207f` passed public CI run
+`34755696607` and protected owner deployment run `34755814811`.
 Every scored KCNA lesson interaction now gives an explicit verdict, identifies
 the learner's answer and the expected model, marks correct/incorrect rows or
 positions, explains the mechanism, and offers a correction attempt. Ordering
@@ -20,7 +22,13 @@ verified wrong-answer and correction journeys; the full Playwright matrix is
 **42 passed with 12 intentional skips** across desktop, tablet, and mobile.
 Content validation, 76-file typecheck, 35 unit tests, D1 checks, revision checks,
 production build, accessibility, and overflow checks pass. **No blocker:** next
-step is the protected application release and independent production check.
+step is real-use evaluation of whether each correction is understandable without
+outside help. Independent production probes returned 200 for home, KCNA, MCQ,
+lesson, raw lesson YAML, health, and owner-auth routes. D1 reports `ready` with
+manifest SHA `33f23e2e5ba81f573b435a45fd52b70539b1fcadbdb8444842010d2e421af450`
+and lesson revision 2. A live guest browser attempt visibly confirmed Not quite,
+the learner answer, expected answer, option labels, causal explanation, and Try
+again without writing mastery evidence.
 
 **Interactive Lesson Player pilot is live:** exact public source
 `85d61fae6da76c34509e132840147d10ede55d6e` passed public CI run
@@ -283,7 +291,7 @@ and is not part of production.
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
 `✅ Adaptive learning v4` → `✅ Learning progress v5` → `✅ UI v6 live` →
-`✅ MCQ refresher v7 live` → `✅ Resources lesson live` → `🔄 Pilot evaluation` →
+`✅ MCQ refresher v7 live` → `✅ Resources lesson live` → `✅ Feedback clarity live` → `🔄 Pilot evaluation` →
 `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
@@ -304,6 +312,7 @@ and is not part of production.
 | Learning-product UI v6 | ✅ Live | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Exact source `a9ebfe1` passed public CI `34588219031`, protected owner deploy `34588405704`, and independent production probes plus rendered mobile verification. |
 | KCNA MCQ refresher v7 | ✅ Live | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Exact source `9566794` passed public CI `34590530006`, protected owner deploy `34620453123`, and independent production route/manifest/D1 probes. |
 | KCNA Resources lesson pilot | ✅ Live | One portable 12-exercise lesson and immersive player are live from exact source `85d61fa`; public CI `34750388714`, protected owner deploy `34750501484`, independent production probes, and a real browser interaction passed. Other KCNA checkpoints wait for pilot evaluation. |
+| Feedback clarity | ✅ Live | Lesson primitives, KCNA MCQs, and question-first self-checks now expose actionable correct/incorrect detail and honest correction attempts. Exact source `8afba99` passed public CI `34755696607`, protected owner deploy `34755814811`, the 42-pass browser matrix, and a live guest wrong-answer check. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -314,6 +323,14 @@ and was not modified while this application was built.
 
 ## Progress log
 
+- **2026-09-13 — feedback clarity released:** exact public source `8afba99`
+  passed CI run `34755696607` and protected owner deployment run `34755814811`.
+  Lesson choices, ordering, connections, manifest fields, free-response
+  self-checks, and KCNA MCQs now explain exactly what the learner selected,
+  what was expected, why, and how to retry without inflating first-attempt
+  evidence. The reconciliation trace is explicit and versioned as lesson
+  revision 2. Production routes, owner auth, D1 readiness, manifest SHA, and a
+  real live guest wrong-answer flow were independently verified.
 - **2026-09-13 — KCNA Resources lesson pilot released:** exact public source
   `85d61fa` passed CI run `34750388714` and protected owner deployment run
   `34750501484`. Independent production probes verified 200 responses for the
