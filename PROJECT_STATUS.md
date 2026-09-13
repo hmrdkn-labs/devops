@@ -5,8 +5,10 @@
 
 ## Read this first
 
-**Interactive Lesson Player pilot is locally complete and awaiting release:**
-the single **KCNA → Kubernetes Resources** vertical slice now has a portable
+**Interactive Lesson Player pilot is live:** exact public source
+`85d61fae6da76c34509e132840147d10ede55d6e` passed public CI run
+`34750388714` and protected owner deployment run `34750501484`. The single
+**KCNA → Kubernetes Resources** vertical slice now has a portable
 12-step lesson, immersive `/lesson/kcna-kubernetes-resources` player, focused
 KCNA launcher, and a private owner evidence endpoint. It supports choose,
 arrange, connect, command-builder, terminal-inspection, manifest-fill, trace,
@@ -25,9 +27,14 @@ proxy crash and production trailing-slash behavior; Wrangler is now pinned to
 4.131.1 and the Worker-native contracts pass. The full matrix is **41 passed
 with 10 intentional skips**;
 content validation, 76-file typecheck, 35 unit tests, real local D1 tests, and
-the production build also pass. **There is no implementation blocker.** This
-pilot is not yet claimed live: the next milestone is review and protected
-release, then evaluation before any other KCNA checkpoint is migrated.
+the production build also pass. Independent production probes returned 200 for
+the KCNA launcher, lesson, raw lesson YAML, manifest, health, owner-auth session,
+and auth configuration routes. D1 reports `ready` with manifest SHA
+`cc9d4bb2f664e2fa1fba540359a33887751b7c86084d55e4fd5b6660c065f2d6`,
+and unauthenticated lesson persistence returns 401. A live browser run completed
+the first interaction, inspected its causal feedback, and advanced to step 2/12.
+**There is no implementation or deployment blocker.** The next milestone is
+real-use evaluation before any other KCNA checkpoint is migrated.
 
 **KCNA MCQ refresher v7 is live:** exact public source
 `9566794ca8b4834e1a686ef09b9457420eb0864a` passed public CI run
@@ -240,6 +247,14 @@ viewed or recorded.
    in KCNA and study surfaces. Independent probes verified D1 health, KCNA,
    study/review routes, auth, the new unit-progress authorization boundary, and
    the unchanged canonical content manifest.
+10. ✅ Completed: KCNA Resources lesson exact source
+    `85d61fae6da76c34509e132840147d10ede55d6e` passed public CI run
+    `34750388714` and protected owner deployment run `34750501484`. The workflow
+    rebuilt the immutable public source, applied D1 migrations, deployed the
+    Worker, restored owner secrets, and passed its route/manifest/health checks.
+    Independent probes and a live browser interaction then verified the lesson,
+    raw artifact, 12-exercise manifest entry, D1 readiness, guest-write rejection,
+    causal feedback, and step progression.
 
 **Architecture decision:** no change is needed. The production path is the
 Astro Cloudflare Worker directly; the incompatible Sites preview is optional
@@ -251,7 +266,7 @@ and is not part of production.
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
 `✅ Adaptive learning v4` → `✅ Learning progress v5` → `✅ UI v6 live` →
-`✅ MCQ refresher v7 live` → `✅ Resources lesson pilot` → `⏳ Pilot release` →
+`✅ MCQ refresher v7 live` → `✅ Resources lesson live` → `🔄 Pilot evaluation` →
 `🔄 Owner beta gate`
 
 | Phase | Status | What it means |
@@ -271,7 +286,7 @@ and is not part of production.
 | Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
 | Learning-product UI v6 | ✅ Live | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Exact source `a9ebfe1` passed public CI `34588219031`, protected owner deploy `34588405704`, and independent production probes plus rendered mobile verification. |
 | KCNA MCQ refresher v7 | ✅ Live | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Exact source `9566794` passed public CI `34590530006`, protected owner deploy `34620453123`, and independent production route/manifest/D1 probes. |
-| KCNA Resources lesson pilot | ✅ Locally verified | One portable 12-exercise lesson and immersive player are complete. Browser-first desktop/tablet/mobile QA informed two interaction fixes; the full 41-pass browser matrix, content/type/unit/D1 checks, and production build are green. The pilot is not yet released, and other KCNA checkpoints remain deliberately unmigrated. |
+| KCNA Resources lesson pilot | ✅ Live | One portable 12-exercise lesson and immersive player are live from exact source `85d61fa`; public CI `34750388714`, protected owner deploy `34750501484`, independent production probes, and a real browser interaction passed. Other KCNA checkpoints wait for pilot evaluation. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -282,6 +297,15 @@ and was not modified while this application was built.
 
 ## Progress log
 
+- **2026-09-13 — KCNA Resources lesson pilot released:** exact public source
+  `85d61fa` passed CI run `34750388714` and protected owner deployment run
+  `34750501484`. Independent production probes verified 200 responses for the
+  launcher, lesson, raw YAML, manifest, health, auth configuration, and owner
+  auth-session routes; D1 is ready, health and manifest agree on SHA
+  `cc9d4bb2f664e2fa1fba540359a33887751b7c86084d55e4fd5b6660c065f2d6`,
+  and guest persistence returns 401. A real production browser session entered
+  through KCNA, answered the first task, inspected the complete causal feedback,
+  and advanced to step 2/12.
 - **2026-09-13 — KCNA Resources lesson pilot locally completed:** added the
   portable lesson contract and 12-step Resources lesson, immersive player,
   focused KCNA entry, private answer/completion/evidence persistence, revision
@@ -292,8 +316,8 @@ and was not modified while this application was built.
   The final clean Worker-runtime gate also updated Wrangler from 4.126.0 to
   4.131.1 after reproducing a Miniflare proxy crash and aligned URL assertions
   with production trailing slashes. Content/type/unit/D1/build checks pass; the
-  full browser matrix is 41 passed with 10 intentional skips. Awaiting review
-  and protected release; no other KCNA checkpoint has been migrated.
+  full browser matrix is 41 passed with 10 intentional skips. No other KCNA
+  checkpoint was migrated in this pilot.
 - **2026-09-11 — KCNA MCQ refresher v7 released:** exact source `9566794`
   passed public CI `34590530006` and protected owner deployment `34620453123`.
   Independent production probes verified `/practice/kcna`, the raw YAML practice
@@ -546,8 +570,9 @@ journey, tablet light, mobile light/dark, and a complete dark mobile journey.
 Guest privacy, authenticated assistance payloads, answer privacy, completion
 separation, non-FSRS evidence, revision revalidation, keyboard operation,
 touch targets, reduced motion, overflow, and serious/critical accessibility
-violations are covered. Production verification below still describes the
-currently live MCQ v7 release; the lesson pilot has not yet been deployed.
+violations are covered. Exact source `85d61fa` then passed public CI and the
+protected owner deployment. Independent live probes and a real browser
+interaction verified the released lesson behavior described at the top.
 
 ## Exact blockers
 
@@ -596,8 +621,8 @@ https://devops.hamardikan.com/api/auth/callback/google
 
 ## Deliberately not complete yet
 
-- Protected release and real-use evaluation of the KCNA Resources lesson pilot;
-  other KCNA checkpoints must wait for this pilot gate
+- Real-use evaluation of the KCNA Resources lesson pilot; other KCNA checkpoints
+  wait for this pilot gate
 - The owner-beta success gate (ten real focus sessions over seven days,
   scheduled recall, one revision revalidation, and a validated export)
 - Expansion from the current 37 units toward the broader 70–100-unit DevOps curriculum; the detailed KCNA-specific domain coverage is now implemented, while later content growth can deepen prerequisites and add post-KCNA paths without changing the content contract
@@ -611,10 +636,9 @@ implementation.
 
 ## Safe resume order
 
-1. Review and protected-release the locally verified KCNA Resources lesson
-   pilot, then verify its live route, raw lesson artifact, manifest, and D1
-   behavior against the exact public source.
-2. Use the pilot before deciding whether to migrate another KCNA checkpoint.
+1. Use the live Resources pilot across real study sessions and record friction,
+   completion, understanding, and return-review behavior.
+2. Evaluate that evidence before deciding whether to migrate another KCNA checkpoint.
    Do not bulk-migrate the remaining curriculum.
 3. Continue the owner-beta success gate: ten real focus sessions over seven days,
    scheduled recall, one content revalidation, and a full export.
