@@ -100,6 +100,200 @@ const mcqOptionSchema = z.object({
   code: z.boolean().default(false),
 });
 
+const lessonFeedbackSchema = z.object({
+  title: z.string().min(3),
+  explanation: z.string().min(20),
+  points: z.array(z.string().min(3)).default([]),
+  visual: z.array(z.string().min(1)).default([]),
+});
+
+const lessonLearnFirstSchema = z.object({
+  title: z.string().min(3),
+  body: z.string().min(20),
+  visual: z.array(z.string().min(1)).default([]),
+  variant_prompt: z.string().min(10),
+});
+
+const lessonExerciseBase = z.object({
+  id,
+  unit_id: id,
+  objective_ids: z.array(id).min(1),
+  evidence: z.enum(['encounter', 'recall', 'application']),
+  prompt: z.string().min(10),
+  hint: z.string().min(5).optional(),
+  learn_first: lessonLearnFirstSchema.optional(),
+  feedback: lessonFeedbackSchema,
+});
+
+const lessonChoiceOptionSchema = z.object({
+  id,
+  text: z.string().min(1),
+  rationale: z.string().min(10),
+});
+
+const lessonChoiceFields = {
+  options: z.array(lessonChoiceOptionSchema).min(2).max(8),
+  answer_ids: z.array(id).min(1),
+};
+
+const validateChoiceAnswers = (
+  exercise: { options: Array<{ id: string }>; answer_ids: string[] },
+  context: z.RefinementCtx,
+) => {
+  const optionIds = new Set(exercise.options.map((option) => option.id));
+  if (optionIds.size !== exercise.options.length) {
+    context.addIssue({ code: 'custom', path: ['options'], message: 'option IDs must be unique' });
+  }
+  if (new Set(exercise.answer_ids).size !== exercise.answer_ids.length) {
+    context.addIssue({ code: 'custom', path: ['answer_ids'], message: 'answer IDs must be unique' });
+  }
+  for (const answerId of exercise.answer_ids) {
+    if (!optionIds.has(answerId)) {
+      context.addIssue({ code: 'custom', path: ['answer_ids'], message: `unknown answer option ${answerId}` });
+    }
+  }
+};
+
+const chooseExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('choose'),
+  ...lessonChoiceFields,
+}).superRefine(validateChoiceAnswers);
+
+const predictStateExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('predict_state'),
+  state: z.array(z.string().min(1)).min(1),
+  ...lessonChoiceFields,
+}).superRefine(validateChoiceAnswers);
+
+const spotBugExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('spot_bug'),
+  code: z.string().min(10),
+  ...lessonChoiceFields,
+}).superRefine(validateChoiceAnswers);
+
+const terminalInspectExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('terminal_inspect'),
+  terminal: z.array(z.string().min(1)).min(1),
+  ...lessonChoiceFields,
+}).superRefine(validateChoiceAnswers);
+
+const orderedItemSchema = z.object({ id, text: z.string().min(1) });
+const orderedExerciseFields = {
+  items: z.array(orderedItemSchema).min(2).max(10),
+  correct_order: z.array(id).min(2),
+};
+const validateOrder = (
+  exercise: { items: Array<{ id: string }>; correct_order: string[] },
+  context: z.RefinementCtx,
+) => {
+  const itemIds = exercise.items.map((item) => item.id);
+  if (new Set(itemIds).size !== itemIds.length) {
+    context.addIssue({ code: 'custom', path: ['items'], message: 'item IDs must be unique' });
+  }
+  if (exercise.correct_order.length !== itemIds.length ||
+      new Set(exercise.correct_order).size !== exercise.correct_order.length ||
+      exercise.correct_order.some((itemId) => !itemIds.includes(itemId))) {
+    context.addIssue({ code: 'custom', path: ['correct_order'], message: 'correct_order must contain every item exactly once' });
+  }
+};
+
+const arrangeExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('arrange'),
+  ...orderedExerciseFields,
+}).superRefine(validateOrder);
+
+const traceExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('trace'),
+  ...orderedExerciseFields,
+}).superRefine(validateOrder);
+
+const commandBuilderExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('command_builder'),
+  ...orderedExerciseFields,
+}).superRefine(validateOrder);
+
+const connectExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('connect'),
+  left: z.array(orderedItemSchema).min(2).max(8),
+  right: z.array(orderedItemSchema).min(2).max(8),
+  matches: z.array(z.object({ left_id: id, right_id: id })).min(2),
+}).superRefine((exercise, context) => {
+  const leftIds = new Set(exercise.left.map((item) => item.id));
+  const rightIds = new Set(exercise.right.map((item) => item.id));
+  const matchedLeftIds = new Set(exercise.matches.map((match) => match.left_id));
+  if (leftIds.size !== exercise.left.length || rightIds.size !== exercise.right.length) {
+    context.addIssue({ code: 'custom', path: ['matches'], message: 'connect item IDs must be unique' });
+  }
+  if (exercise.matches.length !== exercise.left.length ||
+      matchedLeftIds.size !== exercise.left.length ||
+      exercise.matches.some((match) => !leftIds.has(match.left_id) || !rightIds.has(match.right_id))) {
+    context.addIssue({ code: 'custom', path: ['matches'], message: 'matches must map every left item to a known right item' });
+  }
+});
+
+const manifestFillExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('manifest_fill'),
+  manifest: z.string().min(20),
+  blanks: z.array(z.object({
+    id,
+    label: z.string().min(2),
+    options: z.array(z.object({ id, text: z.string().min(1) })).min(2).max(8),
+    answer_id: id,
+  })).min(1).max(6),
+}).superRefine((exercise, context) => {
+  for (const [index, blank] of exercise.blanks.entries()) {
+    const optionIds = new Set(blank.options.map((option) => option.id));
+    if (optionIds.size !== blank.options.length) {
+      context.addIssue({ code: 'custom', path: ['blanks', index, 'options'], message: 'blank option IDs must be unique' });
+    }
+    if (!optionIds.has(blank.answer_id)) {
+      context.addIssue({ code: 'custom', path: ['blanks', index, 'answer_id'], message: 'answer_id must reference a blank option' });
+    }
+  }
+});
+
+const explainExerciseSchema = lessonExerciseBase.extend({
+  kind: z.literal('explain'),
+  model_answer: z.string().min(20),
+  critical_points: z.array(z.string().min(3)).min(1),
+});
+
+export const lessonExerciseSchema = z.union([
+  chooseExerciseSchema,
+  arrangeExerciseSchema,
+  connectExerciseSchema,
+  commandBuilderExerciseSchema,
+  terminalInspectExerciseSchema,
+  manifestFillExerciseSchema,
+  traceExerciseSchema,
+  predictStateExerciseSchema,
+  spotBugExerciseSchema,
+  explainExerciseSchema,
+]);
+
+export const lessonSchema = z.object({
+  schema_version: z.literal(1),
+  id,
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  title: z.string().min(3),
+  summary: z.string().min(20),
+  revision: z.number().int().positive(),
+  certification: id,
+  checkpoint: z.string().min(2),
+  estimated_minutes: z.number().int().min(3).max(90),
+  verified_at: isoDate,
+  source_unit_ids: z.array(id).min(1),
+  exercises: z.array(lessonExerciseSchema).min(1),
+}).superRefine((lesson, context) => {
+  const exerciseIds = new Set<string>();
+  for (const [index, exercise] of lesson.exercises.entries()) {
+    if (exerciseIds.has(exercise.id)) {
+      context.addIssue({ code: 'custom', path: ['exercises', index, 'id'], message: `duplicate exercise ID ${exercise.id}` });
+    }
+    exerciseIds.add(exercise.id);
+  }
+});
+
 const mcqQuestionSchema = z.object({
   id,
   checkpoint: z.enum(['fundamentals', 'resources', 'cluster-behavior', 'cloud-native']),
@@ -185,6 +379,8 @@ export type CardFile = z.infer<typeof cardFileSchema>;
 export type SourceFile = z.infer<typeof sourceFileSchema>;
 export type PracticeFile = z.infer<typeof practiceFileSchema>;
 export type PracticeSet = z.infer<typeof practiceSetSchema>;
+export type Lesson = z.infer<typeof lessonSchema>;
+export type LessonExercise = z.infer<typeof lessonExerciseSchema>;
 export type LearningPath = z.infer<typeof pathSchema>;
 export type CertificationRegistry = z.infer<typeof certificationRegistrySchema>;
 

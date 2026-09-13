@@ -9,6 +9,7 @@ interface Props {
   canonicalPath?: string;
   pageClass?: string;
   activeSection?: 'kcna';
+  immersive?: boolean;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   canonicalPath = Astro.url.pathname,
   pageClass = '',
   activeSection,
+  immersive = false,
 } = Astro.props;
 const pageTitle = title === 'DevOps by hmrdkn-labs' ? title : `${title} · DevOps by hmrdkn-labs`;
 const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
@@ -62,9 +64,9 @@ const isCurrent = (item: typeof navigation[number]) => {
     </script>
     <title>{pageTitle}</title>
   </head>
-  <body class={pageClass}>
+  <body class={[pageClass, immersive ? 'immersive-page' : ''].filter(Boolean).join(' ')}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header">
+    {!immersive && <header class="site-header">
       <div class="site-header-inner">
         <a class="brand" href="/" aria-label="DevOps by hmrdkn-labs home">
           <img class="brand-mark" src="/favicon.svg" alt="" width="30" height="30" />
@@ -90,17 +92,17 @@ const isCurrent = (item: typeof navigation[number]) => {
           </details>
         </div>
       </div>
-    </header>
+    </header>}
     <main id="main"><slot /></main>
-    <nav class="mobile-dock" aria-label="Primary mobile navigation">
+    {!immersive && <nav class="mobile-dock" aria-label="Primary mobile navigation">
       {mobileNavigation.map((item) => (
         <a href={item.href} aria-current={isCurrent(item as typeof navigation[number]) ? 'page' : undefined}>
           <span class="mobile-dock-mark" aria-hidden="true"></span>
           <span>{item.label}</span>
         </a>
       ))}
-    </nav>
-    <footer class="site-footer">
+    </nav>}
+    {!immersive && <footer class="site-footer">
       <div>
         <strong>DevOps by hmrdkn-labs</strong>
         <p>An independent learning project. Not affiliated with or endorsed by CNCF, Linux Foundation, Kubernetes, Docker, AWS, or KodeKloud.</p>
@@ -113,6 +115,6 @@ const isCurrent = (item: typeof navigation[number]) => {
         <a href="https://github.com/hmrdkn-labs/devops">GitHub</a>
       </div>
       <p class="license-line">Code and examples: MIT · Prose and original diagrams: CC BY-SA 4.0</p>
-    </footer>
+    </footer>}
   </body>
 </html>

@@ -15,6 +15,7 @@ import { parse } from 'yaml';
 import {
   cardFileSchema,
   certificationRegistrySchema,
+  lessonSchema,
   pathSchema,
   practiceSetSchema,
   practiceFileSchema,
@@ -22,6 +23,7 @@ import {
   sourceFileSchema,
   unitMetadataSchema,
   type LearningPath,
+  type Lesson,
   type LearningUnit,
   type PracticeSet,
 } from '../../src/lib/content/schema';
@@ -189,6 +191,44 @@ export function validatePracticeSets(
   }
 }
 
+export function validateLessons(
+  lessons: Lesson[],
+  units: LearningUnit[],
+  certificationIds: Set<string>,
+) {
+  const unitById = new Map(units.map((unit) => [unit.metadata.id, unit]));
+  const lessonIds = new Set<string>();
+  const lessonSlugs = new Set<string>();
+  const exerciseIds = new Set<string>();
+
+  for (const lesson of lessons) {
+    if (lessonIds.has(lesson.id)) throw new Error(`Duplicate lesson ID: ${lesson.id}`);
+    if (lessonSlugs.has(lesson.slug)) throw new Error(`Duplicate lesson slug: ${lesson.slug}`);
+    lessonIds.add(lesson.id);
+    lessonSlugs.add(lesson.slug);
+    if (!certificationIds.has(lesson.certification)) {
+      throw new Error(`${lesson.id}: unknown certification ${lesson.certification}`);
+    }
+    const sourceUnits = new Set(lesson.source_unit_ids);
+    for (const unitId of sourceUnits) {
+      if (!unitById.has(unitId)) throw new Error(`${lesson.id}: unknown source unit ${unitId}`);
+    }
+    for (const exercise of lesson.exercises) {
+      if (exerciseIds.has(exercise.id)) throw new Error(`Duplicate lesson exercise ID: ${exercise.id}`);
+      exerciseIds.add(exercise.id);
+      if (!sourceUnits.has(exercise.unit_id)) {
+        throw new Error(`${exercise.id}: unit ${exercise.unit_id} is not a lesson source unit`);
+      }
+      const unit = unitById.get(exercise.unit_id);
+      if (!unit) throw new Error(`${exercise.id}: unknown unit ${exercise.unit_id}`);
+      const objectiveIds = new Set(unit.metadata.objectives.map((objective) => objective.id));
+      for (const objectiveId of exercise.objective_ids) {
+        if (!objectiveIds.has(objectiveId)) throw new Error(`${exercise.id}: unknown objective ${objectiveId}`);
+      }
+    }
+  }
+}
+
 export function manifestEntry(unit: LearningUnit) {
   const objectiveHashes = Object.fromEntries(unit.metadata.objectives.map((objective) => {
     const questions = unit.questions.filter((question) => question.objective_ids.includes(objective.id));
@@ -286,14 +326,25 @@ async function main() {
     .sort();
   const practiceSets = await Promise.all(practiceFiles.map((file) =>
     readYaml(path.join(practiceDir, file), practiceSetSchema)));
+  const lessonDir = path.join(contentRoot, 'lessons');
+  const lessonFiles = (await readdir(lessonDir))
+    .filter((file) => file.endsWith('.yaml'))
+    .sort();
+  const lessons = await Promise.all(lessonFiles.map((file) =>
+    readYaml(path.join(lessonDir, file), lessonSchema)));
 
   const certificationIds = new Set(certifications.certifications.map((item) => item.id));
   validateGraph(units, paths, certificationIds);
   validatePracticeSets(practiceSets, units, certificationIds);
+  validateLessons(lessons, units, certificationIds);
   const entries = units.map(manifestEntry);
   const verifiedAt = units
     .map((unit) => unit.metadata.verified_at)
-    .concat(certifications.verified_at, ...practiceSets.map((set) => set.verified_at))
+    .concat(
+      certifications.verified_at,
+      ...practiceSets.map((set) => set.verified_at),
+      ...lessons.map((lesson) => lesson.verified_at),
+    )
     .sort()
     .at(-1) as string;
   const manifestBody = {
@@ -308,6 +359,7 @@ async function main() {
     units: entries,
     paths,
     certifications,
+    lessons,
     practice_sets: practiceSets.map((set) => ({
       id: set.id,
       slug: set.slug,
@@ -327,7 +379,7 @@ async function main() {
   };
 
   if (checkOnly) {
-    console.log(`Validated ${units.length} units, ${paths.length} path, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
+    console.log(`Validated ${units.length} units, ${paths.length} path, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, ${lessons.length} interactive lesson, ${lessons.reduce((total, lesson) => total + lesson.exercises.length, 0)} lesson exercises, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
     return;
   }
 

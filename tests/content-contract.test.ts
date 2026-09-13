@@ -1,7 +1,14 @@
 import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
-import { practiceSetSchema, unitMetadataSchema, type LearningPath, type LearningUnit } from '../src/lib/content/schema';
-import { validateGraph } from '../tools/content/build';
+import {
+  lessonSchema,
+  practiceSetSchema,
+  unitMetadataSchema,
+  type LearningPath,
+  type LearningUnit,
+  type Lesson,
+} from '../src/lib/content/schema';
+import { validateGraph, validateLessons } from '../tools/content/build';
 
 function unit(
   id = 'fpp:test',
@@ -78,6 +85,49 @@ function pathFor(units: LearningUnit[]): LearningPath {
   };
 }
 
+function lessonFor(source: LearningUnit = unit()): Lesson {
+  const objectiveId = source.metadata.objectives[0]!.id;
+  return lessonSchema.parse({
+    schema_version: 1,
+    id: 'lesson:test',
+    slug: 'test-lesson',
+    title: 'Test interactive lesson',
+    summary: 'A complete portable lesson fixture used to validate interaction contracts.',
+    revision: 1,
+    certification: 'cncf:kcna',
+    checkpoint: 'test',
+    estimated_minutes: 10,
+    verified_at: '2026-09-12',
+    source_unit_ids: [source.metadata.id],
+    exercises: [{
+      id: 'lesson:test/choose',
+      kind: 'choose',
+      unit_id: source.metadata.id,
+      objective_ids: [objectiveId],
+      evidence: 'recall',
+      prompt: 'Which option satisfies this deterministic lesson fixture?',
+      options: [
+        { id: 'right', text: 'The valid option', rationale: 'This option is correct for the deterministic fixture.' },
+        { id: 'wrong', text: 'The distractor', rationale: 'This option is deliberately wrong for the deterministic fixture.' },
+      ],
+      answer_ids: ['right'],
+      hint: 'Choose the option described as valid.',
+      learn_first: {
+        title: 'Fixture concept',
+        body: 'This small concept exists only to exercise the portable learn-first contract.',
+        visual: ['input → reasoning → answer'],
+        variant_prompt: 'Which fixture option remains valid after seeing the concept?',
+      },
+      feedback: {
+        title: 'The fixture is deterministic',
+        explanation: 'The answer and distractor are deliberately stable so validation remains deterministic.',
+        points: ['Feedback explains why the answer is valid.'],
+        visual: ['right ✓', 'wrong ✗'],
+      },
+    }],
+  });
+}
+
 describe('content contract', () => {
   it('validates the complete checked-in corpus', () => {
     expect(() => execFileSync(process.execPath, [
@@ -149,5 +199,83 @@ describe('content contract', () => {
       ...valid,
       questions: [{ ...valid.questions[0], answer_ids: ['a', 'missing'] }],
     })).toThrow('unknown answer option');
+  });
+
+  it('validates lesson graph ownership, certifications, and globally immutable IDs', () => {
+    const source = unit();
+    const valid = lessonFor(source);
+    expect(() => validateLessons([valid], [source], new Set(['cncf:kcna']))).not.toThrow();
+
+    const duplicateId = structuredClone(valid);
+    duplicateId.slug = 'second-lesson';
+    expect(() => validateLessons([valid, duplicateId], [source], new Set(['cncf:kcna']))).toThrow('Duplicate lesson ID');
+
+    const duplicateSlug = structuredClone(valid);
+    duplicateSlug.id = 'lesson:second';
+    expect(() => validateLessons([valid, duplicateSlug], [source], new Set(['cncf:kcna']))).toThrow('Duplicate lesson slug');
+
+    const duplicateExercise = structuredClone(valid);
+    duplicateExercise.id = 'lesson:second';
+    duplicateExercise.slug = 'second-lesson';
+    expect(() => validateLessons([valid, duplicateExercise], [source], new Set(['cncf:kcna']))).toThrow('Duplicate lesson exercise ID');
+
+    const unknownSource = structuredClone(valid);
+    unknownSource.source_unit_ids = ['fpp:missing'];
+    expect(() => validateLessons([unknownSource], [source], new Set(['cncf:kcna']))).toThrow('unknown source unit');
+
+    const wrongObjective = structuredClone(valid);
+    wrongObjective.exercises[0]!.objective_ids = ['fpp:missing/objective'];
+    expect(() => validateLessons([wrongObjective], [source], new Set(['cncf:kcna']))).toThrow('unknown objective');
+
+    const wrongCertification = structuredClone(valid);
+    wrongCertification.certification = 'cncf:missing';
+    expect(() => validateLessons([wrongCertification], [source], new Set(['cncf:kcna']))).toThrow('unknown certification');
+  });
+
+  it('rejects malformed lesson answer, order, match, and blank contracts', () => {
+    const valid = lessonFor();
+    const invalidAnswer = structuredClone(valid);
+    (invalidAnswer.exercises[0] as Extract<Lesson['exercises'][number], { kind: 'choose' }>).answer_ids = ['missing'];
+    expect(() => lessonSchema.parse(invalidAnswer)).toThrow('unknown answer option');
+
+    const duplicateAnswer = structuredClone(valid);
+    (duplicateAnswer.exercises[0] as Extract<Lesson['exercises'][number], { kind: 'choose' }>).answer_ids = ['right', 'right'];
+    expect(() => lessonSchema.parse(duplicateAnswer)).toThrow('answer IDs must be unique');
+
+    const base = valid.exercises[0]!;
+    const invalidOrder = structuredClone(valid) as unknown as Record<string, unknown>;
+    invalidOrder.exercises = [{
+      ...base,
+      kind: 'arrange',
+      items: [{ id: 'one', text: 'One' }, { id: 'two', text: 'Two' }, { id: 'three', text: 'Three' }],
+      correct_order: ['one', 'one', 'two'],
+    }];
+    expect(() => lessonSchema.parse(invalidOrder)).toThrow('correct_order must contain every item exactly once');
+
+    const invalidMatch = structuredClone(valid) as unknown as Record<string, unknown>;
+    invalidMatch.exercises = [{
+      ...base,
+      kind: 'connect',
+      left: [{ id: 'one', text: 'One' }, { id: 'two', text: 'Two' }],
+      right: [{ id: 'first', text: 'First' }, { id: 'second', text: 'Second' }],
+      matches: [{ left_id: 'one', right_id: 'first' }, { left_id: 'one', right_id: 'second' }],
+    }];
+    expect(() => lessonSchema.parse(invalidMatch)).toThrow('matches must map every left item');
+
+    const invalidBlank = structuredClone(valid) as unknown as Record<string, unknown>;
+    invalidBlank.exercises = [{
+      ...base,
+      kind: 'manifest_fill',
+      manifest: 'apiVersion: apps/v1\nkind: Deployment\nspec: {}',
+      blanks: [{
+        id: 'replicas',
+        label: 'Replica count',
+        options: [{ id: 'two', text: '2' }, { id: 'three', text: '3' }],
+        answer_id: 'missing',
+      }],
+    }];
+    expect(() => lessonSchema.parse(invalidBlank)).toThrow('answer_id must reference a blank option');
+
+    expect(() => lessonSchema.parse({ ...valid, exercises: [{ kind: 'choose' }] })).toThrow();
   });
 });

@@ -62,7 +62,74 @@ try {
     throw new Error('Stable task completion did not carry across content revisions');
   }
 
-  console.log('D1 migration, due index, and idempotency checks passed.');
+  const lessonEvidence = run('d1', 'execute', 'DB', '--local', '--config', config, '--persist-to', persistence,
+    '--command', `INSERT OR IGNORE INTO attempt
+      (id,user_id,idempotency_key,unit_id,unit_revision,question_id,objective_ids_json,answer_markdown,critical_points_json,submitted_at)
+      VALUES ('attempt:lesson-assisted','owner','lesson-assisted','fpp:test',1,'lesson:test/apply','["fpp:test.objective"]','assisted result','[]',20);
+      INSERT OR IGNORE INTO attempt
+      (id,user_id,idempotency_key,unit_id,unit_revision,question_id,objective_ids_json,answer_markdown,critical_points_json,submitted_at)
+      VALUES ('attempt:lesson-assisted-duplicate','owner','lesson-assisted','fpp:test',1,'lesson:test/apply','["fpp:test.objective"]','duplicate','[]',21);
+      INSERT OR IGNORE INTO unit_task_progress
+      (user_id,unit_id,unit_revision,task_type,task_id,completed_at,updated_at)
+      VALUES ('owner','fpp:test',1,'lesson-exercise','lesson:test/apply',20,20);
+      INSERT OR IGNORE INTO private_answer
+      (id,user_id,unit_id,unit_revision,question_id,answer_markdown,created_at)
+      VALUES ('answer:lesson-explain','owner','fpp:test',1,'lesson:test/explain','private explanation',20);
+      INSERT INTO unit_evidence
+      (user_id,unit_id,objective_id,objective_hash,encountered_at,updated_at)
+      VALUES ('owner','fpp:test','fpp:test.objective','hash-v1',20,20)
+      ON CONFLICT(user_id,unit_id,objective_id) DO UPDATE SET
+        objective_hash=excluded.objective_hash,
+        encountered_at=COALESCE(unit_evidence.encountered_at,excluded.encountered_at),
+        updated_at=excluded.updated_at;
+      INSERT OR IGNORE INTO attempt
+      (id,user_id,idempotency_key,unit_id,unit_revision,question_id,objective_ids_json,answer_markdown,critical_points_json,submitted_at)
+      VALUES ('attempt:lesson-clean','owner','lesson-clean','fpp:test',1,'lesson:test/apply','["fpp:test.objective"]','clean result','[]',30);
+      UPDATE unit_evidence SET applied_at=30,application_score=MAX(application_score,0.7),revalidation_required=0,updated_at=30
+      WHERE user_id='owner' AND unit_id='fpp:test' AND objective_id='fpp:test.objective';
+      SELECT
+        (SELECT COUNT(*) FROM attempt WHERE user_id='owner' AND idempotency_key='lesson-assisted') AS lesson_attempt_count,
+        (SELECT COUNT(*) FROM unit_task_progress WHERE user_id='owner' AND task_type='lesson-exercise') AS lesson_completion_count,
+        (SELECT COUNT(*) FROM private_answer WHERE id='answer:lesson-explain') AS lesson_private_answer_count,
+        (SELECT application_score FROM unit_evidence WHERE user_id='owner' AND unit_id='fpp:test' AND objective_id='fpp:test.objective') AS lesson_application_score,
+        (SELECT retention_score FROM unit_evidence WHERE user_id='owner' AND unit_id='fpp:test' AND objective_id='fpp:test.objective') AS lesson_retention_score,
+        (SELECT COUNT(*) FROM fsrs_card WHERE user_id='owner' AND card_id LIKE 'lesson:%') AS lesson_fsrs_count;`);
+  for (const expected of [
+    /lesson_attempt_count[\s\S]*?1/,
+    /lesson_completion_count[\s\S]*?1/,
+    /lesson_private_answer_count[\s\S]*?1/,
+    /lesson_application_score[\s\S]*?0\.7/,
+    /lesson_retention_score[\s\S]*?0/,
+    /lesson_fsrs_count[\s\S]*?0/,
+  ]) {
+    if (!lessonEvidence.match(expected)) throw new Error(`Lesson evidence D1 invariant failed: ${expected}`);
+  }
+
+  const lessonRevalidation = run('d1', 'execute', 'DB', '--local', '--config', config, '--persist-to', persistence,
+    '--command', `INSERT INTO unit_evidence
+      (user_id,unit_id,objective_id,objective_hash,encountered_at,updated_at)
+      VALUES ('owner','fpp:test','fpp:test.objective','hash-v2',40,40)
+      ON CONFLICT(user_id,unit_id,objective_id) DO UPDATE SET
+        objective_hash=excluded.objective_hash,
+        encountered_at=excluded.encountered_at,
+        recalled_at=NULL,
+        recall_score=0,
+        applied_at=NULL,
+        application_score=0,
+        retained_at=NULL,
+        retention_score=0,
+        revalidation_required=1,
+        updated_at=excluded.updated_at;
+      SELECT objective_hash,application_score,retention_score,revalidation_required
+      FROM unit_evidence WHERE user_id='owner' AND unit_id='fpp:test' AND objective_id='fpp:test.objective';`);
+  if (!lessonRevalidation.includes('hash-v2') ||
+      !lessonRevalidation.match(/application_score[\s\S]*?0/) ||
+      !lessonRevalidation.match(/retention_score[\s\S]*?0/) ||
+      !lessonRevalidation.match(/revalidation_required[\s\S]*?1/)) {
+    throw new Error('Lesson objective-hash revalidation did not reset affected evidence');
+  }
+
+  console.log('D1 migration, due index, idempotency, lesson evidence, and revalidation checks passed.');
 } finally {
   await rm(temporary, { recursive: true, force: true });
 }

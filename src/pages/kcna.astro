@@ -126,6 +126,13 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
               <small>{checkpoint.units.length} units</small>
             </div>
           </summary>
+          {checkpoint.id === 'resources' && (
+            <a class="kcna-lesson-launch" href="/lesson/kcna-kubernetes-resources">
+              <span class="section-kicker">Interactive lesson</span>
+              <strong>Learn Kubernetes Resources by doing →</strong>
+              <small>12 focused interactions · about 16 minutes</small>
+            </a>
+          )}
           <ol>
             {checkpoint.units.map(({ unit, index, weight }) => (
               <li data-unit-id={unit.metadata.id}>

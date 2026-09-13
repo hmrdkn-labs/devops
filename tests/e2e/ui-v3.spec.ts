@@ -40,10 +40,11 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await page.getByRole('button', { name: 'Check answer' }).click();
 
   await expect(page.getByText('Not quite', { exact: true })).toBeVisible();
-  await expect(page.getByText(/The API server is the front door/)).toBeVisible();
-  await expect(page.getByText(/The scheduler chooses a feasible node/)).toBeVisible();
-  await expect(page.getByText(/Controllers reconcile desired and observed state/)).toBeVisible();
-  await expect(page.getByText(/The kubelet is a node agent/)).toBeVisible();
+  const optionExplanations = page.locator('.mcq-options small');
+  await expect(optionExplanations.filter({ hasText: /The API server is the front door/ })).toBeVisible();
+  await expect(optionExplanations.filter({ hasText: /The scheduler chooses a feasible node/ })).toBeVisible();
+  await expect(optionExplanations.filter({ hasText: /Controllers reconcile desired and observed state/ })).toBeVisible();
+  await expect(optionExplanations.filter({ hasText: /The kubelet is a node agent/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Next question/ })).toBeVisible();
 });
 

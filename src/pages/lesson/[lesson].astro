@@ -1,0 +1,28 @@
+---
+import LessonPlayer from '@/components/LessonPlayer';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { lessons } from '@/lib/content/catalog';
+import type { Lesson } from '@/lib/content/schema';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return lessons.map((lesson) => ({
+    params: { lesson: lesson.slug },
+    props: { lesson },
+  }));
+}
+
+const { lesson } = Astro.props as { lesson: Lesson };
+---
+
+<BaseLayout
+  title={lesson.title}
+  description={lesson.summary}
+  canonicalPath={'/lesson/' + lesson.slug}
+  pageClass="lesson-page"
+  activeSection="kcna"
+  immersive
+>
+  <LessonPlayer lesson={lesson} client:load />
+</BaseLayout>

@@ -1,12 +1,38 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-11 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-13 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
 
-**KCNA MCQ refresher v7 is release-ready:** `/practice/kcna` adds a portable
-YAML-backed bank of **26 independently authored questions** across Fundamentals,
+**Interactive Lesson Player pilot is locally complete and awaiting release:**
+the single **KCNA → Kubernetes Resources** vertical slice now has a portable
+12-step lesson, immersive `/lesson/kcna-kubernetes-resources` player, focused
+KCNA launcher, and a private owner evidence endpoint. It supports choose,
+arrange, connect, command-builder, terminal-inspection, manifest-fill, trace,
+predict-state, spot-bug, and explain interactions. Assistance, reveal, wrong
+answers, and Learn-first create Encountered evidence only; a clean correct
+attempt may create Recall or Application evidence. Completion is tracked
+separately, and lesson activity never manufactures Retained/FSRS evidence.
+
+Browser-first QA covered a complete 12-step dark desktop journey, 1024×768
+light, and 390×844 light/dark—including a complete mobile journey. It found and
+fixed a clipped smooth-scroll transition and a pre-hydration tap race. Those
+behaviors are now encoded in Playwright with keyboard, focus, touch-target,
+overflow, theme, reduced-motion, safe-exit, assistance-payload, and serious /
+critical axe checks. A clean Worker-runtime run also exposed a Wrangler 4.126
+proxy crash and production trailing-slash behavior; Wrangler is now pinned to
+4.131.1 and the Worker-native contracts pass. The full matrix is **41 passed
+with 10 intentional skips**;
+content validation, 76-file typecheck, 35 unit tests, real local D1 tests, and
+the production build also pass. **There is no implementation blocker.** This
+pilot is not yet claimed live: the next milestone is review and protected
+release, then evaluation before any other KCNA checkpoint is migrated.
+
+**KCNA MCQ refresher v7 is live:** exact public source
+`9566794ca8b4834e1a686ef09b9457420eb0864a` passed public CI run
+`34590530006` and protected owner deployment run `34620453123`.
+`/practice/kcna` adds a portable YAML-backed bank of **26 independently authored questions** across Fundamentals,
 Resources, Cluster Behavior, and Cloud-Native Context. The bank includes **9
 kubectl command questions** and **7 multi-select questions**. Quick sessions use
 12 questions (three per checkpoint), while the full bank remains available on
@@ -20,7 +46,10 @@ type, unit, D1, build, desktop/tablet/mobile interaction, accessibility, and
 overflow checks pass; the browser matrix has **28 passed and 2 intentional
 skips**. A separate existing study hydration race was also fixed by keeping
 Hint/Learn-first controls disabled until their client handlers are attached.
-Awaiting public CI and protected owner deployment.
+Independent production probes returned 200 for home, KCNA, the MCQ route, the
+raw practice YAML, and the owner auth-session route. D1 reports `ready` with
+manifest SHA `e3f93027e121e9f2ca0a01b8a500089982b5b7492ca8ec91e0369fa593d1ce3b`,
+and the live manifest advertises `kcna-mcq` with 26 questions.
 
 **Learning-product UI v6 is live:** exact public source
 `a9ebfe1a9f8ca9384cccbbef5ba2a48205ffcfc3` passed public CI run
@@ -222,7 +251,8 @@ and is not part of production.
 `✅ Guest release` → `✅ Owner release` → `✅ UI reset` → `✅ Detailed KCNA source` →
 `✅ KCNA protected release` → `✅ UI v3 release` → `✅ KCNA focus workspace` →
 `✅ Adaptive learning v4` → `✅ Learning progress v5` → `✅ UI v6 live` →
-`🔄 MCQ refresher v7 release` → `🔄 Owner beta gate`
+`✅ MCQ refresher v7 live` → `✅ Resources lesson pilot` → `⏳ Pilot release` →
+`🔄 Owner beta gate`
 
 | Phase | Status | What it means |
 | --- | --- | --- |
@@ -240,7 +270,8 @@ and is not part of production.
 | Adaptive learning v4 | ✅ Live | `/kcna` now chooses the next focused action, scopes review to KCNA, exposes checkpoint/mastery/weak-spot evidence, and supports Study, Hint, Learn-first, and Reference paths without faking recall. Public CI `34581879391`, protected owner deploy `34582116074`, and independent live probes passed for exact source `abc2d69`. |
 | Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
 | Learning-product UI v6 | ✅ Live | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Exact source `a9ebfe1` passed public CI `34588219031`, protected owner deploy `34588405704`, and independent production probes plus rendered mobile verification. |
-| KCNA MCQ refresher v7 | 🔄 Release-ready | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Local checks and the 28-pass browser matrix are green; public CI/deployment are pending. |
+| KCNA MCQ refresher v7 | ✅ Live | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Exact source `9566794` passed public CI `34590530006`, protected owner deploy `34620453123`, and independent production route/manifest/D1 probes. |
+| KCNA Resources lesson pilot | ✅ Locally verified | One portable 12-exercise lesson and immersive player are complete. Browser-first desktop/tablet/mobile QA informed two interaction fixes; the full 41-pass browser matrix, content/type/unit/D1 checks, and production build are green. The pilot is not yet released, and other KCNA checkpoints remain deliberately unmigrated. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
 deployment boundary: `hamardikan/hamardikan-infra`
@@ -251,6 +282,24 @@ and was not modified while this application was built.
 
 ## Progress log
 
+- **2026-09-13 — KCNA Resources lesson pilot locally completed:** added the
+  portable lesson contract and 12-step Resources lesson, immersive player,
+  focused KCNA entry, private answer/completion/evidence persistence, revision
+  validation, raw/archive/manifest output, and authoring documentation. Manual
+  browser QA traversed the complete lesson on desktop and mobile and checked
+  1024×768 plus 390×844 light/dark layouts. It drove fixes for transition
+  positioning and pre-hydration taps before Playwright codified the journey.
+  The final clean Worker-runtime gate also updated Wrangler from 4.126.0 to
+  4.131.1 after reproducing a Miniflare proxy crash and aligned URL assertions
+  with production trailing slashes. Content/type/unit/D1/build checks pass; the
+  full browser matrix is 41 passed with 10 intentional skips. Awaiting review
+  and protected release; no other KCNA checkpoint has been migrated.
+- **2026-09-11 — KCNA MCQ refresher v7 released:** exact source `9566794`
+  passed public CI `34590530006` and protected owner deployment `34620453123`.
+  Independent production probes verified `/practice/kcna`, the raw YAML practice
+  set, owner auth-session route, and D1-ready health. The live manifest exposes
+  `kcna-mcq` with 26 questions and manifest SHA
+  `e3f93027e121e9f2ca0a01b8a500089982b5b7492ca8ec91e0369fa593d1ce3b`.
 - **2026-09-11 — KCNA MCQ refresher v7 prepared:** added a portable 26-question
   practice set plus a dedicated `/practice/kcna` learning-product surface with
   Quick 12/all-bank modes, command recognition, select-all questions, per-option
@@ -480,21 +529,25 @@ and was not modified while this application was built.
 
 ## Verification at the stopping point
 
-The following completed successfully from a clean dependency install:
+The current KCNA Resources lesson pilot completed the following checks:
 
 ```text
-npm run check       # 37 units, 2 paths, 191 cards; 19 unit/privacy tests
-npm run build       # generated the 29-unit /paths/kcna and portable exports
-npm run revision:check
-npm run test:e2e    # 19 passed, 2 intentional skips; desktop/tablet/mobile, light/dark
+npm run content:check  # 37 units, 2 paths, 26 MCQs, 1 lesson / 12 exercises, 191 cards
+npm run typecheck      # 76 files; 0 errors, warnings, or hints
+npm test               # 35 passed
+npm run test:d1        # migration, idempotency, lesson evidence, and revalidation
+npm run test:e2e       # 41 passed, 10 intentional skips; desktop/tablet/mobile
+npm run build          # Cloudflare Worker production build, lesson route included
 git diff --check
 ```
 
-Additional checks passed for an empty D1 migration, indexed due-review query,
-duplicate-submission idempotency, guest privacy, accessibility, and a stable
-content-archive checksum across repeated builds. The private infrastructure
-validator suite and a Wrangler Worker dry-run passed before release; protected
-run `33137237808` now also verifies the production Worker and D1 health.
+Manual browser QA preceded Playwright and covered a complete dark desktop
+journey, tablet light, mobile light/dark, and a complete dark mobile journey.
+Guest privacy, authenticated assistance payloads, answer privacy, completion
+separation, non-FSRS evidence, revision revalidation, keyboard operation,
+touch targets, reduced motion, overflow, and serious/critical accessibility
+violations are covered. Production verification below still describes the
+currently live MCQ v7 release; the lesson pilot has not yet been deployed.
 
 ## Exact blockers
 
@@ -543,6 +596,8 @@ https://devops.hamardikan.com/api/auth/callback/google
 
 ## Deliberately not complete yet
 
+- Protected release and real-use evaluation of the KCNA Resources lesson pilot;
+  other KCNA checkpoints must wait for this pilot gate
 - The owner-beta success gate (ten real focus sessions over seven days,
   scheduled recall, one revision revalidation, and a validated export)
 - Expansion from the current 37 units toward the broader 70–100-unit DevOps curriculum; the detailed KCNA-specific domain coverage is now implemented, while later content growth can deepen prerequisites and add post-KCNA paths without changing the content contract
@@ -556,11 +611,16 @@ implementation.
 
 ## Safe resume order
 
-1. Run the owner-beta success gate: ten real focus sessions over seven days,
+1. Review and protected-release the locally verified KCNA Resources lesson
+   pilot, then verify its live route, raw lesson artifact, manifest, and D1
+   behavior against the exact public source.
+2. Use the pilot before deciding whether to migrate another KCNA checkpoint.
+   Do not bulk-migrate the remaining curriculum.
+3. Continue the owner-beta success gate: ten real focus sessions over seven days,
    scheduled recall, one content revalidation, and a full export.
-2. Review learning evidence from the beta, then deepen weak KCNA topics or
+4. Review learning evidence from the beta, then deepen weak KCNA topics or
    begin the next certification path as a content-only increment.
-3. Keep UI changes inside the v3 design contract and use the browser evidence
+5. Keep UI changes inside the v3 design contract and use the browser evidence
    matrix to catch hierarchy, accessibility, and responsive regressions.
 
 Do not place Cloudflare resource IDs, OAuth credentials, owner provider IDs, or

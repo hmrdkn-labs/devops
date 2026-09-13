@@ -1,0 +1,508 @@
+schema_version: 1
+id: lesson:kcna-kubernetes-resources
+slug: kcna-kubernetes-resources
+title: KCNA Kubernetes Resources
+summary: Build the Kubernetes resource model by predicting reconciliation, tracing ownership, reading manifests, and proving live state.
+revision: 1
+certification: cncf:kcna
+checkpoint: resources
+estimated_minutes: 16
+verified_at: 2026-09-12
+source_unit_ids:
+  - fpp:kubernetes-pod-model
+  - fpp:pods-workloads
+  - fpp:kubernetes-labels-replicasets
+  - fpp:kubernetes-deployments-rollouts
+  - fpp:kubernetes-apply-live-state
+  - fpp:kubernetes-namespaces-scope
+  - fpp:kcna-kubernetes-resources-review
+exercises:
+  - id: lesson:kcna-kubernetes-resources/predict-replacement
+    kind: predict_state
+    unit_id: fpp:kubernetes-labels-replicasets
+    objective_ids:
+      - fpp:kubernetes-labels-replicasets/reconciliation
+    evidence: application
+    prompt: A ReplicaSet has desired replicas 3 and all three Pods are running. One Pod is deleted. What should happen next?
+    state:
+      - "desired: 3 Pods"
+      - "observed: 2 Pods after deletion"
+    options:
+      - id: stay-two
+        text: It stays at 2 until a human runs kubectl apply again.
+        rationale: A ReplicaSet continuously reconciles observed replicas against its desired replica count.
+      - id: replicaset-replaces
+        text: The ReplicaSet creates a replacement Pod to return to 3.
+        rationale: The desired count is still 3, so the ReplicaSet acts when observed state falls to 2.
+      - id: deployment-scales
+        text: The Deployment changes its desired replicas field to 2.
+        rationale: Deleting a Pod does not change the Deployment specification or desired replica count.
+    answer_ids: [replicaset-replaces]
+    hint: Separate desired state from the Pod that happened to disappear.
+    learn_first:
+      title: Desired state survives an individual Pod.
+      body: A ReplicaSet repeatedly compares the number of matching Pods it observes with the replica count it should maintain. Deleting one Pod changes observation, not desired state.
+      visual:
+        - "desired 3 → observed 2 → reconcile → observed 3"
+      variant_prompt: A three-replica ReplicaSet loses one matching Pod after a node failure. What should happen next?
+    feedback:
+      title: The ReplicaSet closes the gap.
+      explanation: The deletion changed observed state only. Desired replicas remained 3, so the ReplicaSet creates another matching Pod.
+      points:
+        - A controller reacts to a difference between desired and observed state.
+        - Deleting a managed Pod is not the same operation as scaling a workload.
+      visual:
+        - "desired = 3"
+        - "observed = 2  ● ● ×"
+        - "ReplicaSet reconciles ↓"
+        - "observed = 3  ● ● ●"
+
+  - id: lesson:kcna-kubernetes-resources/arrange-ownership
+    kind: arrange
+    unit_id: fpp:kubernetes-deployments-rollouts
+    objective_ids:
+      - fpp:kubernetes-deployments-rollouts/ownership-chain
+    evidence: recall
+    prompt: Put these workload objects in their normal ownership chain from highest-level rollout intent to the running Pod.
+    items:
+      - id: deployment
+        text: Deployment
+      - id: pod
+        text: Pod
+      - id: replicaset
+        text: ReplicaSet
+    correct_order: [deployment, replicaset, pod]
+    hint: Ask which object owns rollout history, then which object owns the Pods.
+    learn_first:
+      title: Ownership is layered.
+      body: A Deployment manages ReplicaSets to perform rollouts. A ReplicaSet manages matching Pods to maintain a replica count.
+      visual:
+        - "Deployment → ReplicaSet → Pod"
+      variant_prompt: Rebuild the ownership chain from rollout-level intent down to the replaceable running Pod.
+    feedback:
+      title: Deployment → ReplicaSet → Pod
+      explanation: The Deployment owns ReplicaSets so it can create rollout revisions; the active ReplicaSet owns Pods so it can reconcile their count.
+      points:
+        - Deployment is the rollout-level controller.
+        - ReplicaSet is the replica-count controller for matching Pods.
+      visual:
+        - "Deployment"
+        - "   ↓ owns rollout revision"
+        - "ReplicaSet"
+        - "   ↓ owns matching replicas"
+        - "Pod"
+
+  - id: lesson:kcna-kubernetes-resources/choose-pod-owner
+    kind: choose
+    unit_id: fpp:kubernetes-pod-model
+    objective_ids:
+      - fpp:kubernetes-pod-model/ownership
+    evidence: recall
+    prompt: A Pod belongs to a ReplicaSet that belongs to a Deployment. Which component is responsible for restoring the missing Pod replica?
+    options:
+      - id: service
+        text: Service
+        rationale: A Service provides stable discovery and traffic selection; it does not maintain Pod replica count.
+      - id: replicaset
+        text: ReplicaSet
+        rationale: The ReplicaSet watches matching Pods and reconciles their observed count to the desired count.
+      - id: scheduler
+        text: kube-scheduler
+        rationale: The scheduler chooses a node for an already-created unscheduled Pod; it does not decide the replica count.
+      - id: kubelet
+        text: kubelet
+        rationale: kubelet makes assigned Pods real on its node; it does not own the workload replica target.
+    answer_ids: [replicaset]
+    hint: Distinguish creating a replacement object from choosing a node for that object.
+    learn_first:
+      title: Creation and placement are separate responsibilities.
+      body: ReplicaSet decides that another Pod object is required. The scheduler later chooses a node for that new Pod, and kubelet executes it there.
+      visual:
+        - "ReplicaSet creates Pod → scheduler assigns node → kubelet runs it"
+      variant_prompt: A Deployment still desires 5 replicas but only 4 matching Pods exist. Which controller creates the missing Pod object?
+    feedback:
+      title: ReplicaSet creates the replacement.
+      explanation: The ReplicaSet owns the replica target. The other components participate later or solve a different problem.
+      points:
+        - Service routes/selects traffic.
+        - kube-scheduler chooses a node.
+        - kubelet runs assigned Pods on that node.
+      visual:
+        - "ReplicaSet → create Pod → scheduler → kubelet"
+
+  - id: lesson:kcna-kubernetes-resources/trace-reconciliation
+    kind: trace
+    unit_id: fpp:kubernetes-labels-replicasets
+    objective_ids:
+      - fpp:kubernetes-labels-replicasets/reconciliation
+    evidence: application
+    prompt: Arrange the reconciliation loop after one of three desired Pods disappears.
+    items:
+      - id: desired-three
+        text: Desired replicas remains 3
+      - id: observe-two
+        text: ReplicaSet observes only 2 matching Pods
+      - id: detect-drift
+        text: Controller detects desired/observed drift
+      - id: create-pod
+        text: ReplicaSet creates a new Pod
+      - id: observe-three
+        text: Observed matching Pods returns to 3
+    correct_order: [desired-three, observe-two, detect-drift, create-pod, observe-three]
+    hint: Desired state does not change during this scenario; observation changes first.
+    learn_first:
+      title: Reconciliation is a loop, not a one-time command.
+      body: Controllers observe state, compare it with desired state, act to reduce the difference, and then observe again.
+      visual:
+        - "observe → compare → act → observe"
+      variant_prompt: A three-replica workload loses one Pod unexpectedly. Trace how the controller restores the observed count to three.
+    feedback:
+      title: Observe, compare, correct, observe again.
+      explanation: Kubernetes controllers do not assume that one action succeeded forever. They repeatedly reconcile the shared API state toward intent.
+      points:
+        - Desired state remains authoritative throughout this failure.
+        - The replacement is an effect of the controller loop, not a restart of the deleted Pod.
+      visual:
+        - "desired 3"
+        - "   ↓ compare with"
+        - "observed 2 → create 1 → observed 3"
+
+  - id: lesson:kcna-kubernetes-resources/explain-replacement
+    kind: explain
+    unit_id: fpp:kubernetes-labels-replicasets
+    objective_ids:
+      - fpp:kubernetes-labels-replicasets/reconciliation
+    evidence: recall
+    prompt: Why does deleting one Pod from a Deployment with replicas 3 not permanently scale the application down to 2?
+    model_answer: Deleting the Pod changes observed state, not the Deployment or ReplicaSet desired replica count. The ReplicaSet still desires three matching Pods, notices only two, and creates a replacement.
+    critical_points:
+      - Desired replicas remains 3.
+      - The ReplicaSet observes the missing matching Pod.
+      - Reconciliation creates a replacement rather than changing desired state.
+    hint: State separately what changed, what stayed the same, and which controller reacts.
+    learn_first:
+      title: Deletion is not scaling.
+      body: Scaling edits desired state. Deleting one managed Pod only changes observed state, so the owning controller restores the desired count.
+      visual:
+        - "scale: desired 3 → 2"
+        - "delete Pod: desired 3, observed 3 → 2 → 3"
+      variant_prompt: A node failure removes one Pod from a three-replica Deployment. Explain why the workload still returns to three replicas.
+    feedback:
+      title: The specification is the durable intent.
+      explanation: The important distinction is between editing desired state and disturbing runtime state. Controllers exist to repair the latter when intent has not changed.
+      points:
+        - Pod identity is replaceable under a controller.
+        - Replica count comes from desired state, not from how many Pods survived a failure.
+      visual:
+        - "spec.replicas = 3"
+        - "observed 2 → reconciliation → observed 3"
+
+  - id: lesson:kcna-kubernetes-resources/connect-responsibilities
+    kind: connect
+    unit_id: fpp:kcna-kubernetes-resources-review
+    objective_ids:
+      - fpp:kcna-kubernetes-resources-review/ownership
+    evidence: recall
+    prompt: Match each Kubernetes object to the responsibility it primarily provides in this resource model.
+    left:
+      - id: pod
+        text: Pod
+      - id: replicaset
+        text: ReplicaSet
+      - id: deployment
+        text: Deployment
+      - id: service
+        text: Service
+    right:
+      - id: execution-boundary
+        text: execution and sharing boundary for containers
+      - id: replica-count
+        text: maintain a matching replica count
+      - id: rollout
+        text: manage rollout revisions and ReplicaSets
+      - id: discovery
+        text: stable traffic selection and discovery
+    matches:
+      - left_id: pod
+        right_id: execution-boundary
+      - left_id: replicaset
+        right_id: replica-count
+      - left_id: deployment
+        right_id: rollout
+      - left_id: service
+        right_id: discovery
+    hint: Separate execution, replica maintenance, rollout management, and network discovery.
+    learn_first:
+      title: Objects solve different layers of the workload problem.
+      body: Pod is the execution boundary, ReplicaSet maintains count, Deployment manages rollout revisions, and Service gives clients a stable way to reach changing Pods.
+      visual:
+        - "Deployment → ReplicaSet → Pod"
+        - "Service → selects Pods for traffic"
+      variant_prompt: Match the same four objects to their responsibilities without using ownership as the only clue.
+    feedback:
+      title: One object, one primary responsibility.
+      explanation: Keeping these boundaries separate prevents common KCNA errors where scheduling, rollout, execution, and service discovery are treated as one mechanism.
+      points:
+        - A Service does not own Pods.
+        - A Pod does not decide its own replica count.
+      visual:
+        - "Deployment: rollout"
+        - "ReplicaSet: count"
+        - "Pod: execution"
+        - "Service: discovery"
+
+  - id: lesson:kcna-kubernetes-resources/fill-selector
+    kind: manifest_fill
+    unit_id: fpp:kubernetes-labels-replicasets
+    objective_ids:
+      - fpp:kubernetes-labels-replicasets/selection
+    evidence: application
+    prompt: Complete the three meaningful fields so this Deployment desires three Pods and its selector matches the Pod template label.
+    manifest: |
+      apiVersion: apps/v1
+      kind: Deployment
+      spec:
+        replicas: ___replicas___
+        selector:
+          matchLabels:
+            app: ___selector___
+        template:
+          metadata:
+            labels:
+              app: ___template___
+    blanks:
+      - id: replicas
+        label: replicas
+        options:
+          - id: two
+            text: "2"
+          - id: three
+            text: "3"
+        answer_id: three
+      - id: selector
+        label: selector app label
+        options:
+          - id: payments
+            text: payments
+          - id: frontend
+            text: frontend
+        answer_id: payments
+      - id: template
+        label: template app label
+        options:
+          - id: payments
+            text: payments
+          - id: worker
+            text: worker
+        answer_id: payments
+    hint: The selector and Pod-template labels must describe the same membership set.
+    learn_first:
+      title: A selector is the controller's membership rule.
+      body: A Deployment selector must match the labels on the Pods its template creates. Replicas states how many matching Pods should exist.
+      visual:
+        - "selector app=payments ⇄ template label app=payments"
+      variant_prompt: Reconstruct the same three-replica payments Deployment by focusing on which selector and template labels must agree.
+    feedback:
+      title: The selector and template agree.
+      explanation: replicas controls desired count while selector and template labels establish which Pods belong to the controller.
+      points:
+        - A selector mismatch is a semantic ownership problem, not cosmetic YAML.
+        - The label value itself is arbitrary; consistency is what matters.
+      visual:
+        - "replicas: 3"
+        - "selector app=payments = template app=payments"
+
+  - id: lesson:kcna-kubernetes-resources/spot-selector-bug
+    kind: spot_bug
+    unit_id: fpp:kubernetes-labels-replicasets
+    objective_ids:
+      - fpp:kubernetes-labels-replicasets/selection
+    evidence: application
+    prompt: Inspect this Deployment fragment. What is the important controller bug?
+    code: |
+      spec:
+        selector:
+          matchLabels:
+            app: payments
+        template:
+          metadata:
+            labels:
+              app: billing
+    options:
+      - id: selector-mismatch
+        text: The selector app=payments does not match the template label app=billing.
+        rationale: The controller membership rule and labels on the Pods it creates must agree.
+      - id: no-service
+        text: A Service is missing from the same YAML document.
+        rationale: A Deployment does not require a Service object in order to manage Pods.
+      - id: no-node
+        text: No nodeName is specified on the Pod template.
+        rationale: Normal Deployment Pods are scheduled without hard-coding nodeName.
+    answer_ids: [selector-mismatch]
+    hint: Compare only the label set used for membership with the labels the template creates.
+    learn_first:
+      title: Controller membership is label based.
+      body: A selector is how the controller identifies the Pods it should manage. If the template creates Pods outside that selector, the ownership model is broken.
+      visual:
+        - "selector: app=payments"
+        - "template: app=billing  ← mismatch"
+      variant_prompt: A selector expects tier=backend while the Pod template labels tier=api. Identify the failure in the controller relationship.
+    feedback:
+      title: The membership rule and generated labels disagree.
+      explanation: This is the critical relationship to inspect. A Service and nodeName are separate concerns and do not repair controller membership.
+      points:
+        - Selectors define which objects belong to a controller.
+        - Template labels must satisfy that selector.
+      visual:
+        - "app=payments ≠ app=billing"
+
+  - id: lesson:kcna-kubernetes-resources/predict-rollout
+    kind: predict_state
+    unit_id: fpp:kubernetes-deployments-rollouts
+    objective_ids:
+      - fpp:kubernetes-deployments-rollouts/revision
+    evidence: application
+    prompt: A Deployment changes its Pod template image from app:v1 to app:v2. What resource-level behavior should you expect during the rollout?
+    state:
+      - "current template: image app:v1"
+      - "new template: image app:v2"
+    options:
+      - id: mutate-pods
+        text: Existing Pods are mutated in place until each one becomes v2.
+        rationale: Pods are replacement-oriented; a Deployment rollout does not rewrite running Pod identity in place.
+      - id: new-replicaset
+        text: The Deployment creates a new ReplicaSet for the v2 Pod template and shifts replicas toward it.
+        rationale: Pod-template changes produce a new Deployment revision represented by a new ReplicaSet.
+      - id: service-rollout
+        text: The Service creates the new Pods because its endpoints changed.
+        rationale: Services select endpoints but do not own Deployment rollout revisions or create Pods.
+    answer_ids: [new-replicaset]
+    hint: Ask which object represents a Deployment revision.
+    learn_first:
+      title: Rollouts create revisions, not in-place Pod edits.
+      body: The Deployment manages ReplicaSets. A changed Pod template creates a new ReplicaSet, then the Deployment adjusts old and new replica counts according to rollout strategy.
+      visual:
+        - "Deployment"
+        - "├─ ReplicaSet v1 ↓"
+        - "└─ ReplicaSet v2 ↑"
+      variant_prompt: A Deployment changes an environment variable in its Pod template. What object should appear to represent the new revision?
+    feedback:
+      title: A new ReplicaSet carries the new template.
+      explanation: The Deployment expresses rollout policy by managing old and new ReplicaSets; Pods are replaced according to the new template.
+      points:
+        - Pod-template change means a new Deployment revision.
+        - Service endpoint changes are an effect of Pod replacement, not the rollout controller.
+      visual:
+        - "RS v1: ● ● ● → ● ● → ●"
+        - "RS v2: ○ → ○ ○ → ○ ○ ○"
+
+  - id: lesson:kcna-kubernetes-resources/build-kubectl
+    kind: command_builder
+    unit_id: fpp:kubernetes-apply-live-state
+    objective_ids:
+      - fpp:kubernetes-apply-live-state/live-state
+    evidence: application
+    prompt: Assemble the command that lists Pods in the payments namespace with the wider output columns useful for inspection.
+    items:
+      - id: kubectl
+        text: kubectl
+      - id: get
+        text: get
+      - id: pods
+        text: pods
+      - id: namespace-flag
+        text: -n
+      - id: payments
+        text: payments
+      - id: output-flag
+        text: -o
+      - id: wide
+        text: wide
+    correct_order: [kubectl, get, pods, namespace-flag, payments, output-flag, wide]
+    hint: Build it as verb + resource + scope + output format.
+    learn_first:
+      title: kubectl commands expose a predictable grammar.
+      body: Start with kubectl and an action, name the resource, then add flags that narrow scope or change output. Here the scope is a namespace and the output is wide.
+      visual:
+        - "kubectl | get | pods | -n payments | -o wide"
+      variant_prompt: You are troubleshooting the payments namespace from another context. Build the command that lists its Pods with wide output.
+    feedback:
+      title: Verb, resource, scope, output.
+      explanation: Reading command structure is more durable than memorizing one string. This command asks the API for Pod objects in one namespace and requests wider presentation.
+      points:
+        - -n payments changes namespace scope.
+        - -o wide changes presentation, not cluster state.
+      visual:
+        - "kubectl get pods -n payments -o wide"
+
+  - id: lesson:kcna-kubernetes-resources/inspect-after-apply
+    kind: terminal_inspect
+    unit_id: fpp:kubernetes-apply-live-state
+    objective_ids:
+      - fpp:kubernetes-apply-live-state/live-state
+    evidence: application
+    prompt: kubectl apply was accepted, but the workload is unhealthy. Which next observation best separates API acceptance from runtime state?
+    terminal:
+      - "$ kubectl apply -f deployment.yaml"
+      - "deployment.apps/payments configured"
+      - "$ kubectl get pods -n payments"
+      - "payments-7c8c9d4f6-x2p9q   0/1   CrashLoopBackOff   4   3m"
+    options:
+      - id: describe-logs
+        text: Inspect the failing Pod with describe and logs to learn why the container is not healthy.
+        rationale: The API object exists; runtime-focused observation is the next layer needed to explain CrashLoopBackOff.
+      - id: apply-again
+        text: Run kubectl apply repeatedly until the Pod becomes Running.
+        rationale: Repeating an already accepted declaration does not explain a runtime crash loop.
+      - id: create-service
+        text: Create a Service first because every unhealthy Pod means networking is missing.
+        rationale: A container can crash independently of Service discovery or traffic routing.
+    answer_ids: [describe-logs]
+    hint: The API already accepted the desired object. Move one layer downward toward the failing runtime.
+    learn_first:
+      title: API success is not application success.
+      body: apply confirms that the API accepted an object update. Controllers, scheduler, kubelet, runtime, and the application still have work to do afterward.
+      visual:
+        - "apply accepted ✓"
+        - "Pod runtime CrashLoopBackOff ✗"
+      variant_prompt: The API accepted the payments Deployment, but its Pod is CrashLoopBackOff. Which next observation would give useful runtime evidence?
+    feedback:
+      title: Move from declared state to runtime evidence.
+      explanation: The apply output proves API acceptance only. The Pod status proves runtime trouble, so describe/events and container logs are the useful next observations.
+      points:
+        - API object existence is one layer of proof.
+        - Pod/container state and logs provide evidence about execution failure.
+      visual:
+        - "local YAML → API accepted ✓ → controller/runtime → app health ✗"
+
+  - id: lesson:kcna-kubernetes-resources/explain-namespace-boundary
+    kind: explain
+    unit_id: fpp:kubernetes-namespaces-scope
+    objective_ids:
+      - fpp:kubernetes-namespaces-scope/boundary
+    evidence: recall
+    prompt: What boundary does a Kubernetes namespace provide, and what two security boundaries does it not automatically provide by itself?
+    model_answer: A namespace scopes names and many API objects, but it is not automatic authorization or network isolation. RBAC is needed for access control, and NetworkPolicy or equivalent networking controls are needed for traffic isolation.
+    critical_points:
+      - Namespace provides naming and API-resource scope.
+      - Namespace alone does not create RBAC authorization boundaries.
+      - Namespace alone does not create network isolation.
+    hint: Separate organization and object identity from authorization and packet reachability.
+    learn_first:
+      title: Namespace is primarily an API scope.
+      body: Namespaces partition the names of many Kubernetes objects and give policy systems something to target, but policy must still be configured. RBAC controls API actions; NetworkPolicy controls allowed traffic where supported.
+      visual:
+        - "namespace = scope"
+        - "RBAC = API authorization"
+        - "NetworkPolicy = traffic policy"
+      variant_prompt: A team creates namespaces dev and prod. Explain why that alone does not prevent dev users from accessing prod objects or dev Pods from reaching prod Pods.
+    feedback:
+      title: Scope is not isolation by itself.
+      explanation: Namespace boundaries organize object identity and policy targeting. Security emerges only when authorization and networking policy are attached to those scopes.
+      points:
+        - RBAC answers who may do what to API resources.
+        - NetworkPolicy answers which traffic paths are allowed.
+      visual:
+        - "Namespace ── scopes objects"
+        - "RBAC ─────── controls API access"
+        - "NetworkPolicy controls traffic"

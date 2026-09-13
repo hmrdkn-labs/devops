@@ -58,6 +58,7 @@ test('public search finds exact canonical content', async ({ page }) => {
 });
 
 test('primary public pages have no serious automated accessibility violations', async ({ page }) => {
+  test.slow();
   const routes = ['/', '/kcna', '/practice/kcna', '/paths/kcna', '/learn/kcna-kubernetes-resources-review', '/review', '/map', '/library', '/search'];
 
   for (const theme of ['light', 'dark'] as const) {
