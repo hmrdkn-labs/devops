@@ -98,6 +98,7 @@ export default function StudyFlow(props: Props) {
   const [answer, setAnswer] = createSignal('');
   const [revealed, setRevealed] = createSignal(false);
   const [rated, setRated] = createSignal(false);
+  const [rating, setRating] = createSignal<'again' | 'hard' | 'good' | 'easy' | null>(null);
   const [finished, setFinished] = createSignal(false);
   const [showHint, setShowHint] = createSignal(false);
   const [learningFirst, setLearningFirst] = createSignal(false);
@@ -239,6 +240,7 @@ export default function StudyFlow(props: Props) {
       }
     }
     setSaving(false);
+    setRating(value);
     setRated(true);
   }
 
@@ -294,6 +296,7 @@ export default function StudyFlow(props: Props) {
       setAnswer('');
       setRevealed(false);
       setRated(false);
+      setRating(null);
       setChecked([]);
       setReflection('');
       setShowHint(false);
@@ -472,12 +475,32 @@ export default function StudyFlow(props: Props) {
                 <small>{me()?.authenticated ? 'Saved to your private unit notes when you rate this attempt.' : 'Guest mode keeps this correction only on this page.'}</small>
               </label>
               <Show when={!rated()} fallback={
-                <div class="stage-actions">
-                  <button class="button primary" onClick={next}>
-                    {questionIndex() + 1 < props.unit.questions.length ? 'Next question' : 'Open the lesson'}
-                  </button>
-                  <span class="save-status" role="status">{saveMessage()}</span>
-                </div>
+                <>
+                  <div
+                    class="self-check-verdict"
+                    data-result={checked().length === question().critical_points.length && (rating() === 'good' || rating() === 'easy') ? 'ready' : 'review'}
+                    aria-live="polite"
+                  >
+                    <strong>{checked().length === question().critical_points.length && (rating() === 'good' || rating() === 'easy')
+                      ? 'Self-check complete'
+                      : 'Review needed'}</strong>
+                    <p>{checked().length} of {question().critical_points.length} critical points were present. You rated this recall “{rating()}”.</p>
+                    <Show when={checked().length < question().critical_points.length}>
+                      <div>
+                        <span>Add these missing ideas:</span>
+                        <ul>
+                          <For each={question().critical_points.filter((point) => !checked().includes(point))}>{(point) => <li>{point}</li>}</For>
+                        </ul>
+                      </div>
+                    </Show>
+                  </div>
+                  <div class="stage-actions">
+                    <button class="button primary" onClick={next}>
+                      {questionIndex() + 1 < props.unit.questions.length ? 'Next question' : 'Open the lesson'}
+                    </button>
+                    <span class="save-status" role="status">{saveMessage()}</span>
+                  </div>
+                </>
               }>
                 <div class="rating-block">
                   <p>How effortful was accurate recall?</p>

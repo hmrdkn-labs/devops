@@ -82,6 +82,42 @@ export default function LessonPlayer(props: Props) {
   const connectExercise = createMemo<ConnectExercise | null>(() => exercise().kind === 'connect' ? exercise() as ConnectExercise : null);
   const manifestExercise = createMemo<ManifestExercise | null>(() => exercise().kind === 'manifest_fill' ? exercise() as ManifestExercise : null);
   const explainExercise = createMemo<ExplainExercise | null>(() => exercise().kind === 'explain' ? exercise() as ExplainExercise : null);
+  const feedbackDetail = createMemo(() => {
+    const choice = choiceExercise();
+    if (choice) {
+      const selectedText = selected().map((id) => choice.options.find((option) => option.id === id)?.text ?? id).join(', ');
+      const expectedText = choice.answer_ids.map((id) => choice.options.find((option) => option.id === id)?.text ?? id).join(', ');
+      return correct()
+        ? `Your answer matches the expected answer: ${expectedText}.`
+        : `Your answer — ${selectedText || 'No answer'} Expected answer — ${expectedText}`;
+    }
+    const ordered = orderedExercise();
+    if (ordered) {
+      const correctPositions = order().filter((id, index) => ordered.correct_order[index] === id).length;
+      return correct()
+        ? `All ${ordered.correct_order.length} steps are in the expected position.`
+        : `${correctPositions} of ${ordered.correct_order.length} positions are correct. Compare the two sequences below.`;
+    }
+    const connect = connectExercise();
+    if (connect) {
+      const correctMatches = connect.matches.filter((match) => connections()[match.left_id] === match.right_id).length;
+      return correct()
+        ? `All ${connect.matches.length} responsibilities are matched correctly.`
+        : `${correctMatches} of ${connect.matches.length} responsibilities are matched correctly. Check each marked row.`;
+    }
+    const manifest = manifestExercise();
+    if (manifest) {
+      const correctFields = manifest.blanks.filter((blank) => blankAnswers()[blank.id] === blank.answer_id).length;
+      return correct()
+        ? `All ${manifest.blanks.length} manifest fields are correct.`
+        : `${correctFields} of ${manifest.blanks.length} manifest fields are correct. The expected value is shown beside each field.`;
+    }
+    return rated()
+      ? correct()
+        ? 'Your self-check supports a clean recall attempt.'
+        : 'Use the critical points to identify what your explanation still needs.'
+      : 'Compare your explanation with the model, check the critical points, then rate the quality of your recall.';
+  });
 
   onMount(() => setHydrated(true));
 
@@ -221,6 +257,18 @@ export default function LessonPlayer(props: Props) {
     queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus());
   }
 
+  function retryExercise() {
+    setAssisted(true);
+    setRevealed(false);
+    setCorrect(null);
+    setRated(false);
+    setCheckedPoints([]);
+    setStatus('Correction attempt: feedback was revealed, so this remains encounter evidence.');
+    if (choiceExercise()) setSelected([]);
+    if (explainExercise()) setAnswer('');
+    queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus());
+  }
+
   function continueLesson() {
     if (step() + 1 >= props.lesson.exercises.length) {
       setFinished(true);
@@ -311,19 +359,41 @@ export default function LessonPlayer(props: Props) {
                         <pre class="lesson-terminal" aria-label="Terminal output"><code>{choiceTerminal(current()).join('\n')}</code></pre>
                       </Show>
                       <div class="lesson-options" role="group" aria-label="Answer choices">
-                        <For each={current().options}>{(option, index) => (
-                          <button
-                            type="button"
-                            class="lesson-option"
-                            classList={{ selected: selected().includes(option.id) }}
-                            aria-pressed={selected().includes(option.id)}
-                            disabled={!hydrated() || revealed()}
-                            onClick={() => setSelected([option.id])}
-                          >
-                            <span>{String.fromCharCode(65 + index())}</span>
-                            <strong>{option.text}</strong>
-                          </button>
-                        )}</For>
+                        <For each={current().options}>{(option, index) => {
+                          const chosen = () => selected().includes(option.id);
+                          const expected = () => current().answer_ids.includes(option.id);
+                          const state = () => {
+                            if (!revealed()) return chosen() ? 'selected' : 'idle';
+                            if (expected() && chosen()) return 'correct-selected';
+                            if (expected()) return 'correct-missed';
+                            if (chosen()) return 'wrong-selected';
+                            return 'neutral';
+                          };
+                          return (
+                            <button
+                              type="button"
+                              class="lesson-option"
+                              data-state={state()}
+                              aria-pressed={chosen()}
+                              disabled={!hydrated() || revealed()}
+                              onClick={() => setSelected([option.id])}
+                            >
+                              <span>{String.fromCharCode(65 + index())}</span>
+                              <span class="lesson-option-copy">
+                                <strong>{option.text}</strong>
+                                <Show when={revealed() && state() !== 'neutral'}>
+                                  <small class="lesson-row-result">
+                                    {state() === 'correct-selected'
+                                      ? 'Your answer · Correct'
+                                      : state() === 'correct-missed'
+                                        ? 'Expected answer'
+                                        : 'Your answer · Incorrect'}
+                                  </small>
+                                </Show>
+                              </span>
+                            </button>
+                          );
+                        }}</For>
                       </div>
                     </div>
                   )}
@@ -333,14 +403,22 @@ export default function LessonPlayer(props: Props) {
                     <div class="lesson-order" classList={{ command: current().kind === 'command_builder' }}>
                       <For each={order()}>{(itemId, index) => {
                         const item = () => current().items.find((candidate) => candidate.id === itemId)!;
+                        const expectedPosition = () => current().correct_order.indexOf(itemId) + 1;
+                        const positionIsCorrect = () => expectedPosition() === index() + 1;
                         return (
-                          <div class="lesson-order-item">
+                          <div class="lesson-order-item" data-state={revealed() ? positionIsCorrect() ? 'correct' : 'incorrect' : 'idle'}>
                             <span class="lesson-order-index">{index() + 1}</span>
                             <code classList={{ 'plain-label': current().kind !== 'command_builder' }}>{item().text}</code>
-                            <div class="lesson-order-controls" aria-label={`Move ${item().text}`}>
-                              <button type="button" aria-label={`Move ${item().text} up`} disabled={!hydrated() || revealed() || index() === 0} onClick={() => moveItem(index(), -1)}>↑</button>
-                              <button type="button" aria-label={`Move ${item().text} down`} disabled={!hydrated() || revealed() || index() === order().length - 1} onClick={() => moveItem(index(), 1)}>↓</button>
-                            </div>
+                            <Show when={!revealed()} fallback={
+                              <small class="lesson-row-result">
+                                {positionIsCorrect() ? `✓ Position ${index() + 1}` : `Expected #${expectedPosition()}`}
+                              </small>
+                            }>
+                              <div class="lesson-order-controls" aria-label={`Move ${item().text}`}>
+                                <button type="button" aria-label={`Move ${item().text} up`} disabled={!hydrated() || index() === 0} onClick={() => moveItem(index(), -1)}>↑</button>
+                                <button type="button" aria-label={`Move ${item().text} down`} disabled={!hydrated() || index() === order().length - 1} onClick={() => moveItem(index(), 1)}>↓</button>
+                              </div>
+                            </Show>
                           </div>
                         );
                       }}</For>
@@ -350,21 +428,31 @@ export default function LessonPlayer(props: Props) {
                 <Show when={connectExercise()}>
                   {(current) => (
                     <div class="lesson-connect-grid">
-                      <For each={current().left}>{(left) => (
-                        <label class="lesson-connect-row">
-                          <strong>{left.text}</strong>
-                          <span aria-hidden="true">→</span>
-                          <select
-                            aria-label={`Responsibility for ${left.text}`}
-                            disabled={!hydrated() || revealed()}
-                            value={connections()[left.id] ?? ''}
-                            onInput={(event) => setConnections((value) => ({ ...value, [left.id]: event.currentTarget.value }))}
-                          >
-                            <option value="">Choose responsibility</option>
-                            <For each={current().right}>{(right) => <option value={right.id}>{right.text}</option>}</For>
-                          </select>
-                        </label>
-                      )}</For>
+                      <For each={current().left}>{(left) => {
+                        const expectedId = () => current().matches.find((match) => match.left_id === left.id)!.right_id;
+                        const expectedText = () => current().right.find((right) => right.id === expectedId())!.text;
+                        const rowIsCorrect = () => connections()[left.id] === expectedId();
+                        return (
+                          <label class="lesson-connect-row" data-state={revealed() ? rowIsCorrect() ? 'correct' : 'incorrect' : 'idle'}>
+                            <strong>{left.text}</strong>
+                            <span aria-hidden="true">→</span>
+                            <span class="lesson-field-response">
+                              <select
+                                aria-label={`Responsibility for ${left.text}`}
+                                disabled={!hydrated() || revealed()}
+                                value={connections()[left.id] ?? ''}
+                                onInput={(event) => setConnections((value) => ({ ...value, [left.id]: event.currentTarget.value }))}
+                              >
+                                <option value="">Choose responsibility</option>
+                                <For each={current().right}>{(right) => <option value={right.id}>{right.text}</option>}</For>
+                              </select>
+                              <Show when={revealed()}>
+                                <small class="lesson-row-result">{rowIsCorrect() ? '✓ Correct match' : `Expected: ${expectedText()}`}</small>
+                              </Show>
+                            </span>
+                          </label>
+                        );
+                      }}</For>
                     </div>
                   )}
                 </Show>
@@ -373,19 +461,28 @@ export default function LessonPlayer(props: Props) {
                     <div class="lesson-manifest-fill">
                       <pre class="lesson-code-block"><code>{current().manifest}</code></pre>
                       <div class="lesson-blank-grid">
-                        <For each={current().blanks}>{(blank) => (
-                          <label>
-                            <span>{blank.label}</span>
-                            <select
-                              disabled={!hydrated() || revealed()}
-                              value={blankAnswers()[blank.id] ?? ''}
-                              onInput={(event) => setBlankAnswers((value) => ({ ...value, [blank.id]: event.currentTarget.value }))}
-                            >
-                              <option value="">Choose value</option>
-                              <For each={blank.options}>{(option) => <option value={option.id}>{option.text}</option>}</For>
-                            </select>
-                          </label>
-                        )}</For>
+                        <For each={current().blanks}>{(blank) => {
+                          const answerText = () => blank.options.find((option) => option.id === blank.answer_id)!.text;
+                          const fieldIsCorrect = () => blankAnswers()[blank.id] === blank.answer_id;
+                          return (
+                            <label data-state={revealed() ? fieldIsCorrect() ? 'correct' : 'incorrect' : 'idle'}>
+                              <span>{blank.label}</span>
+                              <span class="lesson-field-response">
+                                <select
+                                  disabled={!hydrated() || revealed()}
+                                  value={blankAnswers()[blank.id] ?? ''}
+                                  onInput={(event) => setBlankAnswers((value) => ({ ...value, [blank.id]: event.currentTarget.value }))}
+                                >
+                                  <option value="">Choose value</option>
+                                  <For each={blank.options}>{(option) => <option value={option.id}>{option.text}</option>}</For>
+                                </select>
+                                <Show when={revealed()}>
+                                  <small class="lesson-row-result">{fieldIsCorrect() ? '✓ Correct value' : `Expected: ${answerText()}`}</small>
+                                </Show>
+                              </span>
+                            </label>
+                          );
+                        }}</For>
                       </div>
                     </div>
                   )}
@@ -413,9 +510,29 @@ export default function LessonPlayer(props: Props) {
               </Show>
               <Show when={revealed()}>
                 <section class="lesson-feedback" aria-live="polite" data-testid="lesson-feedback">
-                  <p class="lesson-feedback-result">
-                    {correct() === true ? '✓ Correct model' : correct() === false ? 'Review the model' : 'Compare your model'}
-                  </p>
+                  <div class="lesson-verdict" data-result={correct() === true ? 'correct' : correct() === false ? 'incorrect' : 'compare'}>
+                    <span class="lesson-verdict-icon" aria-hidden="true">{correct() === true ? '✓' : correct() === false ? '!' : '↔'}</span>
+                    <div>
+                      <strong>{correct() === true ? 'Correct' : correct() === false ? 'Not quite' : 'Compare your answer'}</strong>
+                      <p>{feedbackDetail()}</p>
+                    </div>
+                  </div>
+                  <Show when={orderedExercise()}>
+                    {(current) => (
+                      <Show when={correct() === false}>
+                        <div class="lesson-answer-compare" aria-label="Your order compared with expected order">
+                          <div>
+                            <span>Your order</span>
+                            <ol><For each={order()}>{(itemId) => <li>{current().items.find((item) => item.id === itemId)!.text}</li>}</For></ol>
+                          </div>
+                          <div>
+                            <span>Expected order</span>
+                            <ol><For each={current().correct_order}>{(itemId) => <li>{current().items.find((item) => item.id === itemId)!.text}</li>}</For></ol>
+                          </div>
+                        </div>
+                      </Show>
+                    )}
+                  </Show>
                   <h2>{exercise().feedback.title}</h2>
                   <Show when={explainExercise()}>
                     {(current) => (
@@ -503,6 +620,9 @@ export default function LessonPlayer(props: Props) {
                   </div>
                 </Show>
                 <Show when={revealed() && (!explainExercise() || rated())}>
+                  <Show when={correct() === false}>
+                    <button class="lesson-secondary" type="button" data-testid="lesson-retry" onClick={retryExercise}>Try again</button>
+                  </Show>
                   <button class="lesson-primary" type="button" data-testid="lesson-continue" onClick={continueLesson}>
                     {step() + 1 < props.lesson.exercises.length ? 'Continue' : 'Finish lesson'}
                   </button>

@@ -5,6 +5,23 @@
 
 ## Read this first
 
+**Feedback clarity release is locally complete and awaiting protected release.**
+Every scored KCNA lesson interaction now gives an explicit verdict, identifies
+the learner's answer and the expected model, marks correct/incorrect rows or
+positions, explains the mechanism, and offers a correction attempt. Ordering
+tasks show the learner and expected sequences side by side; connect and manifest
+tasks show the expected value per missed row. KCNA MCQs now distinguish Correct,
+Not quite, and Corrected, label selected/missed options in words, and preserve
+the first-attempt score after retry. Standard question-first units now summarize
+the learner's own critical-point check and list missing ideas after rating. The
+ambiguous reconciliation trace was rewritten as intent → failure → compare →
+replace → observe, and its lesson revision advanced to 2. Browser-first QA
+verified wrong-answer and correction journeys; the full Playwright matrix is
+**42 passed with 12 intentional skips** across desktop, tablet, and mobile.
+Content validation, 76-file typecheck, 35 unit tests, D1 checks, revision checks,
+production build, accessibility, and overflow checks pass. **No blocker:** next
+step is the protected application release and independent production check.
+
 **Interactive Lesson Player pilot is live:** exact public source
 `85d61fae6da76c34509e132840147d10ede55d6e` passed public CI run
 `34750388714` and protected owner deployment run `34750501484`. The single

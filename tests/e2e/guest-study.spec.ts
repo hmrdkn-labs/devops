@@ -10,6 +10,9 @@ test('guest completes the question-first study flow without persistence', async 
   await page.getByRole('button', { name: 'Save privately & reveal' }).click();
   await expect(page.getByText('Concise model')).toBeVisible();
   await page.getByRole('button', { name: 'Good' }).click();
+  await expect(page.getByText('Review needed', { exact: true })).toBeVisible();
+  await expect(page.getByText(/0 of 2 critical points were present/)).toBeVisible();
+  await expect(page.getByText('Add these missing ideas:')).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Guest answer kept in memory');
   await page.getByRole('button', { name: 'Next question' }).click();
 

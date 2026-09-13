@@ -69,11 +69,55 @@ test('wrong feedback teaches the causal model and every distractor', async ({ pa
   await check(page);
 
   const feedback = page.getByTestId('lesson-feedback');
-  await expect(feedback.getByText('Review the model')).toBeVisible();
+  await expect(feedback.getByText('Not quite', { exact: true })).toBeVisible();
+  await expect(feedback.getByText(/Your answer — It stays at 2/)).toBeVisible();
+  await expect(feedback.getByText(/Expected answer — The ReplicaSet creates a replacement Pod/)).toBeVisible();
+  await expect(page.locator('.lesson-option[data-state="wrong-selected"]')).toContainText('Your answer · Incorrect');
+  await expect(page.locator('.lesson-option[data-state="correct-missed"]')).toContainText('Expected answer');
   await expect(feedback.getByText('desired = 3')).toBeVisible();
   await expect(feedback.getByText(/A ReplicaSet continuously reconciles/)).toBeVisible();
   await expect(feedback.getByText(/Deleting a Pod does not change the Deployment specification/)).toBeVisible();
+  await expect(page.getByTestId('lesson-retry')).toBeVisible();
   await expect(page.getByTestId('lesson-continue')).toBeVisible();
+
+  await page.getByTestId('lesson-retry').click();
+  await expect(feedback).toHaveCount(0);
+  await expect(page.getByText('Predict state · assisted')).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('remains encounter evidence');
+  await expect(page.locator('.lesson-option').first()).toBeEnabled();
+});
+
+test('ordered feedback marks each position and supports an honest correction', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Detailed ordering feedback only needs one browser project');
+  await page.goto(lessonRoute);
+
+  await page.locator('.lesson-option').nth(1).click();
+  await check(page);
+  await continueLesson(page, 2);
+  await page.getByRole('button', { name: 'Move Deployment up' }).click();
+  await page.getByRole('button', { name: 'Move Deployment up' }).click();
+  await page.getByRole('button', { name: 'Move ReplicaSet up' }).click();
+  await check(page);
+  await continueLesson(page, 3);
+  await page.locator('.lesson-option').nth(1).click();
+  await check(page);
+  await continueLesson(page, 4);
+
+  for (let index = 0; index < 3; index += 1) {
+    await page.getByRole('button', { name: 'Move Starting intent: desired replicas is 3 up' }).click();
+  }
+  await check(page);
+  await expect(page.getByTestId('lesson-feedback').getByText('3 of 5 positions are correct. Compare the two sequences below.')).toBeVisible();
+  await expect(page.locator('.lesson-answer-compare')).toContainText('Your order');
+  await expect(page.locator('.lesson-answer-compare')).toContainText('Expected order');
+  await expect(page.locator('.lesson-order-item').nth(0)).toContainText('Expected #2');
+  await expect(page.locator('.lesson-order-item').nth(1)).toContainText('Expected #1');
+
+  await page.getByTestId('lesson-retry').click();
+  await page.getByRole('button', { name: 'Move Starting intent: desired replicas is 3 up' }).click();
+  await check(page);
+  await expect(page.getByTestId('lesson-feedback').getByText('Correct', { exact: true })).toBeVisible();
+  await expect(page.locator('.lesson-order-item[data-state="correct"]')).toHaveCount(5);
 });
 
 test('Learn first and hints remain assisted and use a different prompt variant', async ({ page }, testInfo) => {
@@ -138,7 +182,7 @@ test('all twelve Resources interactions complete end to end', async ({ page }, t
   await continueLesson(page, 4);
 
   for (let index = 0; index < 4; index += 1) {
-    await page.getByRole('button', { name: 'Move Desired replicas remains 3 up' }).click();
+    await page.getByRole('button', { name: 'Move Starting intent: desired replicas is 3 up' }).click();
   }
   await check(page);
   await continueLesson(page, 5);

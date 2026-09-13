@@ -40,12 +40,23 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await page.getByRole('button', { name: 'Check answer' }).click();
 
   await expect(page.getByText('Not quite', { exact: true })).toBeVisible();
+  await expect(page.getByText(/Your answer: kube-scheduler\. Correct answer: kube-apiserver\./)).toBeVisible();
+  await expect(page.locator('.mcq-option[data-state="wrong-selected"]')).toContainText('Your answer · Incorrect');
+  await expect(page.locator('.mcq-option[data-state="correct-missed"]')).toContainText('Correct answer');
   const optionExplanations = page.locator('.mcq-options small');
   await expect(optionExplanations.filter({ hasText: /The API server is the front door/ })).toBeVisible();
   await expect(optionExplanations.filter({ hasText: /The scheduler chooses a feasible node/ })).toBeVisible();
   await expect(optionExplanations.filter({ hasText: /Controllers reconcile desired and observed state/ })).toBeVisible();
   await expect(optionExplanations.filter({ hasText: /The kubelet is a node agent/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
   await expect(page.getByRole('button', { name: /Next question/ })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Try again' }).click();
+  await expect(page.getByText(/Correction attempt/)).toBeVisible();
+  await page.getByText('kube-apiserver', { exact: true }).click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText('Corrected', { exact: true })).toBeVisible();
+  await expect(page.getByText('0 correct', { exact: true })).toBeVisible();
 });
 
 test('UI v3 primary surfaces stay compact, readable, and overflow-free', async ({ page }, testInfo) => {

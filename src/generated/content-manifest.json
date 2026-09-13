@@ -1163,7 +1163,7 @@
       "slug": "kcna-kubernetes-resources",
       "title": "KCNA Kubernetes Resources",
       "summary": "Build the Kubernetes resource model by predicting reconciliation, tracing ownership, reading manifests, and proving live state.",
-      "revision": 1,
+      "revision": 2,
       "certification": "cncf:kcna",
       "checkpoint": "resources",
       "estimated_minutes": 16,
@@ -1351,8 +1351,8 @@
             "fpp:kubernetes-labels-replicasets/reconciliation"
           ],
           "evidence": "application",
-          "prompt": "Arrange the reconciliation loop after one of three desired Pods disappears.",
-          "hint": "Desired state does not change during this scenario; observation changes first.",
+          "prompt": "Arrange the starting intent, observed failure, and controller actions in the order used to explain this reconciliation.",
+          "hint": "Begin with the pre-existing intent, then the failure that changes observation. The controller compares those states before it acts.",
           "learn_first": {
             "title": "Reconciliation is a loop, not a one-time command.",
             "body": "Controllers observe state, compare it with desired state, act to reduce the difference, and then observe again.",
@@ -1378,19 +1378,19 @@
           "items": [
             {
               "id": "desired-three",
-              "text": "Desired replicas remains 3"
+              "text": "Starting intent: desired replicas is 3"
             },
             {
               "id": "observe-two",
-              "text": "ReplicaSet observes only 2 matching Pods"
+              "text": "A Pod disappears; observed matching Pods becomes 2"
             },
             {
               "id": "detect-drift",
-              "text": "Controller detects desired/observed drift"
+              "text": "ReplicaSet compares desired 3 with observed 2"
             },
             {
               "id": "create-pod",
-              "text": "ReplicaSet creates a new Pod"
+              "text": "ReplicaSet creates a replacement Pod"
             },
             {
               "id": "observe-three",
@@ -1902,5 +1902,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "cc9d4bb2f664e2fa1fba540359a33887751b7c86084d55e4fd5b6660c065f2d6"
+  "manifest_sha256": "33f23e2e5ba81f573b435a45fd52b70539b1fcadbdb8444842010d2e421af450"
 }

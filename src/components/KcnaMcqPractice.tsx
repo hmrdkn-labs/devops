@@ -54,6 +54,7 @@ export default function KcnaMcqPractice(props: Props) {
   const [checked, setChecked] = createSignal(false);
   const [score, setScore] = createSignal(0);
   const [finished, setFinished] = createSignal(false);
+  const [firstAttemptCorrect, setFirstAttemptCorrect] = createSignal<boolean | null>(null);
 
   const sessionQuestions = createMemo(() => mode() === 'all' ? props.questions : quickMix(props.questions, mixOffset()));
   const question = createMemo(() => sessionQuestions()[questionIndex()]);
@@ -70,6 +71,7 @@ export default function KcnaMcqPractice(props: Props) {
     setChecked(false);
     setScore(0);
     setFinished(false);
+    setFirstAttemptCorrect(null);
   }
 
   function choose(optionId: string) {
@@ -92,8 +94,18 @@ export default function KcnaMcqPractice(props: Props) {
   function checkAnswer(event: SubmitEvent) {
     event.preventDefault();
     if (!selected().length || checked()) return;
-    if (answerIsCorrect()) setScore((value) => value + 1);
+    const result = answerIsCorrect();
+    if (firstAttemptCorrect() === null) {
+      setFirstAttemptCorrect(result);
+      if (result) setScore((value) => value + 1);
+    }
     setChecked(true);
+  }
+
+  function retryAnswer() {
+    setSelected([]);
+    setChecked(false);
+    queueMicrotask(() => document.querySelector<HTMLElement>('.mcq-question-card')?.focus());
   }
 
   function nextQuestion() {
@@ -104,6 +116,7 @@ export default function KcnaMcqPractice(props: Props) {
     setQuestionIndex((value) => value + 1);
     setSelected([]);
     setChecked(false);
+    setFirstAttemptCorrect(null);
   }
 
   function optionState(optionId: string) {
@@ -114,6 +127,24 @@ export default function KcnaMcqPractice(props: Props) {
     if (correct) return 'correct-missed';
     if (chosen) return 'wrong-selected';
     return 'neutral';
+  }
+
+  function answerText(ids: string[]) {
+    return ids.map((id) => question().options.find((option) => option.id === id)?.text ?? id).join(', ');
+  }
+
+  function feedbackDetail() {
+    if (answerIsCorrect()) {
+      return firstAttemptCorrect() === false
+        ? 'You corrected the answer. The session score still reflects your first attempt.'
+        : 'Your answer includes the complete expected set.';
+    }
+    if (question().select === 'single') {
+      return `Your answer: ${answerText(selected())}. Correct answer: ${answerText(question().answer_ids)}.`;
+    }
+    const correctSelections = selected().filter((id) => question().answer_ids.includes(id)).length;
+    const incorrectSelections = selected().length - correctSelections;
+    return `${correctSelections} of ${question().answer_ids.length} correct choices selected; ${incorrectSelections} incorrect. Expected: ${answerText(question().answer_ids)}.`;
   }
 
   return (
@@ -151,7 +182,7 @@ export default function KcnaMcqPractice(props: Props) {
           </div>
         </div>
 
-        <article class="mcq-question-card">
+        <article class="mcq-question-card" tabindex="-1">
           <div class="mcq-question-meta">
             <span>{checkpointLabels[question().checkpoint]}</span>
             <span>{question().category === 'kubectl' ? 'kubectl' : question().category}</span>
@@ -163,43 +194,62 @@ export default function KcnaMcqPractice(props: Props) {
             <fieldset aria-labelledby="mcq-question-title">
               <legend class="sr-only">Answer options</legend>
               <div class="mcq-options">
-                <For each={question().options}>{(option) => (
-                  <label class="mcq-option" data-state={optionState(option.id)}>
-                    <input
-                      type={question().select === 'single' ? 'radio' : 'checkbox'}
-                      name="mcq-answer"
-                      value={option.id}
-                      checked={selected().includes(option.id)}
-                      disabled={checked()}
-                      onChange={() => choose(option.id)}
-                    />
-                    <span class="mcq-option-letter">{option.id.toUpperCase()}</span>
-                    <span class="mcq-option-copy">
-                      <Show when={option.code} fallback={<strong>{option.text}</strong>}>
-                        <code>{option.text}</code>
-                      </Show>
-                      <Show when={checked()}>
-                        <small>{option.rationale}</small>
-                      </Show>
-                    </span>
-                  </label>
-                )}</For>
+                <For each={question().options}>{(option) => {
+                  const state = () => optionState(option.id);
+                  return (
+                    <label class="mcq-option" data-state={state()}>
+                      <input
+                        type={question().select === 'single' ? 'radio' : 'checkbox'}
+                        name="mcq-answer"
+                        value={option.id}
+                        checked={selected().includes(option.id)}
+                        disabled={checked()}
+                        onChange={() => choose(option.id)}
+                      />
+                      <span class="mcq-option-letter">{option.id.toUpperCase()}</span>
+                      <span class="mcq-option-copy">
+                        <Show when={option.code} fallback={<strong>{option.text}</strong>}>
+                          <code>{option.text}</code>
+                        </Show>
+                        <Show when={checked() && state() !== 'neutral'}>
+                          <span class="mcq-option-result">
+                            {state() === 'correct-selected'
+                              ? 'Your answer · Correct'
+                              : state() === 'correct-missed'
+                                ? 'Correct answer'
+                                : 'Your answer · Incorrect'}
+                          </span>
+                        </Show>
+                        <Show when={checked()}>
+                          <small>{option.rationale}</small>
+                        </Show>
+                      </span>
+                    </label>
+                  );
+                }}</For>
               </div>
             </fieldset>
 
             <Show when={!checked()}>
+              <Show when={firstAttemptCorrect() === false}>
+                <p class="mcq-correction-note" role="status">Correction attempt · your first answer remains the scored attempt.</p>
+              </Show>
               <button class="button mcq-check" type="submit" disabled={!selected().length}>Check answer</button>
             </Show>
 
             <Show when={checked()}>
               <div class="mcq-feedback" data-correct={answerIsCorrect() ? 'true' : 'false'}>
-                <strong>{answerIsCorrect() ? 'Correct' : 'Not quite'}</strong>
+                <strong>{answerIsCorrect() ? firstAttemptCorrect() === false ? 'Corrected' : 'Correct' : 'Not quite'}</strong>
+                <p class="mcq-feedback-detail">{feedbackDetail()}</p>
                 <p>{question().explanation}</p>
                 <div class="mcq-source-links">
                   <span>Review:</span>
                   <For each={question().sourceUnits}>{(unit) => <a href={unit.href}>{unit.title}</a>}</For>
                 </div>
               </div>
+              <Show when={!answerIsCorrect()}>
+                <button class="quiet-button mcq-retry" type="button" onClick={retryAnswer}>Try again</button>
+              </Show>
               <button class="button mcq-next" type="button" onClick={nextQuestion}>
                 {questionIndex() === sessionQuestions().length - 1 ? 'See result' : 'Next question'} →
               </button>
