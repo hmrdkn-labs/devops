@@ -922,7 +922,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .rating-buttons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; }
 .rating-buttons button { background: transparent; }
 .rating-buttons button:first-child { border-color: color-mix(in srgb, var(--warning) 55%, var(--line)); }
-.lesson { padding-bottom: 2.6rem; }
+.lesson { min-width: 0; padding-bottom: 2.6rem; }
 .completion-action { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-top: 1rem; }
 .completion-action > span { color: var(--muted); font-size: .68rem; }
 .completion-toggle { min-height: 34px; padding: .35rem .6rem; border: 1px solid var(--line); border-radius: var(--radius-control); background: transparent; color: var(--muted); font-size: .7rem; }
@@ -935,25 +935,25 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .learn-first-return { position: sticky; bottom: .75rem; z-index: 2; padding: .7rem; border: 1px solid var(--line); border-radius: var(--radius-control); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(8px); }
 .lesson-divider { display: flex; align-items: center; gap: .65rem; margin-bottom: 1.5rem; color: var(--muted); font-size: .68rem; font-weight: 700; text-transform: uppercase; }
 .lesson-divider::after { flex: 1; height: 1px; background: var(--line); content: ''; }
-.markdown-body { font-size: .98rem; line-height: 1.75; }
+.markdown-body { min-width: 0; font-size: .98rem; line-height: 1.75; }
 .markdown-body h1 { margin: 0 0 1.35rem; font-size: 2rem; letter-spacing: -.035em; }
 .markdown-body h2 { margin: 2.25rem 0 .65rem; font-size: 1.35rem; letter-spacing: -.02em; }
 .markdown-body h3 { margin: 1.6rem 0 .5rem; font-size: 1.05rem; }
 .markdown-body p, .markdown-body ul, .markdown-body ol { max-width: 72ch; }
 .markdown-body li { margin-block: .25rem; }
 .markdown-body code { padding: .08rem .25rem; border-radius: 4px; background: var(--surface-subtle); font: .86em var(--mono); }
-.markdown-body pre { overflow-x: auto; margin: 1.15rem 0; padding: .95rem 1rem; border-radius: var(--radius-control); background: var(--code); color: var(--code-ink); line-height: 1.55; }
+.markdown-body pre { box-sizing: border-box; max-width: 100%; overflow-x: auto; margin: 1.15rem 0; padding: .95rem 1rem; border-radius: var(--radius-control); background: var(--code); color: var(--code-ink); line-height: 1.55; }
 .markdown-body pre code { padding: 0; background: transparent; color: inherit; }
 .markdown-body blockquote { margin: 1.1rem 0; padding: .05rem .9rem; border-left: 2px solid var(--accent); color: var(--muted); }
 .markdown-body table { width: 100%; border-collapse: collapse; font-size: .85rem; }
 .markdown-body th, .markdown-body td { padding: .48rem .55rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .markdown-body th { color: var(--muted); font-size: .72rem; text-transform: uppercase; }
-.reference-visuals { display: grid; gap: .75rem; margin: 1.2rem 0 2rem; }
+.reference-visuals { min-width: 0; display: grid; gap: .75rem; margin: 1.2rem 0 2rem; }
 .reference-visuals-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .reference-visuals-heading > span { color: var(--accent); font: 800 .65rem/1.2 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
 .reference-visuals-heading > p { margin: 0; color: var(--muted); font-size: .78rem; }
 .reference-visual-stack { display: grid; gap: 1rem; }
-.reference-visual-item { display: grid; gap: .5rem; }
+.reference-visual-item { min-width: 0; display: grid; gap: .5rem; }
 .reference-visual-teaching-point { max-width: 72ch; margin: 0; padding-inline: .15rem; color: var(--muted); font-size: .82rem; line-height: 1.55; }
 .depth-grid, .card-preview, .notes-panel, .unit-sources { padding-block: 1.8rem; border-top: 1px solid var(--line); }
 .depth-grid h2, .card-preview h2, .notes-panel h2 { margin: .25rem 0 .8rem; font-size: 1.25rem; letter-spacing: -.02em; }

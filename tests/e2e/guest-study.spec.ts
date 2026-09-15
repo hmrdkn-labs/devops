@@ -88,6 +88,9 @@ test('new learners can learn first or use reference mode without faking recall',
   const visual = page.getByTestId('lesson-visual-guide').first();
   await visual.getByRole('button', { name: 'Next →' }).click();
   await expect(visual.locator('.lesson-visual-counter')).toContainText('2 /');
+  const viewport = page.viewportSize();
+  expect(viewport).not.toBeNull();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport!.width);
   await expect(page.getByLabel('Your explanation')).toBeHidden();
   const lessonCompletion = page.getByRole('button', { name: 'Mark lesson read' });
   await lessonCompletion.click();
