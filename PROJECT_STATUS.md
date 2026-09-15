@@ -5,7 +5,7 @@
 
 ## Read this first
 
-**Study-flow continuity v12 is release-ready:** the standard `/learn/*`
+**Study-flow continuity v12 is live:** the standard `/learn/*`
 question-first experience now treats question changes, Study ↔ Reference, and
 Learn-first ↔ retrieval as one continuous learning surface instead of mounting
 unrelated blocks with entry-only fades. Supporting browsers use the
@@ -23,8 +23,15 @@ typecheck, **36 unit tests**, D1 checks, production build, `git diff --check`,
 and the full Playwright desktop/tablet/mobile matrix with **54 passed / 18
 intentional skips**. A real local browser pass on `container-lifecycle`
 confirmed Study → Reference → Study layout continuity in both directions,
-including the Web Animations fallback used by that browser. **No implementation
-blocker. Pending public CI and protected owner deployment.**
+including the Web Animations fallback used by that browser. Exact public source
+`9faccf5cd9d0523ef059156fb6fcfa2e5173b249` passed public CI run
+`34942113889` and protected owner deployment run `34942342513`. Production
+health reports status `ok`, D1 `ready`, and content manifest SHA
+`5844708533a0b634ce26b1028d38184e377b85ad9a7b5b6a36bfda4900d2d85a`.
+A live production inspection of `container-lifecycle` confirms one persistent
+`study-surface` with `view-transition-name: study-surface`, animated grid
+columns/gap, and opacity/transform rail transitions loaded on the deployed
+page. **No implementation or deployment blocker.**
 
 **Reference visual learning v11 is live:** the visual teaching
 layer is no longer limited to KCNA exercises. All **37 published reference
