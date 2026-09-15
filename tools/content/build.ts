@@ -216,6 +216,14 @@ export function validateLessons(
     for (const exercise of lesson.exercises) {
       if (exerciseIds.has(exercise.id)) throw new Error(`Duplicate lesson exercise ID: ${exercise.id}`);
       exerciseIds.add(exercise.id);
+      if (lesson.certification === 'cncf:kcna') {
+        if (!exercise.learn_first || exercise.learn_first.visual.length === 0) {
+          throw new Error(`${exercise.id}: KCNA exercises require a learn-first visual walkthrough`);
+        }
+        if (exercise.feedback.visual.length === 0) {
+          throw new Error(`${exercise.id}: KCNA exercises require a feedback visual walkthrough`);
+        }
+      }
       if (!sourceUnits.has(exercise.unit_id)) {
         throw new Error(`${exercise.id}: unit ${exercise.unit_id} is not a lesson source unit`);
       }

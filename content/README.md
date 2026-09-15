@@ -23,6 +23,13 @@ The v1 exercise kinds are `choose`, `arrange`, `connect`, `command_builder`,
 hints, text diagrams, and a learn-first variant; it must not contain HTML,
 framework components, CSS classes, or screen coordinates.
 
+For KCNA lessons, every exercise carries two portable visual walkthroughs:
+`learn_first.visual` for assisted concept teaching and `feedback.visual` for the
+post-attempt causal model. Each array item is one ordered presentation frame. Use
+`→`, `↓`, `←`, or `↔` inside a frame when a relationship should be rendered as a
+flow. The player supplies animation, step/replay controls, and reduced-motion
+behavior; the YAML stays plain text that another client can render independently.
+
 Every exercise owns immutable IDs, references objectives from its declared
 source unit, and declares an evidence intent. Runtime evidence remains stricter
 than that intent:

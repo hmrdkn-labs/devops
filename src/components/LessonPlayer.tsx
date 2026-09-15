@@ -1,5 +1,6 @@
 import { For, Show, createMemo, createResource, createSignal, onMount } from 'solid-js';
 import type { Lesson, LessonExercise } from '@/lib/content/schema';
+import LessonVisualGuide from '@/components/LessonVisualGuide';
 
 interface Props {
   lesson: Lesson;
@@ -373,7 +374,11 @@ export default function LessonPlayer(props: Props) {
                   <p class="lesson-kicker">Learn first · encounter only</p>
                   <h2>{concept().title}</h2>
                   <p>{concept().body}</p>
-                  <pre class="lesson-visual"><code>{concept().visual.join('\n')}</code></pre>
+                  <LessonVisualGuide
+                    lines={concept().visual}
+                    eyebrow="Learn visually"
+                    title="Step through the mental model"
+                  />
                   <button class="lesson-primary" type="button" onClick={tryVariant}>Try a new variant</button>
                 </div>
               )}
@@ -585,7 +590,11 @@ export default function LessonPlayer(props: Props) {
                       </div>
                     )}
                   </Show>
-                  <pre class="lesson-visual"><code>{exercise().feedback.visual.join('\n')}</code></pre>
+                  <LessonVisualGuide
+                    lines={exercise().feedback.visual}
+                    eyebrow="See what changed"
+                    title="Replay the causal model"
+                  />
                   <p>{exercise().feedback.explanation}</p>
                   <ul><For each={exercise().feedback.points}>{(point) => <li>{point}</li>}</For></ul>
                   <Show when={choiceExercise()}>

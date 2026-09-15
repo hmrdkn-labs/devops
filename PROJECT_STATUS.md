@@ -5,6 +5,24 @@
 
 ## Read this first
 
+**KCNA visual learning v10 is release-ready:** every one of the **45 KCNA
+interactive exercises** now has a reusable visual teaching layer in both its
+assisted Learn-first path and its post-attempt feedback. Existing portable YAML
+`visual` arrays remain the source of truth; the Solid player now renders them as
+step-through causal presentations with an active stage, progress rail,
+Back/Next, Play/Pause, and Replay controls. One-line arrow chains are expanded
+into progressive frames instead of being shown as static ASCII. Motion remains
+instructional and restrained, and `prefers-reduced-motion` disables transition
+animation without removing the step controls. The layout is responsive on
+desktop/tablet/mobile and does not change Encountered/Recall/Application or
+FSRS semantics. KCNA content validation now fails if either the Learn-first or
+feedback visual is missing, so future exercises cannot silently regress to
+text-only teaching. Local validation is green: 77-file typecheck, 35 unit tests,
+D1 checks, production build, `git diff --check`, and the full Playwright matrix
+with **48 passed / 18 intentional skips**. Rendered Chromium QA covered light
+desktop, light 390px mobile, and dark wrong-answer feedback. **No implementation
+blocker.** Next step is exact-SHA protected release and live browser verification.
+
 **KCNA interactive curriculum v9 is live:** the interactive lesson
 model now covers all four KCNA checkpoints instead of only the Resources pilot.
 `content/lessons/` contains four portable checkpoint lessons with **45 total
@@ -367,6 +385,7 @@ and is not part of production.
 | KCNA MCQ refresher v7 | ✅ Live | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Exact source `9566794` passed public CI `34590530006`, protected owner deploy `34620453123`, and independent production route/manifest/D1 probes. |
 | KCNA Resources lesson pilot | ✅ Complete | The 12-exercise Resources pilot proved the portable lesson schema, evidence semantics, immersive player, browser contracts, and production boundary. It is now the retained second checkpoint inside the broader v9 rollout. |
 | KCNA interactive curriculum v9 | ✅ Live | All four KCNA checkpoints now have portable interactive lessons: Fundamentals 11, Resources 12, Cluster Behavior 11, and Cloud-Native Context 11. Exact source `503cc95` passed public CI `34927502284`, protected owner deploy `34927892274`, independent production probes, and live guest browser verification of launchers, checkpoint identity, safe exits, and wrong-answer feedback. D1 is `ready` with manifest SHA `af3dbc9b742471bf19ae3983eeaa9f314fb7e774fc9183b6a8cdcc2295d0aaf7`. |
+| KCNA visual learning v10 | 🟡 Release-ready | All 45 KCNA exercises now render portable Learn-first and feedback visuals as interactive step-through presentations with progressive causal frames, playback controls, responsive layouts, and reduced-motion support. Content validation requires both visual surfaces. Local CI and the 48-pass browser matrix are green; protected release is next. |
 | Feedback clarity | ✅ Live | Lesson primitives, KCNA MCQs, and question-first self-checks now expose actionable correct/incorrect detail and honest correction attempts. Exact source `8afba99` passed public CI `34755696607`, protected owner deploy `34755814811`, the 42-pass browser matrix, and a live guest wrong-answer check. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private

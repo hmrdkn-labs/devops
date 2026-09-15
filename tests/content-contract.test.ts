@@ -230,6 +230,14 @@ describe('content contract', () => {
     const wrongCertification = structuredClone(valid);
     wrongCertification.certification = 'cncf:missing';
     expect(() => validateLessons([wrongCertification], [source], new Set(['cncf:kcna']))).toThrow('unknown certification');
+
+    const missingLearnVisual = structuredClone(valid);
+    missingLearnVisual.exercises[0]!.learn_first!.visual = [];
+    expect(() => validateLessons([missingLearnVisual], [source], new Set(['cncf:kcna']))).toThrow('learn-first visual walkthrough');
+
+    const missingFeedbackVisual = structuredClone(valid);
+    missingFeedbackVisual.exercises[0]!.feedback.visual = [];
+    expect(() => validateLessons([missingFeedbackVisual], [source], new Set(['cncf:kcna']))).toThrow('feedback visual walkthrough');
   });
 
   it('rejects malformed lesson answer, order, match, and blank contracts', () => {

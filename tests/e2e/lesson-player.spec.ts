@@ -88,7 +88,38 @@ test('every KCNA checkpoint exposes the same interactive lesson model', async ({
     await expect(page.locator('.lesson-step-count')).toHaveText(`1 / ${lesson.exercises}`);
     await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', `/kcna#${lesson.checkpoint}`);
     await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
+    await page.getByRole('button', { name: 'Learn first' }).click();
+    const visual = page.getByTestId('lesson-visual-guide');
+    await expect(visual).toBeVisible();
+    await expect(visual.getByText('Learn visually')).toBeVisible();
+    await expect(visual.getByRole('button', { name: 'Play', exact: true })).toBeVisible();
+    await expect(visual.getByRole('button', { name: 'Next →' })).toBeVisible();
   }
+});
+
+test('visual walkthrough supports stepping, replay, and feedback presentation', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Visual walkthrough behavior only needs one browser project');
+  await page.goto(lessonRoute);
+  await page.getByRole('button', { name: 'Learn first' }).click();
+
+  const learnVisual = page.getByTestId('lesson-visual-guide');
+  const counter = learnVisual.locator('.lesson-visual-counter');
+  await expect(counter).toHaveText(/1 \/ [2-9]/);
+  await learnVisual.getByRole('button', { name: 'Next →' }).click();
+  await expect(counter).toHaveText(/2 \/ [2-9]/);
+  await learnVisual.getByRole('button', { name: '← Back' }).click();
+  await expect(counter).toHaveText(/1 \/ [2-9]/);
+  await learnVisual.getByRole('button', { name: 'Next →' }).click();
+  await learnVisual.getByRole('button', { name: 'Replay' }).click();
+  await expect(counter).toHaveText(/1 \/ [2-9]/);
+
+  await page.getByRole('button', { name: 'Try a new variant' }).click();
+  await page.locator('.lesson-option').first().click();
+  await check(page);
+  const feedbackVisual = page.getByTestId('lesson-feedback').getByTestId('lesson-visual-guide');
+  await expect(feedbackVisual).toBeVisible();
+  await expect(feedbackVisual.getByText('See what changed')).toBeVisible();
+  await expect(feedbackVisual.getByRole('button', { name: 'Play', exact: true })).toBeVisible();
 });
 
 test('all KCNA checkpoint lessons stay within the responsive viewport', async ({ page }) => {
@@ -112,7 +143,7 @@ test('wrong feedback teaches the causal model and every distractor', async ({ pa
   await expect(feedback.getByText(/Expected answer — The ReplicaSet creates a replacement Pod/)).toBeVisible();
   await expect(page.locator('.lesson-option[data-state="wrong-selected"]')).toContainText('Your answer · Incorrect');
   await expect(page.locator('.lesson-option[data-state="correct-missed"]')).toContainText('Expected answer');
-  await expect(feedback.getByText('desired = 3')).toBeVisible();
+  await expect(feedback.locator('.lesson-visual-stage').getByText('desired = 3')).toBeVisible();
   await expect(feedback.getByText(/A ReplicaSet continuously reconciles/)).toBeVisible();
   await expect(feedback.getByText(/Deleting a Pod does not change the Deployment specification/)).toBeVisible();
   await expect(page.getByTestId('lesson-retry')).toBeVisible();
@@ -180,7 +211,7 @@ test('Learn first and hints remain assisted and use a different prompt variant',
   await page.getByRole('button', { name: 'Learn first' }).click();
   const learnFirst = page.getByTestId('learn-first-panel');
   await expect(learnFirst).toContainText('encounter only');
-  await expect(learnFirst.getByText(/desired 3 → observed 2 → reconcile/)).toBeVisible();
+  await expect(learnFirst).toContainText('desired 3 → observed 2 → reconcile');
   await page.getByRole('button', { name: 'Try a new variant' }).click();
   const variantPrompt = await page.getByTestId('lesson-active-task').getByRole('heading', { level: 1 }).innerText();
   expect(variantPrompt).not.toBe(originalPrompt);
@@ -257,7 +288,7 @@ test('all twelve Resources interactions complete end to end', async ({ page }, t
     await page.getByRole('button', { name: 'Move kubectl up' }).click();
   }
   await check(page);
-  await expect(page.getByTestId('lesson-feedback').getByText('kubectl get pods -n payments -o wide')).toBeVisible();
+  await expect(page.getByTestId('lesson-feedback').locator('.lesson-visual-stage').getByText('kubectl get pods -n payments -o wide')).toBeVisible();
   await continueLesson(page, 11);
 
   await page.locator('.lesson-option').nth(0).click();
