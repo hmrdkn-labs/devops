@@ -5,6 +5,27 @@
 
 ## Read this first
 
+**Complete private answer history v14 is live and production-verified:**
+previous explanations are now discoverable without weakening retrieval-first
+learning. Study mode fetches answer metadata only, so an answered question shows
+an **Answered before** cue, saved-attempt count, latest timestamp, and a
+**Review previous answers** action while the previous wording stays hidden.
+Reference mode now shows **every saved attempt**, newest first within each
+question, labels the latest versus previous attempts, and preserves answers from
+retired or changed question IDs under **Earlier content revisions** instead of
+silently dropping them. The authenticated `/api/answers` endpoint also supports
+`view=metadata`, which omits `answerMarkdown`; full history is fetched only when
+the learner intentionally opens Reference/history. Successful persistence
+refreshes both views. Local validation is green: Astro typecheck, **36 unit
+tests**, D1 checks, production build, `git diff --check`, and the full Playwright
+desktop/tablet/mobile matrix with **57 passed / 18 intentional skips**. Exact
+public source `c4aa86c650fe1b35e94878a4d907fa5c0937318b` passed public CI run
+`34950405036` and protected owner deployment run `34950598745`. Live signed-in
+production QA on `kubernetes-manifests` confirmed the Study cue reports two
+saved attempts, and Reference mode exposes both historical answers for the first
+question plus the saved `spec` versus `status` explanation for the second.
+**No implementation or deployment blocker.**
+
 **Component ownership + private explanation history v13 is live:**
 Kubernetes visuals can now carry a portable component responsibility map in
 canonical YAML: exact component name, architectural location, responsibility,
