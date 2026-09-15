@@ -27,9 +27,9 @@
         "fpp:cloud-native-architecture-principles/scale": "b4acca5d2330751a94987167b115bbeee35da6b6a9cf5e5a90de8f6c50828f7d"
       },
       "mastery_hash": "6809e60585999db8deeb3b27140203929150c73e7fd15bee2e5c9a3d5a52e3d7",
-      "enrichment_hash": "cafba9d3f8c171f70436d7d1ece58ac5cd4872825bf74a1292e8bc78ed2fd620",
+      "enrichment_hash": "74ece67a5b0007051c41d40ba1e70f8c765b26b9dc02700873e6ebe599d32c6e",
       "editorial_hash": "c6e6cf790a28d35d10fa26920dc2b6d9df351843b98446f594ad0fd486138ec7",
-      "content_hash": "17d9610f0027fc05d93cf950a561059ae5e98a986bee873780c62a63d5c1969c",
+      "content_hash": "457286fc28b3fc290c10a803d23258408cbe3fede8ec17ac75e8ba4af021a29c",
       "raw_markdown_url": "/raw/v1/units/cloud-native-architecture-principles/unit.md",
       "raw_visuals_url": "/raw/v1/units/cloud-native-architecture-principles/visuals.yaml",
       "visual_count": 1
@@ -54,9 +54,9 @@
         "fpp:cloud-native-delivery-gitops/gitops": "9dd041e59f18cd30f62a31dc80471b033f08408bd3832a637e6aa50ce25abed8"
       },
       "mastery_hash": "165a47dfa5ddf58c4fa0cc26a57462eb155ed1593b84ad89ef85949220b575dc",
-      "enrichment_hash": "20264e1e27babc577c080af27aa956ba270f1b60459611910cc6de2ada4b42cf",
+      "enrichment_hash": "f568bf98aba165df555b416c6223d6f4c477630f3cab8b7577816d551ef348fd",
       "editorial_hash": "4af9bb8142c1cf641a805f0cc9f9fab5fb0c9dfab7603d7f48b87ba2686744d5",
-      "content_hash": "5e9a11e26fe8457297986b9cbd0fbcdeb608779446009b58036c5110ab72fff1",
+      "content_hash": "3ab0194b045a1b5ca75adc293cb4435d684d1f1fcc2fb830bf821c3b6ff6908b",
       "raw_markdown_url": "/raw/v1/units/cloud-native-delivery-gitops/unit.md",
       "raw_visuals_url": "/raw/v1/units/cloud-native-delivery-gitops/visuals.yaml",
       "visual_count": 1
@@ -79,9 +79,9 @@
         "fpp:cloud-native-observability-signals/tools": "6cfcffd3480f0d98530dd64bfb8c1f3e18ef2c16baa20519c70bef09f34b4ff9"
       },
       "mastery_hash": "467826666219b8c1eb785aeed271448c1f80b98a6f8a35531ac29cfaaf84f2ba",
-      "enrichment_hash": "c0f8dba7ce76bc7b1b7a7ed1508d329ef5c67d8b3b5212ccd2f83426dbafb472",
+      "enrichment_hash": "5170a03b5dba405b964ac8aed43e428f2fe88945c9dffe043f3540097f699a21",
       "editorial_hash": "37763aecab8ae6f497304b8128a60530108a88d2dc522c8b72d529d6b50ad1b3",
-      "content_hash": "3fd1e342b9d8fc4b77afef167942d289fc0b919fca428da4d9237986fb7869af",
+      "content_hash": "f309f43162b031115d9e465130c52ebe1d7336a6473011fabc9cc4e5cb722982",
       "raw_markdown_url": "/raw/v1/units/cloud-native-observability-signals/unit.md",
       "raw_visuals_url": "/raw/v1/units/cloud-native-observability-signals/visuals.yaml",
       "visual_count": 1
@@ -106,9 +106,9 @@
         "fpp:cloud-native-release-debugging/evidence": "514b0b4db926d406f9b4e60db1c5cd5be599a0b520cbd540fc2bf1dbb48f8ed7"
       },
       "mastery_hash": "3b78d8def65df795a7215593f8430326cef4c001840247fa3646dbfb9f5da57f",
-      "enrichment_hash": "7c9eaa3c4d8689f1d35b08f93959f3e66c2b0fab6a165e2582305da8dabcfad1",
+      "enrichment_hash": "2c3d06fe6aafa743fa91a36ed8da87a9542de4ee69e51c58de9cf7efa051df99",
       "editorial_hash": "f7576d2bb9be7fc0fc8775875b4b8f3107d9ec6a8e454de51868eb9c948c7175",
-      "content_hash": "41b67b2645c922af09cbad493e4caeff6a18d3da6c8ffbb82682522fbcce4060",
+      "content_hash": "346a4ff6250b93328dc26d3a4499fb58ea229aa19ea47549548829b0eb9bd87d",
       "raw_markdown_url": "/raw/v1/units/cloud-native-release-debugging/unit.md",
       "raw_visuals_url": "/raw/v1/units/cloud-native-release-debugging/visuals.yaml",
       "visual_count": 1
@@ -132,9 +132,9 @@
         "fpp:cncf-ecosystem-community/community": "e0a69d5d8b6d79a04f4abd142eb6ab2fe3c3dac68fcc32aa013b645ff4324407"
       },
       "mastery_hash": "ff79eec388f1b9965fd452e43dc4b2ac311364c3c36523323731a81dd2d9d620",
-      "enrichment_hash": "3a77aa51c0f5f556cb349ba6d9c9b3e4003c313a0b149399bf4d2ee0a8ccee0f",
+      "enrichment_hash": "ff42c600582b1b845f2c70f1811d70e89bd40da4727a75726b49635e1d1179b7",
       "editorial_hash": "4ae212d60562b4ed3965f850345972774646f5f1df9bb67ab24a9ae360b1f72d",
-      "content_hash": "66262f12fa33aac1ff100f4d7c18c11cbc58c9a47db06ef5b9c58f1b122895f6",
+      "content_hash": "dd260c8cf31de1169f2aa18952440c4243c908e32cb8ab1d5dd504e338a900bb",
       "raw_markdown_url": "/raw/v1/units/cncf-ecosystem-community/unit.md",
       "raw_visuals_url": "/raw/v1/units/cncf-ecosystem-community/visuals.yaml",
       "visual_count": 1
@@ -159,9 +159,9 @@
         "fpp:config-secrets-storage/pv-topology": "5217abd9555fd69e9ecf17937fa33ecc443827cc03f390019676eb3ea282994e"
       },
       "mastery_hash": "d0c4096517e9193eb5c7d18b0daecc9618ee182ab0c96b05212f98eb6c2b4b87",
-      "enrichment_hash": "397f339aa9cb052a98bb4db18c73b67ef243c4b7fadd27f3c38c5b8776842c9b",
+      "enrichment_hash": "98930bf2eed73afcc45cdade01c58ab584d580c8c05330903d17feb9e4e7fbf4",
       "editorial_hash": "719425ae747e5cf99d0776ad800ea60c6bc89a1198aab386acb66707f0696e5f",
-      "content_hash": "62fa7d0273247b5f6ad829e527d112fc1e44fd89f50def4b33dd6f9c43cfb7bd",
+      "content_hash": "3aa6194c78735680d6b9c69b4fcd807a4f7ecc20261a394e3dad7475eafd1b87",
       "raw_markdown_url": "/raw/v1/units/config-secrets-storage/unit.md",
       "raw_visuals_url": "/raw/v1/units/config-secrets-storage/visuals.yaml",
       "visual_count": 1
@@ -186,9 +186,9 @@
         "fpp:container-lifecycle/pid1-exit": "6b547c3035d7d0ee2dcfc47d45ef5e33456cf1daf7d48539901583bf2217b591"
       },
       "mastery_hash": "08a03c16754549703a7da1c547fc404594355cdd07003c2b86062cfa26723819",
-      "enrichment_hash": "5bdad4df9c1dc3aa5b08d5fda11100bcd5d2cb57dad9fc3db5dfa20865ab2026",
+      "enrichment_hash": "09bb468da2976e429fba70c290fb1ad77ec42e28f8f893c8153612749b5edf8a",
       "editorial_hash": "4e4754eb851ab1edef8f6ad38adb533e20ab86efe22152c957e34ee8239a4c82",
-      "content_hash": "2f732750c898bf1dfeab247be99c573ab15a0521846c096680d35734d5e312cd",
+      "content_hash": "f9ccb2fba10f7f5cb437edc36c9ba2f8dabfd4f39c6c10a4fe017cf7850e663c",
       "raw_markdown_url": "/raw/v1/units/container-lifecycle/unit.md",
       "raw_visuals_url": "/raw/v1/units/container-lifecycle/visuals.yaml",
       "visual_count": 1
@@ -212,9 +212,9 @@
         "fpp:container-network-storage/storage-boundary": "52622264ab8a1d26dc96e4ace467fc032c688646256c5b8e936164e65ea5cb44"
       },
       "mastery_hash": "1a3a832d93ac3e98aa3e08d8d0d01ea8d169fc8e902a4907ccec5137c4d8dac1",
-      "enrichment_hash": "83e0a42fbc71a98b06d5253585d746c12da6c0720f521ff19cd46ca9656567ec",
+      "enrichment_hash": "ce026e51851324b3c894653b468356e2c67dd3642504ca5126681dd391c28a94",
       "editorial_hash": "db9d5601b8d2c60b3299b3c75f5996ebee2fe857c6bec4d00fe0cf917e5d0c0e",
-      "content_hash": "ee14287210e6b82e76258818261f81ae5ca00509362e8f9200fe790b1a9c3573",
+      "content_hash": "2201e7834a5557b12cd3a19a074d222690cc3e13c699fd578f1791e7e160eae7",
       "raw_markdown_url": "/raw/v1/units/container-network-storage/unit.md",
       "raw_visuals_url": "/raw/v1/units/container-network-storage/visuals.yaml",
       "visual_count": 1
@@ -237,9 +237,9 @@
         "fpp:files-users-permissions/mode-bits": "ac7b69d6d25eef8bfcfca6f3b411ac30c511b82375becf56aa2f4a914ad5a8a9"
       },
       "mastery_hash": "890d2a56bfdad0847f4824fcfefdfd72c5d340a786111c8c356b37fbf69e7eaf",
-      "enrichment_hash": "18cfd36f7a85315e6e0d975dabd997b1379c838b540b5a3f597e8d1cc9441143",
+      "enrichment_hash": "3084c66d7bf028e5ca942317ebead22d9aba918c3f1903c0de6b8aab5e854953",
       "editorial_hash": "d1b23217aa74961b5e0a6991f54268c06b74bee7ff00d152be28d272ac0235a4",
-      "content_hash": "482e95ebb435e3ef7dd58a1a4c67e482cfd89dacf023b985cc21b0943389b704",
+      "content_hash": "961a2cc4412d650497dfaa23d1a89fbeffa281212e783c854c0c715baaa663ed",
       "raw_markdown_url": "/raw/v1/units/files-users-permissions/unit.md",
       "raw_visuals_url": "/raw/v1/units/files-users-permissions/visuals.yaml",
       "visual_count": 1
@@ -262,9 +262,9 @@
         "fpp:git-yaml-declarative/yaml-schema": "05e732976b01ad18e1629e7a09d780fadfc6e8dd3228a9dea4db4ca7066cde08"
       },
       "mastery_hash": "ecd2872c18584dca01dd7c3ad1dfd04d7b5af6867fe9730e2f379aa6683a9d68",
-      "enrichment_hash": "75ed8b5e5cf2df126a8a29d1095cb17405a987b0ebfcf04df85b315a575ae697",
+      "enrichment_hash": "5c8d2a94364e0378f90e450b52a3dc67653bb8e737c24e3c2ce66a19a859907f",
       "editorial_hash": "5cb3cefb5545b495648bc7d3f3b9d054a72b066fe3271120ef2b00366aa19811",
-      "content_hash": "8cc6dabac61d5c8b378fc1d1e9b8d8281d5648c6684f726edc2dbc7c1f2be3a8",
+      "content_hash": "317e6f2f2b3950f83971be1af06832f4ab5138f6fc54bac583401c01e96cdff4",
       "raw_markdown_url": "/raw/v1/units/git-yaml-declarative/unit.md",
       "raw_visuals_url": "/raw/v1/units/git-yaml-declarative/visuals.yaml",
       "visual_count": 1
@@ -288,9 +288,9 @@
         "fpp:http-tls/tls-identity": "9636c7029a9a1843e01bba8ce4daabcc4a5a3e2400f92e152a6a30d3b161cade"
       },
       "mastery_hash": "731dba6ba9adba590284bc9ec5da22304c7b18e588fe1848fc6e3d693b56bc52",
-      "enrichment_hash": "f6a3e7cdd047c236b3033804b847b2d150cbed60514c87202b58a545c20bc9f2",
+      "enrichment_hash": "b17a7b18d529522528ffa49a2fca6148c2cda210d04c0f65f3e761163b513264",
       "editorial_hash": "3dfc61661074d551e9aea61b0a8e9f8a5df29443d0f20ce79074caf86e794b83",
-      "content_hash": "5d7af2fc013f27f1068c0efdc68f2655260203a422700b0e5f730fd272252d8c",
+      "content_hash": "f4a2028106e8be4b4025686276452d4c8855220f8b09b6bf528638c5500ea949",
       "raw_markdown_url": "/raw/v1/units/http-tls/unit.md",
       "raw_visuals_url": "/raw/v1/units/http-tls/visuals.yaml",
       "visual_count": 1
@@ -314,9 +314,9 @@
         "fpp:images-layers-registries/tag-digest": "1ff3c3ef8c2615c019d955f22ccaaef9246177c75ae2ccb7fa04bec422e0dc60"
       },
       "mastery_hash": "5c9a4c83e2fcecb5f2ce11470c898e76d85e01cc7c98d69ceb52b2dc658f2067",
-      "enrichment_hash": "89d4945ef7852b3c79d2813ff2d3d27e730d918f4a8daa7d771911f072bf0009",
+      "enrichment_hash": "1358e7f753a3431e43011959fcac0246c6cd80d08db327a5022bd4162180d9bf",
       "editorial_hash": "650e9478d627a5c591e69132611656cce251b5fdc1c74ec7734db18e4569edd1",
-      "content_hash": "e0d83ee06e138aac8cde508cb0587cbd1b3f0075b85745ba262cdb4766ef5612",
+      "content_hash": "922faa074b961e59f1d4e1555e3bc17be28aed767c2cffc5f9279896f83ee717",
       "raw_markdown_url": "/raw/v1/units/images-layers-registries/unit.md",
       "raw_visuals_url": "/raw/v1/units/images-layers-registries/visuals.yaml",
       "visual_count": 1
@@ -339,9 +339,9 @@
         "fpp:ip-subnets/local-or-routed": "c50c38e0060c8be0573fc7aea3d1f8012113564c3a81fc3ff07b02a285b1fcc9"
       },
       "mastery_hash": "6806463125693e05ab52fd637c7506e9e34460e90ec267a8483e337e1821f5d3",
-      "enrichment_hash": "9c4b988951bf3bc77ed52a55b8497a67ffa4d05f5793a5dc301bcd71abc7ea21",
+      "enrichment_hash": "348b9b385e6f8db20c3af5f3dfbd73fa4aadd004f1839760a83b262c3e96fd8a",
       "editorial_hash": "c102dc66eb8d09d3799a167bb27fc0d9d64fbc01a7d06f0f89076bce67e8a421",
-      "content_hash": "59af2e5ba6a669bd22e4210edb7e70466fb6fb1f26b186b4cb7c26cbc5406ae1",
+      "content_hash": "28e5c9f0fe63287ea76ae2e393945b5e6d55584328616273754fe69fa53083d8",
       "raw_markdown_url": "/raw/v1/units/ip-subnets/unit.md",
       "raw_visuals_url": "/raw/v1/units/ip-subnets/visuals.yaml",
       "visual_count": 1
@@ -362,9 +362,9 @@
         "fpp:kcna-domain-map/layers": "5110df1215c507111cbfdbc1f89e5f6a0fa5e6251c78e7f7de9015e90f15dd40"
       },
       "mastery_hash": "8ddcfe585d750568a7799cbcc82f1075fc2259e7919f3e5001d16d06c2c9498a",
-      "enrichment_hash": "d42596a6d6989295baeafef7393492e227779bd3b62d845c6790b055e566a9fb",
+      "enrichment_hash": "91856ced3bd826f5aecfacdbf5c068f1be89c76587214eca03a72f327b2dbdba",
       "editorial_hash": "89cc3e24b4d02cedeed4a4b7b40cfdd0bdcbfffeaa37f26f457bfece64651319",
-      "content_hash": "e9cb986e9f248091bac167b041af8bacb0aaeb00e92930d02b5aa629f1e63dc0",
+      "content_hash": "00fe55d5e835746b6bb5e93964403ddb7888cb91b38d5d30b66589ec6dfb01a0",
       "raw_markdown_url": "/raw/v1/units/kcna-domain-map/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-domain-map/visuals.yaml",
       "visual_count": 1
@@ -389,9 +389,9 @@
         "fpp:kcna-kubernetes-fundamentals-review/runtime": "da2ffe4cedd47c55d670027da361d3474816f83c73baf834b75e787443ec88ad"
       },
       "mastery_hash": "2b963753b0382aa14138ef0b1cf1fee2f1e3634901fbb7a0b14b89e8e7c7a8c6",
-      "enrichment_hash": "059afdd37867ba71bbf179a3734459b6c0fa3e2c22d9e7a02cfff6e86d61fbd3",
+      "enrichment_hash": "bd6efde339965e5d6fe8753887189527e5bc288bcd7d2723a9edfb9b7b3f3194",
       "editorial_hash": "bb83c206523ce7a69462a256fd26697c44c31df10088c7bbe4d3a6cc47523eca",
-      "content_hash": "3338c3cf8e4a41c2866649d999af44c9d6158842e69c1b567a980d3f6fee421a",
+      "content_hash": "993e6cce965b9cf618b8142d55c85f4b2e77a301d4ffeb5b397c1247db8b4ddf",
       "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/visuals.yaml",
       "visual_count": 1
@@ -419,9 +419,9 @@
         "fpp:kcna-kubernetes-resources-review/api-objects": "8aa7fa5bd060607e87ec35e2f23af9a82ebacf9b6a52abbb252febd69b1184c4"
       },
       "mastery_hash": "18533f47a1770c40de4313ea5772879658e36830278684ed4edc35029d513cf3",
-      "enrichment_hash": "81d3afbbdbb376506b37d8d7ba24ff0116d0d19478dd3877d350d4523b511628",
+      "enrichment_hash": "820ff0059d332f37776f61f43cd9e93ea9fb4270c28cdc1f67f2d8e3c2941647",
       "editorial_hash": "f71506c53f96168957c71780c9778834b7ed4a95ed4d497f30ffc0f721f29d4a",
-      "content_hash": "80445cc3165dea5625c4a4d664a388a45e27d3766dd3fded745301e377b50330",
+      "content_hash": "24eb540c4307fc68bbb7cba692dcec4e1ff86246477b9e36ab2a63a848a72a34",
       "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-resources-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-kubernetes-resources-review/visuals.yaml",
       "visual_count": 1
@@ -445,9 +445,9 @@
         "fpp:kubernetes-apply-live-state/live-state": "df12cac8cb1a79f240ea9f986dc9a6cd2a31ef489b967eb45495c80b6e53cec9"
       },
       "mastery_hash": "66356c1893657ad2ed02e6da89b7011350ed6001458a66bda6232cea658e4fd5",
-      "enrichment_hash": "246b4ee83e5d878f370f01c8307574579045092f9152862b3e1d4afb467f7002",
+      "enrichment_hash": "f48b0b89b60e34656415c1052308564a06e01b39e751bc22970539751f2ac3db",
       "editorial_hash": "bbb895d776896617bf578813d770b8286d125f790bcf67b94a5fbac6d04a22e1",
-      "content_hash": "34fbe426c4a54e88b5dfc44f36b6fbdd1119f27d413dc4345e5ebe97f38ccc08",
+      "content_hash": "390b31d8f7a367042dd85335faa5f309fcda717b79af4d103b253e89e15c5d80",
       "raw_markdown_url": "/raw/v1/units/kubernetes-apply-live-state/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-apply-live-state/visuals.yaml",
       "visual_count": 1
@@ -471,9 +471,9 @@
         "fpp:kubernetes-architecture-components/request-path": "226ce92ab8306dc66a7a9a606ca85be7c4706444f6799e757143bedd6f513a45"
       },
       "mastery_hash": "7e351113b11d97335a37502cff3566c2bea0bdabe0fe3ea002fbb0bb73027e04",
-      "enrichment_hash": "d065db2edc3ec362c16af71d8eafb2c48dac9982eb748de44c467cdbcc074dde",
+      "enrichment_hash": "cf1526d859d24bd4d8f09f5f6374ff3e343b80c9b6f4138f87840a5aeae7b5c8",
       "editorial_hash": "ffe9f400e5def70953493d3c54963e0ee08f6cfc199831d0ecf2a1195247dd92",
-      "content_hash": "86f9668527537fd31af8eb375bb2633c6079730d49fee0c5825d4499c1810075",
+      "content_hash": "019c224d09624998ba0b919625c457bd671f2daf866ce5e3031cea7586ae7d41",
       "raw_markdown_url": "/raw/v1/units/kubernetes-architecture-components/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-architecture-components/visuals.yaml",
       "visual_count": 1
@@ -497,9 +497,9 @@
         "fpp:kubernetes-control-loop/reconciliation": "68ca218f4fe97d849b9f175b0092da9bb7d91febe12fde9130a7790bc106efe3"
       },
       "mastery_hash": "f2ec50d019292418a019d49c587031909b7aa119c1043003fcbd972359d3d075",
-      "enrichment_hash": "efaae4f04ebd1b819882080e31fab62f933d81ea611ec51c257af094cfd3237a",
+      "enrichment_hash": "c9d17837e03c2f2ae384d703f6d6c801c5bdaf7e73ad0bb6c96c477abb320201",
       "editorial_hash": "fb8d1c25fab6c49772667c0e3627cdae0f4dc241379056a5854b71bb0e5f3d7a",
-      "content_hash": "5d648ada2be669f0b490e63d72cd2b6eeac1bddd6b14da60fef57712a8c1c4d4",
+      "content_hash": "bf2ce7dac744d7a2efaca241592c5f14ef0172d344b9f02129d3c054c1cea770",
       "raw_markdown_url": "/raw/v1/units/kubernetes-control-loop/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-control-loop/visuals.yaml",
       "visual_count": 1
@@ -522,9 +522,9 @@
         "fpp:kubernetes-deployments-rollouts/revision": "8d2039d7a25c1e799146ee3916fa01f4f7fd4b6598f9e072e2c1649a33bb32b1"
       },
       "mastery_hash": "261268b285690dcb22bfcf7b140b075eb0e8cd15e9e030b94fadb3db0eaab3de",
-      "enrichment_hash": "d2c09742023b9d742d924deaca9acd3ae1d78cdabed37dfc457d3e8145c7f03d",
+      "enrichment_hash": "a61cd0b9b854d963e642c5e64a49441d9296659e338d3f85725d07193dec5a61",
       "editorial_hash": "63cb55fb6afbf717d1568b54d34079ad5d143d58e8856d348a243d74526cdb37",
-      "content_hash": "eb3f301a843d914d4cfccfc6333c62c775c317c2670d6e5b017f07a354b3260d",
+      "content_hash": "910eb6d59b98db8d1d94fe9da64dcdce3bf6d143e10996e3b84d88d9b25079de",
       "raw_markdown_url": "/raw/v1/units/kubernetes-deployments-rollouts/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-deployments-rollouts/visuals.yaml",
       "visual_count": 1
@@ -548,9 +548,9 @@
         "fpp:kubernetes-labels-replicasets/reconciliation": "03a89ffe3e0514040fa301abf64480296c98c835a1e8e4a54caa02c698d6e6de"
       },
       "mastery_hash": "52f0831aaa83df3c628fc82c7bda2b03a0a282b026d068f6597bda6f9fde68c2",
-      "enrichment_hash": "57e4f1a30753a822a0478037bfae33a37cc88dbb0afc47c9a52f0b3c1d2dccbb",
+      "enrichment_hash": "c69dc436527cc806a3efcb1bdb6e5107e0f4abbc8c9e9b55caada288d7678115",
       "editorial_hash": "81941966196ad5ef89b16342ba4632e9a89a2996a3f3b21dff0bdfab14c32e20",
-      "content_hash": "a456c9c23d20647e6a80d1a4014199118d50a2d2aafd71c9c6a128254bf4a048",
+      "content_hash": "ba5cd516690b08a3d2af5b434bb321a19a2aa546d865995362b17d6dec5f3cac",
       "raw_markdown_url": "/raw/v1/units/kubernetes-labels-replicasets/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-labels-replicasets/visuals.yaml",
       "visual_count": 1
@@ -574,9 +574,9 @@
         "fpp:kubernetes-manifests/proof-boundary": "9e6292d282bfb324af70f8727f84ed752b0df6aae1c17b4519650e210ab1b098"
       },
       "mastery_hash": "78ac5f25cff003ee590198b4eecdbf151db27a9264c48791753269b5cd9c3ab0",
-      "enrichment_hash": "01cee71a57a0861e2d491df7c030beeabf8c13773dd7144e10b20419fa7e0d23",
+      "enrichment_hash": "99e251f8accb10d9b5545e01e74ff716252ce00b172afde3e069568d4f921c92",
       "editorial_hash": "0ee5ea210405a10ca3d4b914f00f4fa91649f302bc3129418c035b62df12ee76",
-      "content_hash": "d3400d0e0c0e9f152cba184214b5355c65c88934891a312bb580ecd2ce2905f5",
+      "content_hash": "bf64af1b7f152d1e9b12c1608e6b5d3aea74e39fea4526cc6e82ba2ce6abd3d0",
       "raw_markdown_url": "/raw/v1/units/kubernetes-manifests/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-manifests/visuals.yaml",
       "visual_count": 1
@@ -600,9 +600,9 @@
         "fpp:kubernetes-namespaces-scope/boundary": "5b62ba3b66dd43128b5f2c3fcbfcdd7dde9ea6ae1fcd95fe135f4f0a4a8cde51"
       },
       "mastery_hash": "70c5a2911a38b1a5dbe329494cbd870a3fe1c99f73bf617329c909230058859e",
-      "enrichment_hash": "8fa110bf1b40fd66cfc8e16379302396bbe412b077d84752e62e9dfcc16c2ea9",
+      "enrichment_hash": "f0da82846f8e7e98a6a152c1fd6099003d44225a7d83640a75c864fb8976b26d",
       "editorial_hash": "68e6744aab696b7f89b8ae31e0bb9545523725c5a02cb2b8d19ca82857391892",
-      "content_hash": "5d56a7b1b7747b46bb132386c59dacb77cf2537df36e85f91a3a0915829d46d4",
+      "content_hash": "6200b76de9dde06fc163723d24c167a7e5e2dbad1c7cd2ea9002e354024646ff",
       "raw_markdown_url": "/raw/v1/units/kubernetes-namespaces-scope/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-namespaces-scope/visuals.yaml",
       "visual_count": 1
@@ -628,9 +628,9 @@
         "fpp:kubernetes-networking-request-path/boundaries": "14ac54d3d5faf99d69273a3335cfb2118e5add6f32476688dc354304d352849f"
       },
       "mastery_hash": "7125d7134a3bc090db475f0651bbcf18e22482c7a673598e0fa3a2464d9d0c9b",
-      "enrichment_hash": "12ded693c50492146e10f6f5148389c3324534cc7ba1eab50c717593186693b2",
+      "enrichment_hash": "66eb3e88ec060a99fa0d9b4fa4ec07adcb631ed4031c08def01b5cfa4d44e806",
       "editorial_hash": "2116bf34e7627d32bf386f797a69fcc98edeb00778bbb7defba4206a9c17eb21",
-      "content_hash": "d7d54055bbc9a6729f6e62191f3d8d98c9ec3c7e3026f510fa2ddc7175f90777",
+      "content_hash": "64ae9a159637b482b8d0579d61beb11cc0a14a9e7ec50796541bdae2a11b3850",
       "raw_markdown_url": "/raw/v1/units/kubernetes-networking-request-path/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-networking-request-path/visuals.yaml",
       "visual_count": 1
@@ -654,9 +654,9 @@
         "fpp:kubernetes-pod-model/ownership": "7ac56f42485cb4d7e757745fbcd010a57214ee58a49e38dbc2cd4ce99be33fbe"
       },
       "mastery_hash": "1dccca6b7c84362847656cb255d92739e84c3f7b027948276a85fdcce0122909",
-      "enrichment_hash": "ff5aea2aaa6ba6d381b5c550452f31b0dc073a34dcaf8f2002c64b68f2b97dbf",
+      "enrichment_hash": "db14a56c2bc60a59da31fe94725f7cd97fe25776ef314f83a4e087a534124547",
       "editorial_hash": "53b9d743d11b85675c55931f396069939a05f4b03036871495a7827ba7294257",
-      "content_hash": "17bf9a70972eee6e08fdaf923b6704278f7f2c05525e05103b557b067f173918",
+      "content_hash": "1d433da2a342a568fa896f7b667da08b3076431b5737e56772516089f31ead0c",
       "raw_markdown_url": "/raw/v1/units/kubernetes-pod-model/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-pod-model/visuals.yaml",
       "visual_count": 1
@@ -680,9 +680,9 @@
         "fpp:kubernetes-scheduling-placement/policy": "791098654c391da55afa66e84bbddb2ce279d62ed6b5e971509b5930ee2e6bc3"
       },
       "mastery_hash": "a0b3794da3c0eb5912d089a660a3fb9b1cfbc7cd356d1a47b52aad9b10282665",
-      "enrichment_hash": "8b0ef9c39bf64880161d55189b7c5f3aba7649dca77eef50e50b9d53a486e7b6",
+      "enrichment_hash": "78804a6fcfd98f839f086a5c17df6d369699e13ff5dfec0789782be7e7fcf575",
       "editorial_hash": "4afee044a670fe1b9e76a2641b53396ea9fb9ef730a3adb786315b7decc2191c",
-      "content_hash": "e9100239e075d605be3835df0c3a9cab2fe4fcb38ebe581170b15ac4b8670877",
+      "content_hash": "2f9d819708a25670b1852ce520a49684218b7843cd4272df868a04e1e8097b39",
       "raw_markdown_url": "/raw/v1/units/kubernetes-scheduling-placement/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-scheduling-placement/visuals.yaml",
       "visual_count": 1
@@ -706,9 +706,9 @@
         "fpp:kubernetes-security-access/workload": "85190ba4541816812443b4f70c2a91a0f1252388acce1231bed9f6002333262c"
       },
       "mastery_hash": "0966226b46c91aca3ec27aefe402026e0f12f7f444128a3a67a840fe2b7d82f0",
-      "enrichment_hash": "93d5c555a7322a70b97b844b7fe06a266e5a05e91f9ab58f87ce6b8503bfda38",
+      "enrichment_hash": "c17fb2b119d52c4431bfe908ab39fe085ccd27674a4e45405d2465440014c8ee",
       "editorial_hash": "6527bf51c6c1df5302f9bf2fbaaf2c0e87b8541db3e74c471d89732abde328ce",
-      "content_hash": "6610a070296b34ecd85e06cc09b4845a1f2fd0e267b3463216d0de50610bfde1",
+      "content_hash": "3533ad737ec31f267648e67902dd2fe507d80fa03d769bd78403186ea41752cc",
       "raw_markdown_url": "/raw/v1/units/kubernetes-security-access/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-security-access/visuals.yaml",
       "visual_count": 1
@@ -732,9 +732,9 @@
         "fpp:kubernetes-storage-lifecycle/failure-domain": "3762af04817b517124f30d43864494933c9f4b6e552c6902c96bfc83af550f71"
       },
       "mastery_hash": "718cf201550757cb39b308ff30ac91dfb381d71c5292ad479cd9874feb1c750b",
-      "enrichment_hash": "cb1aaf03925dc1fed283217c6847e83b30df639931f66b533392ae7bea07cef3",
+      "enrichment_hash": "66a4d9b7284a56f37a1526c6aaf4d3b06c3cdfd41cac9a80aa4077d454384cb5",
       "editorial_hash": "ff474a9bff7c1c21c0530ee8cd0a2d2884584a695b4319974556a74c37dbcc3a",
-      "content_hash": "50dc6d82a26dbf33b884afa02929273a3ba34a0c92debda55f3e9e1878c8ed17",
+      "content_hash": "27a392bd467dd0d53c46bc5ee9fe86a606583fc04b9a7199173441b2f38b18fc",
       "raw_markdown_url": "/raw/v1/units/kubernetes-storage-lifecycle/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-storage-lifecycle/visuals.yaml",
       "visual_count": 1
@@ -758,9 +758,9 @@
         "fpp:namespaces-cgroups/resource-control": "27f8f6b6a5498f9141171da06d27e4c038fff86f9542715a6110988ea626aa94"
       },
       "mastery_hash": "f73901c6fd2f9532d073c01fab247c28a5069c4d9be7b6651923b595b05e2013",
-      "enrichment_hash": "7cd7b1576996b4455d91635ba1c8583ac0c8f1345ded2fe88f27b06b5c066d78",
+      "enrichment_hash": "d8b2c4f259ddde31408e4409974ca8e5225f7eb04d0748fc20f99a44e00b6ec2",
       "editorial_hash": "078410c6c97fbe4ecc16e60a2f06aec6ff854abd0f0fb9f5085ecf3b029bfb97",
-      "content_hash": "2ec3906813dc1a397d30e60aa277490ce263bf35732f4560a1319806ca4f4306",
+      "content_hash": "5c3d7384a6cda922a2c0e2a6e5a9226018f89b2ae6e705142ff8feaf6603cad1",
       "raw_markdown_url": "/raw/v1/units/namespaces-cgroups/unit.md",
       "raw_visuals_url": "/raw/v1/units/namespaces-cgroups/visuals.yaml",
       "visual_count": 1
@@ -784,9 +784,9 @@
         "fpp:pods-workloads/controller-choice": "8b38cd82365e92a4143539c8eeb88824a3504ae20e685eb1bd54f868171407c4"
       },
       "mastery_hash": "cc960cfe34fc0041cb2d1f335ecd10e8436bcbf1076a4070e5547b8f644a48fb",
-      "enrichment_hash": "7a0c102fab3f9c9159a9d5222db3475a80683f2707ca6bc37e412c74a8827df0",
+      "enrichment_hash": "65904639dc3610c69bf32e16ce71a0857ba82536b40a066eabda517a2579587f",
       "editorial_hash": "c45346d9a81d1896588b39f0e3cfbfcbe840a981708c55c7ff36a5912ece1d7b",
-      "content_hash": "ed8024960785424f527e89026ea1f4a93b099643181f974b4343a62b7aaede41",
+      "content_hash": "bd9eb6013c2a581c2a9f3eceeec4d2be927148c235a1cf3c40ea6e7e86668de8",
       "raw_markdown_url": "/raw/v1/units/pods-workloads/unit.md",
       "raw_visuals_url": "/raw/v1/units/pods-workloads/visuals.yaml",
       "visual_count": 1
@@ -809,9 +809,9 @@
         "fpp:ports-sockets-dns/dns-resolution": "4827eb732d9421b8f7a487fa01c15934bfdfab07746b757caee40f3c4df637b8"
       },
       "mastery_hash": "7a28cfb2e210506912b652347f53d91f4b906c8d3e6f943c660d84268ba57a7a",
-      "enrichment_hash": "30e53b686d6f68370f80fb1fae65c7aa7f7fbfdc3a549964451cd24e5e24ce66",
+      "enrichment_hash": "c9e8858fbad3d648d717ce8dc47830ac376a340f91e68a137cba0f6675ca8ec3",
       "editorial_hash": "ca1ddbe06c922ea8e042d991a7661c371de6fe9f4293c2c6192ad3d91c893d43",
-      "content_hash": "0d07febc1324ca16ffe5e3c15d18c16be7a4c2ae1543a1740689973d8b946b6b",
+      "content_hash": "2ba2d7704a194bd0e3e4fc9fffbfea2782fa9e390538ac8a34b32b52be3ce232",
       "raw_markdown_url": "/raw/v1/units/ports-sockets-dns/unit.md",
       "raw_visuals_url": "/raw/v1/units/ports-sockets-dns/visuals.yaml",
       "visual_count": 1
@@ -832,9 +832,9 @@
         "fpp:processes-and-resources/resource-pressure": "2149b09266fdb3378cce83cf1561ce0a7b2e536789989f38ba71e17b19f209dd"
       },
       "mastery_hash": "6a2130fd04a96ac96bb12a6e63a351419d9c54e1163c003ba9abb542776270f2",
-      "enrichment_hash": "88b4b5f565959697d2f68c9b3c1ab9efc19fec8c0fa378c31ffd2a9bf936f3e6",
+      "enrichment_hash": "df30250a5875a776ef83d3029fab5461c06eb57dd6bf6fd841b26a621bdb9cb9",
       "editorial_hash": "b8ea6641f8fe88aeae7927ef7a7eca82ba78e3ae2ebeb5a4f68181ddca230403",
-      "content_hash": "fac2a4b256df8a2a7483b3d7e3ec9b45584d252915016292a55db50be7bb558d",
+      "content_hash": "fdca3992a90ac6a9e0f185ad55fe6e640abb85e9912564b00e673cb79c715b7f",
       "raw_markdown_url": "/raw/v1/units/processes-and-resources/unit.md",
       "raw_visuals_url": "/raw/v1/units/processes-and-resources/visuals.yaml",
       "visual_count": 1
@@ -858,9 +858,9 @@
         "fpp:routing-nat-firewalls/nat-policy": "78392091031008c63acd4295daa1245fdd51d0a05522172927c26961b81bc474"
       },
       "mastery_hash": "5cd6b7c0e4c663e89fe002158146fcad364c7dc419292f0e708e3887720b145c",
-      "enrichment_hash": "5e56509440291800ea93344c507b3e906a2908e8aef70d785b035b8dffd63f73",
+      "enrichment_hash": "11b2fa86bf3f65a38077465f5ba22c954f170014829194bcec75e6c323a2e6ce",
       "editorial_hash": "519167b1e246f24a97cd05684d3dd44d082323d592ed01102325eb1a8a9cc18c",
-      "content_hash": "3498ca2c991ef1c584ad642db7049e0800e2ab836d18d422c2c1078171a630e7",
+      "content_hash": "d83e01d92b9fa324c75a6ad5b07827b038e08e3704bb745e78b8959484614a89",
       "raw_markdown_url": "/raw/v1/units/routing-nat-firewalls/unit.md",
       "raw_visuals_url": "/raw/v1/units/routing-nat-firewalls/visuals.yaml",
       "visual_count": 1
@@ -884,9 +884,9 @@
         "fpp:scheduling-resources-health/probe-semantics": "c4b0bcb859b17571483460796b23607b59e0413082554f91ec55e194ea294524"
       },
       "mastery_hash": "3d3509de627adf6b1c7f25d59564e2210f60d18cd2e20f5690cf4f1bdd150d12",
-      "enrichment_hash": "897e11c219d29d139a704e1fdaae8db16ee236c3d4a3b4ce0d05463ce72d9104",
+      "enrichment_hash": "190736d44108a08e3b0843a7988469b3e394b94bc52dbec7c8eb682419d01554",
       "editorial_hash": "7648f7d1a6656a4a39249a492cad16bfd8a280b45753d572734b502fff31d4f1",
-      "content_hash": "84589254189c29ba3838d356adb95d5b4d9da26c659a5b4e2b7e880e0aa83e91",
+      "content_hash": "716c86000e41dc69d5d01e9054feba6413667d7cf25a8d2ea2a559cdab490fd5",
       "raw_markdown_url": "/raw/v1/units/scheduling-resources-health/unit.md",
       "raw_visuals_url": "/raw/v1/units/scheduling-resources-health/visuals.yaml",
       "visual_count": 1
@@ -910,9 +910,9 @@
         "fpp:services-dns-ingress/external-routing": "a8e272eda5692bc2ced0be9811435be268f35275ffff62a08293880632fdeeb4"
       },
       "mastery_hash": "a29afe0aea6d7424c4c0252b3e399da91694595e8c691a87c9683fa61ad4e2be",
-      "enrichment_hash": "395dcbf14b80d0999ebe44cb19e725e69158793bbaec459c7624d2e9f181cb6c",
+      "enrichment_hash": "d1da60bae30b7d18efd72a4c82ff7f0f791c3b425792ff0a6607ea2db5ed76f4",
       "editorial_hash": "199c4a8cb7ee5232c9087161c0a4181a147de6731d104df6aa0fe46b741202e4",
-      "content_hash": "597aa245af18d67e228cf9d031e276287cce6d25a2e2cd0609b112edbfd45f38",
+      "content_hash": "2aee0a7970cbdbfe3ca29c2dac9c492ebac76d184fa5ca6d8691ff13150a2e44",
       "raw_markdown_url": "/raw/v1/units/services-dns-ingress/unit.md",
       "raw_visuals_url": "/raw/v1/units/services-dns-ingress/visuals.yaml",
       "visual_count": 1
@@ -936,9 +936,9 @@
         "fpp:shell-pipes-signals/signal-shutdown": "e089d9ccef2c706ebb3a6f3cd37f7c80cbf639bb3e536f21630da8947b698cd9"
       },
       "mastery_hash": "9edef245220a286072b05cca3365f28448ffc68f95ff652a36b7e27b392e39b5",
-      "enrichment_hash": "7d46d75779da2ef75d587ad7bca53906c140d3e41003ac4a58ca887585e05e32",
+      "enrichment_hash": "fbdb8a5728cf8681e31c1224888110deeaed6a9237f5250c008ebcab349aeead",
       "editorial_hash": "f98eb8012dbaf0f44d4006f7f664f2ffab64ed4758e58f25ee12ce2dc959f29b",
-      "content_hash": "e73307982ce292d5ad3873c616d86323c4960c134764d9ae54bf1e85af927418",
+      "content_hash": "8db3cc65da05aed8088c6266ab57f2bd36759c3a4e111e5a5594d694c3d885be",
       "raw_markdown_url": "/raw/v1/units/shell-pipes-signals/unit.md",
       "raw_visuals_url": "/raw/v1/units/shell-pipes-signals/visuals.yaml",
       "visual_count": 1
@@ -964,9 +964,9 @@
         "fpp:troubleshoot-process-to-pod/cross-layer": "28874cbf4f5e637b9902cfc879d2cb551c9568de98c785904e8e4beeba75eb5b"
       },
       "mastery_hash": "ae27cab208ec3604c13a5f01cec3d81c13eb6b98c7d97520333f024931637e68",
-      "enrichment_hash": "d4b9269bdede2f3c6dc884700d290b42b743b185679fdb5ee2d3ebc9e07ab8a8",
+      "enrichment_hash": "b274572a13dc621ead139109e3b3b0ab93f786491576867aa32e9cf42ce229dd",
       "editorial_hash": "582cc4759e495810458b5a831aef5776e55a715da55b3e80e78c9087ac557e27",
-      "content_hash": "1c77b79c445266467eff649389284766d7ee76bfb32447558c56b0aceb367ba3",
+      "content_hash": "76536bd79d4c0b8f4a23c563b1c95586d1a844fffb73756e8321061efb0514d6",
       "raw_markdown_url": "/raw/v1/units/troubleshoot-process-to-pod/unit.md",
       "raw_visuals_url": "/raw/v1/units/troubleshoot-process-to-pod/visuals.yaml",
       "visual_count": 1
@@ -1267,6 +1267,7 @@
               "source → CI → artifact",
               "desired deployment state → reconciliation → running workload"
             ],
+            "components": [],
             "variant_prompt": "Rebuild the path from merged source to a running workload while keeping artifact creation separate from environment reconciliation."
           },
           "feedback": {
@@ -1278,7 +1279,8 @@
             ],
             "visual": [
               "build artifact ≠ deploy artifact ≠ prove behavior"
-            ]
+            ],
+            "components": []
           },
           "kind": "arrange",
           "items": [
@@ -1327,6 +1329,7 @@
               "Git desired 3 ↔ live observed 5",
               "reconciler → live 3"
             ],
+            "components": [],
             "variant_prompt": "A human changes an image tag directly in a GitOps-managed cluster while Git still references the old digest. What should reconciliation do?"
           },
           "feedback": {
@@ -1338,7 +1341,8 @@
             ],
             "visual": [
               "versioned intent → reconcile → target"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -1384,6 +1388,7 @@
               "traces: request path",
               "events: control-plane clue"
             ],
+            "components": [],
             "variant_prompt": "Match trend analysis, exception detail, cross-service latency localization, and FailedScheduling clues to metrics, logs, traces, and Kubernetes events."
           },
           "feedback": {
@@ -1395,7 +1400,8 @@
             ],
             "visual": [
               "user symptom ← metrics + traces + logs + events"
-            ]
+            ],
+            "components": []
           },
           "kind": "connect",
           "left": [
@@ -1469,6 +1475,7 @@
               "app → OpenTelemetry → telemetry backend",
               "target → Prometheus scrape/store/query/alert"
             ],
+            "components": [],
             "variant_prompt": "If an application emits traces through OpenTelemetry, does that mean the OpenTelemetry Collector is also the final trace database?"
           },
           "feedback": {
@@ -1480,7 +1487,8 @@
             ],
             "visual": [
               "instrument/collect/export ≠ store/query/alert"
-            ]
+            ],
+            "components": []
           },
           "kind": "choose",
           "options": [
@@ -1521,6 +1529,7 @@
               "blue-green: two sets, switch",
               "canary: small exposure → measure → expand/abort"
             ],
+            "components": [],
             "variant_prompt": "A new release receives 5% of requests while error rate and latency are watched before increasing traffic. Which release strategy is this?"
           },
           "feedback": {
@@ -1532,7 +1541,8 @@
             ],
             "visual": [
               "5% → observe → 25% → observe → 100% or abort"
-            ]
+            ],
+            "components": []
           },
           "kind": "choose",
           "options": [
@@ -1571,6 +1581,7 @@
             "visual": [
               "artifact → desired state → rollout → runtime → endpoints → request"
             ],
+            "components": [],
             "variant_prompt": "A rollout reports progress but users still fail. Rebuild the chain of evidence you should verify before assuming the deployment controller is the only problem."
           },
           "feedback": {
@@ -1582,7 +1593,8 @@
             ],
             "visual": [
               "first failed boundary → smallest useful diagnosis"
-            ]
+            ],
+            "components": []
           },
           "kind": "trace",
           "items": [
@@ -1635,6 +1647,7 @@
             "visual": [
               "intent → reconcile → place → run → reach → user"
             ],
+            "components": [],
             "variant_prompt": "Put the same evidence ladder in order for a Deployment whose Pods exist but the service is still unreachable."
           },
           "feedback": {
@@ -1646,7 +1659,8 @@
             ],
             "visual": [
               "observe first → localize → change deliberately → verify again"
-            ]
+            ],
+            "components": []
           },
           "kind": "arrange",
           "items": [
@@ -1694,6 +1708,7 @@
             "visual": [
               "declare → automate → replace → observe → recover"
             ],
+            "components": [],
             "variant_prompt": "Which is more cloud-native: a manually patched long-lived VM or a replaceable versioned artifact reconciled from declarative state with health telemetry?"
           },
           "feedback": {
@@ -1705,7 +1720,8 @@
             ],
             "visual": [
               "location alone ≠ cloud-native operating model"
-            ]
+            ],
+            "components": []
           },
           "kind": "choose",
           "options": [
@@ -1746,6 +1762,7 @@
               "autoscaling: change N automatically",
               "elasticity: expand/contract resource use"
             ],
+            "components": [],
             "variant_prompt": "A service has two replicas forever with no automatic capacity change. Is that replication, autoscaling, elasticity, or serverless?"
           },
           "feedback": {
@@ -1757,7 +1774,8 @@
             ],
             "visual": [
               "replicas 3 → autoscaler → 8 → autoscaler → 3"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -1804,6 +1822,7 @@
               "runtime → containerd",
               "packaging → Helm"
             ],
+            "components": [],
             "variant_prompt": "Match metrics, DNS, runtime, and Kubernetes package management to Prometheus, CoreDNS, containerd, and Helm."
           },
           "feedback": {
@@ -1815,7 +1834,8 @@
             ],
             "visual": [
               "need → responsibility → representative implementation"
-            ]
+            ],
+            "components": []
           },
           "kind": "connect",
           "left": [
@@ -1889,6 +1909,7 @@
               "shared governance → shared technical ownership",
               "open interface → replaceable implementation behind contract"
             ],
+            "components": [],
             "variant_prompt": "Explain how CRI or CNI can support multiple implementations without Kubernetes hard-coding one vendor product."
           },
           "feedback": {
@@ -1900,7 +1921,8 @@
             ],
             "visual": [
               "community contract + software contract → interoperability"
-            ]
+            ],
+            "components": []
           },
           "kind": "explain",
           "model_answer": "Open governance lets many organizations share technical ownership and decision processes, while stable open interfaces separate responsibilities so implementations can evolve or be replaced behind known contracts. OCI, CRI, CNI, and CSI reduce hard coupling without making every implementation identical.",
@@ -1948,6 +1970,7 @@
             "visual": [
               "DNS → Service → EndpointSlice → Pod IP → process"
             ],
+            "components": [],
             "variant_prompt": "Trace how a request to payments.default.svc reaches one ready payments Pod without assuming the client knows the Pod IP in advance."
           },
           "feedback": {
@@ -1959,7 +1982,8 @@
             ],
             "visual": [
               "service name → stable VIP/identity → ready endpoint → Pod process"
-            ]
+            ],
+            "components": []
           },
           "kind": "trace",
           "items": [
@@ -2010,6 +2034,7 @@
               "Ingress/Gateway: external HTTP routing",
               "NetworkPolicy: allowed flows"
             ],
+            "components": [],
             "variant_prompt": "Match the same four mechanisms after asking which one creates Pod connectivity, which forwards Service traffic, which handles host/path routing, and which restricts flows."
           },
           "feedback": {
@@ -2021,7 +2046,8 @@
             ],
             "visual": [
               "connectivity ≠ forwarding ≠ HTTP routing ≠ policy"
-            ]
+            ],
+            "components": []
           },
           "kind": "connect",
           "left": [
@@ -2095,6 +2121,7 @@
               "readiness → traffic eligibility",
               "liveness → restart decision"
             ],
+            "components": [],
             "variant_prompt": "A Pod's readiness fails during cache warmup but liveness remains healthy. Should it keep running, receive Service traffic, both, or neither?"
           },
           "feedback": {
@@ -2106,7 +2133,8 @@
             ],
             "visual": [
               "running ✓  ready ✗  → no normal Service traffic"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -2152,6 +2180,7 @@
               "Node B: required affinity ✗",
               "feasible nodes: none"
             ],
+            "components": [],
             "variant_prompt": "A Pod fits Node B's resources but fails a required node selector there, while Node A matches the selector but cannot satisfy the Pod's memory request. What happens?"
           },
           "feedback": {
@@ -2163,7 +2192,8 @@
             ],
             "visual": [
               "hard constraints → feasible set → scoring"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -2207,6 +2237,7 @@
             "visual": [
               "candidate nodes → eliminate by hard constraints → none left"
             ],
+            "components": [],
             "variant_prompt": "A FailedScheduling event reports insufficient memory on one node and required affinity mismatch on the others. What boundary failed?"
           },
           "feedback": {
@@ -2218,7 +2249,8 @@
             ],
             "visual": [
               "CPU fit ✗ + taint tolerance ✗ → Pending"
-            ]
+            ],
+            "components": []
           },
           "kind": "terminal_inspect",
           "terminal": [
@@ -2264,6 +2296,7 @@
               "Secret → sensitive value",
               "PVC → durable storage request"
             ],
+            "components": [],
             "variant_prompt": "Match application settings, credentials, and durable database files to ConfigMap, Secret, and PVC."
           },
           "feedback": {
@@ -2275,7 +2308,8 @@
             ],
             "visual": [
               "config ≠ secret ≠ durable storage"
-            ]
+            ],
+            "components": []
           },
           "kind": "connect",
           "left": [
@@ -2336,6 +2370,7 @@
             "visual": [
               "PVC → StorageClass → CSI provision → PV/bind → mount"
             ],
+            "components": [],
             "variant_prompt": "Rebuild the dynamic storage path without treating a PVC as the physical disk itself."
           },
           "feedback": {
@@ -2347,7 +2382,8 @@
             ],
             "visual": [
               "claim → policy → provision → bind → attach/mount"
-            ]
+            ],
+            "components": []
           },
           "kind": "arrange",
           "items": [
@@ -2396,6 +2432,7 @@
               "Pod replacement ✓",
               "volume reattachment → depends on topology/access"
             ],
+            "components": [],
             "variant_prompt": "A Stateful workload uses a volume available only in zone A. Zone A fails. Does a new Pod in zone B automatically make that same storage usable there?"
           },
           "feedback": {
@@ -2407,7 +2444,8 @@
             ],
             "visual": [
               "controller wants Pod → scheduler/storage must satisfy volume topology"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -2451,6 +2489,7 @@
             "visual": [
               "request → authentication → authorization → admission → persistence"
             ],
+            "components": [],
             "variant_prompt": "Trace the security gates an API request crosses before its object is accepted into cluster state."
           },
           "feedback": {
@@ -2463,7 +2502,8 @@
             ],
             "visual": [
               "who? → allowed? → admissible? → persist"
-            ]
+            ],
+            "components": []
           },
           "kind": "trace",
           "items": [
@@ -2513,6 +2553,7 @@
               "RBAC → API authorization",
               "NetworkPolicy → traffic rules"
             ],
+            "components": [],
             "variant_prompt": "If two workloads live in different namespaces but no NetworkPolicy restricts them, should you assume cross-namespace traffic is blocked?"
           },
           "feedback": {
@@ -2524,7 +2565,8 @@
             ],
             "visual": [
               "scope ≠ authorization ≠ network filtering"
-            ]
+            ],
+            "components": []
           },
           "kind": "choose",
           "options": [
@@ -2566,6 +2608,7 @@
               "→ storage attach/mount succeeds",
               "→ kubelet starts workload"
             ],
+            "components": [],
             "variant_prompt": "Explain why a Stateful Pod may remain Pending after its controller successfully creates a replacement object."
           },
           "feedback": {
@@ -2577,7 +2620,8 @@
             ],
             "visual": [
               "replace intent → placement → storage → runtime"
-            ]
+            ],
+            "components": []
           },
           "kind": "explain",
           "model_answer": "The controller can create a replacement Pod, but the scheduler must find a node that satisfies resource and placement constraints, and any persistent volume must also be attachable or mountable there under its access mode and topology rules. Pod replacement intent does not bypass node or storage feasibility.",
@@ -2627,6 +2671,7 @@
             "visual": [
               "intent → control → execution → running state → proof"
             ],
+            "components": [],
             "variant_prompt": "A Service exists but has no ready endpoints. Which layer should you reason about first when asking who decides endpoint membership?"
           },
           "feedback": {
@@ -2639,7 +2684,8 @@
             "visual": [
               "desired 3 ≠ observed 2",
               "controller decides → create replacement"
-            ]
+            ],
+            "components": []
           },
           "kind": "choose",
           "options": [
@@ -2684,6 +2730,7 @@
               "10.20.4.17/24 → local prefix 10.20.4.0/24",
               "10.20.5.9      → different prefix"
             ],
+            "components": [],
             "variant_prompt": "A host is 192.168.8.44/24. Is 192.168.9.10 on-link from that interface?"
           },
           "feedback": {
@@ -2695,7 +2742,8 @@
             ],
             "visual": [
               "10.20.4.0/24  ≠  10.20.5.0/24"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -2739,6 +2787,7 @@
               "name → IP   ✓",
               "IP:port → listener   ?"
             ],
+            "components": [],
             "variant_prompt": "DNS returns a ClusterIP for a Service, but connecting to the Service port times out. What has already been proven and what remains unproven?"
           },
           "feedback": {
@@ -2750,7 +2799,8 @@
             ],
             "visual": [
               "DNS ✓ → route/policy/listener/app still need proof"
-            ]
+            ],
+            "components": []
           },
           "kind": "terminal_inspect",
           "terminal": [
@@ -2795,6 +2845,7 @@
             "visual": [
               "image → create → start → stop → remove"
             ],
+            "components": [],
             "variant_prompt": "Reconstruct the same lifecycle while keeping image availability separate from the lifetime of one container instance."
           },
           "feedback": {
@@ -2806,7 +2857,8 @@
             ],
             "visual": [
               "image ≠ container ≠ process"
-            ]
+            ],
+            "components": []
           },
           "kind": "arrange",
           "items": [
@@ -2854,6 +2906,7 @@
             "visual": [
               "kubelet → CRI → containerd/CRI-O → container"
             ],
+            "components": [],
             "variant_prompt": "If Docker Engine is absent on a worker node, can Kubernetes still run a standard OCI-compatible image using containerd?"
           },
           "feedback": {
@@ -2867,7 +2920,8 @@
               "CRI = interface",
               "containerd = runtime implementation",
               "OCI image = packaged artifact"
-            ]
+            ],
+            "components": []
           },
           "kind": "choose",
           "options": [
@@ -2906,6 +2960,7 @@
             "visual": [
               "YAML parser ✓ → Kubernetes schema ✗"
             ],
+            "components": [],
             "variant_prompt": "A YAML file parses correctly but uses a field the selected Kubernetes kind does not define. Which boundary failed?"
           },
           "feedback": {
@@ -2917,7 +2972,8 @@
             ],
             "visual": [
               "syntax ✓  schema ✗"
-            ]
+            ],
+            "components": []
           },
           "kind": "spot_bug",
           "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web\nspec:\n  replica: 3\n",
@@ -2957,6 +3013,7 @@
             "visual": [
               "declare → persist → observe/compare → act → observe"
             ],
+            "components": [],
             "variant_prompt": "Trace what happens conceptually after accepted desired state drifts from reality and a controller must restore it."
           },
           "feedback": {
@@ -2969,7 +3026,8 @@
             "visual": [
               "desired ↔ observed",
               "difference → controller action → new observation"
-            ]
+            ],
+            "components": []
           },
           "kind": "trace",
           "items": [
@@ -3020,6 +3078,7 @@
               "spec → intent",
               "status → observation"
             ],
+            "components": [],
             "variant_prompt": "Rebuild the top-level fields of a Deployment object by separating schema identity, object identity, desired state, and observed state."
           },
           "feedback": {
@@ -3031,7 +3090,8 @@
             ],
             "visual": [
               "type → identity → intent → observation"
-            ]
+            ],
+            "components": []
           },
           "kind": "manifest_fill",
           "manifest": "___version___: apps/v1\n___kind___: Deployment\n___metadata___:\n  name: web\n___spec___:\n  replicas: 3\n",
@@ -3115,6 +3175,7 @@
               "scheduler → placement",
               "kubelet → node execution"
             ],
+            "components": [],
             "variant_prompt": "Match the same four components after asking which one stores state, chooses placement, accepts API traffic, and executes on a node."
           },
           "feedback": {
@@ -3129,7 +3190,8 @@
               "etcd: state",
               "scheduler: placement",
               "kubelet: execution"
-            ]
+            ],
+            "components": []
           },
           "kind": "connect",
           "left": [
@@ -3202,6 +3264,7 @@
             "visual": [
               "kubectl → API → controller → scheduler → kubelet → runtime"
             ],
+            "components": [],
             "variant_prompt": "Reconstruct how an accepted Deployment change becomes a running container without assuming the client directly controls a worker node."
           },
           "feedback": {
@@ -3213,7 +3276,8 @@
             ],
             "visual": [
               "client → control plane decisions → node execution"
-            ]
+            ],
+            "components": []
           },
           "kind": "trace",
           "items": [
@@ -3267,6 +3331,7 @@
               "apply ✓ → API object accepted",
               "running? ready? reachable? correct response? → still unproven"
             ],
+            "components": [],
             "variant_prompt": "A Deployment manifest is accepted with no API error. Explain why a user can still receive a failed request."
           },
           "feedback": {
@@ -3278,7 +3343,8 @@
             ],
             "visual": [
               "intent → reconciliation → placement → runtime → network → app → user"
-            ]
+            ],
+            "components": []
           },
           "kind": "explain",
           "model_answer": "A successful apply proves that the API request was accepted for the object, not that every later controller, scheduling, node, network, and application step succeeded. End-to-end health requires additional evidence such as status, events, ready endpoints, logs, and a real request.",
@@ -3326,6 +3392,22 @@
             "visual": [
               "desired 3 → observed 2 → reconcile → observed 3"
             ],
+            "components": [
+              {
+                "name": "ReplicaSet controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "Compares the ReplicaSet's desired count with matching Pods and creates a replacement Pod object when one is missing.",
+                "acts_on": "ReplicaSet and matching Pod API objects",
+                "proof": "kubectl describe rs <name>"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Runs the replacement Pod only after that Pod exists and is assigned to its node.",
+                "acts_on": "Pods assigned to its node",
+                "proof": "kubectl get pod <name> -o wide"
+              }
+            ],
             "variant_prompt": "A three-replica ReplicaSet loses one matching Pod after a node failure. What should happen next?"
           },
           "feedback": {
@@ -3340,6 +3422,15 @@
               "observed = 2  ● ● ×",
               "ReplicaSet reconciles ↓",
               "observed = 3  ● ● ●"
+            ],
+            "components": [
+              {
+                "name": "ReplicaSet controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "Owns replica-count reconciliation for the selected Pod population.",
+                "acts_on": "ReplicaSet desired replicas and Pod objects",
+                "proof": "kubectl describe rs <name>"
+              }
             ]
           },
           "kind": "predict_state",
@@ -3383,6 +3474,7 @@
             "visual": [
               "Deployment → ReplicaSet → Pod"
             ],
+            "components": [],
             "variant_prompt": "Rebuild the ownership chain from rollout-level intent down to the replaceable running Pod."
           },
           "feedback": {
@@ -3398,7 +3490,8 @@
               "ReplicaSet",
               "   ↓ owns matching replicas",
               "Pod"
-            ]
+            ],
+            "components": []
           },
           "kind": "arrange",
           "items": [
@@ -3436,6 +3529,29 @@
             "visual": [
               "ReplicaSet creates Pod → scheduler assigns node → kubelet runs it"
             ],
+            "components": [
+              {
+                "name": "ReplicaSet controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "Decides that a replacement Pod object is required to restore desired replica count.",
+                "acts_on": "ReplicaSet and Pod API objects",
+                "proof": "kubectl describe rs <name>"
+              },
+              {
+                "name": "kube-scheduler",
+                "location": "control-plane",
+                "responsibility": "Chooses a feasible node for the already-created replacement Pod.",
+                "acts_on": "Unscheduled Pod objects",
+                "proof": "kubectl get pod <name> -o wide"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Starts the assigned Pod's containers on the selected worker node.",
+                "acts_on": "Pods assigned to its node",
+                "proof": "kubectl describe pod <name>"
+              }
+            ],
             "variant_prompt": "A Deployment still desires 5 replicas but only 4 matching Pods exist. Which controller creates the missing Pod object?"
           },
           "feedback": {
@@ -3448,6 +3564,29 @@
             ],
             "visual": [
               "ReplicaSet → create Pod → scheduler → kubelet"
+            ],
+            "components": [
+              {
+                "name": "ReplicaSet controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "Creates the replacement Pod object; this is the exact controller responsible for replica-count repair.",
+                "acts_on": "ReplicaSet and matching Pod objects",
+                "proof": "kubectl describe rs <name>"
+              },
+              {
+                "name": "kube-scheduler",
+                "location": "control-plane",
+                "responsibility": "Assigns that new Pod to a feasible worker node after creation.",
+                "acts_on": "Unscheduled Pod objects",
+                "proof": "kubectl get pod <name> -o wide"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Executes the assigned Pod on its node; it does not decide replica count.",
+                "acts_on": "Assigned Pods",
+                "proof": "kubectl describe pod <name>"
+              }
             ]
           },
           "kind": "choose",
@@ -3492,6 +3631,22 @@
             "visual": [
               "observe → compare → act → observe"
             ],
+            "components": [
+              {
+                "name": "ReplicaSet controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "Watches ReplicaSet and Pod state through the API, compares desired versus observed replicas, then creates the missing Pod object.",
+                "acts_on": "ReplicaSet desired count and matching Pod objects",
+                "proof": "kubectl describe rs <name>"
+              },
+              {
+                "name": "kube-apiserver",
+                "location": "control-plane",
+                "responsibility": "Provides the shared API state that the ReplicaSet controller observes and updates.",
+                "acts_on": "ReplicaSet and Pod API state",
+                "proof": "kubectl get rs,pods"
+              }
+            ],
             "variant_prompt": "A three-replica workload loses one Pod unexpectedly. Trace how the controller restores the observed count to three."
           },
           "feedback": {
@@ -3505,6 +3660,29 @@
               "desired 3",
               "   ↓ compare with",
               "observed 2 → create 1 → observed 3"
+            ],
+            "components": [
+              {
+                "name": "ReplicaSet controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "This specific controller performs the desired-versus-observed comparison and creates the replacement Pod object.",
+                "acts_on": "ReplicaSet and Pod API objects",
+                "proof": "kubectl describe rs <name>"
+              },
+              {
+                "name": "kube-scheduler",
+                "location": "control-plane",
+                "responsibility": "Places the new replacement Pod after the ReplicaSet controller creates it.",
+                "acts_on": "Unscheduled replacement Pod",
+                "proof": "kubectl get pod <name> -o wide"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Turns the scheduled replacement Pod into running containers on the chosen node.",
+                "acts_on": "Assigned replacement Pod",
+                "proof": "kubectl describe pod <name>"
+              }
             ]
           },
           "kind": "trace",
@@ -3554,6 +3732,7 @@
               "scale: desired 3 → 2",
               "delete Pod: desired 3, observed 3 → 2 → 3"
             ],
+            "components": [],
             "variant_prompt": "A node failure removes one Pod from a three-replica Deployment. Explain why the workload still returns to three replicas."
           },
           "feedback": {
@@ -3566,7 +3745,8 @@
             "visual": [
               "spec.replicas = 3",
               "observed 2 → reconciliation → observed 3"
-            ]
+            ],
+            "components": []
           },
           "kind": "explain",
           "model_answer": "Deleting the Pod changes observed state, not the Deployment or ReplicaSet desired replica count. The ReplicaSet still desires three matching Pods, notices only two, and creates a replacement.",
@@ -3592,6 +3772,7 @@
               "Deployment → ReplicaSet → Pod",
               "Service → selects Pods for traffic"
             ],
+            "components": [],
             "variant_prompt": "Match the same four objects to their responsibilities without using ownership as the only clue."
           },
           "feedback": {
@@ -3606,7 +3787,8 @@
               "ReplicaSet: count",
               "Pod: execution",
               "Service: discovery"
-            ]
+            ],
+            "components": []
           },
           "kind": "connect",
           "left": [
@@ -3679,6 +3861,7 @@
             "visual": [
               "selector app=payments ⇄ template label app=payments"
             ],
+            "components": [],
             "variant_prompt": "Reconstruct the same three-replica payments Deployment by focusing on which selector and template labels must agree."
           },
           "feedback": {
@@ -3691,7 +3874,8 @@
             "visual": [
               "replicas: 3",
               "selector app=payments = template app=payments"
-            ]
+            ],
+            "components": []
           },
           "kind": "manifest_fill",
           "manifest": "apiVersion: apps/v1\nkind: Deployment\nspec:\n  replicas: ___replicas___\n  selector:\n    matchLabels:\n      app: ___selector___\n  template:\n    metadata:\n      labels:\n        app: ___template___\n",
@@ -3759,6 +3943,7 @@
               "selector: app=payments",
               "template: app=billing  ← mismatch"
             ],
+            "components": [],
             "variant_prompt": "A selector expects tier=backend while the Pod template labels tier=api. Identify the failure in the controller relationship."
           },
           "feedback": {
@@ -3770,7 +3955,8 @@
             ],
             "visual": [
               "app=payments ≠ app=billing"
-            ]
+            ],
+            "components": []
           },
           "kind": "spot_bug",
           "code": "spec:\n  selector:\n    matchLabels:\n      app: payments\n  template:\n    metadata:\n      labels:\n        app: billing\n",
@@ -3812,6 +3998,7 @@
               "├─ ReplicaSet v1 ↓",
               "└─ ReplicaSet v2 ↑"
             ],
+            "components": [],
             "variant_prompt": "A Deployment changes an environment variable in its Pod template. What object should appear to represent the new revision?"
           },
           "feedback": {
@@ -3824,7 +4011,8 @@
             "visual": [
               "RS v1: ● ● ● → ● ● → ●",
               "RS v2: ○ → ○ ○ → ○ ○ ○"
-            ]
+            ],
+            "components": []
           },
           "kind": "predict_state",
           "state": [
@@ -3867,6 +4055,7 @@
             "visual": [
               "kubectl | get | pods | -n payments | -o wide"
             ],
+            "components": [],
             "variant_prompt": "You are troubleshooting the payments namespace from another context. Build the command that lists its Pods with wide output."
           },
           "feedback": {
@@ -3878,7 +4067,8 @@
             ],
             "visual": [
               "kubectl get pods -n payments -o wide"
-            ]
+            ],
+            "components": []
           },
           "kind": "command_builder",
           "items": [
@@ -3937,6 +4127,36 @@
               "apply accepted ✓",
               "Pod runtime CrashLoopBackOff ✗"
             ],
+            "components": [
+              {
+                "name": "kube-apiserver",
+                "location": "control-plane",
+                "responsibility": "Accepts and stores the declared object change; this proves only the API layer accepted the request.",
+                "acts_on": "Kubernetes API objects",
+                "proof": "kubectl get deployment <name>"
+              },
+              {
+                "name": "Deployment controller (kube-controller-manager)",
+                "location": "control-plane",
+                "responsibility": "Reconciles Deployment rollout intent into ReplicaSets and Pod creation work.",
+                "acts_on": "Deployment and ReplicaSet objects",
+                "proof": "kubectl describe deployment <name>"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Runs assigned containers and reports restart and termination state for the failing Pod.",
+                "acts_on": "Assigned Pod and container state",
+                "proof": "kubectl describe pod <name>"
+              },
+              {
+                "name": "container runtime",
+                "location": "worker-node",
+                "responsibility": "Starts and restarts the container process requested by kubelet; application crashes occur at this execution layer.",
+                "acts_on": "Containers",
+                "proof": "crictl ps -a"
+              }
+            ],
             "variant_prompt": "The API accepted the payments Deployment, but its Pod is CrashLoopBackOff. Which next observation would give useful runtime evidence?"
           },
           "feedback": {
@@ -3948,6 +4168,29 @@
             ],
             "visual": [
               "local YAML → API accepted ✓ → controller/runtime → app health ✗"
+            ],
+            "components": [
+              {
+                "name": "kube-apiserver",
+                "location": "control-plane",
+                "responsibility": "Proves the desired object exists, but not that the application successfully runs.",
+                "acts_on": "API object state",
+                "proof": "kubectl get deployment <name>"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Reports container restart, termination reason, conditions, and events for the assigned Pod.",
+                "acts_on": "Pod execution state",
+                "proof": "kubectl describe pod <name>"
+              },
+              {
+                "name": "container runtime",
+                "location": "worker-node",
+                "responsibility": "Hosts the actual container process whose exit behavior produces CrashLoopBackOff symptoms.",
+                "acts_on": "Container processes",
+                "proof": "kubectl logs <pod> --previous"
+              }
             ]
           },
           "kind": "terminal_inspect",
@@ -3995,6 +4238,7 @@
               "RBAC = API authorization",
               "NetworkPolicy = traffic policy"
             ],
+            "components": [],
             "variant_prompt": "A team creates namespaces dev and prod. Explain why that alone does not prevent dev users from accessing prod objects or dev Pods from reaching prod Pods."
           },
           "feedback": {
@@ -4008,7 +4252,8 @@
               "Namespace ── scopes objects",
               "RBAC ─────── controls API access",
               "NetworkPolicy controls traffic"
-            ]
+            ],
+            "components": []
           },
           "kind": "explain",
           "model_answer": "A namespace scopes names and many API objects, but it is not automatic authorization or network isolation. RBAC is needed for access control, and NetworkPolicy or equivalent networking controls are needed for traffic isolation.",
@@ -4035,5 +4280,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "5844708533a0b634ce26b1028d38184e377b85ad9a7b5b6a36bfda4900d2d85a"
+  "manifest_sha256": "26ff83a311513605b5482f1e19e465a39b7108d8e634b72e19f4d58a50940aff"
 }

@@ -9,3 +9,24 @@ visuals:
     lines:
       - "local manifest → kubectl apply → API server live object → controller reconciliation → runtime objects → observed status"
     teaching_point: kubectl apply does not directly start containers; it updates declared API state, after which controllers and node agents converge the runtime toward that intent.
+    components:
+      - name: kubectl
+        location: client
+        responsibility: Sends the declared object change to the Kubernetes API; it does not directly start containers.
+        acts_on: API object declarations
+        proof: kubectl apply -f <file>
+      - name: kube-apiserver
+        location: control-plane
+        responsibility: Accepts the request and exposes the resulting live API object to other components.
+        acts_on: Kubernetes API state
+        proof: kubectl get <kind> <name> -o yaml
+      - name: Relevant controller
+        location: control-plane
+        responsibility: Reconciles the specific object kind toward its desired state; the exact controller depends on the resource.
+        acts_on: Controller-owned API objects
+        proof: kubectl describe <kind> <name>
+      - name: kubelet
+        location: worker-node
+        responsibility: Executes assigned Pod intent on a worker node after control-plane decisions have been recorded.
+        acts_on: Assigned Pods
+        proof: kubectl describe pod <name>

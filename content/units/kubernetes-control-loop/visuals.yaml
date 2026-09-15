@@ -9,3 +9,19 @@ visuals:
     lines:
       - "desired replicas 3 → observed matching Pods 2 → controller detects drift → create replacement Pod → observed matching Pods 3"
     teaching_point: Kubernetes reliability comes from repeated reconciliation of durable desired state against current observations, not from assuming individual Pods never fail.
+    components:
+      - name: kube-apiserver
+        location: control-plane
+        responsibility: Exposes the desired and observed object state that controllers continuously watch and update.
+        acts_on: ReplicaSet and Pod API state
+        proof: kubectl get rs,pods
+      - name: ReplicaSet controller (kube-controller-manager)
+        location: control-plane
+        responsibility: Compares desired replicas with matching Pods and creates or removes Pod objects to close the gap.
+        acts_on: ReplicaSet desired count and matching Pod objects
+        proof: kubectl describe rs <name>
+      - name: kubelet
+        location: worker-node
+        responsibility: Makes a newly assigned replacement Pod real on the selected worker node.
+        acts_on: Pods assigned to its node
+        proof: kubectl get pod <name> -o wide

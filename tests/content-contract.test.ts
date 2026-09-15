@@ -76,6 +76,7 @@ function unit(
       title: 'Trace the fixture contract',
       lines: ['source → validation → published unit'],
       teaching_point: 'The visual fixture exists so published units always carry a portable mental model.',
+      components: [],
     }],
   };
 }

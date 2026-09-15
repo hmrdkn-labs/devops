@@ -9,3 +9,24 @@ visuals:
     lines:
       - "controller intent → Pod object → scheduler chooses one node → kubelet runs containers → Pod ends → controller may create replacement"
     teaching_point: A Pod has one scheduling lifetime and shared network identity for its containers; durable availability comes from controller ownership and replacement semantics.
+    components:
+      - name: Workload controller
+        location: control-plane
+        responsibility: Creates replacement Pod objects when higher-level workload intent requires them.
+        acts_on: Workload and Pod API objects
+        proof: kubectl get pod <name> -o jsonpath='{.metadata.ownerReferences}'
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Selects one feasible worker node for each newly created unscheduled Pod.
+        acts_on: Unscheduled Pod objects
+        proof: kubectl get pod <name> -o wide
+      - name: kubelet
+        location: worker-node
+        responsibility: Reconciles the assigned Pod specification into running containers on its node.
+        acts_on: Pods assigned to its node
+        proof: kubectl describe pod <name>
+      - name: container runtime
+        location: worker-node
+        responsibility: Creates and manages the Pod sandbox and container processes requested by kubelet.
+        acts_on: Pod sandboxes and containers
+        proof: crictl ps

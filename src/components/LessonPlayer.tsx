@@ -378,6 +378,7 @@ export default function LessonPlayer(props: Props) {
                     lines={concept().visual}
                     eyebrow="Learn visually"
                     title="Step through the mental model"
+                    components={concept().components}
                   />
                   <button class="lesson-primary" type="button" onClick={tryVariant}>Try a new variant</button>
                 </div>
@@ -594,6 +595,7 @@ export default function LessonPlayer(props: Props) {
                     lines={exercise().feedback.visual}
                     eyebrow="See what changed"
                     title="Replay the causal model"
+                    components={exercise().feedback.components}
                   />
                   <p>{exercise().feedback.explanation}</p>
                   <ul><For each={exercise().feedback.points}>{(point) => <li>{point}</li>}</For></ul>

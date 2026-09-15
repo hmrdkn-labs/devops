@@ -93,6 +93,14 @@ export const practiceFileSchema = z.object({
   })).default([]),
 });
 
+const visualComponentSchema = z.object({
+  name: z.string().min(2),
+  location: z.enum(['client', 'control-plane', 'worker-node', 'cluster-addon', 'data-plane', 'external']),
+  responsibility: z.string().min(8),
+  acts_on: z.string().min(2),
+  proof: z.string().min(3).optional(),
+});
+
 export const referenceVisualFileSchema = z.object({
   schema_version: z.literal(1),
   unit_id: id,
@@ -104,6 +112,7 @@ export const referenceVisualFileSchema = z.object({
     title: z.string().min(3),
     lines: z.array(z.string().min(1)).min(1).max(8),
     teaching_point: z.string().min(12),
+    components: z.array(visualComponentSchema).default([]),
   })).min(1),
 });
 
@@ -119,12 +128,14 @@ const lessonFeedbackSchema = z.object({
   explanation: z.string().min(20),
   points: z.array(z.string().min(3)).default([]),
   visual: z.array(z.string().min(1)).default([]),
+  components: z.array(visualComponentSchema).default([]),
 });
 
 const lessonLearnFirstSchema = z.object({
   title: z.string().min(3),
   body: z.string().min(20),
   visual: z.array(z.string().min(1)).default([]),
+  components: z.array(visualComponentSchema).default([]),
   variant_prompt: z.string().min(10),
 });
 

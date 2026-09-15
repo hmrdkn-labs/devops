@@ -44,6 +44,17 @@ exercises:
       body: A ReplicaSet repeatedly compares the number of matching Pods it observes with the replica count it should maintain. Deleting one Pod changes observation, not desired state.
       visual:
         - "desired 3 → observed 2 → reconcile → observed 3"
+      components:
+        - name: ReplicaSet controller (kube-controller-manager)
+          location: control-plane
+          responsibility: Compares the ReplicaSet's desired count with matching Pods and creates a replacement Pod object when one is missing.
+          acts_on: ReplicaSet and matching Pod API objects
+          proof: kubectl describe rs <name>
+        - name: kubelet
+          location: worker-node
+          responsibility: Runs the replacement Pod only after that Pod exists and is assigned to its node.
+          acts_on: Pods assigned to its node
+          proof: kubectl get pod <name> -o wide
       variant_prompt: A three-replica ReplicaSet loses one matching Pod after a node failure. What should happen next?
     feedback:
       title: The ReplicaSet closes the gap.
@@ -56,6 +67,12 @@ exercises:
         - "observed = 2  ● ● ×"
         - "ReplicaSet reconciles ↓"
         - "observed = 3  ● ● ●"
+      components:
+        - name: ReplicaSet controller (kube-controller-manager)
+          location: control-plane
+          responsibility: Owns replica-count reconciliation for the selected Pod population.
+          acts_on: ReplicaSet desired replicas and Pod objects
+          proof: kubectl describe rs <name>
 
   - id: lesson:kcna-kubernetes-resources/arrange-ownership
     kind: arrange
@@ -119,6 +136,22 @@ exercises:
       body: ReplicaSet decides that another Pod object is required. The scheduler later chooses a node for that new Pod, and kubelet executes it there.
       visual:
         - "ReplicaSet creates Pod → scheduler assigns node → kubelet runs it"
+      components:
+        - name: ReplicaSet controller (kube-controller-manager)
+          location: control-plane
+          responsibility: Decides that a replacement Pod object is required to restore desired replica count.
+          acts_on: ReplicaSet and Pod API objects
+          proof: kubectl describe rs <name>
+        - name: kube-scheduler
+          location: control-plane
+          responsibility: Chooses a feasible node for the already-created replacement Pod.
+          acts_on: Unscheduled Pod objects
+          proof: kubectl get pod <name> -o wide
+        - name: kubelet
+          location: worker-node
+          responsibility: Starts the assigned Pod's containers on the selected worker node.
+          acts_on: Pods assigned to its node
+          proof: kubectl describe pod <name>
       variant_prompt: A Deployment still desires 5 replicas but only 4 matching Pods exist. Which controller creates the missing Pod object?
     feedback:
       title: ReplicaSet creates the replacement.
@@ -129,6 +162,22 @@ exercises:
         - kubelet runs assigned Pods on that node.
       visual:
         - "ReplicaSet → create Pod → scheduler → kubelet"
+      components:
+        - name: ReplicaSet controller (kube-controller-manager)
+          location: control-plane
+          responsibility: Creates the replacement Pod object; this is the exact controller responsible for replica-count repair.
+          acts_on: ReplicaSet and matching Pod objects
+          proof: kubectl describe rs <name>
+        - name: kube-scheduler
+          location: control-plane
+          responsibility: Assigns that new Pod to a feasible worker node after creation.
+          acts_on: Unscheduled Pod objects
+          proof: kubectl get pod <name> -o wide
+        - name: kubelet
+          location: worker-node
+          responsibility: Executes the assigned Pod on its node; it does not decide replica count.
+          acts_on: Assigned Pods
+          proof: kubectl describe pod <name>
 
   - id: lesson:kcna-kubernetes-resources/trace-reconciliation
     kind: trace
@@ -155,6 +204,17 @@ exercises:
       body: Controllers observe state, compare it with desired state, act to reduce the difference, and then observe again.
       visual:
         - "observe → compare → act → observe"
+      components:
+        - name: ReplicaSet controller (kube-controller-manager)
+          location: control-plane
+          responsibility: Watches ReplicaSet and Pod state through the API, compares desired versus observed replicas, then creates the missing Pod object.
+          acts_on: ReplicaSet desired count and matching Pod objects
+          proof: kubectl describe rs <name>
+        - name: kube-apiserver
+          location: control-plane
+          responsibility: Provides the shared API state that the ReplicaSet controller observes and updates.
+          acts_on: ReplicaSet and Pod API state
+          proof: kubectl get rs,pods
       variant_prompt: A three-replica workload loses one Pod unexpectedly. Trace how the controller restores the observed count to three.
     feedback:
       title: Observe, compare, correct, observe again.
@@ -166,6 +226,22 @@ exercises:
         - "desired 3"
         - "   ↓ compare with"
         - "observed 2 → create 1 → observed 3"
+      components:
+        - name: ReplicaSet controller (kube-controller-manager)
+          location: control-plane
+          responsibility: This specific controller performs the desired-versus-observed comparison and creates the replacement Pod object.
+          acts_on: ReplicaSet and Pod API objects
+          proof: kubectl describe rs <name>
+        - name: kube-scheduler
+          location: control-plane
+          responsibility: Places the new replacement Pod after the ReplicaSet controller creates it.
+          acts_on: Unscheduled replacement Pod
+          proof: kubectl get pod <name> -o wide
+        - name: kubelet
+          location: worker-node
+          responsibility: Turns the scheduled replacement Pod into running containers on the chosen node.
+          acts_on: Assigned replacement Pod
+          proof: kubectl describe pod <name>
 
   - id: lesson:kcna-kubernetes-resources/explain-replacement
     kind: explain
@@ -465,6 +541,27 @@ exercises:
       visual:
         - "apply accepted ✓"
         - "Pod runtime CrashLoopBackOff ✗"
+      components:
+        - name: kube-apiserver
+          location: control-plane
+          responsibility: Accepts and stores the declared object change; this proves only the API layer accepted the request.
+          acts_on: Kubernetes API objects
+          proof: kubectl get deployment <name>
+        - name: Deployment controller (kube-controller-manager)
+          location: control-plane
+          responsibility: Reconciles Deployment rollout intent into ReplicaSets and Pod creation work.
+          acts_on: Deployment and ReplicaSet objects
+          proof: kubectl describe deployment <name>
+        - name: kubelet
+          location: worker-node
+          responsibility: Runs assigned containers and reports restart and termination state for the failing Pod.
+          acts_on: Assigned Pod and container state
+          proof: kubectl describe pod <name>
+        - name: container runtime
+          location: worker-node
+          responsibility: Starts and restarts the container process requested by kubelet; application crashes occur at this execution layer.
+          acts_on: Containers
+          proof: crictl ps -a
       variant_prompt: The API accepted the payments Deployment, but its Pod is CrashLoopBackOff. Which next observation would give useful runtime evidence?
     feedback:
       title: Move from declared state to runtime evidence.
@@ -474,6 +571,22 @@ exercises:
         - Pod/container state and logs provide evidence about execution failure.
       visual:
         - "local YAML → API accepted ✓ → controller/runtime → app health ✗"
+      components:
+        - name: kube-apiserver
+          location: control-plane
+          responsibility: Proves the desired object exists, but not that the application successfully runs.
+          acts_on: API object state
+          proof: kubectl get deployment <name>
+        - name: kubelet
+          location: worker-node
+          responsibility: Reports container restart, termination reason, conditions, and events for the assigned Pod.
+          acts_on: Pod execution state
+          proof: kubectl describe pod <name>
+        - name: container runtime
+          location: worker-node
+          responsibility: Hosts the actual container process whose exit behavior produces CrashLoopBackOff symptoms.
+          acts_on: Container processes
+          proof: kubectl logs <pod> --previous
 
   - id: lesson:kcna-kubernetes-resources/explain-namespace-boundary
     kind: explain

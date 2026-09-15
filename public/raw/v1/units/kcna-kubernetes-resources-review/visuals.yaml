@@ -10,3 +10,24 @@ visuals:
       - "manifest → API object → Deployment → ReplicaSet → Pods"
       - "labels + selector → membership → desired replicas versus observed replicas → reconciliation"
     teaching_point: Resource questions are easier when you track object identity, ownership, selectors, and which controller repairs drift instead of memorizing YAML shapes alone.
+    components:
+      - name: Deployment controller (kube-controller-manager)
+        location: control-plane
+        responsibility: Manages ReplicaSet revisions and rollout-level desired state for a Deployment.
+        acts_on: Deployment and ReplicaSet objects
+        proof: kubectl describe deployment <name>
+      - name: ReplicaSet controller (kube-controller-manager)
+        location: control-plane
+        responsibility: Maintains the desired number of Pods matching its selector; this is the controller that replaces a missing replica.
+        acts_on: ReplicaSet and matching Pod objects
+        proof: kubectl describe rs <name>
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Chooses a node only after the replacement Pod object exists.
+        acts_on: Unscheduled replacement Pods
+        proof: kubectl get pod <name> -o wide
+      - name: kubelet
+        location: worker-node
+        responsibility: Runs the assigned replacement Pod on the chosen node; it does not decide desired replica count.
+        acts_on: Pods assigned to its worker node
+        proof: kubectl describe pod <name>

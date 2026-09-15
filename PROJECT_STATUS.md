@@ -5,6 +5,31 @@
 
 ## Read this first
 
+**Component ownership + private explanation history v13 is release-ready:**
+Kubernetes visuals can now carry a portable component responsibility map in
+canonical YAML: exact component name, architectural location, responsibility,
+what it acts on, and a smallest useful proof command. The same map renders in
+both reference visuals and KCNA Learn-first/feedback surfaces. Core Kubernetes
+units now distinguish control-plane versus worker-node work and name concrete
+controllers such as **Deployment controller (kube-controller-manager)** and
+**ReplicaSet controller (kube-controller-manager)** instead of collapsing them
+into a generic "controller" label. The Resources checkpoint also teaches the
+handoff from ReplicaSet controller → scheduler → kubelet and separates API
+acceptance from kubelet/runtime execution evidence. Separately, owner answers
+were already stored in D1 `private_answer` rows but had no read path. A new
+authenticated `/api/answers` endpoint now returns only the current owner's
+unit-scoped history. Fresh Study retrieval still hides prior explanations; once
+the learner reveals an attempt, saved explanations become available for
+comparison, and Reference mode shows the latest private explanation per
+question. Guest state remains memory-only and private answers remain excluded
+from public search and public artifacts. Local validation is green: content
+contract, Astro typecheck, **36 unit tests**, D1 checks, production build,
+`git diff --check`, and the full Playwright desktop/tablet/mobile matrix with
+**57 passed / 18 intentional skips**. Rendered local QA confirmed the KCNA
+Learn-first component map and the architecture reference map with component
+location, target, and proof. **No implementation blocker. Pending public CI and
+protected owner deployment.**
+
 **Study-flow continuity v12 is live:** the standard `/learn/*`
 question-first experience now treats question changes, Study ↔ Reference, and
 Learn-first ↔ retrieval as one continuous learning surface instead of mounting

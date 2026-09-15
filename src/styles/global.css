@@ -904,6 +904,31 @@ html[data-study-transition] .study-surface { will-change: transform, opacity; }
 .model-answer { background: transparent; }
 .model-answer .comparison-label { color: var(--accent); }
 .preserve-lines { white-space: pre-wrap; color: var(--muted); }
+.answer-history,
+.answer-history-panel {
+  margin-top: .85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-subtle);
+}
+.answer-history { padding: .75rem .85rem; }
+.answer-history summary { cursor: pointer; font-size: .76rem; font-weight: 760; }
+.answer-history-intro { margin: .45rem 0 .7rem; color: var(--muted); font-size: .7rem; line-height: 1.5; }
+.answer-history-panel { padding: 1rem; }
+.answer-history-panel h2 { margin: .2rem 0 .75rem; font-size: 1.1rem; }
+.answer-history-list { display: grid; gap: .55rem; }
+.answer-history-list article {
+  min-width: 0;
+  padding: .7rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.answer-history-list article > div { display: grid; gap: .12rem; }
+.answer-history-list article > div > span,
+.answer-history-list article > div > small { color: var(--faint); font: .58rem/1.4 var(--mono); }
+.answer-history-list article > div > strong { font-size: .76rem; line-height: 1.45; }
+.answer-history-list article > p { margin: .48rem 0 0; font-size: .76rem; line-height: 1.55; }
 .critical-check { display: grid; gap: .55rem; margin: .9rem 0; padding: .8rem; border: 1px solid var(--line); border-radius: var(--radius-control); }
 .critical-check legend { padding-right: .6rem; font-size: .8rem; font-weight: 700; }
 .critical-check label { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; font-size: .82rem; }
@@ -1728,6 +1753,54 @@ html[data-study-transition] .study-surface { will-change: transform, opacity; }
   font-size: 1.15rem;
   font-weight: 900;
 }
+.lesson-component-map {
+  display: grid;
+  gap: .5rem;
+  padding-top: .15rem;
+}
+.lesson-component-map-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.lesson-component-map-head > span {
+  color: var(--accent);
+  font: 850 .62rem/1.2 var(--mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.lesson-component-map-head > small { color: var(--faint); font-size: .65rem; }
+.lesson-component-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: .45rem;
+}
+.lesson-component-card {
+  min-width: 0;
+  padding: .7rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.lesson-component-card[data-location='control-plane'] { border-top-color: color-mix(in srgb, var(--accent) 70%, var(--line)); }
+.lesson-component-card[data-location='worker-node'] { border-top-color: color-mix(in srgb, var(--success) 70%, var(--line)); }
+.lesson-component-card[data-location='data-plane'] { border-top-color: color-mix(in srgb, var(--warning) 65%, var(--line)); }
+.lesson-component-location {
+  display: block;
+  margin-bottom: .28rem;
+  color: var(--muted);
+  font: 800 .56rem/1.2 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.lesson-component-card > strong { display: block; font-size: .8rem; }
+.lesson-component-card > p { margin: .28rem 0 .55rem; color: var(--muted); font-size: .7rem; line-height: 1.45; }
+.lesson-component-card dl { display: grid; gap: .35rem; margin: 0; }
+.lesson-component-card dl > div { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: .35rem; align-items: start; }
+.lesson-component-card dt { color: var(--faint); font: 800 .56rem/1.45 var(--mono); text-transform: uppercase; }
+.lesson-component-card dd { min-width: 0; margin: 0; color: var(--ink); font-size: .66rem; line-height: 1.45; }
+.lesson-component-card dd code { overflow-wrap: anywhere; font-size: .95em; }
 .lesson-visual-rail {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1974,6 +2047,8 @@ html[data-study-transition] .study-surface { will-change: transform, opacity; }
   .lesson-visual-guide { padding: .65rem; }
   .reference-visuals-heading { display: grid; gap: .25rem; }
   .lesson-visual-stage { min-height: 104px; padding: .8rem; }
+  .lesson-component-map-head { display: grid; gap: .15rem; }
+  .lesson-component-grid { grid-template-columns: 1fr; }
   .lesson-visual-flow { align-items: stretch; }
   .lesson-visual-node { min-height: 44px; width: 100%; }
   .lesson-visual-arrow { width: 100%; text-align: center; transform: rotate(90deg); }

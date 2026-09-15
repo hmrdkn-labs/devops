@@ -212,6 +212,10 @@ test('Learn first and hints remain assisted and use a different prompt variant',
   const learnFirst = page.getByTestId('learn-first-panel');
   await expect(learnFirst).toContainText('encounter only');
   await expect(learnFirst).toContainText('desired 3 → observed 2 → reconcile');
+  const componentMap = learnFirst.getByRole('region', { name: 'Component responsibility map' });
+  await expect(componentMap).toContainText('ReplicaSet controller');
+  await expect(componentMap).toContainText('control plane');
+  await expect(componentMap).toContainText('kubelet');
   await page.getByRole('button', { name: 'Try a new variant' }).click();
   const variantPrompt = await page.getByTestId('lesson-active-task').getByRole('heading', { level: 1 }).innerText();
   expect(variantPrompt).not.toBe(originalPrompt);

@@ -43,6 +43,19 @@ test('authenticated reveal is immediate even while persistence is still pending'
     contentType: 'application/json',
     body: JSON.stringify({ units: [] }),
   }));
+  await page.route('**/api/answers?unitId=*', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      unitId: 'fpp:processes-and-resources',
+      answers: [{
+        unitRevision: 1,
+        questionId: 'fpp:processes-and-resources/q-process',
+        answerMarkdown: 'Earlier I explained that a process has identity plus finite CPU and memory resources.',
+        createdAt: 1_786_000_000_000,
+      }],
+    }),
+  }));
   await page.route('**/api/attempt', async (route) => {
     attemptStarted = true;
     await attemptGate;
@@ -54,15 +67,33 @@ test('authenticated reveal is immediate even while persistence is still pending'
   });
 
   await page.goto('/learn/processes-and-resources');
+  await expect(page.getByText('Saved explanations')).toBeHidden();
   await page.getByLabel('Your explanation').fill('A process consumes finite resources.');
   await page.getByRole('button', { name: 'Save privately & reveal' }).click();
 
   await expect.poll(() => attemptStarted).toBe(true);
   await expect(page.getByText('Concise model')).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Saving privately');
+  await expect(page.getByTestId('answer-history-current')).toContainText('Earlier I explained that a process has identity');
 
   releaseAttempt();
   await expect(page.getByRole('status')).toContainText('Private answer saved.');
+  await page.getByRole('button', { name: 'Reference', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Your explanations' })).toBeVisible();
+  await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeVisible();
+});
+
+test('Kubernetes reference visual names component position, responsibility, target, and proof', async ({ page }) => {
+  await page.goto('/learn/kubernetes-architecture-components?mode=reference');
+  const visual = page.getByTestId('lesson-visual-guide').first();
+  await expect(visual).toContainText('kube-apiserver ↔ etcd: persist API state');
+  await expect(visual).toContainText('ReplicaSet controller ↔ kube-apiserver: observe ReplicaSet, create Pod');
+  const map = page.getByRole('region', { name: 'Component responsibility map' });
+  await expect(map).toBeVisible();
+  await expect(map).toContainText('ReplicaSet controller');
+  await expect(map).toContainText('control plane');
+  await expect(map).toContainText('Works on');
+  await expect(map).toContainText('kubectl describe rs <name>');
 });
 
 test('new learners can learn first or use reference mode without faking recall', async ({ page }) => {
@@ -71,7 +102,9 @@ test('new learners can learn first or use reference mode without faking recall',
   const reveal = page.getByRole('button', { name: 'Save privately & reveal' });
   await expect(reveal).toBeDisabled();
 
-  await page.getByRole('button', { name: 'Give me a hint' }).click();
+  const hint = page.getByRole('button', { name: 'Give me a hint' });
+  await expect(hint).toBeEnabled();
+  await hint.click();
   await expect(page.getByText('Directional hint')).toBeVisible();
   await expect(reveal).toBeDisabled();
 
@@ -122,7 +155,7 @@ test('reduced-motion study transitions stay immediate and preserve the return fo
 test('reference lessons with long technical literals stay inside the viewport', async ({ page }) => {
   await page.goto('/learn/kubernetes-networking-request-path?mode=reference');
   await expect(page.getByTestId('reference-visuals')).toBeVisible();
-  await expect(page.getByText('http://catalog.default.svc.cluster.local:8080')).toBeVisible();
+  await expect(page.getByTestId('study-surface').getByText('http://catalog.default.svc.cluster.local:8080')).toBeVisible();
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport!.width);

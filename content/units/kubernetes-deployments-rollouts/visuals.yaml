@@ -9,3 +9,24 @@ visuals:
     lines:
       - "Deployment template v2 → new ReplicaSet v2 → scale v2 up and v1 down → new Pods become ready → rollout converges"
     teaching_point: Deployment revisions are represented by ReplicaSets; rollout status proves controller convergence but still does not prove end-user application health.
+    components:
+      - name: Deployment controller (kube-controller-manager)
+        location: control-plane
+        responsibility: Owns rollout strategy and creates or scales ReplicaSets representing Deployment revisions.
+        acts_on: Deployment and ReplicaSet API objects
+        proof: kubectl rollout status deployment/<name>
+      - name: ReplicaSet controller (kube-controller-manager)
+        location: control-plane
+        responsibility: Maintains the Pod replica count requested by each ReplicaSet during the rollout.
+        acts_on: ReplicaSet and Pod API objects
+        proof: kubectl get rs
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Places newly created rollout Pods onto feasible nodes.
+        acts_on: Unscheduled rollout Pods
+        proof: kubectl get pods -o wide
+      - name: kubelet
+        location: worker-node
+        responsibility: Starts the containers for rollout Pods assigned to its node and reports readiness status.
+        acts_on: Assigned rollout Pods
+        proof: kubectl describe pod <name>

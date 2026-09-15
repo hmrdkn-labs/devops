@@ -43,6 +43,13 @@ interface ReferenceVisual {
   title: string;
   lines: string[];
   teaching_point: string;
+  components: Array<{
+    name: string;
+    location: 'client' | 'control-plane' | 'worker-node' | 'cluster-addon' | 'data-plane' | 'external';
+    responsibility: string;
+    acts_on: string;
+    proof?: string;
+  }>;
 }
 
 interface Props {
@@ -80,7 +87,12 @@ function ReferenceVisuals(props: { visuals: ReferenceVisual[] }) {
       <div class="reference-visual-stack">
         <For each={props.visuals}>{(visual) => (
           <div class="reference-visual-item" data-visual-kind={visual.kind}>
-            <LessonVisualGuide lines={visual.lines} title={visual.title} eyebrow={visual.eyebrow} />
+            <LessonVisualGuide
+              lines={visual.lines}
+              title={visual.title}
+              eyebrow={visual.eyebrow}
+              components={visual.components}
+            />
             <p class="reference-visual-teaching-point">{visual.teaching_point}</p>
           </div>
         )}</For>
@@ -119,6 +131,18 @@ interface UnitLearningProgress {
 
 interface ProgressResponse {
   units: UnitLearningProgress[];
+}
+
+interface PrivateAnswerHistoryEntry {
+  unitRevision: number;
+  questionId: string;
+  answerMarkdown: string;
+  createdAt: number;
+}
+
+interface AnswerHistoryResponse {
+  unitId: string;
+  answers: PrivateAnswerHistoryEntry[];
 }
 
 type LearningTransitionDirection = 'forward' | 'back' | 'crossfade';
@@ -166,9 +190,28 @@ export default function StudyFlow(props: Props) {
       return response.json() as Promise<ProgressResponse>;
     },
   );
+  const [answerHistory, { refetch: refetchAnswerHistory }] = createResource(
+    () => me()?.authenticated && (revealed() || mode() === 'reference' || finished()) ? props.unit.id : null,
+    async (unitId) => {
+      const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId), { credentials: 'include' });
+      if (!response.ok) return null;
+      return response.json() as Promise<AnswerHistoryResponse>;
+    },
+  );
   const question = createMemo(() => props.unit.questions[questionIndex()]);
   const progress = createMemo(() => ((questionIndex() + (finished() ? 1 : 0)) / props.unit.questions.length) * 100);
   const unitLearningProgress = createMemo(() => learningProgress()?.units.find((unit) => unit.id === props.unit.id));
+  const currentQuestionHistory = createMemo(() => answerHistory()?.answers.filter((entry) => entry.questionId === question().id) ?? []);
+  const latestAnswerByQuestion = createMemo(() => {
+    const latest = new Map<string, PrivateAnswerHistoryEntry>();
+    for (const entry of answerHistory()?.answers ?? []) {
+      if (!latest.has(entry.questionId)) latest.set(entry.questionId, entry);
+    }
+    return props.unit.questions.flatMap((item) => {
+      const entry = latest.get(item.id);
+      return entry ? [{ question: item, entry }] : [];
+    });
+  });
 
   onMount(() => {
     const params = new URLSearchParams(window.location.search);
@@ -338,7 +381,10 @@ export default function StudyFlow(props: Props) {
       if (question().id === questionId && saveSequence === sequence) {
         setSaveMessage(response.ok ? 'Private answer saved.' : 'Answer kept in memory; saving failed.');
       }
-      if (response.ok) void refetchLearningProgress();
+      if (response.ok) {
+        void refetchLearningProgress();
+        void refetchAnswerHistory();
+      }
     } catch {
       if (question().id === questionId && saveSequence === sequence) setSaveMessage('Answer kept in memory; saving failed.');
     }
@@ -626,6 +672,23 @@ export default function StudyFlow(props: Props) {
                   <p>{question().model_answer}</p>
                 </div>
               </div>
+              <Show when={me()?.authenticated && currentQuestionHistory().length > 0}>
+                <details class="answer-history" data-testid="answer-history-current">
+                  <summary>Saved explanations ({currentQuestionHistory().length})</summary>
+                  <p class="answer-history-intro">Your private answer history appears only after you reveal the current attempt, so old wording does not leak into fresh retrieval.</p>
+                  <div class="answer-history-list">
+                    <For each={currentQuestionHistory()}>{(entry) => (
+                      <article>
+                        <div>
+                          <span>{new Date(entry.createdAt).toLocaleString()}</span>
+                          <small>revision {entry.unitRevision}</small>
+                        </div>
+                        <p class="preserve-lines">{entry.answerMarkdown}</p>
+                      </article>
+                    )}</For>
+                  </div>
+                </details>
+              </Show>
               <fieldset class="critical-check">
                 <legend>Critical-point self-check</legend>
                 <For each={question().critical_points}>{(point) => (
@@ -732,6 +795,28 @@ export default function StudyFlow(props: Props) {
                 <span>{taskMessage()}</span>
               </div>
             </article>
+
+            <Show when={mode() === 'reference' && me()?.authenticated}>
+              <section class="answer-history-panel" aria-labelledby="answer-history-title">
+                <p class="section-kicker">Private recall history</p>
+                <h2 id="answer-history-title">Your explanations</h2>
+                <Show when={latestAnswerByQuestion().length > 0} fallback={
+                  <p class="guest-note">No saved explanation for this unit yet. Your answers will appear here after you reveal them in Study mode.</p>
+                }>
+                  <div class="answer-history-list">
+                    <For each={latestAnswerByQuestion()}>{({ question: item, entry }) => (
+                      <article>
+                        <div>
+                          <strong>{item.prompt}</strong>
+                          <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
+                        </div>
+                        <p class="preserve-lines">{entry.answerMarkdown}</p>
+                      </article>
+                    )}</For>
+                  </div>
+                </Show>
+              </section>
+            </Show>
 
             <section class="depth-grid" aria-labelledby="practice-title">
               <div>

@@ -4,6 +4,13 @@ interface Props {
   lines: string[];
   title?: string;
   eyebrow?: string;
+  components?: Array<{
+    name: string;
+    location: 'client' | 'control-plane' | 'worker-node' | 'cluster-addon' | 'data-plane' | 'external';
+    responsibility: string;
+    acts_on: string;
+    proof?: string;
+  }>;
 }
 
 const arrows = new Set(['→', '↓', '←', '↔', '⇒', '⇢']);
@@ -123,6 +130,38 @@ export default function LessonVisualGuide(props: Props) {
           )}</For>
         </div>
       </div>
+
+      <Show when={(props.components?.length ?? 0) > 0}>
+        <section class="lesson-component-map" aria-label="Component responsibility map">
+          <div class="lesson-component-map-head">
+            <span>Where the work happens</span>
+            <small>Location · owner · responsibility · target</small>
+          </div>
+          <div class="lesson-component-grid">
+            <For each={props.components ?? []}>{(component) => (
+              <article class="lesson-component-card" data-location={component.location}>
+                <span class="lesson-component-location">{component.location.replace('-', ' ')}</span>
+                <strong>{component.name}</strong>
+                <p>{component.responsibility}</p>
+                <dl>
+                  <div>
+                    <dt>Works on</dt>
+                    <dd>{component.acts_on}</dd>
+                  </div>
+                  <Show when={component.proof}>
+                    {(proof) => (
+                      <div>
+                        <dt>Proof</dt>
+                        <dd><code>{proof()}</code></dd>
+                      </div>
+                    )}
+                  </Show>
+                </dl>
+              </article>
+            )}</For>
+          </div>
+        </section>
+      </Show>
 
       <ol class="lesson-visual-rail" aria-label="Visual model steps">
         <For each={frames()}>{(line, index) => (

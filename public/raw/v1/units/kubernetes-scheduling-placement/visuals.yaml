@@ -9,3 +9,19 @@ visuals:
     lines:
       - "Pending Pod → resource requests → hard node constraints → taints and tolerations → affinity and topology scoring → bind selected node"
     teaching_point: Placement is a sequence of feasibility and preference decisions; controllers express workload intent, while the scheduler chooses a node that satisfies the Pod's constraints.
+    components:
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Filters infeasible nodes, scores feasible candidates, and records the selected node for an unscheduled Pod.
+        acts_on: Unscheduled Pod placement
+        proof: kubectl get pod <name> -o wide
+      - name: kube-apiserver
+        location: control-plane
+        responsibility: Provides the Pod and node state used by scheduling and stores the resulting placement decision.
+        acts_on: Pod and Node API objects
+        proof: kubectl get pod <name> -o yaml
+      - name: kubelet
+        location: worker-node
+        responsibility: Acts only after a Pod is assigned to its node, turning the placement decision into execution.
+        acts_on: Pods bound to its node
+        proof: kubectl describe pod <name>
