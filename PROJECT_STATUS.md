@@ -5,6 +5,24 @@
 
 ## Read this first
 
+**KCNA interactive curriculum v9 is release-ready:** the interactive lesson
+model now covers all four KCNA checkpoints instead of only the Resources pilot.
+`content/lessons/` contains four portable checkpoint lessons with **45 total
+interactions**: 11 for Kubernetes Fundamentals, 12 for Kubernetes Resources, 11
+for Cluster Behavior, and 11 for Cloud-Native Context. The three new lessons
+reuse the same renderer-independent primitives, assistance rules, feedback
+model, private evidence endpoint, and Encountered/Recall/Application semantics;
+they do not create Retained evidence or bypass FSRS. The immersive player is now
+checkpoint-agnostic, and `/kcna` discovers lesson launchers from the lesson
+catalog rather than hard-coding Resources. New browser contracts verify all four
+launchers, checkpoint titles, safe exit anchors, exercise counts, and responsive
+overflow behavior. Local content validation reports **4 interactive lessons / 45
+lesson exercises**; 76-file typecheck, 35 unit tests, D1 checks, production build,
+`git diff --check`, and the full Playwright matrix pass with **47 passed and 16
+intentional skips** across desktop, tablet, and mobile. **No implementation
+blocker.** Next step is protected exact-SHA release and live verification of all
+four checkpoint launchers.
+
 **Interaction smoothness v8 is live:** exact public source
 `2190646705e5f25638de6bde224a888a63f6ed64` passed public CI run
 `34924053087` and protected owner deployment run `34924211727`. The app remains
@@ -335,7 +353,8 @@ and is not part of production.
 | Learning progress v5 | ✅ Live | Completion is tracked independently from evidence-derived understanding, survives content revisions by stable task ID, and is included in learner export v2. Public CI `34584535362`, protected owner deploy `34584744823`, and independent live probes passed for exact source `8e63ad1`. |
 | Learning-product UI v6 | ✅ Live | Proven learning-product affordances are applied without changing content or evidence semantics: dominant next action, stronger checkpoint/question surfaces, learned-path progress, explicit learning-loop cues, tactile controls, and persistent mobile navigation. Exact source `a9ebfe1` passed public CI `34588219031`, protected owner deploy `34588405704`, and independent production probes plus rendered mobile verification. |
 | KCNA MCQ refresher v7 | ✅ Live | `/practice/kcna` provides 26 original MCQs, including 9 kubectl command questions and 7 multi-select questions, with rationale for every option and canonical-unit review links. Session scores remain memory-only and do not alter mastery/readiness. Exact source `9566794` passed public CI `34590530006`, protected owner deploy `34620453123`, and independent production route/manifest/D1 probes. |
-| KCNA Resources lesson pilot | ✅ Live | One portable 12-exercise lesson and immersive player are live from exact source `85d61fa`; public CI `34750388714`, protected owner deploy `34750501484`, independent production probes, and a real browser interaction passed. Other KCNA checkpoints wait for pilot evaluation. |
+| KCNA Resources lesson pilot | ✅ Complete | The 12-exercise Resources pilot proved the portable lesson schema, evidence semantics, immersive player, browser contracts, and production boundary. It is now the retained second checkpoint inside the broader v9 rollout. |
+| KCNA interactive curriculum v9 | 🟡 Release-ready | All four KCNA checkpoints now have portable interactive lessons: Fundamentals 11, Resources 12, Cluster Behavior 11, and Cloud-Native Context 11. `/kcna` discovers launchers from the lesson catalog and the player derives checkpoint identity/exit targets from lesson metadata. Local CI and the 47-pass browser matrix are green; protected release is next. |
 | Feedback clarity | ✅ Live | Lesson primitives, KCNA MCQs, and question-first self-checks now expose actionable correct/incorrect detail and honest correction attempts. Exact source `8afba99` passed public CI `34755696607`, protected owner deploy `34755814811`, the 42-pass browser matrix, and a live guest wrong-answer check. |
 
 **Repositories:** [public app](https://github.com/hmrdkn-labs/devops) · private
@@ -679,8 +698,8 @@ https://devops.hamardikan.com/api/auth/callback/google
 
 ## Deliberately not complete yet
 
-- Real-use evaluation of the KCNA Resources lesson pilot; other KCNA checkpoints
-  wait for this pilot gate
+- Real-use evaluation of the full four-checkpoint interactive KCNA curriculum,
+  including return-review behavior and evidence quality across the new lessons
 - The owner-beta success gate (ten real focus sessions over seven days,
   scheduled recall, one revision revalidation, and a validated export)
 - Expansion from the current 37 units toward the broader 70–100-unit DevOps curriculum; the detailed KCNA-specific domain coverage is now implemented, while later content growth can deepen prerequisites and add post-KCNA paths without changing the content contract
@@ -694,10 +713,10 @@ implementation.
 
 ## Safe resume order
 
-1. Use the live Resources pilot across real study sessions and record friction,
-   completion, understanding, and return-review behavior.
-2. Evaluate that evidence before deciding whether to migrate another KCNA checkpoint.
-   Do not bulk-migrate the remaining curriculum.
+1. Release the four-checkpoint interactive KCNA curriculum through the protected
+   exact-SHA workflow and verify every checkpoint launcher in production.
+2. Use all four checkpoint lessons across real study sessions and record
+   friction, completion, understanding, and return-review behavior.
 3. Continue the owner-beta success gate: ten real focus sessions over seven days,
    scheduled recall, one content revalidation, and a full export.
 4. Review learning evidence from the beta, then deepen weak KCNA topics or

@@ -1,7 +1,7 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { paths, practiceSets, unitsById } from '@/lib/content/catalog';
+import { lessons, paths, practiceSets, unitsById } from '@/lib/content/catalog';
 
 export const prerender = true;
 
@@ -46,7 +46,11 @@ const checkpoints = [
     start: 23,
     end: pathUnits.length,
   },
-].map((checkpoint) => ({ ...checkpoint, units: pathUnits.slice(checkpoint.start, checkpoint.end) }));
+].map((checkpoint) => ({
+  ...checkpoint,
+  units: pathUnits.slice(checkpoint.start, checkpoint.end),
+  lesson: lessons.find((lesson) => lesson.certification === 'cncf:kcna' && lesson.checkpoint === checkpoint.id),
+}));
 
 const reviewUnits = pathUnits.filter(({ unit }) => unit.metadata.slug.startsWith('kcna-') && unit.metadata.slug.endsWith('-review'));
 const clientUnits = checkpoints.flatMap((checkpoint) => checkpoint.units.map(({ unit }) => ({
@@ -126,11 +130,11 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
               <small>{checkpoint.units.length} units</small>
             </div>
           </summary>
-          {checkpoint.id === 'resources' && (
-            <a class="kcna-lesson-launch" href="/lesson/kcna-kubernetes-resources">
+          {checkpoint.lesson && (
+            <a class="kcna-lesson-launch" href={'/lesson/' + checkpoint.lesson.slug}>
               <span class="section-kicker">Interactive lesson</span>
-              <strong>Learn Kubernetes Resources by doing →</strong>
-              <small>12 focused interactions · about 16 minutes</small>
+              <strong>Learn {checkpoint.title} by doing →</strong>
+              <small>{checkpoint.lesson.exercises.length} focused interactions · about {checkpoint.lesson.estimated_minutes} minutes</small>
             </a>
           )}
           <ol>

@@ -1,0 +1,432 @@
+schema_version: 1
+id: lesson:kcna-cloud-native-context
+slug: kcna-cloud-native-context
+title: KCNA Cloud-Native Context
+summary: Connect Kubernetes to delivery, troubleshooting, observability, cloud-native architecture, release strategy, and the wider CNCF ecosystem.
+revision: 1
+certification: cncf:kcna
+checkpoint: cloud-native
+estimated_minutes: 20
+verified_at: 2026-09-15
+source_unit_ids:
+  - fpp:cloud-native-delivery-gitops
+  - fpp:troubleshoot-process-to-pod
+  - fpp:cloud-native-release-debugging
+  - fpp:cloud-native-observability-signals
+  - fpp:cloud-native-architecture-principles
+  - fpp:cncf-ecosystem-community
+exercises:
+  - id: lesson:kcna-cloud-native-context/arrange-delivery-chain
+    kind: arrange
+    unit_id: fpp:cloud-native-delivery-gitops
+    objective_ids: [fpp:cloud-native-delivery-gitops/pipeline]
+    evidence: application
+    prompt: Arrange this simplified delivery chain from source change to a reconciled workload running the new immutable artifact.
+    items:
+      - id: reconcile
+        text: A delivery controller or deployment process reconciles the environment toward the new desired state
+      - id: build
+        text: CI tests the change and builds an immutable image artifact
+      - id: source
+        text: A source change is committed and integrated
+      - id: desired
+        text: Desired deployment state is updated to reference the new artifact
+      - id: running
+        text: The platform converges on workloads using the new artifact
+    correct_order: [source, build, desired, reconcile, running]
+    hint: Separate producing the artifact from changing the environment that should run it.
+    learn_first:
+      title: CI creates an artifact; delivery changes desired environment state.
+      body: CI validates source and produces an identifiable artifact. CD or GitOps then changes or reconciles environment intent so the runtime platform can converge on that artifact.
+      visual:
+        - "source → CI → artifact"
+        - "desired deployment state → reconciliation → running workload"
+      variant_prompt: Rebuild the path from merged source to a running workload while keeping artifact creation separate from environment reconciliation.
+    feedback:
+      title: Artifact and deployment intent are different products.
+      explanation: A successful image build does not deploy anything by itself. Delivery changes environment intent, and reconciliation makes the target system converge on that intent.
+      points:
+        - CI evidence belongs to artifact creation.
+        - Runtime health still needs proof after deployment reconciliation.
+      visual:
+        - "build artifact ≠ deploy artifact ≠ prove behavior"
+
+  - id: lesson:kcna-cloud-native-context/predict-gitops-drift
+    kind: predict_state
+    unit_id: fpp:cloud-native-delivery-gitops
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
+    evidence: application
+    prompt: A GitOps-managed Deployment is manually edited in the cluster from replicas 3 to replicas 5, while Git still declares replicas 3. What should a reconciler normally do?
+    state:
+      - "Git desired state: replicas 3"
+      - "live cluster state: replicas 5"
+    options:
+      - id: accept-drift
+        text: Treat the live manual edit as the new source of truth automatically.
+        rationale: That would break the version-controlled desired-state contract unless the workflow explicitly writes the change back to Git.
+      - id: reconcile-three
+        text: Detect drift and converge the live state back toward replicas 3.
+        rationale: GitOps makes version-controlled desired state authoritative and continuously reconciles drift toward it.
+      - id: delete-git
+        text: Delete the Git declaration so the cluster can keep replicas 5.
+        rationale: A reconciler does not need to remove the source of truth merely because live drift occurred.
+    answer_ids: [reconcile-three]
+    hint: Ask which side is supposed to be authoritative in the GitOps operating model.
+    learn_first:
+      title: GitOps adds a continuous desired-state contract.
+      body: A reconciler compares version-controlled desired state with the target system and works to converge the target toward the declared source of truth.
+      visual:
+        - "Git desired 3 ↔ live observed 5"
+        - "reconciler → live 3"
+      variant_prompt: A human changes an image tag directly in a GitOps-managed cluster while Git still references the old digest. What should reconciliation do?
+    feedback:
+      title: Drift is corrected toward declared intent.
+      explanation: GitOps uses version-controlled desired state as the durable source of deployment truth. A manual live edit is drift unless the operating model explicitly records it back into the source.
+      points:
+        - Reconciliation is continuous, not a one-time sync.
+        - A Git revert changes desired deployment state but does not automatically undo external data side effects.
+      visual:
+        - "versioned intent → reconcile → target"
+
+  - id: lesson:kcna-cloud-native-context/connect-observability-signals
+    kind: connect
+    unit_id: fpp:cloud-native-observability-signals
+    objective_ids: [fpp:cloud-native-observability-signals/signals]
+    evidence: recall
+    prompt: Match each observability signal to the question it is especially good at answering.
+    left:
+      - id: metrics
+        text: Metrics
+      - id: logs
+        text: Logs
+      - id: traces
+        text: Distributed traces
+      - id: events
+        text: Kubernetes events
+    right:
+      - id: trends
+        text: How much, how often, and how values change over time
+      - id: local-detail
+        text: What discrete event or error a component recorded
+      - id: cross-service
+        text: Where one request spent time or failed across service boundaries
+      - id: control-clue
+        text: What scheduling, pull, probe, mount, or control-plane transition occurred
+    matches:
+      - left_id: metrics
+        right_id: trends
+      - left_id: logs
+        right_id: local-detail
+      - left_id: traces
+        right_id: cross-service
+      - left_id: events
+        right_id: control-clue
+    hint: Think about numeric trends, local component records, cross-service request causality, and Kubernetes control-plane clues.
+    learn_first:
+      title: No single telemetry signal is complete observability.
+      body: Metrics summarize numeric behavior, logs record discrete local events, traces follow work across boundaries, and Kubernetes events explain control-plane transitions. Strong investigations combine them.
+      visual:
+        - "metrics: trend"
+        - "logs: local detail"
+        - "traces: request path"
+        - "events: control-plane clue"
+      variant_prompt: Match trend analysis, exception detail, cross-service latency localization, and FailedScheduling clues to metrics, logs, traces, and Kubernetes events.
+    feedback:
+      title: Use each signal for the question it answers best.
+      explanation: The signals overlap, but they are not interchangeable. Independent evidence becomes stronger when multiple signals agree with a user-visible symptom.
+      points:
+        - A healthy metrics scrape does not prove every user transaction works.
+        - Kubernetes events are useful but temporary and are not durable application logs.
+      visual:
+        - "user symptom ← metrics + traces + logs + events"
+
+  - id: lesson:kcna-cloud-native-context/choose-otel-prometheus
+    kind: choose
+    unit_id: fpp:cloud-native-observability-signals
+    objective_ids: [fpp:cloud-native-observability-signals/tools]
+    evidence: recall
+    prompt: Which statement correctly separates OpenTelemetry from Prometheus?
+    options:
+      - id: same-product
+        text: They are interchangeable monitoring databases with the same role.
+        rationale: OpenTelemetry and Prometheus overlap around telemetry ecosystems but have different primary responsibilities.
+      - id: otel-plumbing
+        text: OpenTelemetry provides vendor-neutral instrumentation and telemetry plumbing, while Prometheus commonly scrapes, stores, queries, and alerts on labeled metrics.
+        rationale: OpenTelemetry is primarily a telemetry-generation/processing/export boundary; Prometheus is a metrics monitoring system and time-series backend.
+      - id: otel-storage
+        text: OpenTelemetry Collector is the required storage backend for all Kubernetes metrics.
+        rationale: The Collector processes and exports telemetry; it is not itself a general storage/query backend.
+    answer_ids: [otel-plumbing]
+    hint: Separate generating/transporting telemetry from storing/querying a metrics time series.
+    learn_first:
+      title: Telemetry plumbing is not the same as a metrics backend.
+      body: OpenTelemetry defines APIs, SDKs, semantic conventions, and a Collector for telemetry generation and processing. Prometheus focuses on scraping, storing, querying, and alerting on metrics.
+      visual:
+        - "app → OpenTelemetry → telemetry backend"
+        - "target → Prometheus scrape/store/query/alert"
+      variant_prompt: If an application emits traces through OpenTelemetry, does that mean the OpenTelemetry Collector is also the final trace database?
+    feedback:
+      title: Tool responsibility matters more than the logo.
+      explanation: KCNA questions often become straightforward when you identify whether the tool owns instrumentation, collection, storage, querying, alerting, or visualization.
+      points:
+        - OpenTelemetry can handle traces, metrics, and logs as telemetry signals.
+        - Prometheus is strongly associated with metrics collection, storage, query, and alert rules.
+      visual:
+        - "instrument/collect/export ≠ store/query/alert"
+
+  - id: lesson:kcna-cloud-native-context/choose-release-strategy
+    kind: choose
+    unit_id: fpp:cloud-native-release-debugging
+    objective_ids: [fpp:cloud-native-release-debugging/strategy]
+    evidence: application
+    prompt: You want to expose only a small percentage of users to a new version, observe defined signals, and then expand or abort. Which release idea best matches?
+    options:
+      - id: rolling
+        text: Rolling update
+        rationale: Rolling updates replace old replicas gradually, but they do not inherently imply controlled percentage-based user exposure with evaluation gates.
+      - id: blue-green
+        text: Blue-green
+        rationale: Blue-green keeps two complete sets and typically switches traffic between them rather than gradually increasing a small exposure slice.
+      - id: canary
+        text: Canary
+        rationale: Canary delivery deliberately limits initial exposure, observes signals, and expands or aborts based on evidence.
+    answer_ids: [canary]
+    hint: Focus on controlled exposure plus measurement, not merely the number of new Pods.
+    learn_first:
+      title: Release strategies differ by replacement and traffic exposure.
+      body: Rolling updates replace replicas over time, blue-green keeps two complete versions and switches traffic, while canary delivery limits early exposure and expands only after observing defined signals.
+      visual:
+        - "rolling: replace gradually"
+        - "blue-green: two sets, switch"
+        - "canary: small exposure → measure → expand/abort"
+      variant_prompt: A new release receives 5% of requests while error rate and latency are watched before increasing traffic. Which release strategy is this?
+    feedback:
+      title: Canary means controlled exposure with measurement.
+      explanation: Running one new Pod alone is not enough to call a release canary. The defining idea is deliberately limited traffic or user exposure combined with evaluation.
+      points:
+        - Traffic weighting may be implemented by a gateway, mesh, load balancer, or progressive-delivery controller.
+        - Always identify the component actually executing the traffic decision.
+      visual:
+        - "5% → observe → 25% → observe → 100% or abort"
+
+  - id: lesson:kcna-cloud-native-context/trace-release-debugging
+    kind: trace
+    unit_id: fpp:cloud-native-release-debugging
+    objective_ids: [fpp:cloud-native-release-debugging/evidence]
+    evidence: application
+    prompt: Arrange a practical release-debugging chain from artifact existence to user-visible success.
+    items:
+      - id: endpoints
+        text: Ready replicas appear in endpoint data
+      - id: artifact
+        text: Confirm the intended image artifact or digest exists
+      - id: request
+        text: A real request reaches the new version and behaves correctly
+      - id: manifest
+        text: Confirm desired deployment state references the intended artifact
+      - id: runtime
+        text: Pods schedule, pull the image, and start successfully
+      - id: rollout
+        text: The API and controllers accept and create the rollout objects
+    correct_order: [artifact, manifest, rollout, runtime, endpoints, request]
+    hint: Walk forward from immutable artifact to desired state, cluster convergence, traffic eligibility, and finally user behavior.
+    learn_first:
+      title: Debug releases as a chain of independently provable boundaries.
+      body: Start from the artifact and declared desired state, then follow API acceptance, rollout, scheduling/runtime, readiness/endpoints, and finally an end-to-end request.
+      visual:
+        - "artifact → desired state → rollout → runtime → endpoints → request"
+      variant_prompt: A rollout reports progress but users still fail. Rebuild the chain of evidence you should verify before assuming the deployment controller is the only problem.
+    feedback:
+      title: Find the first broken boundary.
+      explanation: Different failures require different evidence. A valid image digest does not prove readiness, and ready Pods do not prove external traffic or application correctness.
+      points:
+        - Diagnose before choosing rollback as the mitigation.
+        - A real request is the strongest proof at the user boundary.
+      visual:
+        - "first failed boundary → smallest useful diagnosis"
+
+  - id: lesson:kcna-cloud-native-context/arrange-troubleshooting-ladder
+    kind: arrange
+    unit_id: fpp:troubleshoot-process-to-pod
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]
+    evidence: application
+    prompt: Arrange these troubleshooting layers from declared intent toward a user-visible application request.
+    items:
+      - id: runtime
+        text: Check container and process runtime state
+      - id: intent
+        text: Verify the intended object, revision, namespace, and configuration
+      - id: traffic
+        text: Prove discovery, endpoint, packet, protocol, and user request behavior
+      - id: placement
+        text: Check scheduling and node, resource, image, or volume constraints
+      - id: reconciliation
+        text: Check controller conditions and events for convergence
+    correct_order: [intent, reconciliation, placement, runtime, traffic]
+    hint: Start with what should exist, then follow the system toward what the user actually experiences.
+    learn_first:
+      title: Localize before changing state.
+      body: Troubleshooting is faster when you walk from desired state through reconciliation, placement, runtime, discovery/networking, and protocol behavior instead of making random corrective changes.
+      visual:
+        - "intent → reconcile → place → run → reach → user"
+      variant_prompt: Put the same evidence ladder in order for a Deployment whose Pods exist but the service is still unreachable.
+    feedback:
+      title: Move from intent toward the failure boundary.
+      explanation: Each layer has distinct evidence. The goal is to identify the earliest broken boundary before deciding which action is safe and relevant.
+      points:
+        - A later symptom does not prove an earlier layer is healthy unless you inspected it.
+        - Finish with evidence from the original user boundary.
+      visual:
+        - "observe first → localize → change deliberately → verify again"
+
+  - id: lesson:kcna-cloud-native-context/choose-cloud-native-property
+    kind: choose
+    unit_id: fpp:cloud-native-architecture-principles
+    objective_ids: [fpp:cloud-native-architecture-principles/properties]
+    evidence: recall
+    prompt: Which change most strongly moves an application toward a cloud-native operating model rather than merely hosting the same hand-managed server in a cloud VM?
+    options:
+      - id: bigger-vm
+        text: Move the application to a larger VM but keep manual in-place configuration and recovery.
+        rationale: Cloud hosting alone does not create declarative, automated, replaceable, observable operating behavior.
+      - id: declarative-replaceable
+        text: Use versioned immutable artifacts, declarative desired state, automated reconciliation, and observable health signals.
+        rationale: These properties make replacement, scaling, recovery, and change more repeatable in dynamic environments.
+      - id: hide-metrics
+        text: Remove runtime telemetry so the platform makes decisions without exposing implementation details.
+        rationale: Observability is a core property of operating distributed dynamic systems safely.
+    answer_ids: [declarative-replaceable]
+    hint: Cloud-native is primarily an operating and architectural model, not a billing location.
+    learn_first:
+      title: Cloud-native emphasizes adaptability through explicit contracts and automation.
+      body: Declarative desired state, replaceable artifacts, loose coupling, reconciliation, observability, and resilience reinforce each other in dynamic environments.
+      visual:
+        - "declare → automate → replace → observe → recover"
+      variant_prompt: "Which is more cloud-native: a manually patched long-lived VM or a replaceable versioned artifact reconciled from declarative state with health telemetry?"
+    feedback:
+      title: Cloud-native is more than running in a cloud.
+      explanation: The important shift is toward systems that can change, recover, and scale through automation and explicit contracts instead of unique hand-managed machines.
+      points:
+        - Immutable does not mean persistent data disappears.
+        - Observability supports both human and automated decisions.
+      visual:
+        - "location alone ≠ cloud-native operating model"
+
+  - id: lesson:kcna-cloud-native-context/predict-scale-terms
+    kind: predict_state
+    unit_id: fpp:cloud-native-architecture-principles
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+    evidence: application
+    prompt: A workload normally runs 3 replicas, an autoscaler raises desired replicas to 8 during demand, then later returns it to 3. Which description is most precise?
+    state:
+      - "baseline replicas: 3"
+      - "high demand replicas: 8"
+      - "later replicas: 3"
+    options:
+      - id: replication-only
+        text: Replication only, because multiple copies exist.
+        rationale: Replication is present, but the automatic change in desired capacity adds an autoscaling behavior.
+      - id: autoscaling-elasticity
+        text: Autoscaling changes desired capacity and contributes to elasticity.
+        rationale: Autoscaling is the mechanism changing replica count; expanding and contracting resource use is part of elasticity.
+      - id: serverless
+        text: Serverless, because the replica count changed automatically.
+        rationale: Automatic scaling alone does not make a workload serverless; serverless is a broader platform abstraction model.
+    answer_ids: [autoscaling-elasticity]
+    hint: Distinguish the presence of replicas from the mechanism that changes capacity and the broader property of adapting resource use.
+    learn_first:
+      title: Replication, autoscaling, elasticity, and serverless are related but not synonyms.
+      body: Replication means multiple instances exist. Autoscaling changes desired capacity from signals or policy. Elasticity is the broader ability to expand and contract resources. Serverless delegates more infrastructure lifecycle to the platform.
+      visual:
+        - "replication: N copies"
+        - "autoscaling: change N automatically"
+        - "elasticity: expand/contract resource use"
+      variant_prompt: A service has two replicas forever with no automatic capacity change. Is that replication, autoscaling, elasticity, or serverless?
+    feedback:
+      title: Name the mechanism and the property separately.
+      explanation: The workload is replicated, the autoscaler changes desired replicas, and the resulting expansion and contraction contributes to elasticity.
+      points:
+        - HPA changing replica targets is an autoscaling example.
+        - Serverless does not mean servers literally do not exist.
+      visual:
+        - "replicas 3 → autoscaler → 8 → autoscaler → 3"
+
+  - id: lesson:kcna-cloud-native-context/connect-cncf-projects
+    kind: connect
+    unit_id: fpp:cncf-ecosystem-community
+    objective_ids: [fpp:cncf-ecosystem-community/projects]
+    evidence: recall
+    prompt: Match each representative cloud-native project to the job it is commonly associated with.
+    left:
+      - id: prometheus
+        text: Prometheus
+      - id: coredns
+        text: CoreDNS
+      - id: containerd
+        text: containerd
+      - id: helm
+        text: Helm
+    right:
+      - id: metrics
+        text: metrics scraping, time-series queries, and alert rules
+      - id: dns
+        text: pluggable DNS and cluster service-name resolution
+      - id: runtime
+        text: container runtime implementation
+      - id: packaging
+        text: templating and packaging Kubernetes resources as charts
+    matches:
+      - left_id: prometheus
+        right_id: metrics
+      - left_id: coredns
+        right_id: dns
+      - left_id: containerd
+        right_id: runtime
+      - left_id: helm
+        right_id: packaging
+    hint: Learn representative projects by responsibility, not by their visual position in the CNCF Landscape.
+    learn_first:
+      title: The ecosystem is easier to remember as a responsibility map.
+      body: Prometheus is a metrics system, CoreDNS provides DNS behavior, containerd is a container runtime, and Helm packages/templates Kubernetes resources. None is mandatory simply because it appears in the ecosystem.
+      visual:
+        - "metrics → Prometheus"
+        - "DNS → CoreDNS"
+        - "runtime → containerd"
+        - "packaging → Helm"
+      variant_prompt: Match metrics, DNS, runtime, and Kubernetes package management to Prometheus, CoreDNS, containerd, and Helm.
+    feedback:
+      title: Project name follows responsibility.
+      explanation: KCNA rewards recognizing what a project or interface does. The CNCF Landscape is a catalog, not one prescribed stack that every cluster must install.
+      points:
+        - Project maturity does not mean universal fit for every use case.
+        - Interface names such as CNI or CSI are not single product implementations.
+      visual:
+        - "need → responsibility → representative implementation"
+
+  - id: lesson:kcna-cloud-native-context/explain-open-interfaces
+    kind: explain
+    unit_id: fpp:cncf-ecosystem-community
+    objective_ids: [fpp:cncf-ecosystem-community/community]
+    evidence: recall
+    prompt: Why do open governance and interfaces such as OCI, CRI, CNI, and CSI matter in cloud-native systems?
+    model_answer: Open governance lets many organizations share technical ownership and decision processes, while stable open interfaces separate responsibilities so implementations can evolve or be replaced behind known contracts. OCI, CRI, CNI, and CSI reduce hard coupling without making every implementation identical.
+    critical_points:
+      - Open governance enables shared ownership and public technical collaboration across organizations.
+      - Open interfaces define contracts between responsibilities and reduce hard coupling.
+      - An interface such as CNI or CSI is not the same thing as one specific implementation.
+    hint: Explain both the community ownership problem and the technical coupling problem.
+    learn_first:
+      title: Cloud-native openness is both social and technical.
+      body: Shared governance lets independent organizations collaborate on common infrastructure, while open interfaces create stable boundaries that permit interoperable implementations to evolve independently.
+      visual:
+        - "shared governance → shared technical ownership"
+        - "open interface → replaceable implementation behind contract"
+      variant_prompt: Explain how CRI or CNI can support multiple implementations without Kubernetes hard-coding one vendor product.
+    feedback:
+      title: Open contracts let implementations evolve independently.
+      explanation: The ecosystem scales because communities can coordinate publicly while software components meet at documented interfaces instead of depending on one hidden implementation detail.
+      points:
+        - OCI, CRI, CNI, and CSI separate different responsibilities.
+        - The CNCF Landscape catalogs options; it does not prescribe one universal stack.
+      visual:
+        - "community contract + software contract → interoperability"

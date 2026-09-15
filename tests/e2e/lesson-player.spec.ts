@@ -2,6 +2,12 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 const lessonRoute = '/lesson/kcna-kubernetes-resources';
+const checkpointLessons = [
+  { checkpoint: 'fundamentals', title: 'Kubernetes Fundamentals', route: '/lesson/kcna-kubernetes-fundamentals', exercises: 11 },
+  { checkpoint: 'resources', title: 'Kubernetes Resources', route: lessonRoute, exercises: 12 },
+  { checkpoint: 'cluster-behavior', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 11 },
+  { checkpoint: 'cloud-native', title: 'Cloud-Native Context', route: '/lesson/kcna-cloud-native-context', exercises: 11 },
+] as const;
 
 async function check(page: Page) {
   await page.getByTestId('lesson-check').click();
@@ -61,6 +67,38 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
 
   await continueLesson(page, 2);
   await expect(page.getByRole('heading', { name: /Put these workload objects/ })).toBeVisible();
+});
+
+test('every KCNA checkpoint exposes the same interactive lesson model', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Catalog and checkpoint identity only need one browser project');
+
+  await page.goto('/kcna');
+  const launches = page.locator('.kcna-lesson-launch');
+  await expect(launches).toHaveCount(checkpointLessons.length);
+  for (const lesson of checkpointLessons) {
+    const launch = page.locator(`[data-checkpoint="${lesson.checkpoint}"] a.kcna-lesson-launch`);
+    await expect(launch).toHaveAttribute('href', lesson.route);
+    await expect(launch).toContainText(`Learn ${lesson.title} by doing`);
+    await expect(launch).toContainText(`${lesson.exercises} focused interactions`);
+  }
+
+  for (const lesson of checkpointLessons) {
+    await page.goto(lesson.route);
+    await expect(page.locator('.lesson-player-title span')).toHaveText(lesson.title);
+    await expect(page.locator('.lesson-step-count')).toHaveText(`1 / ${lesson.exercises}`);
+    await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', `/kcna#${lesson.checkpoint}`);
+    await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
+  }
+});
+
+test('all KCNA checkpoint lessons stay within the responsive viewport', async ({ page }) => {
+  for (const lesson of checkpointLessons) {
+    await page.goto(lesson.route);
+    const viewport = page.viewportSize();
+    expect(viewport).not.toBeNull();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport!.width);
+    await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
+  }
 });
 
 test('wrong feedback teaches the causal model and every distractor', async ({ page }) => {
@@ -233,7 +271,7 @@ test('all twelve Resources interactions complete end to end', async ({ page }, t
   await page.getByRole('button', { name: 'Good' }).click();
   await page.getByRole('button', { name: 'Finish lesson' }).click();
   await expect(page.getByTestId('lesson-complete')).toBeVisible();
-  await expect(page.getByRole('heading', { name: /traced the Kubernetes resource model/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'You completed Kubernetes Resources.' })).toBeVisible();
 });
 
 test('mobile lesson controls and dense content stay reachable and overflow-free', async ({ page }, testInfo) => {

@@ -62,6 +62,14 @@ export default function LessonPlayer(props: Props) {
   const [status, setStatus] = createSignal('');
   let persistSequence = 0;
 
+  const checkpointLabel = createMemo(() => ({
+    fundamentals: 'Kubernetes Fundamentals',
+    resources: 'Kubernetes Resources',
+    'cluster-behavior': 'Cluster Behavior',
+    'cloud-native': 'Cloud-Native Context',
+  })[props.lesson.checkpoint] ?? props.lesson.title.replace(/^KCNA\s+/, ''));
+  const checkpointHref = createMemo(() => `/kcna#${props.lesson.checkpoint}`);
+
   const [me] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/me', { credentials: 'include' });
     return response.json() as Promise<Me>;
@@ -329,10 +337,10 @@ export default function LessonPlayer(props: Props) {
   return (
     <div class="lesson-player" data-testid="lesson-player" aria-busy={!hydrated()}>
       <header class="lesson-player-topbar">
-        <a class="lesson-exit" href="/kcna#resources">← Exit</a>
+        <a class="lesson-exit" href={checkpointHref()}>← Exit</a>
         <div class="lesson-player-title">
           <strong>KCNA</strong>
-          <span>Kubernetes Resources</span>
+          <span>{checkpointLabel()}</span>
         </div>
         <span class="lesson-step-count">{step() + 1} / {props.lesson.exercises.length}</span>
         <div
@@ -350,10 +358,10 @@ export default function LessonPlayer(props: Props) {
       <main class="lesson-player-main">
         <Show when={!finished()} fallback={
           <section class="lesson-complete" data-testid="lesson-complete">
-            <p class="lesson-kicker">Vertical slice complete</p>
-            <h1>You traced the Kubernetes resource model end to end.</h1>
+            <p class="lesson-kicker">Checkpoint lesson complete</p>
+            <h1>You completed {checkpointLabel()}.</h1>
             <p>Completion is separate from mastery. Retention still comes from later scheduled review.</p>
-            <a class="lesson-primary" href="/kcna#resources">Back to KCNA Resources</a>
+            <a class="lesson-primary" href={checkpointHref()}>Back to {checkpointLabel()}</a>
           </section>
         }>
           <section class="lesson-task-card" data-lesson-task data-testid="lesson-active-task" tabindex="-1">

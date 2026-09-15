@@ -1,0 +1,435 @@
+schema_version: 1
+id: lesson:kcna-cluster-behavior
+slug: kcna-cluster-behavior
+title: KCNA Cluster Behavior
+summary: Reason through a running Kubernetes cluster by tracing service traffic, scheduling, health, storage, configuration, and security boundaries.
+revision: 1
+certification: cncf:kcna
+checkpoint: cluster-behavior
+estimated_minutes: 20
+verified_at: 2026-09-15
+source_unit_ids:
+  - fpp:services-dns-ingress
+  - fpp:kubernetes-networking-request-path
+  - fpp:scheduling-resources-health
+  - fpp:kubernetes-scheduling-placement
+  - fpp:config-secrets-storage
+  - fpp:kubernetes-storage-lifecycle
+  - fpp:kubernetes-security-access
+exercises:
+  - id: lesson:kcna-cluster-behavior/trace-service-request
+    kind: trace
+    unit_id: fpp:kubernetes-networking-request-path
+    objective_ids: [fpp:kubernetes-networking-request-path/service-path]
+    evidence: application
+    prompt: Arrange the in-cluster request path from a Service DNS name to the application process in one ready Pod.
+    items:
+      - id: endpoint
+        text: A ready Pod endpoint is selected from EndpointSlice data
+      - id: dns
+        text: Cluster DNS resolves the Service name
+      - id: process
+        text: The application process receives traffic on its listening port
+      - id: forwarding
+        text: The Service data plane forwards traffic toward the selected endpoint
+      - id: service
+        text: The client sends traffic to the stable Service address and port
+    correct_order: [dns, service, endpoint, forwarding, process]
+    hint: Resolve the stable name first, then move from Service identity to a concrete ready backend.
+    learn_first:
+      title: Stable discovery lives above replaceable Pod IPs.
+      body: Cluster DNS gives clients a stable Service name. The Service selects ready Pod endpoints, and the data plane forwards traffic to one of those concrete Pod addresses where the application is listening.
+      visual:
+        - "DNS → Service → EndpointSlice → Pod IP → process"
+      variant_prompt: Trace how a request to payments.default.svc reaches one ready payments Pod without assuming the client knows the Pod IP in advance.
+    feedback:
+      title: Discovery narrows from stable identity to concrete execution.
+      explanation: A Service keeps client-facing discovery stable while Pods remain replaceable. Endpoint data and the Service forwarding layer connect that stable identity to a current backend.
+      points:
+        - Pod IPs can change while Service identity remains stable.
+        - Ready endpoint membership is part of the path, not an optional detail.
+      visual:
+        - "service name → stable VIP/identity → ready endpoint → Pod process"
+
+  - id: lesson:kcna-cluster-behavior/connect-network-boundaries
+    kind: connect
+    unit_id: fpp:kubernetes-networking-request-path
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+    evidence: recall
+    prompt: Match each networking mechanism to the boundary it primarily controls.
+    left:
+      - id: cni
+        text: CNI-compatible network implementation
+      - id: service
+        text: Service forwarding
+      - id: ingress
+        text: Ingress or Gateway implementation
+      - id: policy
+        text: NetworkPolicy
+    right:
+      - id: pod-connectivity
+        text: Pod interfaces and cluster connectivity
+      - id: stable-forwarding
+        text: stable Service traffic to eligible endpoints
+      - id: north-south
+        text: external HTTP routing by host or path
+      - id: allowed-flows
+        text: allowed ingress and egress between selected Pods
+    matches:
+      - left_id: cni
+        right_id: pod-connectivity
+      - left_id: service
+        right_id: stable-forwarding
+      - left_id: ingress
+        right_id: north-south
+      - left_id: policy
+        right_id: allowed-flows
+    hint: Separate connectivity, service selection/forwarding, external HTTP routing, and policy enforcement.
+    learn_first:
+      title: Kubernetes networking is several cooperating layers.
+      body: CNI provides Pod connectivity, Services provide stable forwarding, Ingress or Gateway implementations handle configured north-south routing, and NetworkPolicy describes allowed traffic when the network implementation enforces it.
+      visual:
+        - "CNI: Pod network"
+        - "Service: backend forwarding"
+        - "Ingress/Gateway: external HTTP routing"
+        - "NetworkPolicy: allowed flows"
+      variant_prompt: Match the same four mechanisms after asking which one creates Pod connectivity, which forwards Service traffic, which handles host/path routing, and which restricts flows.
+    feedback:
+      title: Each mechanism owns a different network decision.
+      explanation: Collapsing these layers causes debugging mistakes, such as expecting a namespace to behave like a firewall or an Ingress object to provide Pod networking by itself.
+      points:
+        - A Service is not the same thing as an Ingress.
+        - NetworkPolicy requires an enforcing network implementation.
+      visual:
+        - "connectivity ≠ forwarding ≠ HTTP routing ≠ policy"
+
+  - id: lesson:kcna-cluster-behavior/predict-readiness
+    kind: predict_state
+    unit_id: fpp:scheduling-resources-health
+    objective_ids: [fpp:scheduling-resources-health/probe-semantics]
+    evidence: application
+    prompt: A container is running, but its readiness probe is failing while liveness still succeeds. What should happen to normal Service traffic?
+    state:
+      - "container: running"
+      - "readiness: failing"
+      - "liveness: succeeding"
+    options:
+      - id: restart
+        text: kubelet should restart the container immediately.
+        rationale: Liveness, not readiness, is the signal that normally decides whether kubelet should restart the container.
+      - id: remove-endpoint
+        text: The Pod should stop receiving normal Service traffic while remaining running.
+        rationale: Readiness controls whether the Pod should be considered ready for Service endpoint traffic.
+      - id: reschedule
+        text: The scheduler should move the running Pod to another node.
+        rationale: Probe failure does not cause the scheduler to migrate an already-running Pod.
+    answer_ids: [remove-endpoint]
+    hint: Ask separately whether the process should keep running and whether it is ready to receive traffic.
+    learn_first:
+      title: Readiness and liveness answer different questions.
+      body: Readiness says whether traffic should reach the Pod. Liveness says whether kubelet should restart the container. A running process can be alive but temporarily not ready to serve requests.
+      visual:
+        - "readiness → traffic eligibility"
+        - "liveness → restart decision"
+      variant_prompt: A Pod's readiness fails during cache warmup but liveness remains healthy. Should it keep running, receive Service traffic, both, or neither?
+    feedback:
+      title: Alive does not always mean ready.
+      explanation: The Pod can remain running while readiness removes it from normal Service traffic until it becomes ready again.
+      points:
+        - Startup probes protect slow startup from premature liveness checks.
+        - Readiness is a traffic decision, not a restart command.
+      visual:
+        - "running ✓  ready ✗  → no normal Service traffic"
+
+  - id: lesson:kcna-cluster-behavior/predict-scheduling-feasibility
+    kind: predict_state
+    unit_id: fpp:kubernetes-scheduling-placement
+    objective_ids: [fpp:kubernetes-scheduling-placement/feasibility]
+    evidence: application
+    prompt: A Pod requests 4 CPU. Node A has 3 CPU allocatable after existing requests, while Node B has 8 CPU allocatable but a required node-affinity rule does not match. What is the scheduling result?
+    state:
+      - "Pod request: 4 CPU"
+      - "Node A available by requests: 3 CPU"
+      - "Node B available by requests: 8 CPU, required affinity mismatch"
+    options:
+      - id: node-a
+        text: Schedule to Node A because affinity matches there.
+        rationale: Node A cannot satisfy the hard CPU request, so it is not feasible.
+      - id: node-b
+        text: Schedule to Node B because it has enough CPU.
+        rationale: A required affinity mismatch is also a hard feasibility failure.
+      - id: pending
+        text: Remain Pending because every candidate violates at least one hard constraint.
+        rationale: Hard resource and placement constraints determine the feasible set before preferences can influence scoring.
+    answer_ids: [pending]
+    hint: Eliminate nodes that fail any hard requirement before thinking about preferences.
+    learn_first:
+      title: Feasibility comes before scoring.
+      body: CPU and memory requests plus required placement constraints eliminate impossible nodes. Only after a feasible set exists do preferred rules influence the final choice.
+      visual:
+        - "Node A: CPU ✗"
+        - "Node B: required affinity ✗"
+        - "feasible nodes: none"
+      variant_prompt: A Pod fits Node B's resources but fails a required node selector there, while Node A matches the selector but cannot satisfy the Pod's memory request. What happens?
+    feedback:
+      title: No feasible node means Pending.
+      explanation: Scheduler scoring cannot rescue a candidate that fails a hard constraint. The Pod remains unscheduled until the constraints or cluster state change.
+      points:
+        - Requests are scheduling inputs, not predictions of live utilization.
+        - Required affinity and resource fit both affect feasibility.
+      visual:
+        - "hard constraints → feasible set → scoring"
+
+  - id: lesson:kcna-cluster-behavior/inspect-pending-pod
+    kind: terminal_inspect
+    unit_id: fpp:kubernetes-scheduling-placement
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy]
+    evidence: application
+    prompt: A Pod is Pending. Which interpretation best matches this scheduler event?
+    terminal:
+      - "Warning  FailedScheduling"
+      - "0/3 nodes are available:"
+      - "1 Insufficient cpu, 2 node(s) had untolerated taint {dedicated: gpu}"
+    options:
+      - id: image-pull
+        text: The image cannot be pulled on any node.
+        rationale: Image pulling happens after a Pod is assigned; the event shown is a scheduling feasibility failure.
+      - id: constraints
+        text: Resource fit and taint/toleration constraints eliminated every node.
+        rationale: The event explicitly reports both insufficient CPU and untolerated taints as reasons no node is feasible.
+      - id: dns
+        text: Cluster DNS is unavailable.
+        rationale: DNS is unrelated to the scheduler's inability to select a node.
+    answer_ids: [constraints]
+    hint: Read the event as an explanation of which constraints removed candidate nodes.
+    learn_first:
+      title: Pending is a decision state, not a diagnosis by itself.
+      body: Scheduler events often tell you why no node was feasible. Taints repel Pods unless tolerated, and resource requests must fit within allocatable capacity committed by existing requests.
+      visual:
+        - "candidate nodes → eliminate by hard constraints → none left"
+      variant_prompt: A FailedScheduling event reports insufficient memory on one node and required affinity mismatch on the others. What boundary failed?
+    feedback:
+      title: The scheduler had no feasible candidate.
+      explanation: The useful diagnosis is not merely that the Pod is Pending, but which hard constraints eliminated all nodes.
+      points:
+        - A toleration permits eligibility; it does not force placement onto a tainted node.
+        - Image/runtime failures occur after scheduling, not before it.
+      visual:
+        - "CPU fit ✗ + taint tolerance ✗ → Pending"
+
+  - id: lesson:kcna-cluster-behavior/connect-config-storage
+    kind: connect
+    unit_id: fpp:config-secrets-storage
+    objective_ids: [fpp:config-secrets-storage/config-secret]
+    evidence: recall
+    prompt: Match each application need to the most appropriate Kubernetes-facing mechanism in this simplified model.
+    left:
+      - id: public-config
+        text: Non-secret application configuration
+      - id: secret-value
+        text: Sensitive value delivered through Kubernetes API objects
+      - id: durable-data
+        text: Data that must outlive one replaceable Pod
+    right:
+      - id: configmap
+        text: ConfigMap
+      - id: secret
+        text: Secret
+      - id: pvc
+        text: PersistentVolumeClaim
+    matches:
+      - left_id: public-config
+        right_id: configmap
+      - left_id: secret-value
+        right_id: secret
+      - left_id: durable-data
+        right_id: pvc
+    hint: Separate configuration content, sensitive content, and storage lifecycle.
+    learn_first:
+      title: Configuration, secrets, and durable data are different concerns.
+      body: ConfigMaps carry non-secret configuration, Secrets are the Kubernetes object for sensitive values, and PVCs request durable storage whose lifecycle can extend beyond one Pod.
+      visual:
+        - "ConfigMap → config"
+        - "Secret → sensitive value"
+        - "PVC → durable storage request"
+      variant_prompt: Match application settings, credentials, and durable database files to ConfigMap, Secret, and PVC.
+    feedback:
+      title: Choose the mechanism by lifecycle and sensitivity.
+      explanation: These resources may all be mounted or consumed by Pods, but they represent different contracts and should not be treated as interchangeable blobs.
+      points:
+        - A Secret object is not equivalent to an external secret-management system.
+        - A PVC describes a storage request, not the Pod itself.
+      visual:
+        - "config ≠ secret ≠ durable storage"
+
+  - id: lesson:kcna-cluster-behavior/arrange-pvc-lifecycle
+    kind: arrange
+    unit_id: fpp:kubernetes-storage-lifecycle
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim]
+    evidence: application
+    prompt: Arrange a simplified dynamic-provisioning path from workload storage request to a mounted volume in the Pod.
+    items:
+      - id: mount
+        text: Kubelet and CSI node operations make the volume available to the assigned Pod
+      - id: pvc
+        text: Workload creates a PersistentVolumeClaim
+      - id: pv
+        text: A PersistentVolume representing backing storage is bound to the claim
+      - id: provision
+        text: StorageClass and CSI provisioner create suitable backing storage
+      - id: class
+        text: The claim selects or references a StorageClass policy
+    correct_order: [pvc, class, provision, pv, mount]
+    hint: Begin with the workload-side request, then follow policy and provisioning before node-side attachment or mount work.
+    learn_first:
+      title: Storage has its own control and execution path.
+      body: A PVC is the workload request, a StorageClass describes provisioning policy, a CSI integration can create backing storage, a PV represents cluster-available storage, and node-side operations make it usable by a Pod.
+      visual:
+        - "PVC → StorageClass → CSI provision → PV/bind → mount"
+      variant_prompt: Rebuild the dynamic storage path without treating a PVC as the physical disk itself.
+    feedback:
+      title: Request, policy, resource, and executor are separate.
+      explanation: Durable storage crosses several objects and controllers. That separation explains why a Pending PVC can fail before scheduling or Pod startup is even relevant.
+      points:
+        - PVC is the claim, not the backing device.
+        - CSI is the integration boundary for storage operations.
+      visual:
+        - "claim → policy → provision → bind → attach/mount"
+
+  - id: lesson:kcna-cluster-behavior/predict-volume-failure-domain
+    kind: predict_state
+    unit_id: fpp:kubernetes-storage-lifecycle
+    objective_ids: [fpp:kubernetes-storage-lifecycle/failure-domain]
+    evidence: application
+    prompt: A Pod using a zonal block volume disappears when its node and availability zone fail. Can Kubernetes always reschedule it into another zone and immediately reattach the same volume?
+    state:
+      - "Pod: replaceable"
+      - "volume: zonal backing storage"
+      - "failure: original zone unavailable"
+    options:
+      - id: always
+        text: Yes. Pod replacement guarantees the same volume can move across zones.
+        rationale: Pod replacement and storage mobility are different lifecycles; topology and provider capabilities can constrain attachment.
+      - id: topology
+        text: No. Replacement is possible only where the storage topology and access semantics permit attachment or recovery.
+        rationale: The scheduler and storage system must satisfy volume topology and access constraints; Kubernetes cannot make a zonal device globally attachable by itself.
+      - id: recreate-data
+        text: Yes. The ReplicaSet recreates the volume contents from the container image.
+        rationale: A controller can replace Pods, but durable volume contents are not reconstructed from the application image.
+    answer_ids: [topology]
+    hint: Keep Pod lifecycle and storage failure domain as separate constraints.
+    learn_first:
+      title: Replaceable compute does not imply universally movable data.
+      body: Kubernetes can create a new Pod object, but the replacement must still satisfy storage access modes, topology, attachment, and recovery constraints of the backing system.
+      visual:
+        - "Pod replacement ✓"
+        - "volume reattachment → depends on topology/access"
+      variant_prompt: A Stateful workload uses a volume available only in zone A. Zone A fails. Does a new Pod in zone B automatically make that same storage usable there?
+    feedback:
+      title: Storage topology remains a real constraint.
+      explanation: The workload controller may want a replacement Pod, but scheduling and storage integration must still find a location where the volume can actually be attached or recovered.
+      points:
+        - Pod identity and storage identity are separate.
+        - Access mode does not erase provider topology limits.
+      visual:
+        - "controller wants Pod → scheduler/storage must satisfy volume topology"
+
+  - id: lesson:kcna-cluster-behavior/trace-api-security
+    kind: trace
+    unit_id: fpp:kubernetes-security-access
+    objective_ids: [fpp:kubernetes-security-access/request]
+    evidence: application
+    prompt: Arrange the simplified Kubernetes API security checks from incoming request to accepted object persistence.
+    items:
+      - id: persist
+        text: Persist the accepted object into cluster state
+      - id: authenticate
+        text: Establish the caller identity
+      - id: admission
+        text: Run validating or mutating admission logic
+      - id: authorize
+        text: Decide whether that identity may perform the requested action
+      - id: request
+        text: Client sends the API request
+    correct_order: [request, authenticate, authorize, admission, persist]
+    hint: Identity comes before permission; admission evaluates the request before accepted state is stored.
+    learn_first:
+      title: Kubernetes security is more than one permission check.
+      body: The API path first establishes identity, then authorizes the requested action, then runs admission logic before accepted objects become persisted API state.
+      visual:
+        - "request → authentication → authorization → admission → persistence"
+      variant_prompt: Trace the security gates an API request crosses before its object is accepted into cluster state.
+    feedback:
+      title: Identity, permission, and admission are distinct gates.
+      explanation: A valid credential proves identity, not authorization. Passing RBAC still does not bypass admission policies that validate or mutate the object.
+      points:
+        - Authentication answers who.
+        - Authorization answers may this identity do this action.
+        - Admission answers should this requested object be accepted or changed.
+      visual:
+        - "who? → allowed? → admissible? → persist"
+
+  - id: lesson:kcna-cluster-behavior/choose-namespace-policy
+    kind: choose
+    unit_id: fpp:kubernetes-security-access
+    objective_ids: [fpp:kubernetes-security-access/workload]
+    evidence: recall
+    prompt: Two Pods are in different namespaces. Which statement is the safest mental model about their network isolation?
+    options:
+      - id: namespace-firewall
+        text: Different namespaces automatically block all traffic between the Pods.
+        rationale: Namespace scope does not automatically create a network firewall.
+      - id: policy-needed
+        text: Namespace boundaries organize and scope API objects; traffic isolation requires network policy and enforcement where needed.
+        rationale: NetworkPolicy is the Kubernetes API for expressing allowed Pod traffic, subject to implementation support.
+      - id: rbac-network
+        text: RBAC bindings automatically control packet flow between the Pods.
+        rationale: RBAC authorizes Kubernetes API actions; it does not directly filter Pod network traffic.
+    answer_ids: [policy-needed]
+    hint: Separate API namespace scope, API authorization, and packet-flow policy.
+    learn_first:
+      title: Namespace is scope, not a universal isolation boundary.
+      body: Namespaces organize namespaced API objects and help scope RBAC and policy selection. Network traffic is a separate boundary controlled by network policy and the enforcing network implementation.
+      visual:
+        - "namespace → API scope"
+        - "RBAC → API authorization"
+        - "NetworkPolicy → traffic rules"
+      variant_prompt: If two workloads live in different namespaces but no NetworkPolicy restricts them, should you assume cross-namespace traffic is blocked?
+    feedback:
+      title: Do not turn one boundary into three.
+      explanation: Namespace, RBAC, Pod security, Secret handling, and NetworkPolicy solve related but distinct security problems.
+      points:
+        - RBAC controls API permissions.
+        - NetworkPolicy controls selected network flows when enforced.
+      visual:
+        - "scope ≠ authorization ≠ network filtering"
+
+  - id: lesson:kcna-cluster-behavior/explain-node-failure
+    kind: explain
+    unit_id: fpp:kubernetes-storage-lifecycle
+    objective_ids: [fpp:kubernetes-storage-lifecycle/failure-domain]
+    evidence: recall
+    prompt: A controller wants to replace a failed Pod on another node. Why can scheduling and storage still prevent that replacement from becoming Running immediately?
+    model_answer: The controller can create a replacement Pod, but the scheduler must find a node that satisfies resource and placement constraints, and any persistent volume must also be attachable or mountable there under its access mode and topology rules. Pod replacement intent does not bypass node or storage feasibility.
+    critical_points:
+      - A controller can create the replacement Pod without guaranteeing placement.
+      - The scheduler must satisfy resource and placement constraints.
+      - Persistent storage adds its own access and topology constraints before the Pod can run.
+    hint: Separate the controller decision to replace from the scheduler and storage work required to execute that decision.
+    learn_first:
+      title: Desired replacement is only the start of the execution path.
+      body: Kubernetes controllers can create the replacement object, but successful recovery still depends on a feasible node and on storage that can be attached and mounted in that location.
+      visual:
+        - "controller creates Pod"
+        - "→ scheduler finds feasible node"
+        - "→ storage attach/mount succeeds"
+        - "→ kubelet starts workload"
+      variant_prompt: Explain why a Stateful Pod may remain Pending after its controller successfully creates a replacement object.
+    feedback:
+      title: Control intent and execution feasibility are separate.
+      explanation: "This is the same layered model used throughout Kubernetes: one component decides the desired correction, while later components prove whether that correction can actually run."
+      points:
+        - Controller success does not imply scheduler success.
+        - Scheduler success does not imply storage mount success.
+      visual:
+        - "replace intent → placement → storage → runtime"

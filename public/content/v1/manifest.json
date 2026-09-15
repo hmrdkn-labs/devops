@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "content_version": "2026.08.1",
-  "generated_at": "2026-09-12T00:00:00.000Z",
+  "generated_at": "2026-09-15T00:00:00.000Z",
   "canonical_base_url": "https://devops.hamardikan.com",
   "licenses": {
     "prose_and_diagrams": "CC-BY-SA-4.0",
@@ -1159,6 +1159,2065 @@
   "lessons": [
     {
       "schema_version": 1,
+      "id": "lesson:kcna-cloud-native-context",
+      "slug": "kcna-cloud-native-context",
+      "title": "KCNA Cloud-Native Context",
+      "summary": "Connect Kubernetes to delivery, troubleshooting, observability, cloud-native architecture, release strategy, and the wider CNCF ecosystem.",
+      "revision": 1,
+      "certification": "cncf:kcna",
+      "checkpoint": "cloud-native",
+      "estimated_minutes": 20,
+      "verified_at": "2026-09-15",
+      "source_unit_ids": [
+        "fpp:cloud-native-delivery-gitops",
+        "fpp:troubleshoot-process-to-pod",
+        "fpp:cloud-native-release-debugging",
+        "fpp:cloud-native-observability-signals",
+        "fpp:cloud-native-architecture-principles",
+        "fpp:cncf-ecosystem-community"
+      ],
+      "exercises": [
+        {
+          "id": "lesson:kcna-cloud-native-context/arrange-delivery-chain",
+          "unit_id": "fpp:cloud-native-delivery-gitops",
+          "objective_ids": [
+            "fpp:cloud-native-delivery-gitops/pipeline"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange this simplified delivery chain from source change to a reconciled workload running the new immutable artifact.",
+          "hint": "Separate producing the artifact from changing the environment that should run it.",
+          "learn_first": {
+            "title": "CI creates an artifact; delivery changes desired environment state.",
+            "body": "CI validates source and produces an identifiable artifact. CD or GitOps then changes or reconciles environment intent so the runtime platform can converge on that artifact.",
+            "visual": [
+              "source → CI → artifact",
+              "desired deployment state → reconciliation → running workload"
+            ],
+            "variant_prompt": "Rebuild the path from merged source to a running workload while keeping artifact creation separate from environment reconciliation."
+          },
+          "feedback": {
+            "title": "Artifact and deployment intent are different products.",
+            "explanation": "A successful image build does not deploy anything by itself. Delivery changes environment intent, and reconciliation makes the target system converge on that intent.",
+            "points": [
+              "CI evidence belongs to artifact creation.",
+              "Runtime health still needs proof after deployment reconciliation."
+            ],
+            "visual": [
+              "build artifact ≠ deploy artifact ≠ prove behavior"
+            ]
+          },
+          "kind": "arrange",
+          "items": [
+            {
+              "id": "reconcile",
+              "text": "A delivery controller or deployment process reconciles the environment toward the new desired state"
+            },
+            {
+              "id": "build",
+              "text": "CI tests the change and builds an immutable image artifact"
+            },
+            {
+              "id": "source",
+              "text": "A source change is committed and integrated"
+            },
+            {
+              "id": "desired",
+              "text": "Desired deployment state is updated to reference the new artifact"
+            },
+            {
+              "id": "running",
+              "text": "The platform converges on workloads using the new artifact"
+            }
+          ],
+          "correct_order": [
+            "source",
+            "build",
+            "desired",
+            "reconcile",
+            "running"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/predict-gitops-drift",
+          "unit_id": "fpp:cloud-native-delivery-gitops",
+          "objective_ids": [
+            "fpp:cloud-native-delivery-gitops/gitops"
+          ],
+          "evidence": "application",
+          "prompt": "A GitOps-managed Deployment is manually edited in the cluster from replicas 3 to replicas 5, while Git still declares replicas 3. What should a reconciler normally do?",
+          "hint": "Ask which side is supposed to be authoritative in the GitOps operating model.",
+          "learn_first": {
+            "title": "GitOps adds a continuous desired-state contract.",
+            "body": "A reconciler compares version-controlled desired state with the target system and works to converge the target toward the declared source of truth.",
+            "visual": [
+              "Git desired 3 ↔ live observed 5",
+              "reconciler → live 3"
+            ],
+            "variant_prompt": "A human changes an image tag directly in a GitOps-managed cluster while Git still references the old digest. What should reconciliation do?"
+          },
+          "feedback": {
+            "title": "Drift is corrected toward declared intent.",
+            "explanation": "GitOps uses version-controlled desired state as the durable source of deployment truth. A manual live edit is drift unless the operating model explicitly records it back into the source.",
+            "points": [
+              "Reconciliation is continuous, not a one-time sync.",
+              "A Git revert changes desired deployment state but does not automatically undo external data side effects."
+            ],
+            "visual": [
+              "versioned intent → reconcile → target"
+            ]
+          },
+          "kind": "predict_state",
+          "state": [
+            "Git desired state: replicas 3",
+            "live cluster state: replicas 5"
+          ],
+          "options": [
+            {
+              "id": "accept-drift",
+              "text": "Treat the live manual edit as the new source of truth automatically.",
+              "rationale": "That would break the version-controlled desired-state contract unless the workflow explicitly writes the change back to Git."
+            },
+            {
+              "id": "reconcile-three",
+              "text": "Detect drift and converge the live state back toward replicas 3.",
+              "rationale": "GitOps makes version-controlled desired state authoritative and continuously reconciles drift toward it."
+            },
+            {
+              "id": "delete-git",
+              "text": "Delete the Git declaration so the cluster can keep replicas 5.",
+              "rationale": "A reconciler does not need to remove the source of truth merely because live drift occurred."
+            }
+          ],
+          "answer_ids": [
+            "reconcile-three"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/connect-observability-signals",
+          "unit_id": "fpp:cloud-native-observability-signals",
+          "objective_ids": [
+            "fpp:cloud-native-observability-signals/signals"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each observability signal to the question it is especially good at answering.",
+          "hint": "Think about numeric trends, local component records, cross-service request causality, and Kubernetes control-plane clues.",
+          "learn_first": {
+            "title": "No single telemetry signal is complete observability.",
+            "body": "Metrics summarize numeric behavior, logs record discrete local events, traces follow work across boundaries, and Kubernetes events explain control-plane transitions. Strong investigations combine them.",
+            "visual": [
+              "metrics: trend",
+              "logs: local detail",
+              "traces: request path",
+              "events: control-plane clue"
+            ],
+            "variant_prompt": "Match trend analysis, exception detail, cross-service latency localization, and FailedScheduling clues to metrics, logs, traces, and Kubernetes events."
+          },
+          "feedback": {
+            "title": "Use each signal for the question it answers best.",
+            "explanation": "The signals overlap, but they are not interchangeable. Independent evidence becomes stronger when multiple signals agree with a user-visible symptom.",
+            "points": [
+              "A healthy metrics scrape does not prove every user transaction works.",
+              "Kubernetes events are useful but temporary and are not durable application logs."
+            ],
+            "visual": [
+              "user symptom ← metrics + traces + logs + events"
+            ]
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "metrics",
+              "text": "Metrics"
+            },
+            {
+              "id": "logs",
+              "text": "Logs"
+            },
+            {
+              "id": "traces",
+              "text": "Distributed traces"
+            },
+            {
+              "id": "events",
+              "text": "Kubernetes events"
+            }
+          ],
+          "right": [
+            {
+              "id": "trends",
+              "text": "How much, how often, and how values change over time"
+            },
+            {
+              "id": "local-detail",
+              "text": "What discrete event or error a component recorded"
+            },
+            {
+              "id": "cross-service",
+              "text": "Where one request spent time or failed across service boundaries"
+            },
+            {
+              "id": "control-clue",
+              "text": "What scheduling, pull, probe, mount, or control-plane transition occurred"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "metrics",
+              "right_id": "trends"
+            },
+            {
+              "left_id": "logs",
+              "right_id": "local-detail"
+            },
+            {
+              "left_id": "traces",
+              "right_id": "cross-service"
+            },
+            {
+              "left_id": "events",
+              "right_id": "control-clue"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/choose-otel-prometheus",
+          "unit_id": "fpp:cloud-native-observability-signals",
+          "objective_ids": [
+            "fpp:cloud-native-observability-signals/tools"
+          ],
+          "evidence": "recall",
+          "prompt": "Which statement correctly separates OpenTelemetry from Prometheus?",
+          "hint": "Separate generating/transporting telemetry from storing/querying a metrics time series.",
+          "learn_first": {
+            "title": "Telemetry plumbing is not the same as a metrics backend.",
+            "body": "OpenTelemetry defines APIs, SDKs, semantic conventions, and a Collector for telemetry generation and processing. Prometheus focuses on scraping, storing, querying, and alerting on metrics.",
+            "visual": [
+              "app → OpenTelemetry → telemetry backend",
+              "target → Prometheus scrape/store/query/alert"
+            ],
+            "variant_prompt": "If an application emits traces through OpenTelemetry, does that mean the OpenTelemetry Collector is also the final trace database?"
+          },
+          "feedback": {
+            "title": "Tool responsibility matters more than the logo.",
+            "explanation": "KCNA questions often become straightforward when you identify whether the tool owns instrumentation, collection, storage, querying, alerting, or visualization.",
+            "points": [
+              "OpenTelemetry can handle traces, metrics, and logs as telemetry signals.",
+              "Prometheus is strongly associated with metrics collection, storage, query, and alert rules."
+            ],
+            "visual": [
+              "instrument/collect/export ≠ store/query/alert"
+            ]
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "same-product",
+              "text": "They are interchangeable monitoring databases with the same role.",
+              "rationale": "OpenTelemetry and Prometheus overlap around telemetry ecosystems but have different primary responsibilities."
+            },
+            {
+              "id": "otel-plumbing",
+              "text": "OpenTelemetry provides vendor-neutral instrumentation and telemetry plumbing, while Prometheus commonly scrapes, stores, queries, and alerts on labeled metrics.",
+              "rationale": "OpenTelemetry is primarily a telemetry-generation/processing/export boundary; Prometheus is a metrics monitoring system and time-series backend."
+            },
+            {
+              "id": "otel-storage",
+              "text": "OpenTelemetry Collector is the required storage backend for all Kubernetes metrics.",
+              "rationale": "The Collector processes and exports telemetry; it is not itself a general storage/query backend."
+            }
+          ],
+          "answer_ids": [
+            "otel-plumbing"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/choose-release-strategy",
+          "unit_id": "fpp:cloud-native-release-debugging",
+          "objective_ids": [
+            "fpp:cloud-native-release-debugging/strategy"
+          ],
+          "evidence": "application",
+          "prompt": "You want to expose only a small percentage of users to a new version, observe defined signals, and then expand or abort. Which release idea best matches?",
+          "hint": "Focus on controlled exposure plus measurement, not merely the number of new Pods.",
+          "learn_first": {
+            "title": "Release strategies differ by replacement and traffic exposure.",
+            "body": "Rolling updates replace replicas over time, blue-green keeps two complete versions and switches traffic, while canary delivery limits early exposure and expands only after observing defined signals.",
+            "visual": [
+              "rolling: replace gradually",
+              "blue-green: two sets, switch",
+              "canary: small exposure → measure → expand/abort"
+            ],
+            "variant_prompt": "A new release receives 5% of requests while error rate and latency are watched before increasing traffic. Which release strategy is this?"
+          },
+          "feedback": {
+            "title": "Canary means controlled exposure with measurement.",
+            "explanation": "Running one new Pod alone is not enough to call a release canary. The defining idea is deliberately limited traffic or user exposure combined with evaluation.",
+            "points": [
+              "Traffic weighting may be implemented by a gateway, mesh, load balancer, or progressive-delivery controller.",
+              "Always identify the component actually executing the traffic decision."
+            ],
+            "visual": [
+              "5% → observe → 25% → observe → 100% or abort"
+            ]
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "rolling",
+              "text": "Rolling update",
+              "rationale": "Rolling updates replace old replicas gradually, but they do not inherently imply controlled percentage-based user exposure with evaluation gates."
+            },
+            {
+              "id": "blue-green",
+              "text": "Blue-green",
+              "rationale": "Blue-green keeps two complete sets and typically switches traffic between them rather than gradually increasing a small exposure slice."
+            },
+            {
+              "id": "canary",
+              "text": "Canary",
+              "rationale": "Canary delivery deliberately limits initial exposure, observes signals, and expands or aborts based on evidence."
+            }
+          ],
+          "answer_ids": [
+            "canary"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/trace-release-debugging",
+          "unit_id": "fpp:cloud-native-release-debugging",
+          "objective_ids": [
+            "fpp:cloud-native-release-debugging/evidence"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange a practical release-debugging chain from artifact existence to user-visible success.",
+          "hint": "Walk forward from immutable artifact to desired state, cluster convergence, traffic eligibility, and finally user behavior.",
+          "learn_first": {
+            "title": "Debug releases as a chain of independently provable boundaries.",
+            "body": "Start from the artifact and declared desired state, then follow API acceptance, rollout, scheduling/runtime, readiness/endpoints, and finally an end-to-end request.",
+            "visual": [
+              "artifact → desired state → rollout → runtime → endpoints → request"
+            ],
+            "variant_prompt": "A rollout reports progress but users still fail. Rebuild the chain of evidence you should verify before assuming the deployment controller is the only problem."
+          },
+          "feedback": {
+            "title": "Find the first broken boundary.",
+            "explanation": "Different failures require different evidence. A valid image digest does not prove readiness, and ready Pods do not prove external traffic or application correctness.",
+            "points": [
+              "Diagnose before choosing rollback as the mitigation.",
+              "A real request is the strongest proof at the user boundary."
+            ],
+            "visual": [
+              "first failed boundary → smallest useful diagnosis"
+            ]
+          },
+          "kind": "trace",
+          "items": [
+            {
+              "id": "endpoints",
+              "text": "Ready replicas appear in endpoint data"
+            },
+            {
+              "id": "artifact",
+              "text": "Confirm the intended image artifact or digest exists"
+            },
+            {
+              "id": "request",
+              "text": "A real request reaches the new version and behaves correctly"
+            },
+            {
+              "id": "manifest",
+              "text": "Confirm desired deployment state references the intended artifact"
+            },
+            {
+              "id": "runtime",
+              "text": "Pods schedule, pull the image, and start successfully"
+            },
+            {
+              "id": "rollout",
+              "text": "The API and controllers accept and create the rollout objects"
+            }
+          ],
+          "correct_order": [
+            "artifact",
+            "manifest",
+            "rollout",
+            "runtime",
+            "endpoints",
+            "request"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/arrange-troubleshooting-ladder",
+          "unit_id": "fpp:troubleshoot-process-to-pod",
+          "objective_ids": [
+            "fpp:troubleshoot-process-to-pod/evidence-ladder"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange these troubleshooting layers from declared intent toward a user-visible application request.",
+          "hint": "Start with what should exist, then follow the system toward what the user actually experiences.",
+          "learn_first": {
+            "title": "Localize before changing state.",
+            "body": "Troubleshooting is faster when you walk from desired state through reconciliation, placement, runtime, discovery/networking, and protocol behavior instead of making random corrective changes.",
+            "visual": [
+              "intent → reconcile → place → run → reach → user"
+            ],
+            "variant_prompt": "Put the same evidence ladder in order for a Deployment whose Pods exist but the service is still unreachable."
+          },
+          "feedback": {
+            "title": "Move from intent toward the failure boundary.",
+            "explanation": "Each layer has distinct evidence. The goal is to identify the earliest broken boundary before deciding which action is safe and relevant.",
+            "points": [
+              "A later symptom does not prove an earlier layer is healthy unless you inspected it.",
+              "Finish with evidence from the original user boundary."
+            ],
+            "visual": [
+              "observe first → localize → change deliberately → verify again"
+            ]
+          },
+          "kind": "arrange",
+          "items": [
+            {
+              "id": "runtime",
+              "text": "Check container and process runtime state"
+            },
+            {
+              "id": "intent",
+              "text": "Verify the intended object, revision, namespace, and configuration"
+            },
+            {
+              "id": "traffic",
+              "text": "Prove discovery, endpoint, packet, protocol, and user request behavior"
+            },
+            {
+              "id": "placement",
+              "text": "Check scheduling and node, resource, image, or volume constraints"
+            },
+            {
+              "id": "reconciliation",
+              "text": "Check controller conditions and events for convergence"
+            }
+          ],
+          "correct_order": [
+            "intent",
+            "reconciliation",
+            "placement",
+            "runtime",
+            "traffic"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/choose-cloud-native-property",
+          "unit_id": "fpp:cloud-native-architecture-principles",
+          "objective_ids": [
+            "fpp:cloud-native-architecture-principles/properties"
+          ],
+          "evidence": "recall",
+          "prompt": "Which change most strongly moves an application toward a cloud-native operating model rather than merely hosting the same hand-managed server in a cloud VM?",
+          "hint": "Cloud-native is primarily an operating and architectural model, not a billing location.",
+          "learn_first": {
+            "title": "Cloud-native emphasizes adaptability through explicit contracts and automation.",
+            "body": "Declarative desired state, replaceable artifacts, loose coupling, reconciliation, observability, and resilience reinforce each other in dynamic environments.",
+            "visual": [
+              "declare → automate → replace → observe → recover"
+            ],
+            "variant_prompt": "Which is more cloud-native: a manually patched long-lived VM or a replaceable versioned artifact reconciled from declarative state with health telemetry?"
+          },
+          "feedback": {
+            "title": "Cloud-native is more than running in a cloud.",
+            "explanation": "The important shift is toward systems that can change, recover, and scale through automation and explicit contracts instead of unique hand-managed machines.",
+            "points": [
+              "Immutable does not mean persistent data disappears.",
+              "Observability supports both human and automated decisions."
+            ],
+            "visual": [
+              "location alone ≠ cloud-native operating model"
+            ]
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "bigger-vm",
+              "text": "Move the application to a larger VM but keep manual in-place configuration and recovery.",
+              "rationale": "Cloud hosting alone does not create declarative, automated, replaceable, observable operating behavior."
+            },
+            {
+              "id": "declarative-replaceable",
+              "text": "Use versioned immutable artifacts, declarative desired state, automated reconciliation, and observable health signals.",
+              "rationale": "These properties make replacement, scaling, recovery, and change more repeatable in dynamic environments."
+            },
+            {
+              "id": "hide-metrics",
+              "text": "Remove runtime telemetry so the platform makes decisions without exposing implementation details.",
+              "rationale": "Observability is a core property of operating distributed dynamic systems safely."
+            }
+          ],
+          "answer_ids": [
+            "declarative-replaceable"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/predict-scale-terms",
+          "unit_id": "fpp:cloud-native-architecture-principles",
+          "objective_ids": [
+            "fpp:cloud-native-architecture-principles/scale"
+          ],
+          "evidence": "application",
+          "prompt": "A workload normally runs 3 replicas, an autoscaler raises desired replicas to 8 during demand, then later returns it to 3. Which description is most precise?",
+          "hint": "Distinguish the presence of replicas from the mechanism that changes capacity and the broader property of adapting resource use.",
+          "learn_first": {
+            "title": "Replication, autoscaling, elasticity, and serverless are related but not synonyms.",
+            "body": "Replication means multiple instances exist. Autoscaling changes desired capacity from signals or policy. Elasticity is the broader ability to expand and contract resources. Serverless delegates more infrastructure lifecycle to the platform.",
+            "visual": [
+              "replication: N copies",
+              "autoscaling: change N automatically",
+              "elasticity: expand/contract resource use"
+            ],
+            "variant_prompt": "A service has two replicas forever with no automatic capacity change. Is that replication, autoscaling, elasticity, or serverless?"
+          },
+          "feedback": {
+            "title": "Name the mechanism and the property separately.",
+            "explanation": "The workload is replicated, the autoscaler changes desired replicas, and the resulting expansion and contraction contributes to elasticity.",
+            "points": [
+              "HPA changing replica targets is an autoscaling example.",
+              "Serverless does not mean servers literally do not exist."
+            ],
+            "visual": [
+              "replicas 3 → autoscaler → 8 → autoscaler → 3"
+            ]
+          },
+          "kind": "predict_state",
+          "state": [
+            "baseline replicas: 3",
+            "high demand replicas: 8",
+            "later replicas: 3"
+          ],
+          "options": [
+            {
+              "id": "replication-only",
+              "text": "Replication only, because multiple copies exist.",
+              "rationale": "Replication is present, but the automatic change in desired capacity adds an autoscaling behavior."
+            },
+            {
+              "id": "autoscaling-elasticity",
+              "text": "Autoscaling changes desired capacity and contributes to elasticity.",
+              "rationale": "Autoscaling is the mechanism changing replica count; expanding and contracting resource use is part of elasticity."
+            },
+            {
+              "id": "serverless",
+              "text": "Serverless, because the replica count changed automatically.",
+              "rationale": "Automatic scaling alone does not make a workload serverless; serverless is a broader platform abstraction model."
+            }
+          ],
+          "answer_ids": [
+            "autoscaling-elasticity"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/connect-cncf-projects",
+          "unit_id": "fpp:cncf-ecosystem-community",
+          "objective_ids": [
+            "fpp:cncf-ecosystem-community/projects"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each representative cloud-native project to the job it is commonly associated with.",
+          "hint": "Learn representative projects by responsibility, not by their visual position in the CNCF Landscape.",
+          "learn_first": {
+            "title": "The ecosystem is easier to remember as a responsibility map.",
+            "body": "Prometheus is a metrics system, CoreDNS provides DNS behavior, containerd is a container runtime, and Helm packages/templates Kubernetes resources. None is mandatory simply because it appears in the ecosystem.",
+            "visual": [
+              "metrics → Prometheus",
+              "DNS → CoreDNS",
+              "runtime → containerd",
+              "packaging → Helm"
+            ],
+            "variant_prompt": "Match metrics, DNS, runtime, and Kubernetes package management to Prometheus, CoreDNS, containerd, and Helm."
+          },
+          "feedback": {
+            "title": "Project name follows responsibility.",
+            "explanation": "KCNA rewards recognizing what a project or interface does. The CNCF Landscape is a catalog, not one prescribed stack that every cluster must install.",
+            "points": [
+              "Project maturity does not mean universal fit for every use case.",
+              "Interface names such as CNI or CSI are not single product implementations."
+            ],
+            "visual": [
+              "need → responsibility → representative implementation"
+            ]
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "prometheus",
+              "text": "Prometheus"
+            },
+            {
+              "id": "coredns",
+              "text": "CoreDNS"
+            },
+            {
+              "id": "containerd",
+              "text": "containerd"
+            },
+            {
+              "id": "helm",
+              "text": "Helm"
+            }
+          ],
+          "right": [
+            {
+              "id": "metrics",
+              "text": "metrics scraping, time-series queries, and alert rules"
+            },
+            {
+              "id": "dns",
+              "text": "pluggable DNS and cluster service-name resolution"
+            },
+            {
+              "id": "runtime",
+              "text": "container runtime implementation"
+            },
+            {
+              "id": "packaging",
+              "text": "templating and packaging Kubernetes resources as charts"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "prometheus",
+              "right_id": "metrics"
+            },
+            {
+              "left_id": "coredns",
+              "right_id": "dns"
+            },
+            {
+              "left_id": "containerd",
+              "right_id": "runtime"
+            },
+            {
+              "left_id": "helm",
+              "right_id": "packaging"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-cloud-native-context/explain-open-interfaces",
+          "unit_id": "fpp:cncf-ecosystem-community",
+          "objective_ids": [
+            "fpp:cncf-ecosystem-community/community"
+          ],
+          "evidence": "recall",
+          "prompt": "Why do open governance and interfaces such as OCI, CRI, CNI, and CSI matter in cloud-native systems?",
+          "hint": "Explain both the community ownership problem and the technical coupling problem.",
+          "learn_first": {
+            "title": "Cloud-native openness is both social and technical.",
+            "body": "Shared governance lets independent organizations collaborate on common infrastructure, while open interfaces create stable boundaries that permit interoperable implementations to evolve independently.",
+            "visual": [
+              "shared governance → shared technical ownership",
+              "open interface → replaceable implementation behind contract"
+            ],
+            "variant_prompt": "Explain how CRI or CNI can support multiple implementations without Kubernetes hard-coding one vendor product."
+          },
+          "feedback": {
+            "title": "Open contracts let implementations evolve independently.",
+            "explanation": "The ecosystem scales because communities can coordinate publicly while software components meet at documented interfaces instead of depending on one hidden implementation detail.",
+            "points": [
+              "OCI, CRI, CNI, and CSI separate different responsibilities.",
+              "The CNCF Landscape catalogs options; it does not prescribe one universal stack."
+            ],
+            "visual": [
+              "community contract + software contract → interoperability"
+            ]
+          },
+          "kind": "explain",
+          "model_answer": "Open governance lets many organizations share technical ownership and decision processes, while stable open interfaces separate responsibilities so implementations can evolve or be replaced behind known contracts. OCI, CRI, CNI, and CSI reduce hard coupling without making every implementation identical.",
+          "critical_points": [
+            "Open governance enables shared ownership and public technical collaboration across organizations.",
+            "Open interfaces define contracts between responsibilities and reduce hard coupling.",
+            "An interface such as CNI or CSI is not the same thing as one specific implementation."
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "lesson:kcna-cluster-behavior",
+      "slug": "kcna-cluster-behavior",
+      "title": "KCNA Cluster Behavior",
+      "summary": "Reason through a running Kubernetes cluster by tracing service traffic, scheduling, health, storage, configuration, and security boundaries.",
+      "revision": 1,
+      "certification": "cncf:kcna",
+      "checkpoint": "cluster-behavior",
+      "estimated_minutes": 20,
+      "verified_at": "2026-09-15",
+      "source_unit_ids": [
+        "fpp:services-dns-ingress",
+        "fpp:kubernetes-networking-request-path",
+        "fpp:scheduling-resources-health",
+        "fpp:kubernetes-scheduling-placement",
+        "fpp:config-secrets-storage",
+        "fpp:kubernetes-storage-lifecycle",
+        "fpp:kubernetes-security-access"
+      ],
+      "exercises": [
+        {
+          "id": "lesson:kcna-cluster-behavior/trace-service-request",
+          "unit_id": "fpp:kubernetes-networking-request-path",
+          "objective_ids": [
+            "fpp:kubernetes-networking-request-path/service-path"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange the in-cluster request path from a Service DNS name to the application process in one ready Pod.",
+          "hint": "Resolve the stable name first, then move from Service identity to a concrete ready backend.",
+          "learn_first": {
+            "title": "Stable discovery lives above replaceable Pod IPs.",
+            "body": "Cluster DNS gives clients a stable Service name. The Service selects ready Pod endpoints, and the data plane forwards traffic to one of those concrete Pod addresses where the application is listening.",
+            "visual": [
+              "DNS → Service → EndpointSlice → Pod IP → process"
+            ],
+            "variant_prompt": "Trace how a request to payments.default.svc reaches one ready payments Pod without assuming the client knows the Pod IP in advance."
+          },
+          "feedback": {
+            "title": "Discovery narrows from stable identity to concrete execution.",
+            "explanation": "A Service keeps client-facing discovery stable while Pods remain replaceable. Endpoint data and the Service forwarding layer connect that stable identity to a current backend.",
+            "points": [
+              "Pod IPs can change while Service identity remains stable.",
+              "Ready endpoint membership is part of the path, not an optional detail."
+            ],
+            "visual": [
+              "service name → stable VIP/identity → ready endpoint → Pod process"
+            ]
+          },
+          "kind": "trace",
+          "items": [
+            {
+              "id": "endpoint",
+              "text": "A ready Pod endpoint is selected from EndpointSlice data"
+            },
+            {
+              "id": "dns",
+              "text": "Cluster DNS resolves the Service name"
+            },
+            {
+              "id": "process",
+              "text": "The application process receives traffic on its listening port"
+            },
+            {
+              "id": "forwarding",
+              "text": "The Service data plane forwards traffic toward the selected endpoint"
+            },
+            {
+              "id": "service",
+              "text": "The client sends traffic to the stable Service address and port"
+            }
+          ],
+          "correct_order": [
+            "dns",
+            "service",
+            "endpoint",
+            "forwarding",
+            "process"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/connect-network-boundaries",
+          "unit_id": "fpp:kubernetes-networking-request-path",
+          "objective_ids": [
+            "fpp:kubernetes-networking-request-path/boundaries"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each networking mechanism to the boundary it primarily controls.",
+          "hint": "Separate connectivity, service selection/forwarding, external HTTP routing, and policy enforcement.",
+          "learn_first": {
+            "title": "Kubernetes networking is several cooperating layers.",
+            "body": "CNI provides Pod connectivity, Services provide stable forwarding, Ingress or Gateway implementations handle configured north-south routing, and NetworkPolicy describes allowed traffic when the network implementation enforces it.",
+            "visual": [
+              "CNI: Pod network",
+              "Service: backend forwarding",
+              "Ingress/Gateway: external HTTP routing",
+              "NetworkPolicy: allowed flows"
+            ],
+            "variant_prompt": "Match the same four mechanisms after asking which one creates Pod connectivity, which forwards Service traffic, which handles host/path routing, and which restricts flows."
+          },
+          "feedback": {
+            "title": "Each mechanism owns a different network decision.",
+            "explanation": "Collapsing these layers causes debugging mistakes, such as expecting a namespace to behave like a firewall or an Ingress object to provide Pod networking by itself.",
+            "points": [
+              "A Service is not the same thing as an Ingress.",
+              "NetworkPolicy requires an enforcing network implementation."
+            ],
+            "visual": [
+              "connectivity ≠ forwarding ≠ HTTP routing ≠ policy"
+            ]
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "cni",
+              "text": "CNI-compatible network implementation"
+            },
+            {
+              "id": "service",
+              "text": "Service forwarding"
+            },
+            {
+              "id": "ingress",
+              "text": "Ingress or Gateway implementation"
+            },
+            {
+              "id": "policy",
+              "text": "NetworkPolicy"
+            }
+          ],
+          "right": [
+            {
+              "id": "pod-connectivity",
+              "text": "Pod interfaces and cluster connectivity"
+            },
+            {
+              "id": "stable-forwarding",
+              "text": "stable Service traffic to eligible endpoints"
+            },
+            {
+              "id": "north-south",
+              "text": "external HTTP routing by host or path"
+            },
+            {
+              "id": "allowed-flows",
+              "text": "allowed ingress and egress between selected Pods"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "cni",
+              "right_id": "pod-connectivity"
+            },
+            {
+              "left_id": "service",
+              "right_id": "stable-forwarding"
+            },
+            {
+              "left_id": "ingress",
+              "right_id": "north-south"
+            },
+            {
+              "left_id": "policy",
+              "right_id": "allowed-flows"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/predict-readiness",
+          "unit_id": "fpp:scheduling-resources-health",
+          "objective_ids": [
+            "fpp:scheduling-resources-health/probe-semantics"
+          ],
+          "evidence": "application",
+          "prompt": "A container is running, but its readiness probe is failing while liveness still succeeds. What should happen to normal Service traffic?",
+          "hint": "Ask separately whether the process should keep running and whether it is ready to receive traffic.",
+          "learn_first": {
+            "title": "Readiness and liveness answer different questions.",
+            "body": "Readiness says whether traffic should reach the Pod. Liveness says whether kubelet should restart the container. A running process can be alive but temporarily not ready to serve requests.",
+            "visual": [
+              "readiness → traffic eligibility",
+              "liveness → restart decision"
+            ],
+            "variant_prompt": "A Pod's readiness fails during cache warmup but liveness remains healthy. Should it keep running, receive Service traffic, both, or neither?"
+          },
+          "feedback": {
+            "title": "Alive does not always mean ready.",
+            "explanation": "The Pod can remain running while readiness removes it from normal Service traffic until it becomes ready again.",
+            "points": [
+              "Startup probes protect slow startup from premature liveness checks.",
+              "Readiness is a traffic decision, not a restart command."
+            ],
+            "visual": [
+              "running ✓  ready ✗  → no normal Service traffic"
+            ]
+          },
+          "kind": "predict_state",
+          "state": [
+            "container: running",
+            "readiness: failing",
+            "liveness: succeeding"
+          ],
+          "options": [
+            {
+              "id": "restart",
+              "text": "kubelet should restart the container immediately.",
+              "rationale": "Liveness, not readiness, is the signal that normally decides whether kubelet should restart the container."
+            },
+            {
+              "id": "remove-endpoint",
+              "text": "The Pod should stop receiving normal Service traffic while remaining running.",
+              "rationale": "Readiness controls whether the Pod should be considered ready for Service endpoint traffic."
+            },
+            {
+              "id": "reschedule",
+              "text": "The scheduler should move the running Pod to another node.",
+              "rationale": "Probe failure does not cause the scheduler to migrate an already-running Pod."
+            }
+          ],
+          "answer_ids": [
+            "remove-endpoint"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/predict-scheduling-feasibility",
+          "unit_id": "fpp:kubernetes-scheduling-placement",
+          "objective_ids": [
+            "fpp:kubernetes-scheduling-placement/feasibility"
+          ],
+          "evidence": "application",
+          "prompt": "A Pod requests 4 CPU. Node A has 3 CPU allocatable after existing requests, while Node B has 8 CPU allocatable but a required node-affinity rule does not match. What is the scheduling result?",
+          "hint": "Eliminate nodes that fail any hard requirement before thinking about preferences.",
+          "learn_first": {
+            "title": "Feasibility comes before scoring.",
+            "body": "CPU and memory requests plus required placement constraints eliminate impossible nodes. Only after a feasible set exists do preferred rules influence the final choice.",
+            "visual": [
+              "Node A: CPU ✗",
+              "Node B: required affinity ✗",
+              "feasible nodes: none"
+            ],
+            "variant_prompt": "A Pod fits Node B's resources but fails a required node selector there, while Node A matches the selector but cannot satisfy the Pod's memory request. What happens?"
+          },
+          "feedback": {
+            "title": "No feasible node means Pending.",
+            "explanation": "Scheduler scoring cannot rescue a candidate that fails a hard constraint. The Pod remains unscheduled until the constraints or cluster state change.",
+            "points": [
+              "Requests are scheduling inputs, not predictions of live utilization.",
+              "Required affinity and resource fit both affect feasibility."
+            ],
+            "visual": [
+              "hard constraints → feasible set → scoring"
+            ]
+          },
+          "kind": "predict_state",
+          "state": [
+            "Pod request: 4 CPU",
+            "Node A available by requests: 3 CPU",
+            "Node B available by requests: 8 CPU, required affinity mismatch"
+          ],
+          "options": [
+            {
+              "id": "node-a",
+              "text": "Schedule to Node A because affinity matches there.",
+              "rationale": "Node A cannot satisfy the hard CPU request, so it is not feasible."
+            },
+            {
+              "id": "node-b",
+              "text": "Schedule to Node B because it has enough CPU.",
+              "rationale": "A required affinity mismatch is also a hard feasibility failure."
+            },
+            {
+              "id": "pending",
+              "text": "Remain Pending because every candidate violates at least one hard constraint.",
+              "rationale": "Hard resource and placement constraints determine the feasible set before preferences can influence scoring."
+            }
+          ],
+          "answer_ids": [
+            "pending"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/inspect-pending-pod",
+          "unit_id": "fpp:kubernetes-scheduling-placement",
+          "objective_ids": [
+            "fpp:kubernetes-scheduling-placement/policy"
+          ],
+          "evidence": "application",
+          "prompt": "A Pod is Pending. Which interpretation best matches this scheduler event?",
+          "hint": "Read the event as an explanation of which constraints removed candidate nodes.",
+          "learn_first": {
+            "title": "Pending is a decision state, not a diagnosis by itself.",
+            "body": "Scheduler events often tell you why no node was feasible. Taints repel Pods unless tolerated, and resource requests must fit within allocatable capacity committed by existing requests.",
+            "visual": [
+              "candidate nodes → eliminate by hard constraints → none left"
+            ],
+            "variant_prompt": "A FailedScheduling event reports insufficient memory on one node and required affinity mismatch on the others. What boundary failed?"
+          },
+          "feedback": {
+            "title": "The scheduler had no feasible candidate.",
+            "explanation": "The useful diagnosis is not merely that the Pod is Pending, but which hard constraints eliminated all nodes.",
+            "points": [
+              "A toleration permits eligibility; it does not force placement onto a tainted node.",
+              "Image/runtime failures occur after scheduling, not before it."
+            ],
+            "visual": [
+              "CPU fit ✗ + taint tolerance ✗ → Pending"
+            ]
+          },
+          "kind": "terminal_inspect",
+          "terminal": [
+            "Warning  FailedScheduling",
+            "0/3 nodes are available:",
+            "1 Insufficient cpu, 2 node(s) had untolerated taint {dedicated: gpu}"
+          ],
+          "options": [
+            {
+              "id": "image-pull",
+              "text": "The image cannot be pulled on any node.",
+              "rationale": "Image pulling happens after a Pod is assigned; the event shown is a scheduling feasibility failure."
+            },
+            {
+              "id": "constraints",
+              "text": "Resource fit and taint/toleration constraints eliminated every node.",
+              "rationale": "The event explicitly reports both insufficient CPU and untolerated taints as reasons no node is feasible."
+            },
+            {
+              "id": "dns",
+              "text": "Cluster DNS is unavailable.",
+              "rationale": "DNS is unrelated to the scheduler's inability to select a node."
+            }
+          ],
+          "answer_ids": [
+            "constraints"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/connect-config-storage",
+          "unit_id": "fpp:config-secrets-storage",
+          "objective_ids": [
+            "fpp:config-secrets-storage/config-secret"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each application need to the most appropriate Kubernetes-facing mechanism in this simplified model.",
+          "hint": "Separate configuration content, sensitive content, and storage lifecycle.",
+          "learn_first": {
+            "title": "Configuration, secrets, and durable data are different concerns.",
+            "body": "ConfigMaps carry non-secret configuration, Secrets are the Kubernetes object for sensitive values, and PVCs request durable storage whose lifecycle can extend beyond one Pod.",
+            "visual": [
+              "ConfigMap → config",
+              "Secret → sensitive value",
+              "PVC → durable storage request"
+            ],
+            "variant_prompt": "Match application settings, credentials, and durable database files to ConfigMap, Secret, and PVC."
+          },
+          "feedback": {
+            "title": "Choose the mechanism by lifecycle and sensitivity.",
+            "explanation": "These resources may all be mounted or consumed by Pods, but they represent different contracts and should not be treated as interchangeable blobs.",
+            "points": [
+              "A Secret object is not equivalent to an external secret-management system.",
+              "A PVC describes a storage request, not the Pod itself."
+            ],
+            "visual": [
+              "config ≠ secret ≠ durable storage"
+            ]
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "public-config",
+              "text": "Non-secret application configuration"
+            },
+            {
+              "id": "secret-value",
+              "text": "Sensitive value delivered through Kubernetes API objects"
+            },
+            {
+              "id": "durable-data",
+              "text": "Data that must outlive one replaceable Pod"
+            }
+          ],
+          "right": [
+            {
+              "id": "configmap",
+              "text": "ConfigMap"
+            },
+            {
+              "id": "secret",
+              "text": "Secret"
+            },
+            {
+              "id": "pvc",
+              "text": "PersistentVolumeClaim"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "public-config",
+              "right_id": "configmap"
+            },
+            {
+              "left_id": "secret-value",
+              "right_id": "secret"
+            },
+            {
+              "left_id": "durable-data",
+              "right_id": "pvc"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/arrange-pvc-lifecycle",
+          "unit_id": "fpp:kubernetes-storage-lifecycle",
+          "objective_ids": [
+            "fpp:kubernetes-storage-lifecycle/claim"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange a simplified dynamic-provisioning path from workload storage request to a mounted volume in the Pod.",
+          "hint": "Begin with the workload-side request, then follow policy and provisioning before node-side attachment or mount work.",
+          "learn_first": {
+            "title": "Storage has its own control and execution path.",
+            "body": "A PVC is the workload request, a StorageClass describes provisioning policy, a CSI integration can create backing storage, a PV represents cluster-available storage, and node-side operations make it usable by a Pod.",
+            "visual": [
+              "PVC → StorageClass → CSI provision → PV/bind → mount"
+            ],
+            "variant_prompt": "Rebuild the dynamic storage path without treating a PVC as the physical disk itself."
+          },
+          "feedback": {
+            "title": "Request, policy, resource, and executor are separate.",
+            "explanation": "Durable storage crosses several objects and controllers. That separation explains why a Pending PVC can fail before scheduling or Pod startup is even relevant.",
+            "points": [
+              "PVC is the claim, not the backing device.",
+              "CSI is the integration boundary for storage operations."
+            ],
+            "visual": [
+              "claim → policy → provision → bind → attach/mount"
+            ]
+          },
+          "kind": "arrange",
+          "items": [
+            {
+              "id": "mount",
+              "text": "Kubelet and CSI node operations make the volume available to the assigned Pod"
+            },
+            {
+              "id": "pvc",
+              "text": "Workload creates a PersistentVolumeClaim"
+            },
+            {
+              "id": "pv",
+              "text": "A PersistentVolume representing backing storage is bound to the claim"
+            },
+            {
+              "id": "provision",
+              "text": "StorageClass and CSI provisioner create suitable backing storage"
+            },
+            {
+              "id": "class",
+              "text": "The claim selects or references a StorageClass policy"
+            }
+          ],
+          "correct_order": [
+            "pvc",
+            "class",
+            "provision",
+            "pv",
+            "mount"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/predict-volume-failure-domain",
+          "unit_id": "fpp:kubernetes-storage-lifecycle",
+          "objective_ids": [
+            "fpp:kubernetes-storage-lifecycle/failure-domain"
+          ],
+          "evidence": "application",
+          "prompt": "A Pod using a zonal block volume disappears when its node and availability zone fail. Can Kubernetes always reschedule it into another zone and immediately reattach the same volume?",
+          "hint": "Keep Pod lifecycle and storage failure domain as separate constraints.",
+          "learn_first": {
+            "title": "Replaceable compute does not imply universally movable data.",
+            "body": "Kubernetes can create a new Pod object, but the replacement must still satisfy storage access modes, topology, attachment, and recovery constraints of the backing system.",
+            "visual": [
+              "Pod replacement ✓",
+              "volume reattachment → depends on topology/access"
+            ],
+            "variant_prompt": "A Stateful workload uses a volume available only in zone A. Zone A fails. Does a new Pod in zone B automatically make that same storage usable there?"
+          },
+          "feedback": {
+            "title": "Storage topology remains a real constraint.",
+            "explanation": "The workload controller may want a replacement Pod, but scheduling and storage integration must still find a location where the volume can actually be attached or recovered.",
+            "points": [
+              "Pod identity and storage identity are separate.",
+              "Access mode does not erase provider topology limits."
+            ],
+            "visual": [
+              "controller wants Pod → scheduler/storage must satisfy volume topology"
+            ]
+          },
+          "kind": "predict_state",
+          "state": [
+            "Pod: replaceable",
+            "volume: zonal backing storage",
+            "failure: original zone unavailable"
+          ],
+          "options": [
+            {
+              "id": "always",
+              "text": "Yes. Pod replacement guarantees the same volume can move across zones.",
+              "rationale": "Pod replacement and storage mobility are different lifecycles; topology and provider capabilities can constrain attachment."
+            },
+            {
+              "id": "topology",
+              "text": "No. Replacement is possible only where the storage topology and access semantics permit attachment or recovery.",
+              "rationale": "The scheduler and storage system must satisfy volume topology and access constraints; Kubernetes cannot make a zonal device globally attachable by itself."
+            },
+            {
+              "id": "recreate-data",
+              "text": "Yes. The ReplicaSet recreates the volume contents from the container image.",
+              "rationale": "A controller can replace Pods, but durable volume contents are not reconstructed from the application image."
+            }
+          ],
+          "answer_ids": [
+            "topology"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/trace-api-security",
+          "unit_id": "fpp:kubernetes-security-access",
+          "objective_ids": [
+            "fpp:kubernetes-security-access/request"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange the simplified Kubernetes API security checks from incoming request to accepted object persistence.",
+          "hint": "Identity comes before permission; admission evaluates the request before accepted state is stored.",
+          "learn_first": {
+            "title": "Kubernetes security is more than one permission check.",
+            "body": "The API path first establishes identity, then authorizes the requested action, then runs admission logic before accepted objects become persisted API state.",
+            "visual": [
+              "request → authentication → authorization → admission → persistence"
+            ],
+            "variant_prompt": "Trace the security gates an API request crosses before its object is accepted into cluster state."
+          },
+          "feedback": {
+            "title": "Identity, permission, and admission are distinct gates.",
+            "explanation": "A valid credential proves identity, not authorization. Passing RBAC still does not bypass admission policies that validate or mutate the object.",
+            "points": [
+              "Authentication answers who.",
+              "Authorization answers may this identity do this action.",
+              "Admission answers should this requested object be accepted or changed."
+            ],
+            "visual": [
+              "who? → allowed? → admissible? → persist"
+            ]
+          },
+          "kind": "trace",
+          "items": [
+            {
+              "id": "persist",
+              "text": "Persist the accepted object into cluster state"
+            },
+            {
+              "id": "authenticate",
+              "text": "Establish the caller identity"
+            },
+            {
+              "id": "admission",
+              "text": "Run validating or mutating admission logic"
+            },
+            {
+              "id": "authorize",
+              "text": "Decide whether that identity may perform the requested action"
+            },
+            {
+              "id": "request",
+              "text": "Client sends the API request"
+            }
+          ],
+          "correct_order": [
+            "request",
+            "authenticate",
+            "authorize",
+            "admission",
+            "persist"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/choose-namespace-policy",
+          "unit_id": "fpp:kubernetes-security-access",
+          "objective_ids": [
+            "fpp:kubernetes-security-access/workload"
+          ],
+          "evidence": "recall",
+          "prompt": "Two Pods are in different namespaces. Which statement is the safest mental model about their network isolation?",
+          "hint": "Separate API namespace scope, API authorization, and packet-flow policy.",
+          "learn_first": {
+            "title": "Namespace is scope, not a universal isolation boundary.",
+            "body": "Namespaces organize namespaced API objects and help scope RBAC and policy selection. Network traffic is a separate boundary controlled by network policy and the enforcing network implementation.",
+            "visual": [
+              "namespace → API scope",
+              "RBAC → API authorization",
+              "NetworkPolicy → traffic rules"
+            ],
+            "variant_prompt": "If two workloads live in different namespaces but no NetworkPolicy restricts them, should you assume cross-namespace traffic is blocked?"
+          },
+          "feedback": {
+            "title": "Do not turn one boundary into three.",
+            "explanation": "Namespace, RBAC, Pod security, Secret handling, and NetworkPolicy solve related but distinct security problems.",
+            "points": [
+              "RBAC controls API permissions.",
+              "NetworkPolicy controls selected network flows when enforced."
+            ],
+            "visual": [
+              "scope ≠ authorization ≠ network filtering"
+            ]
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "namespace-firewall",
+              "text": "Different namespaces automatically block all traffic between the Pods.",
+              "rationale": "Namespace scope does not automatically create a network firewall."
+            },
+            {
+              "id": "policy-needed",
+              "text": "Namespace boundaries organize and scope API objects; traffic isolation requires network policy and enforcement where needed.",
+              "rationale": "NetworkPolicy is the Kubernetes API for expressing allowed Pod traffic, subject to implementation support."
+            },
+            {
+              "id": "rbac-network",
+              "text": "RBAC bindings automatically control packet flow between the Pods.",
+              "rationale": "RBAC authorizes Kubernetes API actions; it does not directly filter Pod network traffic."
+            }
+          ],
+          "answer_ids": [
+            "policy-needed"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/explain-node-failure",
+          "unit_id": "fpp:kubernetes-storage-lifecycle",
+          "objective_ids": [
+            "fpp:kubernetes-storage-lifecycle/failure-domain"
+          ],
+          "evidence": "recall",
+          "prompt": "A controller wants to replace a failed Pod on another node. Why can scheduling and storage still prevent that replacement from becoming Running immediately?",
+          "hint": "Separate the controller decision to replace from the scheduler and storage work required to execute that decision.",
+          "learn_first": {
+            "title": "Desired replacement is only the start of the execution path.",
+            "body": "Kubernetes controllers can create the replacement object, but successful recovery still depends on a feasible node and on storage that can be attached and mounted in that location.",
+            "visual": [
+              "controller creates Pod",
+              "→ scheduler finds feasible node",
+              "→ storage attach/mount succeeds",
+              "→ kubelet starts workload"
+            ],
+            "variant_prompt": "Explain why a Stateful Pod may remain Pending after its controller successfully creates a replacement object."
+          },
+          "feedback": {
+            "title": "Control intent and execution feasibility are separate.",
+            "explanation": "This is the same layered model used throughout Kubernetes: one component decides the desired correction, while later components prove whether that correction can actually run.",
+            "points": [
+              "Controller success does not imply scheduler success.",
+              "Scheduler success does not imply storage mount success."
+            ],
+            "visual": [
+              "replace intent → placement → storage → runtime"
+            ]
+          },
+          "kind": "explain",
+          "model_answer": "The controller can create a replacement Pod, but the scheduler must find a node that satisfies resource and placement constraints, and any persistent volume must also be attachable or mountable there under its access mode and topology rules. Pod replacement intent does not bypass node or storage feasibility.",
+          "critical_points": [
+            "A controller can create the replacement Pod without guaranteeing placement.",
+            "The scheduler must satisfy resource and placement constraints.",
+            "Persistent storage adds its own access and topology constraints before the Pod can run."
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "lesson:kcna-kubernetes-fundamentals",
+      "slug": "kcna-kubernetes-fundamentals",
+      "title": "KCNA Kubernetes Fundamentals",
+      "summary": "Build the Kubernetes mental model from network and container prerequisites through API state, reconciliation, component ownership, and proof.",
+      "revision": 1,
+      "certification": "cncf:kcna",
+      "checkpoint": "fundamentals",
+      "estimated_minutes": 18,
+      "verified_at": "2026-09-15",
+      "source_unit_ids": [
+        "fpp:kcna-domain-map",
+        "fpp:ip-subnets",
+        "fpp:ports-sockets-dns",
+        "fpp:container-lifecycle",
+        "fpp:git-yaml-declarative",
+        "fpp:kubernetes-control-loop",
+        "fpp:kubernetes-manifests",
+        "fpp:kubernetes-architecture-components",
+        "fpp:kcna-kubernetes-fundamentals-review"
+      ],
+      "exercises": [
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/classify-request-layer",
+          "unit_id": "fpp:kcna-domain-map",
+          "objective_ids": [
+            "fpp:kcna-domain-map/layers"
+          ],
+          "evidence": "recall",
+          "prompt": "A Deployment says replicas 3, but only 2 Pods exist. Which reasoning layer should you inspect first to explain why Kubernetes should create another Pod?",
+          "hint": "Ask who owns the decision to reduce desired-versus-observed drift.",
+          "learn_first": {
+            "title": "Separate intent, control, execution, state, and proof.",
+            "body": "KCNA questions become easier when you first classify the boundary being tested. Controllers live in the control or reconciliation layer because they decide what must change to converge on intent.",
+            "visual": [
+              "intent → control → execution → running state → proof"
+            ],
+            "variant_prompt": "A Service exists but has no ready endpoints. Which layer should you reason about first when asking who decides endpoint membership?"
+          },
+          "feedback": {
+            "title": "Start at the ownership boundary.",
+            "explanation": "The replica target is intent, but the decision to close the gap belongs to reconciliation. Execution happens later after the controller creates or updates objects.",
+            "points": [
+              "Classify the question before memorizing component names.",
+              "Proof signals are evidence, not ownership."
+            ],
+            "visual": [
+              "desired 3 ≠ observed 2",
+              "controller decides → create replacement"
+            ]
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "intent-only",
+              "text": "Intent or configuration only",
+              "rationale": "The desired replica count matters, but it does not explain which component notices and reacts to the difference."
+            },
+            {
+              "id": "reconciliation",
+              "text": "Control and reconciliation",
+              "rationale": "A controller compares desired and observed state and decides what object must change."
+            },
+            {
+              "id": "packet",
+              "text": "Packet forwarding",
+              "rationale": "Packet forwarding is a data-plane concern and does not own workload replica count."
+            },
+            {
+              "id": "telemetry",
+              "text": "Telemetry export",
+              "rationale": "Telemetry can prove behavior but does not own the corrective decision."
+            }
+          ],
+          "answer_ids": [
+            "reconciliation"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/predict-routing",
+          "unit_id": "fpp:ip-subnets",
+          "objective_ids": [
+            "fpp:ip-subnets/local-or-routed"
+          ],
+          "evidence": "application",
+          "prompt": "A host is 10.20.4.17/24 and wants to send to 10.20.5.9. Is the destination on-link from that interface?",
+          "hint": "Apply the /24 mask before looking at the human-readable similarity of the addresses.",
+          "learn_first": {
+            "title": "Prefix membership decides on-link reachability.",
+            "body": "An interface address and prefix define a connected network. With /24, 10.20.4.17 belongs to 10.20.4.0/24; 10.20.5.9 is outside it and therefore needs routing.",
+            "visual": [
+              "10.20.4.17/24 → local prefix 10.20.4.0/24",
+              "10.20.5.9      → different prefix"
+            ],
+            "variant_prompt": "A host is 192.168.8.44/24. Is 192.168.9.10 on-link from that interface?"
+          },
+          "feedback": {
+            "title": "The /24 boundary separates the two networks.",
+            "explanation": "The destination is not in the connected prefix, so the host consults its routing table and normally sends through a next hop.",
+            "points": [
+              "Address similarity is not enough; apply the prefix length.",
+              "DNS and routing answer different questions."
+            ],
+            "visual": [
+              "10.20.4.0/24  ≠  10.20.5.0/24"
+            ]
+          },
+          "kind": "predict_state",
+          "state": [
+            "interface: 10.20.4.17/24",
+            "destination: 10.20.5.9"
+          ],
+          "options": [
+            {
+              "id": "on-link",
+              "text": "Yes, because both addresses start with 10.20.",
+              "rationale": "A /24 compares the first 24 bits, so 10.20.4.0/24 and 10.20.5.0/24 are different prefixes."
+            },
+            {
+              "id": "routed",
+              "text": "No, it needs a route toward another network.",
+              "rationale": "10.20.5.9 is outside 10.20.4.0/24, so the host uses routing rather than treating it as directly reachable on-link."
+            },
+            {
+              "id": "dns-first",
+              "text": "It depends on DNS resolution.",
+              "rationale": "The destination is already an IP address; DNS is not what decides whether that address is local to the prefix."
+            }
+          ],
+          "answer_ids": [
+            "routed"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/separate-dns-transport",
+          "unit_id": "fpp:ports-sockets-dns",
+          "objective_ids": [
+            "fpp:ports-sockets-dns/dns-resolution"
+          ],
+          "evidence": "application",
+          "prompt": "The name resolves successfully, but the TCP connection is refused. Which conclusion is justified by this evidence?",
+          "hint": "Separate obtaining an address from establishing a transport connection to a port.",
+          "learn_first": {
+            "title": "DNS answers a naming question, not a reachability question.",
+            "body": "A resolver can return the correct address even when no process is listening, a firewall blocks traffic, or routing is wrong. Prove each boundary independently.",
+            "visual": [
+              "name → IP   ✓",
+              "IP:port → listener   ?"
+            ],
+            "variant_prompt": "DNS returns a ClusterIP for a Service, but connecting to the Service port times out. What has already been proven and what remains unproven?"
+          },
+          "feedback": {
+            "title": "Resolution succeeded; transport did not.",
+            "explanation": "The output proves the name-to-address step. It does not prove a listening process, permitted packet path, or healthy application.",
+            "points": [
+              "DNS success does not imply TCP success.",
+              "A port belongs to a listening socket/process boundary."
+            ],
+            "visual": [
+              "DNS ✓ → route/policy/listener/app still need proof"
+            ]
+          },
+          "kind": "terminal_inspect",
+          "terminal": [
+            "$ getent hosts api.internal",
+            "10.0.3.21 api.internal",
+            "$ nc -vz api.internal 8443",
+            "connect to 10.0.3.21 port 8443 (tcp) failed: Connection refused"
+          ],
+          "options": [
+            {
+              "id": "dns-broken",
+              "text": "DNS resolution is broken.",
+              "rationale": "The resolver returned an address, so the shown DNS lookup succeeded."
+            },
+            {
+              "id": "transport-failure",
+              "text": "Name resolution worked; investigate the listener or transport path next.",
+              "rationale": "Resolution and transport are separate boundaries. A refused connection points beyond DNS."
+            },
+            {
+              "id": "subnet-proof",
+              "text": "The destination must be on the same subnet.",
+              "rationale": "Successful name resolution says nothing about whether the destination is on-link."
+            }
+          ],
+          "answer_ids": [
+            "transport-failure"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/arrange-container-lifecycle",
+          "unit_id": "fpp:container-lifecycle",
+          "objective_ids": [
+            "fpp:container-lifecycle/create-start-stop"
+          ],
+          "evidence": "recall",
+          "prompt": "Arrange this simplified container lifecycle from packaged artifact to removed runtime instance.",
+          "hint": "The image is input to creation; removal happens only after the runtime instance is no longer needed.",
+          "learn_first": {
+            "title": "An image and a running container are different lifecycle objects.",
+            "body": "The image is packaged input. The runtime creates a container from it, starts its main process, later stops that process, and can then remove the container instance.",
+            "visual": [
+              "image → create → start → stop → remove"
+            ],
+            "variant_prompt": "Reconstruct the same lifecycle while keeping image availability separate from the lifetime of one container instance."
+          },
+          "feedback": {
+            "title": "Artifact first, runtime instance second.",
+            "explanation": "Container lifecycle reasoning is easier when image state, container metadata, and the running process are not collapsed into one thing.",
+            "points": [
+              "Stopping a container is not the same as deleting its image.",
+              "The main process exiting ends that container run."
+            ],
+            "visual": [
+              "image ≠ container ≠ process"
+            ]
+          },
+          "kind": "arrange",
+          "items": [
+            {
+              "id": "start",
+              "text": "Start the container process"
+            },
+            {
+              "id": "remove",
+              "text": "Remove the stopped container instance"
+            },
+            {
+              "id": "pull",
+              "text": "Pull or make the image available"
+            },
+            {
+              "id": "stop",
+              "text": "Stop the container process"
+            },
+            {
+              "id": "create",
+              "text": "Create a container from the image and runtime configuration"
+            }
+          ],
+          "correct_order": [
+            "pull",
+            "create",
+            "start",
+            "stop",
+            "remove"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/choose-cri-boundary",
+          "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
+          "objective_ids": [
+            "fpp:kcna-kubernetes-fundamentals-review/runtime"
+          ],
+          "evidence": "recall",
+          "prompt": "Which statement best describes the relationship between Kubernetes, CRI, containerd, and OCI images?",
+          "hint": "Separate the API boundary from the software implementing that boundary.",
+          "learn_first": {
+            "title": "Interface is not implementation.",
+            "body": "CRI defines how kubelet talks to a container runtime. containerd and CRI-O are implementations commonly used through that boundary, while OCI-compatible images remain portable artifacts.",
+            "visual": [
+              "kubelet → CRI → containerd/CRI-O → container"
+            ],
+            "variant_prompt": "If Docker Engine is absent on a worker node, can Kubernetes still run a standard OCI-compatible image using containerd?"
+          },
+          "feedback": {
+            "title": "CRI is the contract; the runtime implements it.",
+            "explanation": "The durable distinction is between Kubernetes' runtime interface, a runtime implementation, and the image format consumed to create containers.",
+            "points": [
+              "Dockershim removal did not invalidate OCI images.",
+              "containerd is not the same thing as CRI."
+            ],
+            "visual": [
+              "CRI = interface",
+              "containerd = runtime implementation",
+              "OCI image = packaged artifact"
+            ]
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "cri-runtime",
+              "text": "CRI is the container runtime that executes OCI images directly.",
+              "rationale": "CRI is an interface boundary; it is not itself the runtime implementation."
+            },
+            {
+              "id": "containerd-cri",
+              "text": "Kubernetes can use a CRI-compatible runtime such as containerd to run containers from OCI-compatible images.",
+              "rationale": "kubelet uses the CRI boundary to work with runtime implementations such as containerd or CRI-O."
+            },
+            {
+              "id": "docker-required",
+              "text": "Kubernetes requires the Docker Engine because OCI images are Docker-specific.",
+              "rationale": "Kubernetes does not require Docker Engine, and OCI-compatible images are not tied to the removed dockershim integration."
+            }
+          ],
+          "answer_ids": [
+            "containerd-cri"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/spot-schema-boundary",
+          "unit_id": "fpp:git-yaml-declarative",
+          "objective_ids": [
+            "fpp:git-yaml-declarative/yaml-schema"
+          ],
+          "evidence": "application",
+          "prompt": "This document is valid YAML, but Kubernetes rejects it. What is the important reasoning error?",
+          "hint": "Ask whether the failure is in serialization syntax or the consumer's object schema.",
+          "learn_first": {
+            "title": "YAML validity does not guarantee Kubernetes validity.",
+            "body": "YAML only describes a data structure. Kubernetes then validates that structure against the selected API resource schema, where fields such as spec.replicas have defined meaning.",
+            "visual": [
+              "YAML parser ✓ → Kubernetes schema ✗"
+            ],
+            "variant_prompt": "A YAML file parses correctly but uses a field the selected Kubernetes kind does not define. Which boundary failed?"
+          },
+          "feedback": {
+            "title": "Serialization and schema are separate checks.",
+            "explanation": "The file can be syntactically valid YAML while still being semantically invalid for the Kubernetes API object being submitted.",
+            "points": [
+              "YAML is a serialization format.",
+              "apiVersion and kind determine the Kubernetes schema contract."
+            ],
+            "visual": [
+              "syntax ✓  schema ✗"
+            ]
+          },
+          "kind": "spot_bug",
+          "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web\nspec:\n  replica: 3\n",
+          "options": [
+            {
+              "id": "yaml-invalid",
+              "text": "YAML syntax is invalid because replica is singular.",
+              "rationale": "YAML permits that key. The problem is whether the Kubernetes API schema recognizes it for a Deployment."
+            },
+            {
+              "id": "schema-invalid",
+              "text": "YAML parsing can succeed while the Kubernetes API schema rejects an unknown or incorrect field.",
+              "rationale": "Serialization syntax and application schema validation are separate boundaries."
+            },
+            {
+              "id": "git-invalid",
+              "text": "Git must normalize the key before Kubernetes can read it.",
+              "rationale": "Git versions files; it does not transform arbitrary YAML into a valid Kubernetes object."
+            }
+          ],
+          "answer_ids": [
+            "schema-invalid"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/trace-control-loop",
+          "unit_id": "fpp:kubernetes-control-loop",
+          "objective_ids": [
+            "fpp:kubernetes-control-loop/reconciliation"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange the generic Kubernetes control loop from declared intent to a corrected observed state.",
+          "hint": "Reconciliation starts from durable intent, then repeats observation and correction rather than assuming a one-time command stays true forever.",
+          "learn_first": {
+            "title": "Kubernetes is a continuously reconciled system.",
+            "body": "Clients submit desired state to the API. Controllers watch shared state, compare intent with observation, act through API objects, and then observe again.",
+            "visual": [
+              "declare → persist → observe/compare → act → observe"
+            ],
+            "variant_prompt": "Trace what happens conceptually after accepted desired state drifts from reality and a controller must restore it."
+          },
+          "feedback": {
+            "title": "Reconciliation keeps intent authoritative.",
+            "explanation": "Kubernetes controllers repeatedly work from API state toward the desired condition. The loop is continuous; it is not a remote shell script that runs once.",
+            "points": [
+              "Accepted API state becomes the shared coordination point.",
+              "Controllers normally act by creating or updating API objects."
+            ],
+            "visual": [
+              "desired ↔ observed",
+              "difference → controller action → new observation"
+            ]
+          },
+          "kind": "trace",
+          "items": [
+            {
+              "id": "observe-again",
+              "text": "Observe the resulting state again"
+            },
+            {
+              "id": "persist-intent",
+              "text": "Accepted desired state is stored through the API"
+            },
+            {
+              "id": "act",
+              "text": "A controller changes API objects to reduce the difference"
+            },
+            {
+              "id": "compare",
+              "text": "The controller compares desired and observed state"
+            },
+            {
+              "id": "submit",
+              "text": "A client submits desired state"
+            }
+          ],
+          "correct_order": [
+            "submit",
+            "persist-intent",
+            "compare",
+            "act",
+            "observe-again"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/fill-object-shape",
+          "unit_id": "fpp:kubernetes-manifests",
+          "objective_ids": [
+            "fpp:kubernetes-manifests/object-shape"
+          ],
+          "evidence": "application",
+          "prompt": "Fill the fields that identify the API resource type, object identity, and desired configuration boundary.",
+          "hint": "Kubernetes object shape separates type, identity, desired state, and observed status.",
+          "learn_first": {
+            "title": "Read the API object before memorizing YAML layout.",
+            "body": "apiVersion and kind select the resource schema, metadata identifies the object, spec commonly carries desired state, and status commonly reports observation.",
+            "visual": [
+              "apiVersion + kind → schema",
+              "metadata → identity",
+              "spec → intent",
+              "status → observation"
+            ],
+            "variant_prompt": "Rebuild the top-level fields of a Deployment object by separating schema identity, object identity, desired state, and observed state."
+          },
+          "feedback": {
+            "title": "The object has explicit responsibility boundaries.",
+            "explanation": "The YAML is only a representation of an API object whose top-level fields encode schema selection, identity, intent, and observation.",
+            "points": [
+              "spec is not the same thing as status.",
+              "apiVersion and kind together select the resource contract."
+            ],
+            "visual": [
+              "type → identity → intent → observation"
+            ]
+          },
+          "kind": "manifest_fill",
+          "manifest": "___version___: apps/v1\n___kind___: Deployment\n___metadata___:\n  name: web\n___spec___:\n  replicas: 3\n",
+          "blanks": [
+            {
+              "id": "version",
+              "label": "resource version field",
+              "options": [
+                {
+                  "id": "api-version",
+                  "text": "apiVersion"
+                },
+                {
+                  "id": "version",
+                  "text": "version"
+                }
+              ],
+              "answer_id": "api-version"
+            },
+            {
+              "id": "kind",
+              "label": "resource kind field",
+              "options": [
+                {
+                  "id": "kind",
+                  "text": "kind"
+                },
+                {
+                  "id": "type",
+                  "text": "type"
+                }
+              ],
+              "answer_id": "kind"
+            },
+            {
+              "id": "metadata",
+              "label": "identity metadata field",
+              "options": [
+                {
+                  "id": "metadata",
+                  "text": "metadata"
+                },
+                {
+                  "id": "identity",
+                  "text": "identity"
+                }
+              ],
+              "answer_id": "metadata"
+            },
+            {
+              "id": "spec",
+              "label": "desired configuration field",
+              "options": [
+                {
+                  "id": "spec",
+                  "text": "spec"
+                },
+                {
+                  "id": "status",
+                  "text": "status"
+                }
+              ],
+              "answer_id": "spec"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/connect-components",
+          "unit_id": "fpp:kubernetes-architecture-components",
+          "objective_ids": [
+            "fpp:kubernetes-architecture-components/roles"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each Kubernetes component to its primary responsibility in the workload path.",
+          "hint": "Separate API admission, durable state, placement decisions, and node-side execution.",
+          "learn_first": {
+            "title": "Components cooperate through the API but own different decisions.",
+            "body": "The API server is the front door, etcd stores control-plane state, the scheduler records placement decisions, and kubelet reconciles assigned Pods on its node.",
+            "visual": [
+              "client → API server ↔ etcd",
+              "scheduler → placement",
+              "kubelet → node execution"
+            ],
+            "variant_prompt": "Match the same four components after asking which one stores state, chooses placement, accepts API traffic, and executes on a node."
+          },
+          "feedback": {
+            "title": "Decision ownership stays separated.",
+            "explanation": "Remembering one primary responsibility per component prevents common traps such as saying the scheduler starts containers or etcd reconciles workloads.",
+            "points": [
+              "Scheduler chooses placement; kubelet executes the assignment.",
+              "etcd stores state but does not make scheduling decisions."
+            ],
+            "visual": [
+              "API server: front door",
+              "etcd: state",
+              "scheduler: placement",
+              "kubelet: execution"
+            ]
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "apiserver",
+              "text": "kube-apiserver"
+            },
+            {
+              "id": "scheduler",
+              "text": "kube-scheduler"
+            },
+            {
+              "id": "kubelet",
+              "text": "kubelet"
+            },
+            {
+              "id": "etcd",
+              "text": "etcd"
+            }
+          ],
+          "right": [
+            {
+              "id": "api-front-door",
+              "text": "validate and expose the Kubernetes API"
+            },
+            {
+              "id": "placement",
+              "text": "choose a node for an unscheduled Pod"
+            },
+            {
+              "id": "node-execution",
+              "text": "make assigned Pod state real on one node"
+            },
+            {
+              "id": "durable-state",
+              "text": "persist Kubernetes API state for the control plane"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "apiserver",
+              "right_id": "api-front-door"
+            },
+            {
+              "left_id": "scheduler",
+              "right_id": "placement"
+            },
+            {
+              "left_id": "kubelet",
+              "right_id": "node-execution"
+            },
+            {
+              "left_id": "etcd",
+              "right_id": "durable-state"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/trace-apply-path",
+          "unit_id": "fpp:kubernetes-architecture-components",
+          "objective_ids": [
+            "fpp:kubernetes-architecture-components/request-path"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange the main path from kubectl submitting a workload to a container running on a chosen node.",
+          "hint": "The API call records intent first; node-side execution happens only after controllers and scheduling have produced an assigned Pod.",
+          "learn_first": {
+            "title": "kubectl does not SSH to worker nodes.",
+            "body": "kubectl talks to the Kubernetes API. Control-plane components react through API state, the scheduler records placement, and kubelet uses the runtime to execute assigned containers.",
+            "visual": [
+              "kubectl → API → controller → scheduler → kubelet → runtime"
+            ],
+            "variant_prompt": "Reconstruct how an accepted Deployment change becomes a running container without assuming the client directly controls a worker node."
+          },
+          "feedback": {
+            "title": "Intent travels through the API before execution reaches the node.",
+            "explanation": "Kubernetes separates submission, reconciliation, placement, and execution. Each stage leaves observable state that can be inspected independently.",
+            "points": [
+              "kubectl is an API client.",
+              "kubelet, not the scheduler, drives runtime execution on the selected node."
+            ],
+            "visual": [
+              "client → control plane decisions → node execution"
+            ]
+          },
+          "kind": "trace",
+          "items": [
+            {
+              "id": "runtime",
+              "text": "Container runtime starts the container"
+            },
+            {
+              "id": "api",
+              "text": "API server accepts and persists the object after request checks"
+            },
+            {
+              "id": "kubelet",
+              "text": "Kubelet observes the Pod assigned to its node"
+            },
+            {
+              "id": "scheduler",
+              "text": "Scheduler chooses a node for the unscheduled Pod"
+            },
+            {
+              "id": "kubectl",
+              "text": "kubectl sends the API request"
+            },
+            {
+              "id": "controller",
+              "text": "A controller creates or updates the required Pod object"
+            }
+          ],
+          "correct_order": [
+            "kubectl",
+            "api",
+            "controller",
+            "scheduler",
+            "kubelet",
+            "runtime"
+          ]
+        },
+        {
+          "id": "lesson:kcna-kubernetes-fundamentals/explain-proof-boundary",
+          "unit_id": "fpp:kubernetes-manifests",
+          "objective_ids": [
+            "fpp:kubernetes-manifests/proof-boundary"
+          ],
+          "evidence": "recall",
+          "prompt": "Why does a successful kubectl apply not prove that the application is healthy and serving real users?",
+          "hint": "Name what apply proves, then list at least two later stages it does not prove.",
+          "learn_first": {
+            "title": "Configuration proof is not behavior proof.",
+            "body": "The API server can accept a valid object while later scheduling, image pull, startup, readiness, Service selection, or application behavior still fails.",
+            "visual": [
+              "apply ✓ → API object accepted",
+              "running? ready? reachable? correct response? → still unproven"
+            ],
+            "variant_prompt": "A Deployment manifest is accepted with no API error. Explain why a user can still receive a failed request."
+          },
+          "feedback": {
+            "title": "Prove each boundary separately.",
+            "explanation": "Kubernetes exposes rich status and events, but the strongest application proof is still evidence from the boundary the user actually depends on.",
+            "points": [
+              "Accepted desired state is not synonymous with successful execution.",
+              "Troubleshooting should move from intent toward user-visible behavior."
+            ],
+            "visual": [
+              "intent → reconciliation → placement → runtime → network → app → user"
+            ]
+          },
+          "kind": "explain",
+          "model_answer": "A successful apply proves that the API request was accepted for the object, not that every later controller, scheduling, node, network, and application step succeeded. End-to-end health requires additional evidence such as status, events, ready endpoints, logs, and a real request.",
+          "critical_points": [
+            "API acceptance is only one boundary in the request path.",
+            "Reconciliation, placement, runtime, networking, and application behavior happen afterward.",
+            "End-to-end proof requires observing the later boundaries, ideally with a real request."
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
       "id": "lesson:kcna-kubernetes-resources",
       "slug": "kcna-kubernetes-resources",
       "title": "KCNA Kubernetes Resources",
@@ -1902,5 +3961,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "33f23e2e5ba81f573b435a45fd52b70539b1fcadbdb8444842010d2e421af450"
+  "manifest_sha256": "af3dbc9b742471bf19ae3983eeaa9f314fb7e774fc9183b6a8cdcc2295d0aaf7"
 }

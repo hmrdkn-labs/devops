@@ -1,0 +1,461 @@
+schema_version: 1
+id: lesson:kcna-kubernetes-fundamentals
+slug: kcna-kubernetes-fundamentals
+title: KCNA Kubernetes Fundamentals
+summary: Build the Kubernetes mental model from network and container prerequisites through API state, reconciliation, component ownership, and proof.
+revision: 1
+certification: cncf:kcna
+checkpoint: fundamentals
+estimated_minutes: 18
+verified_at: 2026-09-15
+source_unit_ids:
+  - fpp:kcna-domain-map
+  - fpp:ip-subnets
+  - fpp:ports-sockets-dns
+  - fpp:container-lifecycle
+  - fpp:git-yaml-declarative
+  - fpp:kubernetes-control-loop
+  - fpp:kubernetes-manifests
+  - fpp:kubernetes-architecture-components
+  - fpp:kcna-kubernetes-fundamentals-review
+exercises:
+  - id: lesson:kcna-kubernetes-fundamentals/classify-request-layer
+    kind: choose
+    unit_id: fpp:kcna-domain-map
+    objective_ids: [fpp:kcna-domain-map/layers]
+    evidence: recall
+    prompt: A Deployment says replicas 3, but only 2 Pods exist. Which reasoning layer should you inspect first to explain why Kubernetes should create another Pod?
+    options:
+      - id: intent-only
+        text: Intent or configuration only
+        rationale: The desired replica count matters, but it does not explain which component notices and reacts to the difference.
+      - id: reconciliation
+        text: Control and reconciliation
+        rationale: A controller compares desired and observed state and decides what object must change.
+      - id: packet
+        text: Packet forwarding
+        rationale: Packet forwarding is a data-plane concern and does not own workload replica count.
+      - id: telemetry
+        text: Telemetry export
+        rationale: Telemetry can prove behavior but does not own the corrective decision.
+    answer_ids: [reconciliation]
+    hint: Ask who owns the decision to reduce desired-versus-observed drift.
+    learn_first:
+      title: Separate intent, control, execution, state, and proof.
+      body: KCNA questions become easier when you first classify the boundary being tested. Controllers live in the control or reconciliation layer because they decide what must change to converge on intent.
+      visual:
+        - "intent → control → execution → running state → proof"
+      variant_prompt: A Service exists but has no ready endpoints. Which layer should you reason about first when asking who decides endpoint membership?
+    feedback:
+      title: Start at the ownership boundary.
+      explanation: The replica target is intent, but the decision to close the gap belongs to reconciliation. Execution happens later after the controller creates or updates objects.
+      points:
+        - Classify the question before memorizing component names.
+        - Proof signals are evidence, not ownership.
+      visual:
+        - "desired 3 ≠ observed 2"
+        - "controller decides → create replacement"
+
+  - id: lesson:kcna-kubernetes-fundamentals/predict-routing
+    kind: predict_state
+    unit_id: fpp:ip-subnets
+    objective_ids: [fpp:ip-subnets/local-or-routed]
+    evidence: application
+    prompt: A host is 10.20.4.17/24 and wants to send to 10.20.5.9. Is the destination on-link from that interface?
+    state:
+      - "interface: 10.20.4.17/24"
+      - "destination: 10.20.5.9"
+    options:
+      - id: on-link
+        text: Yes, because both addresses start with 10.20.
+        rationale: A /24 compares the first 24 bits, so 10.20.4.0/24 and 10.20.5.0/24 are different prefixes.
+      - id: routed
+        text: No, it needs a route toward another network.
+        rationale: 10.20.5.9 is outside 10.20.4.0/24, so the host uses routing rather than treating it as directly reachable on-link.
+      - id: dns-first
+        text: It depends on DNS resolution.
+        rationale: The destination is already an IP address; DNS is not what decides whether that address is local to the prefix.
+    answer_ids: [routed]
+    hint: Apply the /24 mask before looking at the human-readable similarity of the addresses.
+    learn_first:
+      title: Prefix membership decides on-link reachability.
+      body: An interface address and prefix define a connected network. With /24, 10.20.4.17 belongs to 10.20.4.0/24; 10.20.5.9 is outside it and therefore needs routing.
+      visual:
+        - "10.20.4.17/24 → local prefix 10.20.4.0/24"
+        - "10.20.5.9      → different prefix"
+      variant_prompt: A host is 192.168.8.44/24. Is 192.168.9.10 on-link from that interface?
+    feedback:
+      title: The /24 boundary separates the two networks.
+      explanation: The destination is not in the connected prefix, so the host consults its routing table and normally sends through a next hop.
+      points:
+        - Address similarity is not enough; apply the prefix length.
+        - DNS and routing answer different questions.
+      visual:
+        - "10.20.4.0/24  ≠  10.20.5.0/24"
+
+  - id: lesson:kcna-kubernetes-fundamentals/separate-dns-transport
+    kind: terminal_inspect
+    unit_id: fpp:ports-sockets-dns
+    objective_ids: [fpp:ports-sockets-dns/dns-resolution]
+    evidence: application
+    prompt: The name resolves successfully, but the TCP connection is refused. Which conclusion is justified by this evidence?
+    terminal:
+      - "$ getent hosts api.internal"
+      - "10.0.3.21 api.internal"
+      - "$ nc -vz api.internal 8443"
+      - "connect to 10.0.3.21 port 8443 (tcp) failed: Connection refused"
+    options:
+      - id: dns-broken
+        text: DNS resolution is broken.
+        rationale: The resolver returned an address, so the shown DNS lookup succeeded.
+      - id: transport-failure
+        text: Name resolution worked; investigate the listener or transport path next.
+        rationale: Resolution and transport are separate boundaries. A refused connection points beyond DNS.
+      - id: subnet-proof
+        text: The destination must be on the same subnet.
+        rationale: Successful name resolution says nothing about whether the destination is on-link.
+    answer_ids: [transport-failure]
+    hint: Separate obtaining an address from establishing a transport connection to a port.
+    learn_first:
+      title: DNS answers a naming question, not a reachability question.
+      body: A resolver can return the correct address even when no process is listening, a firewall blocks traffic, or routing is wrong. Prove each boundary independently.
+      visual:
+        - "name → IP   ✓"
+        - "IP:port → listener   ?"
+      variant_prompt: DNS returns a ClusterIP for a Service, but connecting to the Service port times out. What has already been proven and what remains unproven?
+    feedback:
+      title: Resolution succeeded; transport did not.
+      explanation: The output proves the name-to-address step. It does not prove a listening process, permitted packet path, or healthy application.
+      points:
+        - DNS success does not imply TCP success.
+        - A port belongs to a listening socket/process boundary.
+      visual:
+        - "DNS ✓ → route/policy/listener/app still need proof"
+
+  - id: lesson:kcna-kubernetes-fundamentals/arrange-container-lifecycle
+    kind: arrange
+    unit_id: fpp:container-lifecycle
+    objective_ids: [fpp:container-lifecycle/create-start-stop]
+    evidence: recall
+    prompt: Arrange this simplified container lifecycle from packaged artifact to removed runtime instance.
+    items:
+      - id: start
+        text: Start the container process
+      - id: remove
+        text: Remove the stopped container instance
+      - id: pull
+        text: Pull or make the image available
+      - id: stop
+        text: Stop the container process
+      - id: create
+        text: Create a container from the image and runtime configuration
+    correct_order: [pull, create, start, stop, remove]
+    hint: The image is input to creation; removal happens only after the runtime instance is no longer needed.
+    learn_first:
+      title: An image and a running container are different lifecycle objects.
+      body: The image is packaged input. The runtime creates a container from it, starts its main process, later stops that process, and can then remove the container instance.
+      visual:
+        - "image → create → start → stop → remove"
+      variant_prompt: Reconstruct the same lifecycle while keeping image availability separate from the lifetime of one container instance.
+    feedback:
+      title: Artifact first, runtime instance second.
+      explanation: Container lifecycle reasoning is easier when image state, container metadata, and the running process are not collapsed into one thing.
+      points:
+        - Stopping a container is not the same as deleting its image.
+        - The main process exiting ends that container run.
+      visual:
+        - "image ≠ container ≠ process"
+
+  - id: lesson:kcna-kubernetes-fundamentals/choose-cri-boundary
+    kind: choose
+    unit_id: fpp:kcna-kubernetes-fundamentals-review
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+    evidence: recall
+    prompt: Which statement best describes the relationship between Kubernetes, CRI, containerd, and OCI images?
+    options:
+      - id: cri-runtime
+        text: CRI is the container runtime that executes OCI images directly.
+        rationale: CRI is an interface boundary; it is not itself the runtime implementation.
+      - id: containerd-cri
+        text: Kubernetes can use a CRI-compatible runtime such as containerd to run containers from OCI-compatible images.
+        rationale: kubelet uses the CRI boundary to work with runtime implementations such as containerd or CRI-O.
+      - id: docker-required
+        text: Kubernetes requires the Docker Engine because OCI images are Docker-specific.
+        rationale: Kubernetes does not require Docker Engine, and OCI-compatible images are not tied to the removed dockershim integration.
+    answer_ids: [containerd-cri]
+    hint: Separate the API boundary from the software implementing that boundary.
+    learn_first:
+      title: Interface is not implementation.
+      body: CRI defines how kubelet talks to a container runtime. containerd and CRI-O are implementations commonly used through that boundary, while OCI-compatible images remain portable artifacts.
+      visual:
+        - "kubelet → CRI → containerd/CRI-O → container"
+      variant_prompt: If Docker Engine is absent on a worker node, can Kubernetes still run a standard OCI-compatible image using containerd?
+    feedback:
+      title: CRI is the contract; the runtime implements it.
+      explanation: The durable distinction is between Kubernetes' runtime interface, a runtime implementation, and the image format consumed to create containers.
+      points:
+        - Dockershim removal did not invalidate OCI images.
+        - containerd is not the same thing as CRI.
+      visual:
+        - "CRI = interface"
+        - "containerd = runtime implementation"
+        - "OCI image = packaged artifact"
+
+  - id: lesson:kcna-kubernetes-fundamentals/spot-schema-boundary
+    kind: spot_bug
+    unit_id: fpp:git-yaml-declarative
+    objective_ids: [fpp:git-yaml-declarative/yaml-schema]
+    evidence: application
+    prompt: This document is valid YAML, but Kubernetes rejects it. What is the important reasoning error?
+    code: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: web
+      spec:
+        replica: 3
+    options:
+      - id: yaml-invalid
+        text: YAML syntax is invalid because replica is singular.
+        rationale: YAML permits that key. The problem is whether the Kubernetes API schema recognizes it for a Deployment.
+      - id: schema-invalid
+        text: YAML parsing can succeed while the Kubernetes API schema rejects an unknown or incorrect field.
+        rationale: Serialization syntax and application schema validation are separate boundaries.
+      - id: git-invalid
+        text: Git must normalize the key before Kubernetes can read it.
+        rationale: Git versions files; it does not transform arbitrary YAML into a valid Kubernetes object.
+    answer_ids: [schema-invalid]
+    hint: Ask whether the failure is in serialization syntax or the consumer's object schema.
+    learn_first:
+      title: YAML validity does not guarantee Kubernetes validity.
+      body: YAML only describes a data structure. Kubernetes then validates that structure against the selected API resource schema, where fields such as spec.replicas have defined meaning.
+      visual:
+        - "YAML parser ✓ → Kubernetes schema ✗"
+      variant_prompt: A YAML file parses correctly but uses a field the selected Kubernetes kind does not define. Which boundary failed?
+    feedback:
+      title: Serialization and schema are separate checks.
+      explanation: The file can be syntactically valid YAML while still being semantically invalid for the Kubernetes API object being submitted.
+      points:
+        - YAML is a serialization format.
+        - apiVersion and kind determine the Kubernetes schema contract.
+      visual:
+        - "syntax ✓  schema ✗"
+
+  - id: lesson:kcna-kubernetes-fundamentals/trace-control-loop
+    kind: trace
+    unit_id: fpp:kubernetes-control-loop
+    objective_ids: [fpp:kubernetes-control-loop/reconciliation]
+    evidence: application
+    prompt: Arrange the generic Kubernetes control loop from declared intent to a corrected observed state.
+    items:
+      - id: observe-again
+        text: Observe the resulting state again
+      - id: persist-intent
+        text: Accepted desired state is stored through the API
+      - id: act
+        text: A controller changes API objects to reduce the difference
+      - id: compare
+        text: The controller compares desired and observed state
+      - id: submit
+        text: A client submits desired state
+    correct_order: [submit, persist-intent, compare, act, observe-again]
+    hint: Reconciliation starts from durable intent, then repeats observation and correction rather than assuming a one-time command stays true forever.
+    learn_first:
+      title: Kubernetes is a continuously reconciled system.
+      body: Clients submit desired state to the API. Controllers watch shared state, compare intent with observation, act through API objects, and then observe again.
+      visual:
+        - "declare → persist → observe/compare → act → observe"
+      variant_prompt: Trace what happens conceptually after accepted desired state drifts from reality and a controller must restore it.
+    feedback:
+      title: Reconciliation keeps intent authoritative.
+      explanation: Kubernetes controllers repeatedly work from API state toward the desired condition. The loop is continuous; it is not a remote shell script that runs once.
+      points:
+        - Accepted API state becomes the shared coordination point.
+        - Controllers normally act by creating or updating API objects.
+      visual:
+        - "desired ↔ observed"
+        - "difference → controller action → new observation"
+
+  - id: lesson:kcna-kubernetes-fundamentals/fill-object-shape
+    kind: manifest_fill
+    unit_id: fpp:kubernetes-manifests
+    objective_ids: [fpp:kubernetes-manifests/object-shape]
+    evidence: application
+    prompt: Fill the fields that identify the API resource type, object identity, and desired configuration boundary.
+    manifest: |
+      ___version___: apps/v1
+      ___kind___: Deployment
+      ___metadata___:
+        name: web
+      ___spec___:
+        replicas: 3
+    blanks:
+      - id: version
+        label: resource version field
+        options:
+          - id: api-version
+            text: apiVersion
+          - id: version
+            text: version
+        answer_id: api-version
+      - id: kind
+        label: resource kind field
+        options:
+          - id: kind
+            text: kind
+          - id: type
+            text: type
+        answer_id: kind
+      - id: metadata
+        label: identity metadata field
+        options:
+          - id: metadata
+            text: metadata
+          - id: identity
+            text: identity
+        answer_id: metadata
+      - id: spec
+        label: desired configuration field
+        options:
+          - id: spec
+            text: spec
+          - id: status
+            text: status
+        answer_id: spec
+    hint: Kubernetes object shape separates type, identity, desired state, and observed status.
+    learn_first:
+      title: Read the API object before memorizing YAML layout.
+      body: apiVersion and kind select the resource schema, metadata identifies the object, spec commonly carries desired state, and status commonly reports observation.
+      visual:
+        - "apiVersion + kind → schema"
+        - "metadata → identity"
+        - "spec → intent"
+        - "status → observation"
+      variant_prompt: Rebuild the top-level fields of a Deployment object by separating schema identity, object identity, desired state, and observed state.
+    feedback:
+      title: The object has explicit responsibility boundaries.
+      explanation: The YAML is only a representation of an API object whose top-level fields encode schema selection, identity, intent, and observation.
+      points:
+        - spec is not the same thing as status.
+        - apiVersion and kind together select the resource contract.
+      visual:
+        - "type → identity → intent → observation"
+
+  - id: lesson:kcna-kubernetes-fundamentals/connect-components
+    kind: connect
+    unit_id: fpp:kubernetes-architecture-components
+    objective_ids: [fpp:kubernetes-architecture-components/roles]
+    evidence: recall
+    prompt: Match each Kubernetes component to its primary responsibility in the workload path.
+    left:
+      - id: apiserver
+        text: kube-apiserver
+      - id: scheduler
+        text: kube-scheduler
+      - id: kubelet
+        text: kubelet
+      - id: etcd
+        text: etcd
+    right:
+      - id: api-front-door
+        text: validate and expose the Kubernetes API
+      - id: placement
+        text: choose a node for an unscheduled Pod
+      - id: node-execution
+        text: make assigned Pod state real on one node
+      - id: durable-state
+        text: persist Kubernetes API state for the control plane
+    matches:
+      - left_id: apiserver
+        right_id: api-front-door
+      - left_id: scheduler
+        right_id: placement
+      - left_id: kubelet
+        right_id: node-execution
+      - left_id: etcd
+        right_id: durable-state
+    hint: Separate API admission, durable state, placement decisions, and node-side execution.
+    learn_first:
+      title: Components cooperate through the API but own different decisions.
+      body: The API server is the front door, etcd stores control-plane state, the scheduler records placement decisions, and kubelet reconciles assigned Pods on its node.
+      visual:
+        - "client → API server ↔ etcd"
+        - "scheduler → placement"
+        - "kubelet → node execution"
+      variant_prompt: Match the same four components after asking which one stores state, chooses placement, accepts API traffic, and executes on a node.
+    feedback:
+      title: Decision ownership stays separated.
+      explanation: Remembering one primary responsibility per component prevents common traps such as saying the scheduler starts containers or etcd reconciles workloads.
+      points:
+        - Scheduler chooses placement; kubelet executes the assignment.
+        - etcd stores state but does not make scheduling decisions.
+      visual:
+        - "API server: front door"
+        - "etcd: state"
+        - "scheduler: placement"
+        - "kubelet: execution"
+
+  - id: lesson:kcna-kubernetes-fundamentals/trace-apply-path
+    kind: trace
+    unit_id: fpp:kubernetes-architecture-components
+    objective_ids: [fpp:kubernetes-architecture-components/request-path]
+    evidence: application
+    prompt: Arrange the main path from kubectl submitting a workload to a container running on a chosen node.
+    items:
+      - id: runtime
+        text: Container runtime starts the container
+      - id: api
+        text: API server accepts and persists the object after request checks
+      - id: kubelet
+        text: Kubelet observes the Pod assigned to its node
+      - id: scheduler
+        text: Scheduler chooses a node for the unscheduled Pod
+      - id: kubectl
+        text: kubectl sends the API request
+      - id: controller
+        text: A controller creates or updates the required Pod object
+    correct_order: [kubectl, api, controller, scheduler, kubelet, runtime]
+    hint: The API call records intent first; node-side execution happens only after controllers and scheduling have produced an assigned Pod.
+    learn_first:
+      title: kubectl does not SSH to worker nodes.
+      body: kubectl talks to the Kubernetes API. Control-plane components react through API state, the scheduler records placement, and kubelet uses the runtime to execute assigned containers.
+      visual:
+        - "kubectl → API → controller → scheduler → kubelet → runtime"
+      variant_prompt: Reconstruct how an accepted Deployment change becomes a running container without assuming the client directly controls a worker node.
+    feedback:
+      title: Intent travels through the API before execution reaches the node.
+      explanation: Kubernetes separates submission, reconciliation, placement, and execution. Each stage leaves observable state that can be inspected independently.
+      points:
+        - kubectl is an API client.
+        - kubelet, not the scheduler, drives runtime execution on the selected node.
+      visual:
+        - "client → control plane decisions → node execution"
+
+  - id: lesson:kcna-kubernetes-fundamentals/explain-proof-boundary
+    kind: explain
+    unit_id: fpp:kubernetes-manifests
+    objective_ids: [fpp:kubernetes-manifests/proof-boundary]
+    evidence: recall
+    prompt: Why does a successful kubectl apply not prove that the application is healthy and serving real users?
+    model_answer: A successful apply proves that the API request was accepted for the object, not that every later controller, scheduling, node, network, and application step succeeded. End-to-end health requires additional evidence such as status, events, ready endpoints, logs, and a real request.
+    critical_points:
+      - API acceptance is only one boundary in the request path.
+      - Reconciliation, placement, runtime, networking, and application behavior happen afterward.
+      - End-to-end proof requires observing the later boundaries, ideally with a real request.
+    hint: Name what apply proves, then list at least two later stages it does not prove.
+    learn_first:
+      title: Configuration proof is not behavior proof.
+      body: The API server can accept a valid object while later scheduling, image pull, startup, readiness, Service selection, or application behavior still fails.
+      visual:
+        - "apply ✓ → API object accepted"
+        - "running? ready? reachable? correct response? → still unproven"
+      variant_prompt: A Deployment manifest is accepted with no API error. Explain why a user can still receive a failed request.
+    feedback:
+      title: Prove each boundary separately.
+      explanation: Kubernetes exposes rich status and events, but the strongest application proof is still evidence from the boundary the user actually depends on.
+      points:
+        - Accepted desired state is not synonymous with successful execution.
+        - Troubleshooting should move from intent toward user-visible behavior.
+      visual:
+        - "intent → reconciliation → placement → runtime → network → app → user"
+
