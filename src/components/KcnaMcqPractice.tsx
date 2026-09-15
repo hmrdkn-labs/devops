@@ -63,6 +63,19 @@ export default function KcnaMcqPractice(props: Props) {
     return ((questionIndex() + (checked() ? 1 : 0)) / sessionQuestions().length) * 100;
   });
 
+  function animateQuestionCard() {
+    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    queueMicrotask(() => {
+      document.querySelector<HTMLElement>('.mcq-question-card')?.animate(
+        [
+          { opacity: 0, transform: 'translateY(8px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        { duration: 180, easing: 'cubic-bezier(.2,.8,.2,1)' },
+      );
+    });
+  }
+
   function resetSession(nextMode = mode(), nextOffset = mixOffset()) {
     setMode(nextMode);
     setMixOffset(nextOffset);
@@ -72,6 +85,7 @@ export default function KcnaMcqPractice(props: Props) {
     setScore(0);
     setFinished(false);
     setFirstAttemptCorrect(null);
+    animateQuestionCard();
   }
 
   function choose(optionId: string) {
@@ -117,6 +131,8 @@ export default function KcnaMcqPractice(props: Props) {
     setSelected([]);
     setChecked(false);
     setFirstAttemptCorrect(null);
+    animateQuestionCard();
+    queueMicrotask(() => document.querySelector<HTMLElement>('.mcq-question-card')?.focus({ preventScroll: true }));
   }
 
   function optionState(optionId: string) {

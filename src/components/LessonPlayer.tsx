@@ -59,8 +59,8 @@ export default function LessonPlayer(props: Props) {
   const [showHint, setShowHint] = createSignal(false);
   const [learnFirst, setLearnFirst] = createSignal(false);
   const [variant, setVariant] = createSignal(false);
-  const [saving, setSaving] = createSignal(false);
   const [status, setStatus] = createSignal('');
+  let persistSequence = 0;
 
   const [me] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/me', { credentials: 'include' });
@@ -122,6 +122,7 @@ export default function LessonPlayer(props: Props) {
   onMount(() => setHydrated(true));
 
   function resetInteraction(nextExercise = exercise()) {
+    persistSequence += 1;
     setSelected([]);
     setOrder(rotatedOrder(nextExercise));
     setConnections({});
@@ -135,7 +136,6 @@ export default function LessonPlayer(props: Props) {
     setShowHint(false);
     setLearnFirst(false);
     setVariant(false);
-    setSaving(false);
     setStatus('');
   }
 
@@ -144,31 +144,57 @@ export default function LessonPlayer(props: Props) {
       setStatus('Guest mode: this session stays in memory and does not change mastery.');
       return;
     }
-    setSaving(true);
-    const response = await fetch('/api/lesson-event', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        lessonId: props.lesson.id,
-        lessonRevision: props.lesson.revision,
-        exerciseId: exercise().id,
-        assisted: assisted(),
-        correct: isCorrect,
-        completed,
-        responseMarkdown,
-        idempotencyKey: crypto.randomUUID(),
-      }),
-    });
-    if (response.ok) {
-      const result = await response.json() as { evidence?: string };
-      setStatus(result.evidence === 'encounter'
-        ? 'Saved as encounter only.'
-        : `Saved as ${result.evidence} evidence. Retention still requires a later review.`);
-    } else {
-      setStatus('Result kept in this session; persistence failed.');
+    const payload = {
+      lessonId: props.lesson.id,
+      lessonRevision: props.lesson.revision,
+      exerciseId: exercise().id,
+      assisted: assisted(),
+      correct: isCorrect,
+      completed,
+      responseMarkdown,
+      idempotencyKey: crypto.randomUUID(),
+    };
+    const sequence = ++persistSequence;
+    setStatus('Saving result…');
+    try {
+      const response = await fetch('/api/lesson-event', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        const result = await response.json() as { evidence?: string };
+        if (exercise().id === payload.exerciseId && persistSequence === sequence) {
+          setStatus(result.evidence === 'encounter'
+            ? 'Saved as encounter only.'
+            : `Saved as ${result.evidence} evidence. Retention still requires a later review.`);
+        }
+      } else if (exercise().id === payload.exerciseId && persistSequence === sequence) {
+        setStatus('Result kept in this session; persistence failed.');
+      }
+    } catch {
+      if (exercise().id === payload.exerciseId && persistSequence === sequence) {
+        setStatus('Result kept in this session; persistence failed.');
+      }
     }
-    setSaving(false);
+  }
+
+  function revealFeedback() {
+    queueMicrotask(() => document.querySelector<HTMLElement>('.lesson-feedback')?.scrollIntoView({ block: 'nearest' }));
+  }
+
+  function animateLessonTask() {
+    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    queueMicrotask(() => {
+      document.querySelector<HTMLElement>('[data-lesson-task]')?.animate(
+        [
+          { opacity: 0, transform: 'translateY(8px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        { duration: 180, easing: 'cubic-bezier(.2,.8,.2,1)' },
+      );
+    });
   }
 
   function moveItem(index: number, direction: -1 | 1) {
@@ -204,38 +230,38 @@ export default function LessonPlayer(props: Props) {
     return false;
   }
 
-  async function checkAnswer() {
+  function checkAnswer() {
     const current = exercise();
     if (!canCheck(current)) return;
     if (current.kind === 'explain') {
       setRevealed(true);
       setCorrect(null);
-      await persistEvent(false, answer().trim());
-      queueMicrotask(() => document.querySelector<HTMLElement>('.lesson-feedback')?.scrollIntoView({ block: 'nearest' }));
+      revealFeedback();
+      void persistEvent(false, answer().trim());
       return;
     }
     const result = computeCorrect(current);
     setCorrect(result);
     setRevealed(true);
-    await persistEvent(result, undefined, true);
-    queueMicrotask(() => document.querySelector<HTMLElement>('.lesson-feedback')?.scrollIntoView({ block: 'nearest' }));
+    revealFeedback();
+    void persistEvent(result, undefined, true);
   }
 
-  async function rateExplanation(rating: Rating) {
+  function rateExplanation(rating: Rating) {
     const current = exercise();
     if (current.kind !== 'explain') return;
     const covered = checkedPoints().length === current.critical_points.length;
     const cleanRecall = (rating === 'good' || rating === 'easy') && covered;
     setCorrect(cleanRecall);
     setRated(true);
-    await persistEvent(cleanRecall, undefined, true);
+    void persistEvent(cleanRecall, undefined, true);
   }
 
-  async function startLearnFirst() {
+  function startLearnFirst() {
     setAssisted(true);
     setShowHint(false);
     setLearnFirst(true);
-    await persistEvent(false);
+    void persistEvent(false);
   }
 
   function useHint() {
@@ -244,6 +270,7 @@ export default function LessonPlayer(props: Props) {
   }
 
   function tryVariant() {
+    persistSequence += 1;
     setLearnFirst(false);
     setVariant(true);
     setRevealed(false);
@@ -258,6 +285,7 @@ export default function LessonPlayer(props: Props) {
   }
 
   function retryExercise() {
+    persistSequence += 1;
     setAssisted(true);
     setRevealed(false);
     setCorrect(null);
@@ -279,7 +307,8 @@ export default function LessonPlayer(props: Props) {
     setStep(nextIndex);
     resetInteraction(props.lesson.exercises[nextIndex]!);
     window.scrollTo({ top: 0, behavior: 'auto' });
-    queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus());
+    animateLessonTask();
+    queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus({ preventScroll: true }));
   }
 
   function kindLabel(kind: LessonExercise['kind']) {
@@ -602,20 +631,20 @@ export default function LessonPlayer(props: Props) {
                     class="lesson-primary"
                     type="button"
                     data-testid="lesson-check"
-                    disabled={!hydrated() || !canCheck(exercise()) || saving()}
+                    disabled={!hydrated() || !canCheck(exercise())}
                     onClick={checkAnswer}
                   >
-                    {saving() ? 'Saving…' : 'Check'}
+                    Check
                   </button>
                 </Show>
                 <Show when={revealed() && explainExercise() && !rated()}>
                   <div class="lesson-rating" role="group" aria-label="Recall rating">
                     <span>How effortful was accurate recall?</span>
                     <div>
-                      <button type="button" disabled={saving()} onClick={() => rateExplanation('again')}>Again</button>
-                      <button type="button" disabled={saving()} onClick={() => rateExplanation('hard')}>Hard</button>
-                      <button type="button" disabled={saving()} onClick={() => rateExplanation('good')}>Good</button>
-                      <button type="button" disabled={saving()} onClick={() => rateExplanation('easy')}>Easy</button>
+                      <button type="button" onClick={() => rateExplanation('again')}>Again</button>
+                      <button type="button" onClick={() => rateExplanation('hard')}>Hard</button>
+                      <button type="button" onClick={() => rateExplanation('good')}>Good</button>
+                      <button type="button" onClick={() => rateExplanation('easy')}>Easy</button>
                     </div>
                   </div>
                 </Show>

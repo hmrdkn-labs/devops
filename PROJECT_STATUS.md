@@ -1,9 +1,25 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-13 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-15 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**Interaction smoothness v8 is release-ready:** the app remains Astro + Solid +
+Cloudflare/D1, but learner-facing state changes no longer wait for persistence.
+Question-first reveal, lesson checking, Learn-first, and recall rating update the
+UI immediately while authenticated writes finish in the background. Async
+responses are snapshot/sequence guarded so an older request cannot overwrite the
+status of a later question or correction attempt. Feedback, hints, model
+comparisons, MCQ transitions, buttons, options, and progress bars now use a
+restrained 120–180 ms motion system; reduced-motion still collapses it. Lesson
+feedback is positioned before persistence returns, and question changes use
+stable focus plus a short enter transition. A new Playwright regression test
+holds `/api/attempt` open and proves the model answer is visible before the
+network write completes. Local `npm run ci`, D1 checks, `git diff --check`, and
+the full Playwright matrix pass: **43 passed with 14 intentional skips** across
+desktop, tablet, and mobile. **No implementation blocker.** Next step is the
+protected exact-SHA production release and live interaction verification.
 
 **Feedback clarity release is live:** exact public source
 `8afba99be47ce582f430b47cbc8e65ec2194207f` passed public CI run

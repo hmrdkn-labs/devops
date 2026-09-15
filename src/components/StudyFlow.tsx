@@ -103,7 +103,6 @@ export default function StudyFlow(props: Props) {
   const [showHint, setShowHint] = createSignal(false);
   const [learningFirst, setLearningFirst] = createSignal(false);
   const [reflection, setReflection] = createSignal('');
-  const [saving, setSaving] = createSignal(false);
   const [saveMessage, setSaveMessage] = createSignal('');
   const [checked, setChecked] = createSignal<string[]>([]);
   const [note, setNote] = createSignal('');
@@ -113,6 +112,7 @@ export default function StudyFlow(props: Props) {
   const [taskMessage, setTaskMessage] = createSignal('');
   const [guestLessonCompleted, setGuestLessonCompleted] = createSignal(false);
   const [guestPracticesCompleted, setGuestPracticesCompleted] = createSignal<string[]>([]);
+  let saveSequence = 0;
   const [me] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/me', { credentials: 'include' });
     return response.json() as Promise<Me>;
@@ -178,11 +178,21 @@ export default function StudyFlow(props: Props) {
     else void refetchLearningProgress();
   }
 
-  async function reveal() {
-    if (!answer().trim()) return;
-    setSaving(true);
-    setSaveMessage('');
-    if (me()?.authenticated) {
+  function animateQuestionStage() {
+    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    queueMicrotask(() => {
+      document.querySelector<HTMLElement>('.question-stage')?.animate(
+        [
+          { opacity: 0, transform: 'translateY(8px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        { duration: 180, easing: 'cubic-bezier(.2,.8,.2,1)' },
+      );
+    });
+  }
+
+  async function persistAttempt(questionId: string, answerMarkdown: string, sequence: number) {
+    try {
       const response = await fetch('/api/attempt', {
         method: 'POST',
         credentials: 'include',
@@ -190,28 +200,47 @@ export default function StudyFlow(props: Props) {
         body: JSON.stringify({
           unitId: props.unit.id,
           unitRevision: props.unit.revision,
-          questionId: question().id,
-          answerMarkdown: answer(),
+          questionId,
+          answerMarkdown,
           idempotencyKey: crypto.randomUUID(),
         }),
       });
-      setSaveMessage(response.ok ? 'Private answer saved.' : 'Answer kept in memory; saving failed.');
+      if (question().id === questionId && saveSequence === sequence) {
+        setSaveMessage(response.ok ? 'Private answer saved.' : 'Answer kept in memory; saving failed.');
+      }
       if (response.ok) void refetchLearningProgress();
+    } catch {
+      if (question().id === questionId && saveSequence === sequence) setSaveMessage('Answer kept in memory; saving failed.');
+    }
+  }
+
+  function reveal() {
+    if (!answer().trim()) return;
+    const questionIdSnapshot = question().id;
+    const answerSnapshot = answer().trim();
+    setRevealed(true);
+    if (me()?.authenticated) {
+      const sequence = ++saveSequence;
+      setSaveMessage('Saving privately…');
+      void persistAttempt(questionIdSnapshot, answerSnapshot, sequence);
     } else {
       setSaveMessage('Guest answer kept in memory for this page only.');
     }
-    setSaving(false);
-    setRevealed(true);
   }
 
-  async function rate(value: 'again' | 'hard' | 'good' | 'easy') {
-    setSaving(true);
+  async function persistRating(value: 'again' | 'hard' | 'good' | 'easy', reflectionMarkdown: string, sequence: number) {
+    const questionId = question().id;
+    const questionPrompt = question().prompt;
     const preferredType = question().kind === 'scenario' ? 'scenario' : 'prompt';
     const card = props.unit.cards.find((candidate) =>
       candidate.type === preferredType &&
       candidate.objective_ids.some((id) => question().objective_ids.includes(id)),
     ) ?? props.unit.cards.find((candidate) => candidate.type === preferredType) ?? props.unit.cards[0];
-    if (me()?.authenticated && card) {
+    if (!card) {
+      if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating kept in memory; no review card is configured.');
+      return;
+    }
+    try {
       const response = await fetch('/api/review', {
         method: 'POST',
         credentials: 'include',
@@ -224,24 +253,39 @@ export default function StudyFlow(props: Props) {
           idempotencyKey: crypto.randomUUID(),
         }),
       });
-      if (!response.ok) setSaveMessage('Rating kept in memory; scheduling failed.');
-      else void refetchLearningProgress();
-      if (reflection().trim()) {
+      if (!response.ok) {
+        if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating kept in memory; scheduling failed.');
+      } else {
+        if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating scheduled.');
+        void refetchLearningProgress();
+      }
+      if (reflectionMarkdown) {
         const noteResponse = await fetch('/api/notes', {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             unitId: props.unit.id,
-            markdown: `### Correction — ${question().prompt}\n\n${reflection().trim()}`,
+            markdown: `### Correction — ${questionPrompt}\n\n${reflectionMarkdown}`,
           }),
         });
-        if (noteResponse.ok) setSaveMessage('Rating scheduled. Correction appended to your private notes.');
+        if (noteResponse.ok && question().id === questionId && saveSequence === sequence) {
+          setSaveMessage('Rating scheduled. Correction appended to your private notes.');
+        }
       }
+    } catch {
+      if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating kept in memory; scheduling failed.');
     }
-    setSaving(false);
+  }
+
+  function rate(value: 'again' | 'hard' | 'good' | 'easy') {
+    const reflectionSnapshot = reflection().trim();
     setRating(value);
     setRated(true);
+    if (!me()?.authenticated) return;
+    const sequence = ++saveSequence;
+    setSaveMessage('Scheduling review…');
+    void persistRating(value, reflectionSnapshot, sequence);
   }
 
   function taskIsCompleted(taskType: 'lesson' | 'practice', taskId: string) {
@@ -302,6 +346,7 @@ export default function StudyFlow(props: Props) {
       setShowHint(false);
       setLearningFirst(false);
       setSaveMessage('');
+      animateQuestionStage();
     } else {
       setFinished(true);
     }
@@ -419,8 +464,8 @@ export default function StudyFlow(props: Props) {
                 rows={8}
               />
               <div class="stage-actions">
-                <button class="button primary" disabled={!hydrated() || !answer().trim() || saving()} onClick={reveal}>
-                  {saving() ? 'Saving…' : 'Save privately & reveal'}
+                <button class="button primary" disabled={!hydrated() || !answer().trim()} onClick={reveal}>
+                  Save privately & reveal
                 </button>
                 <span class="microcopy">No AI grading. You compare the reasoning yourself.</span>
               </div>
@@ -505,11 +550,12 @@ export default function StudyFlow(props: Props) {
                 <div class="rating-block">
                   <p>How effortful was accurate recall?</p>
                   <div class="rating-buttons" role="group" aria-label="Recall rating">
-                    <button disabled={saving()} onClick={() => rate('again')}>Again</button>
-                    <button disabled={saving()} onClick={() => rate('hard')}>Hard</button>
-                    <button disabled={saving()} onClick={() => rate('good')}>Good</button>
-                    <button disabled={saving()} onClick={() => rate('easy')}>Easy</button>
+                    <button onClick={() => rate('again')}>Again</button>
+                    <button onClick={() => rate('hard')}>Hard</button>
+                    <button onClick={() => rate('good')}>Good</button>
+                    <button onClick={() => rate('easy')}>Easy</button>
                   </div>
+                  <span class="save-status" role="status">{saveMessage()}</span>
                 </div>
               </Show>
             </Show>

@@ -24,6 +24,46 @@ test('guest completes the question-first study flow without persistence', async 
   await expect(page.getByRole('heading', { name: 'Apply the model safely' })).toBeVisible();
 });
 
+test('authenticated reveal is immediate even while persistence is still pending', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Optimistic persistence behavior only needs one browser project');
+  let releaseAttempt!: () => void;
+  let attemptStarted = false;
+  const attemptGate = new Promise<void>((resolve) => {
+    releaseAttempt = resolve;
+  });
+
+  await page.route('**/api/me', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ authenticated: true, authConfigured: true }),
+  }));
+  await page.route('**/api/progress', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ units: [] }),
+  }));
+  await page.route('**/api/attempt', async (route) => {
+    attemptStarted = true;
+    await attemptGate;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ persisted: true }),
+    });
+  });
+
+  await page.goto('/learn/processes-and-resources');
+  await page.getByLabel('Your explanation').fill('A process consumes finite resources.');
+  await page.getByRole('button', { name: 'Save privately & reveal' }).click();
+
+  await expect.poll(() => attemptStarted).toBe(true);
+  await expect(page.getByText('Concise model')).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Saving privately');
+
+  releaseAttempt();
+  await expect(page.getByRole('status')).toContainText('Private answer saved.');
+});
+
 test('new learners can learn first or use reference mode without faking recall', async ({ page }) => {
   await page.goto('/learn/ip-subnets');
 

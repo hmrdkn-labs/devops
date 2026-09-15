@@ -272,6 +272,10 @@ h1, h2, h3 { color: var(--ink); line-height: 1.18; text-wrap: balance; }
 }
 .section-kicker { margin: 0; }
 .lede { max-width: 70ch; color: var(--muted); font-size: 1rem; line-height: 1.6; }
+@keyframes learning-enter {
+  from { opacity: 0; transform: translateY(8px) scale(.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 .button {
   display: inline-flex;
   align-items: center;
@@ -288,6 +292,7 @@ h1, h2, h3 { color: var(--ink); line-height: 1.18; text-wrap: balance; }
   font-size: .84rem;
   font-weight: 680;
   text-decoration: none;
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
 }
 .button:hover { border-color: var(--ink); background: var(--surface-raised); }
 .button:active { transform: translateY(2px); box-shadow: none; }
@@ -857,7 +862,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .unit-learning-status small { color: var(--faint); font-size: .64rem; line-height: 1.4; }
 .question-stage { margin-bottom: 2rem; padding: 1.15rem; border: 1px solid var(--line); border-radius: var(--radius-surface); background: var(--surface); box-shadow: var(--shadow-card); }
 .stage-progress { height: .42rem; margin: -.15rem 0 1rem; overflow: hidden; border-radius: 999px; background: var(--surface-subtle); }
-.stage-progress span { border-radius: inherit; }
+.stage-progress span { border-radius: inherit; transition: width 180ms ease; }
 .question-stage-label { display: flex; gap: .65rem; align-items: center; }
 .question-stage-label small { display: block; margin-top: .08rem; color: var(--faint); font: .61rem var(--mono); }
 .question-stage-number { display: inline-grid; flex: 0 0 auto; width: 2rem; height: 2rem; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--accent-strong); font-weight: 800; }
@@ -870,6 +875,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .text-button { min-height: 34px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: .72rem; text-decoration: underline; text-underline-offset: .2em; }
 .text-button:hover { color: var(--ink); background: transparent; }
 .learning-hint { margin-top: .65rem; padding: .75rem .85rem; border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); border-radius: var(--radius-control); background: var(--accent-soft); }
+.learning-hint,
+.comparison,
+.self-check-verdict,
+.lesson-hint,
+.lesson-learn-first,
+.lesson-feedback,
+.mcq-feedback {
+  animation: learning-enter 180ms cubic-bezier(.2,.8,.2,1) both;
+}
 .learning-hint strong { font-size: .7rem; }
 .learning-hint p { margin: .25rem 0 0; color: var(--muted); font-size: .78rem; }
 .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
@@ -1044,7 +1058,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .mcq-progress-row > div:first-child { display: flex; justify-content: space-between; gap: 1rem; color: var(--muted); font: .66rem var(--mono); }
 .mcq-progress-row strong { color: var(--ink); }
 .mcq-progress-track { height: .5rem; overflow: hidden; border-radius: 999px; background: var(--surface-subtle); }
-.mcq-progress-track > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.mcq-progress-track > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width 180ms ease; }
 .mcq-question-card {
   padding: clamp(1rem, 3vw, 1.55rem);
   border: 1px solid var(--line);
@@ -1080,8 +1094,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   border-radius: var(--radius-control);
   background: var(--surface);
   cursor: pointer;
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
 }
-.mcq-option:hover { border-color: var(--line-strong); background: var(--surface-subtle); }
+.mcq-option:hover { border-color: var(--line-strong); background: var(--surface-subtle); transform: translateY(-1px); }
+.mcq-option:active { transform: translateY(0) scale(.997); }
 .mcq-option input { width: 1.1rem; height: 1.1rem; margin: .28rem 0 0; accent-color: var(--accent); }
 .mcq-option-letter {
   display: inline-grid;
@@ -1440,7 +1456,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   cursor: pointer;
   font-weight: 800;
   text-decoration: none;
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
 }
+.lesson-primary:hover:not(:disabled) { transform: translateY(-1px); }
+.lesson-primary:active:not(:disabled) { transform: translateY(1px) scale(.997); }
 .lesson-primary:disabled { cursor: not-allowed; opacity: .45; }
 .lesson-choice-stack,
 .lesson-order,
@@ -1471,6 +1490,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   color: var(--ink);
   cursor: pointer;
   text-align: left;
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
 }
 .lesson-option > span:first-child {
   width: 2rem;
@@ -1486,6 +1506,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .lesson-option-copy { display: grid; gap: .2rem; min-width: 0; }
 .lesson-option-copy strong { line-height: 1.45; }
 .lesson-option:hover:not(:disabled), .lesson-option[data-state='selected'] { border-color: var(--accent); background: var(--accent-soft); }
+.lesson-option:hover:not(:disabled) { transform: translateY(-1px); }
+.lesson-option:active:not(:disabled) { transform: translateY(0) scale(.997); }
 .lesson-option:disabled { cursor: default; }
 .lesson-option[data-state='correct-selected'],
 .lesson-option[data-state='correct-missed'] { border-color: var(--success); background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface)); }
@@ -1514,6 +1536,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface-subtle);
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
 }
 .lesson-order-item[data-state='correct'],
 .lesson-connect-row[data-state='correct'],
@@ -1546,6 +1569,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface-subtle);
+  transition: border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
 }
 .lesson-connect-row select,
 .lesson-blank-grid select {
@@ -1683,8 +1707,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   color: var(--ink);
   cursor: pointer;
   font-weight: 800;
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
 }
-.lesson-secondary:hover { border-color: var(--accent); }
+.lesson-secondary:hover { border-color: var(--accent); transform: translateY(-1px); }
+.lesson-secondary:active { transform: translateY(1px) scale(.997); }
 .lesson-complete {
   min-height: calc(100svh - 140px);
   display: grid;
