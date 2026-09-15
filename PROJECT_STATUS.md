@@ -5,6 +5,27 @@
 
 ## Read this first
 
+**Reference visual learning v11 is a release candidate:** the visual teaching
+layer is no longer limited to KCNA exercises. All **37 published reference
+units** now carry a framework-independent `visuals.yaml` sidecar with an
+immutable visual ID, kind, eyebrow, title, ordered lines, and a teaching point.
+The same step-through visual engine used by the KCNA player is now rendered at
+the top of both Learn-first reading and direct Reference mode, before the
+canonical Markdown lesson. This keeps the source portable while giving Linux,
+networking, containers, Kubernetes, delivery, architecture, and operations
+references an explicit causal/state/ownership model. The content compiler,
+runtime catalog, manifest, raw exports, and downloadable archive include the
+new sidecars, and published-unit validation fails if a reference visual is
+missing. Reference visuals are classified as enrichment, so they do not alter
+Recall/Application/Retained evidence or FSRS state. Local validation is green
+for content, Astro typecheck, 36 unit tests, D1 checks, production build, and
+the new reference-mode browser contract on desktop/tablet/mobile. Full
+Playwright reached 47 passing checks with one unrelated tablet MCQ timing flake;
+that exact MCQ test passed immediately in isolation. Rendered Chromium QA on
+`kubernetes-networking-request-path` confirmed the intended hierarchy: visual
+model first, explanatory prose/code second, guided practice and recall below.
+**Release/deployment is the remaining step for v11; no implementation blocker.**
+
 **KCNA visual learning v10 is live:** every one of the **45 KCNA
 interactive exercises** now has a reusable visual teaching layer in both its
 assisted Learn-first path and its post-attempt feedback. Existing portable YAML

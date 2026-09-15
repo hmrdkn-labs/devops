@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:cloud-native-delivery-gitops
+revision: 1
+visuals:
+  - id: fpp:cloud-native-delivery-gitops/visual-delivery-loop
+    kind: flow
+    eyebrow: Delivery path
+    title: Separate artifact creation from release reconciliation
+    lines:
+      - "source commit → CI builds artifact → desired deployment state in Git → reconciler → runtime"
+    teaching_point: CI creates and verifies artifacts; GitOps-style CD reconciles reviewed desired state into the runtime and keeps correcting drift.

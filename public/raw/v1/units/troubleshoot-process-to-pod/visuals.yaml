@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:troubleshoot-process-to-pod
+revision: 1
+visuals:
+  - id: fpp:troubleshoot-process-to-pod/visual-evidence-ladder
+    kind: evidence
+    eyebrow: Evidence ladder
+    title: Localize the broken layer before changing state
+    lines:
+      - "declared intent → API status and events → controller or scheduler → kubelet and runtime → process → network and policy → user-visible probe"
+    teaching_point: Move down the evidence ladder until the first broken boundary is identified, then change the smallest relevant layer and verify from the user-visible path again.

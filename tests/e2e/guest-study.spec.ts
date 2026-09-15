@@ -76,12 +76,18 @@ test('new learners can learn first or use reference mode without faking recall',
 
   await page.getByRole('button', { name: "I haven't learned this yet" }).click();
   await expect(page.getByRole('heading', { name: 'Build the model first.' })).toBeVisible();
+  await expect(page.getByTestId('reference-visuals')).toBeVisible();
+  await expect(page.getByTestId('lesson-visual-guide').first()).toBeVisible();
   await expect(page.getByLabel('Your explanation')).toBeHidden();
   await page.getByRole('button', { name: 'Try the question now' }).click();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
 
   await page.getByRole('button', { name: 'Reference', exact: true }).click();
   await expect(page.getByText('Reference lesson')).toBeVisible();
+  await expect(page.getByTestId('reference-visuals')).toBeVisible();
+  const visual = page.getByTestId('lesson-visual-guide').first();
+  await visual.getByRole('button', { name: 'Next →' }).click();
+  await expect(visual.locator('.lesson-visual-counter')).toContainText('2 /');
   await expect(page.getByLabel('Your explanation')).toBeHidden();
   const lessonCompletion = page.getByRole('button', { name: 'Mark lesson read' });
   await lessonCompletion.click();

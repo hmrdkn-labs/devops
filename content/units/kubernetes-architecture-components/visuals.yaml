@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-architecture-components
+revision: 1
+visuals:
+  - id: fpp:kubernetes-architecture-components/visual-request-path
+    kind: ownership
+    eyebrow: API request path
+    title: A workload change crosses control-plane and node responsibilities
+    lines:
+      - "kubectl → API server → etcd → controller manager and scheduler → kubelet → container runtime → Pod status"
+    teaching_point: Kubernetes components are easier to remember by following one change end to end and assigning each decision or action to the component that owns it.

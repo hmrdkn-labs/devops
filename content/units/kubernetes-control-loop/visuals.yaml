@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-control-loop
+revision: 1
+visuals:
+  - id: fpp:kubernetes-control-loop/visual-reconciliation
+    kind: state
+    eyebrow: Reconciliation loop
+    title: Controllers repair drift between desired and observed state
+    lines:
+      - "desired replicas 3 → observed matching Pods 2 → controller detects drift → create replacement Pod → observed matching Pods 3"
+    teaching_point: Kubernetes reliability comes from repeated reconciliation of durable desired state against current observations, not from assuming individual Pods never fail.

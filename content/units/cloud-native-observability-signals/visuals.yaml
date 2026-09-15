@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:cloud-native-observability-signals
+revision: 1
+visuals:
+  - id: fpp:cloud-native-observability-signals/visual-evidence-chain
+    kind: evidence
+    eyebrow: Evidence model
+    title: Use signals to narrow a failure, then prove the outcome
+    lines:
+      - "user symptom → metrics narrow scope → traces follow a request → logs explain local events → probe confirms outcome"
+    teaching_point: No single signal is complete observability; combine complementary evidence until the user-visible behavior is explained and verified.

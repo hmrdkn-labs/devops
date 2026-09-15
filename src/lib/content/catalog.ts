@@ -7,6 +7,7 @@ import {
   practiceSetSchema,
   practiceFileSchema,
   questionFileSchema,
+  referenceVisualFileSchema,
   sourceFileSchema,
   unitMetadataSchema,
   type CertificationRegistry,
@@ -44,6 +45,7 @@ export const units: LearningUnit[] = unitDirs.map((directory) => {
   const cards = readYaml(`${directory}/cards.yaml`, cardFileSchema);
   const sources = readYaml(`${directory}/sources.yaml`, sourceFileSchema);
   const practice = readYaml(`${directory}/practice.yaml`, practiceFileSchema);
+  const visuals = readYaml(`${directory}/visuals.yaml`, referenceVisualFileSchema);
   return {
     metadata,
     markdown: markdownModules[`${directory}/unit.md`],
@@ -51,6 +53,7 @@ export const units: LearningUnit[] = unitDirs.map((directory) => {
     cards: cards.cards,
     sources: sources.sources,
     practices: practice.practices,
+    visuals: visuals.visuals,
   };
 });
 

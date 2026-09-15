@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-apply-live-state
+revision: 1
+visuals:
+  - id: fpp:kubernetes-apply-live-state/visual-declarative-apply
+    kind: state
+    eyebrow: State model
+    title: Apply changes API state; controllers change runtime state
+    lines:
+      - "local manifest → kubectl apply → API server live object → controller reconciliation → runtime objects → observed status"
+    teaching_point: kubectl apply does not directly start containers; it updates declared API state, after which controllers and node agents converge the runtime toward that intent.

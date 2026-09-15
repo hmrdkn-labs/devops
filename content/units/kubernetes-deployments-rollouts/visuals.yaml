@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-deployments-rollouts
+revision: 1
+visuals:
+  - id: fpp:kubernetes-deployments-rollouts/visual-rollout
+    kind: lifecycle
+    eyebrow: Rollout lifecycle
+    title: A Pod-template change creates a new ReplicaSet revision
+    lines:
+      - "Deployment template v2 → new ReplicaSet v2 → scale v2 up and v1 down → new Pods become ready → rollout converges"
+    teaching_point: Deployment revisions are represented by ReplicaSets; rollout status proves controller convergence but still does not prove end-user application health.

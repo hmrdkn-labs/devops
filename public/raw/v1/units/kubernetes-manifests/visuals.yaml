@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-manifests
+revision: 1
+visuals:
+  - id: fpp:kubernetes-manifests/visual-object-boundary
+    kind: flow
+    eyebrow: API object model
+    title: A manifest becomes accepted API state before it becomes runtime behavior
+    lines:
+      - "YAML apiVersion + kind + metadata + spec → API validation and admission → stored object → controller action → status observation"
+    teaching_point: API acceptance proves that the object is valid and stored; successful workload execution requires later controller and runtime evidence.

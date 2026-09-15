@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:images-layers-registries
+revision: 1
+visuals:
+  - id: fpp:images-layers-registries/visual-image-supply-chain
+    kind: lifecycle
+    eyebrow: Image supply chain
+    title: Content-addressed image data moves from build to runtime
+    lines:
+      - "build → image manifest + config + filesystem layers → registry digest → pull → runtime root filesystem"
+    teaching_point: Tags are mutable names, while digests identify immutable content; the runtime reconstructs a container filesystem from the referenced image content.

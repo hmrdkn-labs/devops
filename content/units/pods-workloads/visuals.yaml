@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:pods-workloads
+revision: 1
+visuals:
+  - id: fpp:pods-workloads/visual-controller-choice
+    kind: ownership
+    eyebrow: Workload ownership
+    title: Choose the controller from the lifecycle semantics you need
+    lines:
+      - "desired workload behavior → Deployment or StatefulSet or DaemonSet or Job or CronJob → Pod template → managed Pods"
+    teaching_point: Pods are the execution unit, while workload controllers define identity, replacement, placement, completion, or scheduling semantics around those Pods.

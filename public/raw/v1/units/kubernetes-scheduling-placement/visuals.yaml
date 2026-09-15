@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-scheduling-placement
+revision: 1
+visuals:
+  - id: fpp:kubernetes-scheduling-placement/visual-scheduler-filter
+    kind: flow
+    eyebrow: Placement decision
+    title: Scheduling filters impossible nodes before choosing a feasible one
+    lines:
+      - "Pending Pod → resource requests → hard node constraints → taints and tolerations → affinity and topology scoring → bind selected node"
+    teaching_point: Placement is a sequence of feasibility and preference decisions; controllers express workload intent, while the scheduler chooses a node that satisfies the Pod's constraints.

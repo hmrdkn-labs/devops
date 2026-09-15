@@ -1,0 +1,12 @@
+schema_version: 1
+unit_id: fpp:kubernetes-namespaces-scope
+revision: 1
+visuals:
+  - id: fpp:kubernetes-namespaces-scope/visual-object-scope
+    kind: ownership
+    eyebrow: API scope
+    title: Namespace is part of namespaced object identity
+    lines:
+      - "kind + name + namespace → namespaced API object identity → policy and organization boundary"
+      - "cluster-scoped kind + name → cluster-wide object identity"
+    teaching_point: Namespaces organize and scope many API objects, but stronger isolation still depends on controls such as RBAC, admission policy, quotas, and NetworkPolicy.

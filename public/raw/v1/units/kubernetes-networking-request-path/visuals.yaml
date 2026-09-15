@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-networking-request-path
+revision: 1
+visuals:
+  - id: fpp:kubernetes-networking-request-path/visual-service-request
+    kind: flow
+    eyebrow: Data path
+    title: Trace a request from service discovery to a ready Pod
+    lines:
+      - "DNS name → Service virtual IP → EndpointSlice → ready Pod IP → node or CNI forwarding → Pod socket"
+    teaching_point: DNS discovery, Service endpoint selection, CNI connectivity, ingress routing, and NetworkPolicy are distinct layers even though one application request may cross all of them.

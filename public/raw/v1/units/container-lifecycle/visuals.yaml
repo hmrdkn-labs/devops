@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:container-lifecycle
+revision: 1
+visuals:
+  - id: fpp:container-lifecycle/visual-runtime-lifecycle
+    kind: lifecycle
+    eyebrow: Runtime lifecycle
+    title: A container is a runtime-created process lifecycle
+    lines:
+      - "image → create container state → start PID 1 → signal or exit → stopped container → removal"
+    teaching_point: The image is durable input; the container is runtime state around a process whose PID 1, exit status, logs, and restart policy determine lifecycle behavior.

@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:namespaces-cgroups
+revision: 1
+visuals:
+  - id: fpp:namespaces-cgroups/visual-container-kernel
+    kind: comparison
+    eyebrow: Kernel primitives
+    title: Containers are processes with scoped views and resource controls
+    lines:
+      - "ordinary process → namespaces restrict what it can see → cgroups account and limit resources → container isolation model"
+    teaching_point: Namespaces isolate views such as processes and networking, while cgroups control resource accounting and limits; neither creates a separate guest kernel like a virtual machine.

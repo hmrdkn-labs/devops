@@ -20,6 +20,7 @@ import {
   practiceSetSchema,
   practiceFileSchema,
   questionFileSchema,
+  referenceVisualFileSchema,
   sourceFileSchema,
   unitMetadataSchema,
   type LearningPath,
@@ -52,18 +53,19 @@ async function loadUnits(): Promise<LearningUnit[]> {
     const cards = await readYaml(path.join(base, 'cards.yaml'), cardFileSchema);
     const sources = await readYaml(path.join(base, 'sources.yaml'), sourceFileSchema);
     const practices = await readYaml(path.join(base, 'practice.yaml'), practiceFileSchema);
+    const visuals = await readYaml(path.join(base, 'visuals.yaml'), referenceVisualFileSchema);
     const markdown = await readFile(path.join(base, 'unit.md'), 'utf8');
 
     if (directory !== metadata.slug) {
       throw new Error(`${metadata.id}: directory must match slug ${metadata.slug}`);
     }
-    for (const sidecar of [questions, cards, sources, practices]) {
+    for (const sidecar of [questions, cards, sources, practices, visuals]) {
       if (sidecar.unit_id !== metadata.id) {
         throw new Error(`${metadata.id}: sidecar unit_id mismatch`);
       }
     }
-    if (questions.revision !== metadata.revision || cards.revision !== metadata.revision) {
-      throw new Error(`${metadata.id}: question/card revision must match metadata revision`);
+    if (questions.revision !== metadata.revision || cards.revision !== metadata.revision || visuals.revision !== metadata.revision) {
+      throw new Error(`${metadata.id}: question/card/visual revision must match metadata revision`);
     }
     return {
       metadata,
@@ -72,6 +74,7 @@ async function loadUnits(): Promise<LearningUnit[]> {
       cards: cards.cards,
       sources: sources.sources,
       practices: practices.practices,
+      visuals: visuals.visuals,
     };
   }));
 }
@@ -105,11 +108,14 @@ export function validateGraph(units: LearningUnit[], paths: LearningPath[], cert
       if (contentIds.has(source.id)) throw new Error(`Duplicate source ID: ${source.id}`);
       contentIds.add(source.id);
     }
-    for (const item of [...unit.questions, ...unit.cards, ...unit.practices]) {
+    for (const item of [...unit.questions, ...unit.cards, ...unit.practices, ...unit.visuals]) {
       if (contentIds.has(item.id)) throw new Error(`Duplicate content ID: ${item.id}`);
       contentIds.add(item.id);
     }
     if (unit.sources.length === 0) throw new Error(`${metadata.id}: at least one source is required`);
+    if (metadata.status === 'published' && unit.visuals.length === 0) {
+      throw new Error(`${metadata.id}: published units require at least one reference visual`);
+    }
     for (const mapping of metadata.certification_mappings) {
       if (!certificationIds.has(mapping.certification)) {
         throw new Error(`${metadata.id}: unknown certification ${mapping.certification}`);
@@ -252,6 +258,7 @@ export function manifestEntry(unit: LearningUnit) {
     markdown: unit.markdown,
     practices: unit.practices,
     sources: unit.sources,
+    visuals: unit.visuals,
   });
   const editorialHash = sha256({
     title: unit.metadata.title,
@@ -279,6 +286,8 @@ export function manifestEntry(unit: LearningUnit) {
     editorial_hash: editorialHash,
     content_hash: sha256({ masteryHash, enrichmentHash, editorialHash }),
     raw_markdown_url: `/raw/v1/units/${unit.metadata.slug}/unit.md`,
+    raw_visuals_url: `/raw/v1/units/${unit.metadata.slug}/visuals.yaml`,
+    visual_count: unit.visuals.length,
   };
 }
 

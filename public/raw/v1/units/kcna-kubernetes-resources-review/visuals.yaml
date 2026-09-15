@@ -1,0 +1,12 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-resources-review
+revision: 1
+visuals:
+  - id: fpp:kcna-kubernetes-resources-review/visual-resource-ownership
+    kind: ownership
+    eyebrow: Resource chain
+    title: Read Kubernetes resources as ownership and reconciliation
+    lines:
+      - "manifest → API object → Deployment → ReplicaSet → Pods"
+      - "labels + selector → membership → desired replicas versus observed replicas → reconciliation"
+    teaching_point: Resource questions are easier when you track object identity, ownership, selectors, and which controller repairs drift instead of memorizing YAML shapes alone.

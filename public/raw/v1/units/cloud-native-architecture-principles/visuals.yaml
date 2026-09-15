@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:cloud-native-architecture-principles
+revision: 1
+visuals:
+  - id: fpp:cloud-native-architecture-principles/visual-system-loop
+    kind: flow
+    eyebrow: System model
+    title: Cloud-native systems close the feedback loop
+    lines:
+      - "declared intent → automated reconciliation → running service → observable evidence → adaptation"
+    teaching_point: Cloud-native architecture is defined by adaptable feedback loops and loose coupling, not merely by running software in a cloud.

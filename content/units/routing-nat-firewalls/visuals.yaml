@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:routing-nat-firewalls
+revision: 1
+visuals:
+  - id: fpp:routing-nat-firewalls/visual-packet-policy
+    kind: flow
+    eyebrow: Packet path
+    title: Route, policy, and translation are separate decisions
+    lines:
+      - "packet → route lookup → firewall or stateful policy → NAT translation when configured → egress interface → reverse-path state"
+    teaching_point: Routing selects where a packet goes, firewall policy decides whether it may pass, and NAT rewrites addresses; debugging improves when these are not collapsed into one step.

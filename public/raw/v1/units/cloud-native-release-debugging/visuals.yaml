@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:cloud-native-release-debugging
+revision: 1
+visuals:
+  - id: fpp:cloud-native-release-debugging/visual-release-proof
+    kind: evidence
+    eyebrow: Release proof
+    title: Trace a release all the way to real traffic
+    lines:
+      - "artifact → rollout → ready Pods → Service endpoints → real request → user-visible result"
+    teaching_point: A successful rollout is only an intermediate proof; debugging continues through readiness, endpoints, routing, and an actual request.

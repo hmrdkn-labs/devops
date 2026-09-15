@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kcna-kubernetes-fundamentals-review
+revision: 1
+visuals:
+  - id: fpp:kcna-kubernetes-fundamentals-review/visual-component-ownership
+    kind: ownership
+    eyebrow: Component ownership
+    title: Follow desired state from client to container runtime
+    lines:
+      - "kubectl → API server → durable cluster state → controllers and scheduler → kubelet → CRI runtime → containers"
+    teaching_point: Control-plane components decide and record intent; node-side kubelet and the container runtime turn assigned Pod state into running processes.

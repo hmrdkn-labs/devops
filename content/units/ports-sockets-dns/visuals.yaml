@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:ports-sockets-dns
+revision: 1
+visuals:
+  - id: fpp:ports-sockets-dns/visual-name-to-process
+    kind: flow
+    eyebrow: Connection path
+    title: DNS finds an address; a socket reaches the process
+    lines:
+      - "hostname → DNS record → IP address → transport port → listening socket → process"
+    teaching_point: DNS resolves names to records but does not create connectivity; successful communication still requires routing, transport reachability, and a process listening on the destination socket.

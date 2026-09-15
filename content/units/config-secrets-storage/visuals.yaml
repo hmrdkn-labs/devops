@@ -1,0 +1,12 @@
+schema_version: 1
+unit_id: fpp:config-secrets-storage
+revision: 1
+visuals:
+  - id: fpp:config-secrets-storage/visual-config-storage
+    kind: ownership
+    eyebrow: Boundary map
+    title: Configuration and durable state travel through different paths
+    lines:
+      - "ConfigMap or Secret → Pod environment or mounted file → application"
+      - "PVC → StorageClass → CSI driver → PV → node mount → Pod"
+    teaching_point: Configuration delivery, secret handling, and persistent storage are separate lifecycles with different identity, security, and topology constraints.

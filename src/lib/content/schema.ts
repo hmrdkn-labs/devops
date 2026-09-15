@@ -93,6 +93,20 @@ export const practiceFileSchema = z.object({
   })).default([]),
 });
 
+export const referenceVisualFileSchema = z.object({
+  schema_version: z.literal(1),
+  unit_id: id,
+  revision: z.number().int().positive(),
+  visuals: z.array(z.object({
+    id,
+    kind: z.enum(['flow', 'state', 'ownership', 'comparison', 'lifecycle', 'evidence']),
+    eyebrow: z.string().min(2),
+    title: z.string().min(3),
+    lines: z.array(z.string().min(1)).min(1).max(8),
+    teaching_point: z.string().min(12),
+  })).min(1),
+});
+
 const mcqOptionSchema = z.object({
   id,
   text: z.string().min(2),
@@ -378,6 +392,7 @@ export type QuestionFile = z.infer<typeof questionFileSchema>;
 export type CardFile = z.infer<typeof cardFileSchema>;
 export type SourceFile = z.infer<typeof sourceFileSchema>;
 export type PracticeFile = z.infer<typeof practiceFileSchema>;
+export type ReferenceVisualFile = z.infer<typeof referenceVisualFileSchema>;
 export type PracticeSet = z.infer<typeof practiceSetSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 export type LessonExercise = z.infer<typeof lessonExerciseSchema>;
@@ -391,4 +406,5 @@ export interface LearningUnit {
   cards: CardFile['cards'];
   sources: SourceFile['sources'];
   practices: PracticeFile['practices'];
+  visuals: ReferenceVisualFile['visuals'];
 }

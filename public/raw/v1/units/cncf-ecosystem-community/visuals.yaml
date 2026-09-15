@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:cncf-ecosystem-community
+revision: 1
+visuals:
+  - id: fpp:cncf-ecosystem-community/visual-open-ecosystem
+    kind: ownership
+    eyebrow: Ecosystem model
+    title: Choose projects around open responsibilities and interfaces
+    lines:
+      - "platform need → open interface or standard → project responsibility → interoperable cloud-native system"
+    teaching_point: The CNCF Landscape is a catalog of projects with different responsibilities and maturity levels, not one mandatory stack to install together.

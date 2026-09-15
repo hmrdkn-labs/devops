@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:ip-subnets
+revision: 1
+visuals:
+  - id: fpp:ip-subnets/visual-route-choice
+    kind: flow
+    eyebrow: Packet decision
+    title: Decide whether the destination is on-link before routing
+    lines:
+      - "destination IP + interface prefix → compare network prefix → on-link neighbor resolution or route lookup → next hop"
+    teaching_point: An interface address and its prefix define the local network; destinations outside that prefix require a route rather than direct neighbor delivery.

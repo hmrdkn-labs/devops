@@ -1,0 +1,13 @@
+schema_version: 1
+unit_id: fpp:scheduling-resources-health
+revision: 1
+visuals:
+  - id: fpp:scheduling-resources-health/visual-resource-health
+    kind: ownership
+    eyebrow: Runtime decisions
+    title: Requests, limits, and probes control different parts of the lifecycle
+    lines:
+      - "resource requests → scheduler placement decision"
+      - "resource limits → runtime and kernel enforcement"
+      - "startup, readiness, liveness probes → start gating, traffic eligibility, restart decision"
+    teaching_point: Resource requests influence placement, limits constrain runtime consumption, and each probe type answers a different health question that drives a different action.

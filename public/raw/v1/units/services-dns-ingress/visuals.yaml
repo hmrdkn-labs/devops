@@ -1,0 +1,12 @@
+schema_version: 1
+unit_id: fpp:services-dns-ingress
+revision: 1
+visuals:
+  - id: fpp:services-dns-ingress/visual-north-south
+    kind: flow
+    eyebrow: Traffic path
+    title: Stable names and Services hide changing Pod endpoints
+    lines:
+      - "external hostname → Ingress or Gateway implementation → Service → EndpointSlice → ready Pod"
+      - "cluster DNS name → Service → EndpointSlice → ready Pod"
+    teaching_point: Service discovery and endpoint selection are separate from HTTP ingress routing; both ultimately forward traffic toward currently ready Pod endpoints.

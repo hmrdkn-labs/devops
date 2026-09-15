@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:git-yaml-declarative
+revision: 1
+visuals:
+  - id: fpp:git-yaml-declarative/visual-intent-pipeline
+    kind: flow
+    eyebrow: Intent pipeline
+    title: Versioned text becomes desired state only after validation
+    lines:
+      - "reviewed Git change → YAML parsing → application schema validation → accepted desired state → reconciliation"
+    teaching_point: YAML only encodes data; the receiving system defines the schema and semantics that turn reviewed text into actionable desired state.

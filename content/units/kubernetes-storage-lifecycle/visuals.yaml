@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-storage-lifecycle
+revision: 1
+visuals:
+  - id: fpp:kubernetes-storage-lifecycle/visual-volume-lifecycle
+    kind: lifecycle
+    eyebrow: Storage lifecycle
+    title: A claim becomes storage through provisioning, binding, and mount
+    lines:
+      - "PVC → StorageClass → CSI provisioning → PV bound → topology-aware attach or mount → Pod filesystem"
+    teaching_point: Pod replacement does not imply volume mobility; access mode, storage topology, reclaim policy, and CSI capabilities determine what can be reattached and where.

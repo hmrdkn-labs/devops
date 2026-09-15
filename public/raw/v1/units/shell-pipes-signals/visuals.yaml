@@ -1,0 +1,12 @@
+schema_version: 1
+unit_id: fpp:shell-pipes-signals
+revision: 1
+visuals:
+  - id: fpp:shell-pipes-signals/visual-process-composition
+    kind: flow
+    eyebrow: Shell process model
+    title: The shell composes processes through streams and signals
+    lines:
+      - "shell → process stdout → pipe → next process stdin → exit status"
+      - "signal → target process or process group → handler or default action → graceful or forced exit"
+    teaching_point: Pipes connect standard streams between processes, exit status reports completion, and signals request or force state changes without being ordinary input data.

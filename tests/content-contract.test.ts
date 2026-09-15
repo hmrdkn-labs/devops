@@ -69,6 +69,14 @@ function unit(
       publisher: 'Example', type: 'documentation', verified_at: '2026-08-27', note: 'Fixture only.',
     }],
     practices: [],
+    visuals: [{
+      id: `${id}.visual`,
+      kind: 'flow',
+      eyebrow: 'Fixture model',
+      title: 'Trace the fixture contract',
+      lines: ['source → validation → published unit'],
+      teaching_point: 'The visual fixture exists so published units always carry a portable mental model.',
+    }],
   };
 }
 
@@ -166,6 +174,12 @@ describe('content contract', () => {
     const unknownCertification = unit();
     unknownCertification.metadata.certification_mappings[0]!.certification = 'cncf:unknown';
     expect(() => validateGraph([unknownCertification], [pathFor([unknownCertification])], new Set(['cncf:kcna']))).toThrow('unknown certification');
+  });
+
+  it('requires a portable reference visual for published units', () => {
+    const noVisual = unit();
+    noVisual.visuals = [];
+    expect(() => validateGraph([noVisual], [pathFor([noVisual])], new Set(['cncf:kcna']))).toThrow('reference visual');
   });
 
   it('validates MCQ answer contracts', () => {

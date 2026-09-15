@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:processes-and-resources
+revision: 1
+visuals:
+  - id: fpp:processes-and-resources/visual-resource-pressure
+    kind: state
+    eyebrow: Process model
+    title: Every service is a process competing for finite machine resources
+    lines:
+      - "program → running process → CPU + memory + files + I/O → resource pressure → latency, throttling, OOM, or errors"
+    teaching_point: Troubleshooting starts by treating services as processes with measurable resource demands and failure modes rather than as abstract application boxes.

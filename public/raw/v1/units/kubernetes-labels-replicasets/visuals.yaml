@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kubernetes-labels-replicasets
+revision: 1
+visuals:
+  - id: fpp:kubernetes-labels-replicasets/visual-selector-loop
+    kind: state
+    eyebrow: Membership loop
+    title: Selectors define which Pods count toward desired replicas
+    lines:
+      - "Pod labels → ReplicaSet selector → observed matching count → compare with desired replicas → create or delete Pods"
+    teaching_point: A ReplicaSet reconciles the number of Pods matching its selector, so label membership directly affects what the controller believes it owns and must repair.

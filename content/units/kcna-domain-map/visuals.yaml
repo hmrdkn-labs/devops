@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:kcna-domain-map
+revision: 1
+visuals:
+  - id: fpp:kcna-domain-map/visual-reasoning-strategy
+    kind: flow
+    eyebrow: Exam reasoning
+    title: Classify the question before recalling a term
+    lines:
+      - "question → identify layer → identify owner → trace state change → choose observable proof → answer"
+    teaching_point: KCNA questions become easier when each term is attached to a layer, owner, state transition, and piece of evidence instead of memorized in isolation.

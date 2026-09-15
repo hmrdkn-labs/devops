@@ -1,0 +1,11 @@
+schema_version: 1
+unit_id: fpp:files-users-permissions
+revision: 1
+visuals:
+  - id: fpp:files-users-permissions/visual-access-check
+    kind: flow
+    eyebrow: Access decision
+    title: A process reaches a path using its identity
+    lines:
+      - "process UID and GID → directory traversal → file owner/group/mode bits → kernel access decision"
+    teaching_point: File permissions are evaluated for a process identity at each path boundary, so service users and ownership are both reliability and security concerns.

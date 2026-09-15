@@ -1,4 +1,5 @@
 import { For, Show, createMemo, createResource, createSignal, onMount } from 'solid-js';
+import LessonVisualGuide from '@/components/LessonVisualGuide';
 
 interface Question {
   id: string;
@@ -35,6 +36,15 @@ interface Source {
   note: string;
 }
 
+interface ReferenceVisual {
+  id: string;
+  kind: 'flow' | 'state' | 'ownership' | 'comparison' | 'lifecycle' | 'evidence';
+  eyebrow: string;
+  title: string;
+  lines: string[];
+  teaching_point: string;
+}
+
 interface Props {
   focus?: {
     href: string;
@@ -55,8 +65,28 @@ interface Props {
     cards: Card[];
     practices: Practice[];
     sources: Source[];
+    visuals: ReferenceVisual[];
     lessonHtml: string;
   };
+}
+
+function ReferenceVisuals(props: { visuals: ReferenceVisual[] }) {
+  return (
+    <section class="reference-visuals" data-testid="reference-visuals" aria-label="Reference visual models">
+      <div class="reference-visuals-heading">
+        <span>Visual models</span>
+        <p>Step through the causal model before reading the details.</p>
+      </div>
+      <div class="reference-visual-stack">
+        <For each={props.visuals}>{(visual) => (
+          <div class="reference-visual-item" data-visual-kind={visual.kind}>
+            <LessonVisualGuide lines={visual.lines} title={visual.title} eyebrow={visual.eyebrow} />
+            <p class="reference-visual-teaching-point">{visual.teaching_point}</p>
+          </div>
+        )}</For>
+      </div>
+    </section>
+  );
 }
 
 interface Me {
@@ -567,6 +597,7 @@ export default function StudyFlow(props: Props) {
               <p class="section-kicker">New concept · learn before recall</p>
               <h2 id="learn-first-title">Build the model first.</h2>
               <p class="learn-first-intro">This path records an encounter, not a failed recall attempt. Read the lesson, then return to the same question and answer it from memory.</p>
+              <ReferenceVisuals visuals={props.unit.visuals} />
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
               <div class="stage-actions learn-first-return">
                 <button class="button primary" type="button" onClick={() => {
@@ -583,6 +614,7 @@ export default function StudyFlow(props: Props) {
           <Show when={finished() || mode() === 'reference'}>
             <article class="lesson">
               <div class="lesson-divider"><span>{mode() === 'reference' ? 'Reference lesson' : 'Lesson revealed'}</span></div>
+              <ReferenceVisuals visuals={props.unit.visuals} />
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
               <div class="completion-action">
                 <button
