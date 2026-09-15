@@ -5,6 +5,27 @@
 
 ## Read this first
 
+**Study-flow continuity v12 is release-ready:** the standard `/learn/*`
+question-first experience now treats question changes, Study ↔ Reference, and
+Learn-first ↔ retrieval as one continuous learning surface instead of mounting
+unrelated blocks with entry-only fades. Supporting browsers use the
+same-document View Transitions API; other browsers use a restrained 80 ms exit
++ 160 ms Web Animations crossfade. Desktop Reference mode now collapses the
+context rail smoothly while the learning surface recenters, and mobile keeps a
+single-column transition. Forward/back direction is subtle, focus returns to
+the answer field after question or Learn-first transitions, and the active
+surface is aligned back into view without changing persistence or mastery
+semantics. `prefers-reduced-motion` bypasses the motion while preserving the
+same state and focus behavior. New browser regressions cover next-question
+focus, Learn-first return focus, Study/Reference URL state, one persistent
+learning surface, and reduced-motion behavior. Local QA is green: Astro
+typecheck, **36 unit tests**, D1 checks, production build, `git diff --check`,
+and the full Playwright desktop/tablet/mobile matrix with **54 passed / 18
+intentional skips**. A real local browser pass on `container-lifecycle`
+confirmed Study → Reference → Study layout continuity in both directions,
+including the Web Animations fallback used by that browser. **No implementation
+blocker. Pending public CI and protected owner deployment.**
+
 **Reference visual learning v11 is live:** the visual teaching
 layer is no longer limited to KCNA exercises. All **37 published reference
 units** now carry a framework-independent `visuals.yaml` sidecar with an

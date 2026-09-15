@@ -15,6 +15,7 @@ test('guest completes the question-first study flow without persistence', async 
   await expect(page.getByText('Add these missing ideas:')).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Guest answer kept in memory');
   await page.getByRole('button', { name: 'Next question' }).click();
+  await expect(page.getByLabel('Your explanation')).toBeFocused();
 
   await page.getByLabel('Your explanation').fill('CPU time, memory, file descriptors, and I/O are finite.');
   await page.getByRole('button', { name: 'Save privately & reveal' }).click();
@@ -81,9 +82,11 @@ test('new learners can learn first or use reference mode without faking recall',
   await expect(page.getByLabel('Your explanation')).toBeHidden();
   await page.getByRole('button', { name: 'Try the question now' }).click();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
+  await expect(page.getByLabel('Your explanation')).toBeFocused();
 
   await page.getByRole('button', { name: 'Reference', exact: true }).click();
   await expect(page.getByText('Reference lesson')).toBeVisible();
+  await expect(page).toHaveURL(/\?mode=reference$/);
   await expect(page.getByTestId('reference-visuals')).toBeVisible();
   const visual = page.getByTestId('lesson-visual-guide').first();
   await visual.getByRole('button', { name: 'Next →' }).click();
@@ -101,6 +104,19 @@ test('new learners can learn first or use reference mode without faking recall',
   await expect(page.getByRole('button', { name: 'Practice completed ✓' }).first()).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Study', exact: true }).click();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
+  await expect(page).not.toHaveURL(/mode=reference/);
+  await expect(page.getByTestId('study-surface')).toHaveCount(1);
+});
+
+test('reduced-motion study transitions stay immediate and preserve the return focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/learn/ip-subnets');
+
+  await page.getByRole('button', { name: "I haven't learned this yet" }).click();
+  await expect(page.getByRole('heading', { name: 'Build the model first.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Try the question now' }).click();
+  await expect(page.getByLabel('Your explanation')).toBeFocused();
+  await expect(page.locator('html')).not.toHaveAttribute('data-study-transition');
 });
 
 test('reference lessons with long technical literals stay inside the viewport', async ({ page }) => {

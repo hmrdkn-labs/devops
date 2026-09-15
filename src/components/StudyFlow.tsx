@@ -121,6 +121,16 @@ interface ProgressResponse {
   units: UnitLearningProgress[];
 }
 
+type LearningTransitionDirection = 'forward' | 'back' | 'crossfade';
+
+interface ViewTransitionLike {
+  finished: Promise<void>;
+}
+
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (update: () => void) => ViewTransitionLike;
+};
+
 export default function StudyFlow(props: Props) {
   const [hydrated, setHydrated] = createSignal(false);
   const [mode, setMode] = createSignal<'study' | 'reference'>('study');
@@ -143,6 +153,7 @@ export default function StudyFlow(props: Props) {
   const [guestLessonCompleted, setGuestLessonCompleted] = createSignal(false);
   const [guestPracticesCompleted, setGuestPracticesCompleted] = createSignal<string[]>([]);
   let saveSequence = 0;
+  let transitionSequence = 0;
   const [me] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/me', { credentials: 'include' });
     return response.json() as Promise<Me>;
@@ -165,12 +176,112 @@ export default function StudyFlow(props: Props) {
     setHydrated(true);
   });
 
+  function transitionLearningState(
+    update: () => void,
+    options: {
+      direction?: LearningTransitionDirection;
+      focusSelector?: string;
+      alignSurface?: boolean;
+    } = {},
+  ) {
+    if (typeof window === 'undefined') {
+      update();
+      return;
+    }
+
+    const direction = options.direction ?? 'crossfade';
+    const sequence = ++transitionSequence;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const finish = () => {
+      if (sequence !== transitionSequence) return;
+      delete document.documentElement.dataset.studyTransition;
+      const target = options.focusSelector
+        ? document.querySelector<HTMLElement>(options.focusSelector)
+        : null;
+      target?.focus({ preventScroll: true });
+      if (options.alignSurface) {
+        document.querySelector<HTMLElement>('.study-surface')?.scrollIntoView({
+          behavior: reducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      }
+    };
+
+    if (reducedMotion) {
+      update();
+      queueMicrotask(finish);
+      return;
+    }
+
+    document.documentElement.dataset.studyTransition = direction;
+    const transitionDocument = document as ViewTransitionDocument;
+    if (transitionDocument.startViewTransition) {
+      try {
+        const transition = transitionDocument.startViewTransition(() => update());
+        void transition.finished.then(finish, finish);
+        return;
+      } catch {
+        // Fall through to the lightweight Web Animations fallback.
+      }
+    }
+
+    const outgoing = document.querySelector<HTMLElement>('.study-surface');
+    if (!outgoing) {
+      update();
+      queueMicrotask(finish);
+      return;
+    }
+
+    const exitOffset = direction === 'back' ? 4 : direction === 'forward' ? -5 : -2;
+    const enterOffset = direction === 'back' ? -6 : direction === 'forward' ? 8 : 3;
+    let exitAnimation: Animation;
+    try {
+      exitAnimation = outgoing.animate(
+        [
+          { opacity: 1, transform: 'translateY(0) scale(1)' },
+          { opacity: 0.12, transform: `translateY(${exitOffset}px) scale(.998)` },
+        ],
+        { duration: 80, easing: 'ease-out', fill: 'forwards' },
+      );
+    } catch {
+      update();
+      queueMicrotask(finish);
+      return;
+    }
+
+    const swap = () => {
+      if (sequence !== transitionSequence) return;
+      update();
+      queueMicrotask(() => {
+        const incoming = document.querySelector<HTMLElement>('.study-surface');
+        if (!incoming) {
+          finish();
+          return;
+        }
+        const enterAnimation = incoming.animate(
+          [
+            { opacity: 0.12, transform: `translateY(${enterOffset}px) scale(.998)` },
+            { opacity: 1, transform: 'translateY(0) scale(1)' },
+          ],
+          { duration: 160, easing: 'cubic-bezier(.2,.8,.2,1)' },
+        );
+        void enterAnimation.finished.then(finish, finish);
+      });
+    };
+
+    void exitAnimation.finished.then(swap, swap);
+  }
+
   function switchMode(nextMode: 'study' | 'reference') {
-    setMode(nextMode);
-    const url = new URL(window.location.href);
-    if (nextMode === 'reference') url.searchParams.set('mode', 'reference');
-    else url.searchParams.delete('mode');
-    window.history.replaceState({}, '', url);
+    if (mode() === nextMode) return;
+    transitionLearningState(() => {
+      setMode(nextMode);
+      const url = new URL(window.location.href);
+      if (nextMode === 'reference') url.searchParams.set('mode', 'reference');
+      else url.searchParams.delete('mode');
+      window.history.replaceState({}, '', url);
+    }, { direction: nextMode === 'reference' ? 'forward' : 'back' });
   }
 
   function hintFor(kind: Question['kind']) {
@@ -187,11 +298,13 @@ export default function StudyFlow(props: Props) {
   }
 
   async function learnFirst() {
-    setLearningFirst(true);
-    setShowHint(false);
-    setSaveMessage(me()?.authenticated
-      ? 'Marked as encountered only. No recall credit was created.'
-      : 'Guest mode: learn-first state stays on this page only.');
+    transitionLearningState(() => {
+      setLearningFirst(true);
+      setShowHint(false);
+      setSaveMessage(me()?.authenticated
+        ? 'Marked as encountered only. No recall credit was created.'
+        : 'Guest mode: learn-first state stays on this page only.');
+    }, { direction: 'forward', alignSurface: true });
     if (!me()?.authenticated) return;
     const response = await fetch('/api/encounter', {
       method: 'POST',
@@ -206,19 +319,6 @@ export default function StudyFlow(props: Props) {
     });
     if (!response.ok) setSaveMessage('Learn-first mode opened; encounter evidence could not be saved.');
     else void refetchLearningProgress();
-  }
-
-  function animateQuestionStage() {
-    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    queueMicrotask(() => {
-      document.querySelector<HTMLElement>('.question-stage')?.animate(
-        [
-          { opacity: 0, transform: 'translateY(8px)' },
-          { opacity: 1, transform: 'translateY(0)' },
-        ],
-        { duration: 180, easing: 'cubic-bezier(.2,.8,.2,1)' },
-      );
-    });
   }
 
   async function persistAttempt(questionId: string, answerMarkdown: string, sequence: number) {
@@ -366,19 +466,20 @@ export default function StudyFlow(props: Props) {
 
   function next() {
     if (questionIndex() + 1 < props.unit.questions.length) {
-      setQuestionIndex((value) => value + 1);
-      setAnswer('');
-      setRevealed(false);
-      setRated(false);
-      setRating(null);
-      setChecked([]);
-      setReflection('');
-      setShowHint(false);
-      setLearningFirst(false);
-      setSaveMessage('');
-      animateQuestionStage();
+      transitionLearningState(() => {
+        setQuestionIndex((value) => value + 1);
+        setAnswer('');
+        setRevealed(false);
+        setRated(false);
+        setRating(null);
+        setChecked([]);
+        setReflection('');
+        setShowHint(false);
+        setLearningFirst(false);
+        setSaveMessage('');
+      }, { direction: 'forward', focusSelector: '#private-answer', alignSurface: true });
     } else {
-      setFinished(true);
+      transitionLearningState(() => setFinished(true), { direction: 'forward', alignSurface: true });
     }
   }
 
@@ -426,7 +527,7 @@ export default function StudyFlow(props: Props) {
       </header>
 
       <div class="study-layout shell" classList={{ 'is-reference': mode() === 'reference' }}>
-        <aside class="study-rail" aria-label="Unit context">
+        <aside class="study-rail" aria-label="Unit context" aria-hidden={mode() === 'reference'}>
           <div class="rail-card">
             <span class="section-kicker">Current unit</span>
             <strong>{props.unit.layer}</strong>
@@ -463,8 +564,9 @@ export default function StudyFlow(props: Props) {
               </section>
             )}
           </Show>
-          <Show when={mode() === 'study' && !learningFirst()}>
-          <section class="question-stage" aria-labelledby="question-title">
+          <div class="study-surface" data-testid="study-surface">
+            <Show when={mode() === 'study' && !learningFirst()}>
+            <section class="question-stage" aria-labelledby="question-title">
             <div
               class="stage-progress"
               role="progressbar"
@@ -589,11 +691,11 @@ export default function StudyFlow(props: Props) {
                 </div>
               </Show>
             </Show>
-          </section>
-          </Show>
+            </section>
+            </Show>
 
-          <Show when={mode() === 'study' && learningFirst()}>
-            <section class="learn-first-panel" aria-labelledby="learn-first-title">
+            <Show when={mode() === 'study' && learningFirst()}>
+              <section class="learn-first-panel" aria-labelledby="learn-first-title">
               <p class="section-kicker">New concept · learn before recall</p>
               <h2 id="learn-first-title">Build the model first.</h2>
               <p class="learn-first-intro">This path records an encounter, not a failed recall attempt. Read the lesson, then return to the same question and answer it from memory.</p>
@@ -601,18 +703,19 @@ export default function StudyFlow(props: Props) {
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
               <div class="stage-actions learn-first-return">
                 <button class="button primary" type="button" onClick={() => {
-                  setLearningFirst(false);
-                  setAnswer('');
-                  setSaveMessage('');
-                  queueMicrotask(() => document.querySelector<HTMLTextAreaElement>('#private-answer')?.focus());
+                  transitionLearningState(() => {
+                    setLearningFirst(false);
+                    setAnswer('');
+                    setSaveMessage('');
+                  }, { direction: 'back', focusSelector: '#private-answer', alignSurface: true });
                 }}>Try the question now</button>
                 <span class="save-status" role="status">{saveMessage()}</span>
               </div>
-            </section>
-          </Show>
+              </section>
+            </Show>
 
-          <Show when={finished() || mode() === 'reference'}>
-            <article class="lesson">
+            <Show when={finished() || mode() === 'reference'}>
+              <article class="lesson">
               <div class="lesson-divider"><span>{mode() === 'reference' ? 'Reference lesson' : 'Lesson revealed'}</span></div>
               <ReferenceVisuals visuals={props.unit.visuals} />
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
@@ -711,8 +814,9 @@ export default function StudyFlow(props: Props) {
               <Show when={props.nextUnit}>
                 {(next) => <a class="button primary" href={next().href}>Next: {next().title} →</a>}
               </Show>
-            </nav>
-          </Show>
+              </nav>
+            </Show>
+          </div>
         </div>
       </div>
     </div>
