@@ -5,7 +5,7 @@
 
 ## Read this first
 
-**Component ownership + private explanation history v13 is release-ready:**
+**Component ownership + private explanation history v13 is live:**
 Kubernetes visuals can now carry a portable component responsibility map in
 canonical YAML: exact component name, architectural location, responsibility,
 what it acts on, and a smallest useful proof command. The same map renders in
@@ -22,13 +22,20 @@ unit-scoped history. Fresh Study retrieval still hides prior explanations; once
 the learner reveals an attempt, saved explanations become available for
 comparison, and Reference mode shows the latest private explanation per
 question. Guest state remains memory-only and private answers remain excluded
-from public search and public artifacts. Local validation is green: content
+from public search and public artifacts; production returns `401` for an
+unauthenticated `/api/answers` request. The architecture walkthrough also makes
+the coordination boundary explicit: controllers, scheduler, and kubelet use
+`kube-apiserver`; the API server persists state to `etcd`; kubelet delegates
+container execution to the runtime. Local validation is green: content
 contract, Astro typecheck, **36 unit tests**, D1 checks, production build,
 `git diff --check`, and the full Playwright desktop/tablet/mobile matrix with
-**57 passed / 18 intentional skips**. Rendered local QA confirmed the KCNA
-Learn-first component map and the architecture reference map with component
-location, target, and proof. **No implementation blocker. Pending public CI and
-protected owner deployment.**
+**57 passed / 18 intentional skips**. Exact public source
+`a3da77be80ea396c5690d99eba9e72b6dcb1e490` passed public CI run
+`34946364119` and protected owner deployment run `34946592186`. Production
+health reports status `ok`, D1 `ready`, and content manifest SHA
+`26ff83a311513605b5482f1e19e465a39b7108d8e634b72e19f4d58a50940aff`.
+Live production QA confirmed the architecture component map and corrected API
+request path. **No implementation or deployment blocker.**
 
 **Study-flow continuity v12 is live:** the standard `/learn/*`
 question-first experience now treats question changes, Study ↔ Reference, and
