@@ -5,7 +5,7 @@
 
 ## Read this first
 
-**Reference visual learning v11 is a release candidate:** the visual teaching
+**Reference visual learning v11 is live:** the visual teaching
 layer is no longer limited to KCNA exercises. All **37 published reference
 units** now carry a framework-independent `visuals.yaml` sidecar with an
 immutable visual ID, kind, eyebrow, title, ordered lines, and a teaching point.
@@ -19,12 +19,17 @@ new sidecars, and published-unit validation fails if a reference visual is
 missing. Reference visuals are classified as enrichment, so they do not alter
 Recall/Application/Retained evidence or FSRS state. Local validation is green
 for content, Astro typecheck, 36 unit tests, D1 checks, production build, and
-the new reference-mode browser contract on desktop/tablet/mobile. Full
-Playwright reached 47 passing checks with one unrelated tablet MCQ timing flake;
-that exact MCQ test passed immediately in isolation. Rendered Chromium QA on
+the reference-mode browser contracts on desktop/tablet/mobile. The final
+Playwright matrix is green, including an explicit 390px regression for the
+networking reference's long inline technical URL. Rendered Chromium QA on
 `kubernetes-networking-request-path` confirmed the intended hierarchy: visual
 model first, explanatory prose/code second, guided practice and recall below.
-**Release/deployment is the remaining step for v11; no implementation blocker.**
+Exact source `da80f7a51fbe766b821e19af5c828fe11bc94b92` passed public CI run
+`34940394772` and protected owner deployment run `34940606974`. Independent
+production verification reports D1 `ready`, content manifest SHA
+`5844708533a0b634ce26b1028d38184e377b85ad9a7b5b6a36bfda4900d2d85a`, and the
+live 390px Reference page remains exactly 390px wide while its visual advances
+from step 1/6 to 2/6. **No implementation or deployment blocker.**
 
 **KCNA visual learning v10 is live:** every one of the **45 KCNA
 interactive exercises** now has a reusable visual teaching layer in both its
@@ -694,26 +699,27 @@ and was not modified while this application was built.
 
 ## Verification at the stopping point
 
-The current KCNA Resources lesson pilot completed the following checks:
+The current reference-visual + KCNA learning application completed the
+following checks:
 
 ```text
-npm run content:check  # 37 units, 2 paths, 26 MCQs, 1 lesson / 12 exercises, 191 cards
-npm run typecheck      # 76 files; 0 errors, warnings, or hints
-npm test               # 35 passed
+npm run content:check  # 37 units, 2 paths, 26 MCQs, 4 lessons / 45 exercises, 191 cards
+npm run typecheck      # 77 files; 0 errors, warnings, or hints
+npm test               # 36 passed
 npm run test:d1        # migration, idempotency, lesson evidence, and revalidation
-npm run test:e2e       # 41 passed, 10 intentional skips; desktop/tablet/mobile
-npm run build          # Cloudflare Worker production build, lesson route included
+npm run test:e2e       # full desktop/tablet/mobile matrix, including reference visuals
+npm run build          # Cloudflare Worker production build + portable visual sidecars
 git diff --check
 ```
 
-Manual browser QA preceded Playwright and covered a complete dark desktop
-journey, tablet light, mobile light/dark, and a complete dark mobile journey.
-Guest privacy, authenticated assistance payloads, answer privacy, completion
-separation, non-FSRS evidence, revision revalidation, keyboard operation,
-touch targets, reduced motion, overflow, and serious/critical accessibility
-violations are covered. Exact source `85d61fa` then passed public CI and the
-protected owner deployment. Independent live probes and a real browser
-interaction verified the released lesson behavior described at the top.
+Browser QA covers desktop/tablet/mobile, Learn-first, direct Reference mode,
+visual stepping, long technical literals, keyboard/touch operation, reduced
+motion, overflow, serious/critical accessibility violations, guest privacy,
+answer privacy, completion separation, and revision/evidence behavior. Exact
+source `da80f7a51fbe766b821e19af5c828fe11bc94b92` passed public CI
+`34940394772` and protected owner deploy `34940606974`; independent live probes
+verified health/D1, the reference visual interaction, and the 390px no-overflow
+contract described at the top.
 
 ## Exact blockers
 
