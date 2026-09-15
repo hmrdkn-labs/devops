@@ -5,8 +5,10 @@
 
 ## Read this first
 
-**Interaction smoothness v8 is release-ready:** the app remains Astro + Solid +
-Cloudflare/D1, but learner-facing state changes no longer wait for persistence.
+**Interaction smoothness v8 is live:** exact public source
+`2190646705e5f25638de6bde224a888a63f6ed64` passed public CI run
+`34924053087` and protected owner deployment run `34924211727`. The app remains
+Astro + Solid + Cloudflare/D1, but learner-facing state changes no longer wait for persistence.
 Question-first reveal, lesson checking, Learn-first, and recall rating update the
 UI immediately while authenticated writes finish in the background. Async
 responses are snapshot/sequence guarded so an older request cannot overwrite the
@@ -18,8 +20,14 @@ stable focus plus a short enter transition. A new Playwright regression test
 holds `/api/attempt` open and proves the model answer is visible before the
 network write completes. Local `npm run ci`, D1 checks, `git diff --check`, and
 the full Playwright matrix pass: **43 passed with 14 intentional skips** across
-desktop, tablet, and mobile. **No implementation blocker.** Next step is the
-protected exact-SHA production release and live interaction verification.
+desktop, tablet, and mobile. Independent production probes returned 200 for
+home, KCNA, the Resources lesson, KCNA practice, and health; D1 reports `ready`
+with manifest SHA `33f23e2e5ba81f573b435a45fd52b70539b1fcadbdb8444842010d2e421af450`.
+A live guest browser check reloaded the deployed Resources lesson, selected a
+wrong answer, and immediately exposed the learner answer, expected answer,
+causal explanation, Try again, and Continue controls without writing mastery
+evidence. **No implementation or deployment blocker.** Next step is real-use
+evaluation of interaction feel before expanding the motion system further.
 
 **Feedback clarity release is live:** exact public source
 `8afba99be47ce582f430b47cbc8e65ec2194207f` passed public CI run
