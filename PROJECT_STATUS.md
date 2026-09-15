@@ -5,7 +5,7 @@
 
 ## Read this first
 
-**Stable learning workspace + question depth v15 is release-ready:** the
+**Stable learning workspace + question depth v15 is live and production-verified:** the
 standard `/learn/*` experience no longer treats History, Reference, or Notes as
 destinations. Study is the persistent workspace. Desktop keeps the unit outline,
 720px learning stage, and 320px contextual panel in stable columns; narrower
@@ -32,8 +32,14 @@ checks, production build, `git diff --check`, and the full Playwright
 desktop/tablet/mobile matrix with **57 passed / 18 intentional skips**. Visual QA
 confirmed a fixed 720px learning stage with a separate 320px context column at
 1440px and an opaque, bounded bottom sheet at 390px with no horizontal overflow.
-**No implementation blocker; protected release and production verification are
-the remaining steps.**
+Exact public source `c0d818922ddf96b7410f3394da8b44cfd56d12af` passed public
+CI run `34953992027` and protected owner deployment run `34954222572`.
+Production health reports `ok`, D1 `ready`, and content manifest SHA
+`fb97821c5d272e44571e0ce716f29908571ad99c7d1f4625066207b4d4616838`.
+Independent live browser QA on `kubernetes-manifests` confirmed `1 of 3`, an
+unchanged production URL and zero scroll movement when Reference opens, exact
+question geometry before/after the contextual reveal, and no horizontal
+overflow at 1440px. **No implementation or deployment blocker.**
 
 **Complete private answer history v14 is live and production-verified:**
 previous explanations are now discoverable without weakening retrieval-first
