@@ -103,6 +103,15 @@ test('new learners can learn first or use reference mode without faking recall',
   await expect(page.getByLabel('Your explanation')).toBeVisible();
 });
 
+test('reference lessons with long technical literals stay inside the viewport', async ({ page }) => {
+  await page.goto('/learn/kubernetes-networking-request-path?mode=reference');
+  await expect(page.getByTestId('reference-visuals')).toBeVisible();
+  await expect(page.getByText('http://catalog.default.svc.cluster.local:8080')).toBeVisible();
+  const viewport = page.viewportSize();
+  expect(viewport).not.toBeNull();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport!.width);
+});
+
 test('public search finds exact canonical content', async ({ page }) => {
   await page.goto('/search');
   await page.getByRole('searchbox').fill('container network');

@@ -942,6 +942,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .markdown-body p, .markdown-body ul, .markdown-body ol { max-width: 72ch; }
 .markdown-body li { margin-block: .25rem; }
 .markdown-body code { padding: .08rem .25rem; border-radius: 4px; background: var(--surface-subtle); font: .86em var(--mono); }
+.markdown-body p code, .markdown-body li code { overflow-wrap: anywhere; word-break: break-word; }
 .markdown-body pre { box-sizing: border-box; max-width: 100%; overflow-x: auto; margin: 1.15rem 0; padding: .95rem 1rem; border-radius: var(--radius-control); background: var(--code); color: var(--code-ink); line-height: 1.55; }
 .markdown-body pre code { padding: 0; background: transparent; color: inherit; }
 .markdown-body blockquote { margin: 1.1rem 0; padding: .05rem .9rem; border-left: 2px solid var(--accent); color: var(--muted); }
