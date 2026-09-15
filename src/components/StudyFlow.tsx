@@ -145,6 +145,17 @@ interface AnswerHistoryResponse {
   answers: PrivateAnswerHistoryEntry[];
 }
 
+interface PrivateAnswerHistoryMetadataEntry {
+  unitRevision: number;
+  questionId: string;
+  createdAt: number;
+}
+
+interface AnswerHistoryMetadataResponse {
+  unitId: string;
+  answers: PrivateAnswerHistoryMetadataEntry[];
+}
+
 type LearningTransitionDirection = 'forward' | 'back' | 'crossfade';
 
 interface ViewTransitionLike {
@@ -190,6 +201,14 @@ export default function StudyFlow(props: Props) {
       return response.json() as Promise<ProgressResponse>;
     },
   );
+  const [answerHistoryMetadata, { refetch: refetchAnswerHistoryMetadata }] = createResource(
+    () => me()?.authenticated ? props.unit.id : null,
+    async (unitId) => {
+      const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId) + '&view=metadata', { credentials: 'include' });
+      if (!response.ok) return null;
+      return response.json() as Promise<AnswerHistoryMetadataResponse>;
+    },
+  );
   const [answerHistory, { refetch: refetchAnswerHistory }] = createResource(
     () => me()?.authenticated && (revealed() || mode() === 'reference' || finished()) ? props.unit.id : null,
     async (unitId) => {
@@ -202,15 +221,16 @@ export default function StudyFlow(props: Props) {
   const progress = createMemo(() => ((questionIndex() + (finished() ? 1 : 0)) / props.unit.questions.length) * 100);
   const unitLearningProgress = createMemo(() => learningProgress()?.units.find((unit) => unit.id === props.unit.id));
   const currentQuestionHistory = createMemo(() => answerHistory()?.answers.filter((entry) => entry.questionId === question().id) ?? []);
-  const latestAnswerByQuestion = createMemo(() => {
-    const latest = new Map<string, PrivateAnswerHistoryEntry>();
-    for (const entry of answerHistory()?.answers ?? []) {
-      if (!latest.has(entry.questionId)) latest.set(entry.questionId, entry);
-    }
-    return props.unit.questions.flatMap((item) => {
-      const entry = latest.get(item.id);
-      return entry ? [{ question: item, entry }] : [];
+  const currentQuestionHistoryMetadata = createMemo(() => answerHistoryMetadata()?.answers.filter((entry) => entry.questionId === question().id) ?? []);
+  const answerHistoryByQuestion = createMemo(() => {
+    const entries = answerHistory()?.answers ?? [];
+    const knownQuestionIds = new Set(props.unit.questions.map((item) => item.id));
+    const current = props.unit.questions.flatMap((item) => {
+      const matches = entries.filter((entry) => entry.questionId === item.id);
+      return matches.length > 0 ? [{ question: item, entries: matches }] : [];
     });
+    const retired = entries.filter((entry) => !knownQuestionIds.has(entry.questionId));
+    return { current, retired };
   });
 
   onMount(() => {
@@ -383,6 +403,7 @@ export default function StudyFlow(props: Props) {
       }
       if (response.ok) {
         void refetchLearningProgress();
+        void refetchAnswerHistoryMetadata();
         void refetchAnswerHistory();
       }
     } catch {
@@ -641,6 +662,19 @@ export default function StudyFlow(props: Props) {
                 placeholder="Reason it through in your own words. Accuracy comes after retrieval."
                 rows={8}
               />
+              <Show when={me()?.authenticated && currentQuestionHistoryMetadata().length > 0}>
+                <aside class="answer-history-cue" data-testid="answer-history-cue" aria-label="Previous answer history">
+                  <div>
+                    <strong>Answered before</strong>
+                    <span>
+                      {currentQuestionHistoryMetadata().length} saved {currentQuestionHistoryMetadata().length === 1 ? 'attempt' : 'attempts'}
+                      {' · '}latest {new Date(currentQuestionHistoryMetadata()[0]!.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <button type="button" class="text-button" onClick={() => switchMode('reference')}>Review previous answers</button>
+                  <small>Previous wording stays hidden in Study mode so you can still retrieve from memory first.</small>
+                </aside>
+              </Show>
               <div class="stage-actions">
                 <button class="button primary" disabled={!hydrated() || !answer().trim()} onClick={reveal}>
                   Save privately & reveal
@@ -800,20 +834,53 @@ export default function StudyFlow(props: Props) {
               <section class="answer-history-panel" aria-labelledby="answer-history-title">
                 <p class="section-kicker">Private recall history</p>
                 <h2 id="answer-history-title">Your explanations</h2>
-                <Show when={latestAnswerByQuestion().length > 0} fallback={
-                  <p class="guest-note">No saved explanation for this unit yet. Your answers will appear here after you reveal them in Study mode.</p>
-                }>
-                  <div class="answer-history-list">
-                    <For each={latestAnswerByQuestion()}>{({ question: item, entry }) => (
-                      <article>
-                        <div>
-                          <strong>{item.prompt}</strong>
-                          <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
-                        </div>
-                        <p class="preserve-lines">{entry.answerMarkdown}</p>
-                      </article>
-                    )}</For>
-                  </div>
+                <p class="answer-history-intro">Every saved attempt for this unit is shown here, newest first within each question.</p>
+                <Show when={!answerHistory.loading} fallback={<p class="guest-note">Loading your saved explanations…</p>}>
+                  <Show when={answerHistoryByQuestion().current.length > 0 || answerHistoryByQuestion().retired.length > 0} fallback={
+                    <p class="guest-note">No saved explanation for this unit yet. Your answers will appear here after you reveal them in Study mode.</p>
+                  }>
+                    <div class="answer-history-question-list">
+                      <For each={answerHistoryByQuestion().current}>{({ question: item, entries }) => (
+                        <section class="answer-history-question">
+                          <div class="answer-history-question-head">
+                            <strong>{item.prompt}</strong>
+                            <small>{entries.length} saved {entries.length === 1 ? 'attempt' : 'attempts'}</small>
+                          </div>
+                          <div class="answer-history-list">
+                            <For each={entries}>{(entry, index) => (
+                              <article>
+                                <div>
+                                  <span>{index() === 0 ? 'Latest' : `Previous ${index()}`}</span>
+                                  <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
+                                </div>
+                                <p class="preserve-lines">{entry.answerMarkdown}</p>
+                              </article>
+                            )}</For>
+                          </div>
+                        </section>
+                      )}</For>
+                      <Show when={answerHistoryByQuestion().retired.length > 0}>
+                        <section class="answer-history-question">
+                          <div class="answer-history-question-head">
+                            <strong>Earlier content revisions</strong>
+                            <small>{answerHistoryByQuestion().retired.length} saved {answerHistoryByQuestion().retired.length === 1 ? 'attempt' : 'attempts'}</small>
+                          </div>
+                          <p class="answer-history-intro">These answers belong to question IDs that are no longer present in the current unit revision. They are preserved instead of being hidden.</p>
+                          <div class="answer-history-list">
+                            <For each={answerHistoryByQuestion().retired}>{(entry) => (
+                              <article>
+                                <div>
+                                  <span>{entry.questionId}</span>
+                                  <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
+                                </div>
+                                <p class="preserve-lines">{entry.answerMarkdown}</p>
+                              </article>
+                            )}</For>
+                          </div>
+                        </section>
+                      </Show>
+                    </div>
+                  </Show>
                 </Show>
               </section>
             </Show>

@@ -14,6 +14,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
   if (!locals.user) return unauthorized();
   const unitId = url.searchParams.get('unitId');
   if (!unitId || !unitsById.has(unitId)) return json({ error: 'unknown_unit' }, { status: 400 });
+  const metadataOnly = url.searchParams.get('view') === 'metadata';
 
   const rows = await database().prepare(`SELECT unit_revision, question_id, answer_markdown, created_at
     FROM private_answer
@@ -26,7 +27,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     answers: rows.results.map((row) => ({
       unitRevision: row.unit_revision,
       questionId: row.question_id,
-      answerMarkdown: row.answer_markdown,
+      ...(!metadataOnly ? { answerMarkdown: row.answer_markdown } : {}),
       createdAt: row.created_at,
     })),
   });

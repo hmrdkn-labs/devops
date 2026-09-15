@@ -43,19 +43,33 @@ test('authenticated reveal is immediate even while persistence is still pending'
     contentType: 'application/json',
     body: JSON.stringify({ units: [] }),
   }));
-  await page.route('**/api/answers?unitId=*', (route) => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({
-      unitId: 'fpp:processes-and-resources',
-      answers: [{
+  await page.route('**/api/answers?unitId=*', (route) => {
+    const metadataOnly = new URL(route.request().url()).searchParams.get('view') === 'metadata';
+    const answers = [
+      {
         unitRevision: 1,
         questionId: 'fpp:processes-and-resources/q-process',
         answerMarkdown: 'Earlier I explained that a process has identity plus finite CPU and memory resources.',
         createdAt: 1_786_000_000_000,
-      }],
-    }),
-  }));
+      },
+      {
+        unitRevision: 1,
+        questionId: 'fpp:processes-and-resources/q-process',
+        answerMarkdown: 'My oldest explanation said that a process is a running program with resource limits.',
+        createdAt: 1_785_000_000_000,
+      },
+    ];
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        unitId: 'fpp:processes-and-resources',
+        answers: metadataOnly
+          ? answers.map(({ answerMarkdown: _answerMarkdown, ...entry }) => entry)
+          : answers,
+      }),
+    });
+  });
   await page.route('**/api/attempt', async (route) => {
     attemptStarted = true;
     await attemptGate;
@@ -68,6 +82,16 @@ test('authenticated reveal is immediate even while persistence is still pending'
 
   await page.goto('/learn/processes-and-resources');
   await expect(page.getByText('Saved explanations')).toBeHidden();
+  await expect(page.getByTestId('answer-history-cue')).toContainText('Answered before');
+  await expect(page.getByTestId('answer-history-cue')).toContainText('2 saved attempts');
+  await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeHidden();
+  await expect(page.getByText('My oldest explanation said that a process is a running program with resource limits.')).toBeHidden();
+  await page.getByRole('button', { name: 'Review previous answers' }).click();
+  await expect(page.getByRole('heading', { name: 'Your explanations' })).toBeVisible();
+  await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeVisible();
+  await expect(page.getByText('My oldest explanation said that a process is a running program with resource limits.')).toBeVisible();
+  await page.getByRole('button', { name: 'Study', exact: true }).click();
+  await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeHidden();
   await page.getByLabel('Your explanation').fill('A process consumes finite resources.');
   await page.getByRole('button', { name: 'Save privately & reveal' }).click();
 
@@ -81,6 +105,8 @@ test('authenticated reveal is immediate even while persistence is still pending'
   await page.getByRole('button', { name: 'Reference', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Your explanations' })).toBeVisible();
   await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeVisible();
+  await expect(page.getByText('My oldest explanation said that a process is a running program with resource limits.')).toBeVisible();
+  await expect(page.getByText('2 saved attempts')).toBeVisible();
 });
 
 test('Kubernetes reference visual names component position, responsibility, target, and proof', async ({ page }) => {
