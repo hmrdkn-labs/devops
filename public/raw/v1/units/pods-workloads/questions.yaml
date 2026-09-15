@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:pods-workloads
-revision: 1
+revision: 2
 questions:
   - id: fpp:pods-workloads/q-daemonset
     kind: scenario
@@ -18,3 +18,11 @@ questions:
       - One Pod has one network identity.
       - Containers remain separate runtime processes.
     objective_ids: [fpp:pods-workloads/pod-boundary]
+  - id: fpp:pods-workloads/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Classify four workloads before writing any manifest. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Describe identity, duration, placement, scaling, and replacement needs. Choose a controller for an API, database, node agent, and backup task. State one failure caused by choosing a different controller. Treat the conclusion as justified only when Every choice cites controller semantics rather than familiarity. Pod-level sharing is explicit for multi-container cases."
+    critical_points:
+      - "Every choice cites controller semantics rather than familiarity."
+      - "Pod-level sharing is explicit for multi-container cases."
+    objective_ids: [fpp:pods-workloads/pod-boundary, fpp:pods-workloads/controller-choice]

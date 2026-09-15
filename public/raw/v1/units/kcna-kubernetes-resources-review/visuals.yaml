@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-resources-review
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kcna-kubernetes-resources-review/visual-resource-ownership
     kind: ownership

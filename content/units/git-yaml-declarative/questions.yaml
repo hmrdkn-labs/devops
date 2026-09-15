@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:git-yaml-declarative
-revision: 1
+revision: 2
 questions:
   - id: fpp:git-yaml-declarative/q-valid
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Desired state persists.
       - Reconciliation is repeated and convergent.
     objective_ids: [fpp:git-yaml-declarative/versioned-intent]
+  - id: fpp:git-yaml-declarative/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Demonstrate that parseable YAML and schema-valid configuration are different claims. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Create a harmless sample manifest with valid syntax and one wrong field type. Parse it with a YAML-aware tool. Validate it against the target API schema using a client dry run. Treat the conclusion as justified only when Parsing succeeds. Schema validation identifies the wrong type without creating a resource."
+    critical_points:
+      - "Parsing succeeds."
+      - "Schema validation identifies the wrong type without creating a resource."
+    objective_ids: [fpp:git-yaml-declarative/versioned-intent, fpp:git-yaml-declarative/yaml-schema]

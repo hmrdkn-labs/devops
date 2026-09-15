@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:files-users-permissions
-revision: 1
+revision: 2
 visuals:
   - id: fpp:files-users-permissions/visual-access-check
     kind: flow

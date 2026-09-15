@@ -20,6 +20,11 @@ test('guest completes the question-first study flow without persistence', async 
   await page.getByLabel('Your explanation').fill('CPU time, memory, file descriptors, and I/O are finite.');
   await page.getByRole('button', { name: 'Save privately & reveal' }).click();
   await page.getByRole('button', { name: 'Hard' }).click();
+  await page.getByRole('button', { name: 'Next question' }).click();
+
+  await page.getByLabel('Your explanation').fill('I would inspect the PID and read-only process state before changing anything, then compare the evidence with the expected resource model.');
+  await page.getByRole('button', { name: 'Save privately & reveal' }).click();
+  await page.getByRole('button', { name: 'Good' }).click();
   await page.getByRole('button', { name: 'Open the lesson' }).click();
   await expect(page.getByText('Lesson revealed')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Apply the model safely' })).toBeVisible();
@@ -86,11 +91,24 @@ test('authenticated reveal is immediate even while persistence is still pending'
   await expect(page.getByTestId('answer-history-cue')).toContainText('2 saved attempts');
   await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeHidden();
   await expect(page.getByText('My oldest explanation said that a process is a running program with resource limits.')).toBeHidden();
+  await page.getByLabel('Your explanation').fill('Draft that must survive opening contextual history.');
+  const urlBeforeHistory = page.url();
+  const scrollBeforeHistory = await page.evaluate(() => window.scrollY);
+  const questionBeforeHistory = await page.getByRole('heading', { name: /A binary exists on disk/ }).boundingBox();
   await page.getByRole('button', { name: 'Review previous answers' }).click();
   await expect(page.getByRole('heading', { name: 'Your explanations' })).toBeVisible();
   await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeVisible();
   await expect(page.getByText('My oldest explanation said that a process is a running program with resource limits.')).toBeVisible();
-  await page.getByRole('button', { name: 'Study', exact: true }).click();
+  await expect(page).toHaveURL(urlBeforeHistory);
+  await expect(page.getByRole('textbox', { name: 'Your explanation', exact: true })).toHaveValue('Draft that must survive opening contextual history.');
+  const scrollAfterHistory = await page.evaluate(() => window.scrollY);
+  const questionAfterHistory = await page.getByRole('heading', { name: /A binary exists on disk/ }).boundingBox();
+  expect(Math.abs(scrollAfterHistory - scrollBeforeHistory)).toBeLessThanOrEqual(4);
+  expect(questionBeforeHistory).not.toBeNull();
+  expect(questionAfterHistory).not.toBeNull();
+  expect(Math.abs(questionAfterHistory!.x - questionBeforeHistory!.x)).toBeLessThanOrEqual(4);
+  expect(Math.abs(questionAfterHistory!.y - questionBeforeHistory!.y)).toBeLessThanOrEqual(4);
+  await page.getByRole('button', { name: 'Close learning context' }).click();
   await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeHidden();
   await page.getByLabel('Your explanation').fill('A process consumes finite resources.');
   await page.getByRole('button', { name: 'Save privately & reveal' }).click();
@@ -102,11 +120,10 @@ test('authenticated reveal is immediate even while persistence is still pending'
 
   releaseAttempt();
   await expect(page.getByRole('status')).toContainText('Private answer saved.');
-  await page.getByRole('button', { name: 'Reference', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Your explanations' })).toBeVisible();
-  await expect(page.getByText('Earlier I explained that a process has identity plus finite CPU and memory resources.')).toBeVisible();
-  await expect(page.getByText('My oldest explanation said that a process is a running program with resource limits.')).toBeVisible();
-  await expect(page.getByText('2 saved attempts')).toBeVisible();
+  await page.locator('.study-context-actions').getByRole('button', { name: 'Reference' }).click();
+  await expect(page.getByRole('heading', { name: 'Build or inspect the model' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /A binary exists on disk/ })).toBeVisible();
+  await expect(page.getByTestId('study-surface')).toHaveCount(1);
 });
 
 test('Kubernetes reference visual names component position, responsibility, target, and proof', async ({ page }) => {
@@ -122,7 +139,7 @@ test('Kubernetes reference visual names component position, responsibility, targ
   await expect(map).toContainText('kubectl describe rs <name>');
 });
 
-test('new learners can learn first or use reference mode without faking recall', async ({ page }) => {
+test('new learners can open reference context without leaving the retrieval workspace', async ({ page }) => {
   await page.goto('/learn/ip-subnets');
 
   const reveal = page.getByRole('button', { name: 'Save privately & reveal' });
@@ -135,53 +152,37 @@ test('new learners can learn first or use reference mode without faking recall',
   await expect(reveal).toBeDisabled();
 
   await page.getByRole('button', { name: "I haven't learned this yet" }).click();
-  await expect(page.getByRole('heading', { name: 'Build the model first.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Build or inspect the model' })).toBeVisible();
   await expect(page.getByTestId('reference-visuals')).toBeVisible();
   await expect(page.getByTestId('lesson-visual-guide').first()).toBeVisible();
-  await expect(page.getByLabel('Your explanation')).toBeHidden();
-  await page.getByRole('button', { name: 'Try the question now' }).click();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
-  await expect(page.getByLabel('Your explanation')).toBeFocused();
+  await expect(page).not.toHaveURL(/mode=reference/);
 
-  await page.getByRole('button', { name: 'Reference', exact: true }).click();
-  await expect(page.getByText('Reference lesson')).toBeVisible();
-  await expect(page).toHaveURL(/\?mode=reference$/);
-  await expect(page.getByTestId('reference-visuals')).toBeVisible();
   const visual = page.getByTestId('lesson-visual-guide').first();
   await visual.getByRole('button', { name: 'Next →' }).click();
   await expect(visual.locator('.lesson-visual-counter')).toContainText('2 /');
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport!.width);
-  await expect(page.getByLabel('Your explanation')).toBeHidden();
-  const lessonCompletion = page.getByRole('button', { name: 'Mark lesson read' });
-  await lessonCompletion.click();
-  await expect(page.getByRole('button', { name: 'Lesson read ✓' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByText('Guest mode: completion stays in memory for this page only.')).toBeVisible();
-  await page.locator('.depth-card summary').first().click();
-  await page.getByRole('button', { name: 'Mark practice complete' }).first().click();
-  await expect(page.getByRole('button', { name: 'Practice completed ✓' }).first()).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Study', exact: true }).click();
+  await page.getByRole('button', { name: 'Close learning context' }).click();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
-  await expect(page).not.toHaveURL(/mode=reference/);
   await expect(page.getByTestId('study-surface')).toHaveCount(1);
 });
 
-test('reduced-motion study transitions stay immediate and preserve the return focus', async ({ page }) => {
+test('reduced-motion workspace uses no full-surface transition state', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/learn/ip-subnets');
 
   await page.getByRole('button', { name: "I haven't learned this yet" }).click();
-  await expect(page.getByRole('heading', { name: 'Build the model first.' })).toBeVisible();
-  await page.getByRole('button', { name: 'Try the question now' }).click();
-  await expect(page.getByLabel('Your explanation')).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Build or inspect the model' })).toBeVisible();
+  await expect(page.getByLabel('Your explanation')).toBeVisible();
   await expect(page.locator('html')).not.toHaveAttribute('data-study-transition');
 });
 
 test('reference lessons with long technical literals stay inside the viewport', async ({ page }) => {
   await page.goto('/learn/kubernetes-networking-request-path?mode=reference');
   await expect(page.getByTestId('reference-visuals')).toBeVisible();
-  await expect(page.getByTestId('study-surface').getByText('http://catalog.default.svc.cluster.local:8080')).toBeVisible();
+  await expect(page.getByTestId('learning-context').getByText('http://catalog.default.svc.cluster.local:8080')).toBeVisible();
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport!.width);

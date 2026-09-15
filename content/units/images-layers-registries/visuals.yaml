@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:images-layers-registries
-revision: 1
+revision: 2
 visuals:
   - id: fpp:images-layers-registries/visual-image-supply-chain
     kind: lifecycle

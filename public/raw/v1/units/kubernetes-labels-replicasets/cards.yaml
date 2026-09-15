@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-labels-replicasets
-revision: 1
+revision: 2
 cards:
   - id: fpp:kubernetes-labels-replicasets/c-label
     type: short

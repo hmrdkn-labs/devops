@@ -3,7 +3,7 @@ id: fpp:services-dns-ingress
 slug: services-dns-ingress
 title: Services, cluster DNS, and ingress
 summary: Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

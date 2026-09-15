@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:http-tls
-revision: 1
+revision: 2
 questions:
   - id: fpp:http-tls/q-certificate
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - An HTTP status localizes the response-producing layer.
       - Proxy-to-upstream is a separate connection.
     objective_ids: [fpp:http-tls/http-message]
+  - id: fpp:http-tls/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Inspect one public HTTPS exchange without sending sensitive data. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Use curl verbose mode against a public documentation URL. Identify DNS results, connection address, certificate hostname, request authority, and status. Write one sentence of evidence for each layer. Treat the conclusion as justified only when You do not use a successful status as proof of every lower layer. You can identify where TLS identity was checked."
+    critical_points:
+      - "You do not use a successful status as proof of every lower layer."
+      - "You can identify where TLS identity was checked."
+    objective_ids: [fpp:http-tls/http-message, fpp:http-tls/tls-identity]

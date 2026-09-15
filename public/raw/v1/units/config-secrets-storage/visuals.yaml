@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:config-secrets-storage
-revision: 1
+revision: 2
 visuals:
   - id: fpp:config-secrets-storage/visual-config-storage
     kind: ownership

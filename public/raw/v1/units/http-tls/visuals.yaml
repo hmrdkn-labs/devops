@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:http-tls
-revision: 1
+revision: 2
 visuals:
   - id: fpp:http-tls/visual-request-stack
     kind: flow

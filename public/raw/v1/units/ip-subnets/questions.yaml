@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:ip-subnets
-revision: 1
+revision: 2
 questions:
   - id: fpp:ip-subnets/q-local
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Pod identity is distinct from node identity.
       - Services remain stable while pod IPs change.
     objective_ids: [fpp:ip-subnets/address-prefix]
+  - id: fpp:ip-subnets/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Use read-only commands to connect local addresses to route selection. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: List interface addresses with ip address. List routes with ip route. Ask ip route get for one local and one internet destination. Treat the conclusion as justified only when You can identify the selected interface and next hop. You can name the longest matching prefix for each destination."
+    critical_points:
+      - "You can identify the selected interface and next hop."
+      - "You can name the longest matching prefix for each destination."
+    objective_ids: [fpp:ip-subnets/address-prefix, fpp:ip-subnets/local-or-routed]

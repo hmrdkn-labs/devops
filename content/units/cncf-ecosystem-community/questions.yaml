@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
-revision: 1
+revision: 2
 questions:
   - id: fpp:cncf-ecosystem-community/q-landscape
     kind: explain
@@ -18,3 +18,11 @@ questions:
       - Interface/specification is distinct from implementation.
       - The concrete network dataplane executes packet handling.
     objective_ids: [fpp:cncf-ecosystem-community/projects]
+  - id: fpp:cncf-ecosystem-community/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Choose five unfamiliar CNCF projects and classify each by responsibility before reading implementation details. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: For each project, write one sentence describing the problem it solves. Mark whether it is mainly control plane, data plane, runtime, delivery, or observability tooling. Identify one interface or upstream/downstream component it interacts with. Record whether the project is needed by Kubernetes itself or is an optional ecosystem choice. Treat the conclusion as justified only when No project is classified only by logo or landscape category. Optional ecosystem tools are not described as mandatory Kubernetes components."
+    critical_points:
+      - "No project is classified only by logo or landscape category."
+      - "Optional ecosystem tools are not described as mandatory Kubernetes components."
+    objective_ids: [fpp:cncf-ecosystem-community/projects, fpp:cncf-ecosystem-community/community]

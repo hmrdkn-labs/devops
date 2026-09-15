@@ -38,14 +38,32 @@ function unit(
       verified_at: '2026-08-27',
     },
     markdown: '# Fixture',
-    questions: [{
-      id: `${id}.question`,
-      kind: 'explain',
-      prompt: 'Explain the fixture in enough detail to validate it.',
-      model_answer: 'The fixture exists to exercise content graph validation.',
-      critical_points: ['It is deterministic.'],
-      objective_ids: [objective],
-    }],
+    questions: [
+      {
+        id: `${id}.question`,
+        kind: 'explain',
+        prompt: 'Explain the fixture in enough detail to validate it.',
+        model_answer: 'The fixture exists to exercise content graph validation.',
+        critical_points: ['It is deterministic.'],
+        objective_ids: [objective],
+      },
+      {
+        id: `${id}.prediction`,
+        kind: 'predict',
+        prompt: 'Predict what the fixture should do when its contract remains valid.',
+        model_answer: 'A valid fixture should continue through graph validation without changing its deterministic contract.',
+        critical_points: ['The expected state is explicit.'],
+        objective_ids: [objective],
+      },
+      {
+        id: `${id}.scenario-question`,
+        kind: 'scenario',
+        prompt: 'What evidence would you inspect before changing this fixture during a test?',
+        model_answer: 'Inspect the declared inputs and validation result first, then change only the boundary the scenario is meant to exercise.',
+        critical_points: ['Evidence precedes mutation.'],
+        objective_ids: [objective],
+      },
+    ],
     cards: [
       ...Array.from({ length: 3 }, (_, index) => ({
         id: `${id}.short${index}`,

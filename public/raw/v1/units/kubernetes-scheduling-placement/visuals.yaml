@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-scheduling-placement
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kubernetes-scheduling-placement/visual-scheduler-filter
     kind: flow

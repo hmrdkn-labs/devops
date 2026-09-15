@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:container-network-storage
-revision: 1
+revision: 2
 visuals:
   - id: fpp:container-network-storage/visual-boundaries
     kind: ownership

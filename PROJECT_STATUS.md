@@ -5,6 +5,36 @@
 
 ## Read this first
 
+**Stable learning workspace + question depth v15 is release-ready:** the
+standard `/learn/*` experience no longer treats History, Reference, or Notes as
+destinations. Study is the persistent workspace. Desktop keeps the unit outline,
+720px learning stage, and 320px contextual panel in stable columns; narrower
+screens use an overlay drawer and mobile uses a bottom sheet above the app dock.
+Opening previous answers now preserves the URL, current question, draft answer,
+page scroll, and learning-stage geometry. Reference material and private notes
+open in the same contextual surface, and the legacy `?mode=reference` deep link
+is retained as a compatibility entry into that panel. The whole-surface View
+Transition/Web Animation swap, sidebar collapse/recentering, and automatic
+smooth `scrollIntoView` behavior have been removed; motion is limited to small
+local disclosure/feedback transitions. Answer-history metadata also has a
+reserved loading state so async data does not insert a surprise block into the
+question layout.
+
+The content floor was raised at the same time: every published unit must now
+have at least **three retrieval/application questions**. All **37 published
+units** were expanded from two to three questions (**111 unit questions total**)
+with an evidence-first scenario derived from that unit's existing guided
+practice and objectives, rather than generic filler. These are mastery-affecting
+content changes, so the 37 unit revisions advanced to revision 2 and preserve
+the normal evidence-revalidation boundary. Local validation is green: content
+contract, revision classification, Astro typecheck, **36 unit tests**, D1
+checks, production build, `git diff --check`, and the full Playwright
+desktop/tablet/mobile matrix with **57 passed / 18 intentional skips**. Visual QA
+confirmed a fixed 720px learning stage with a separate 320px context column at
+1440px and an opaque, bounded bottom sheet at 390px with no horizontal overflow.
+**No implementation blocker; protected release and production verification are
+the remaining steps.**
+
 **Complete private answer history v14 is live and production-verified:**
 previous explanations are now discoverable without weakening retrieval-first
 learning. Study mode fetches answer metadata only, so an answered question shows

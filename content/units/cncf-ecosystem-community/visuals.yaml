@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
-revision: 1
+revision: 2
 visuals:
   - id: fpp:cncf-ecosystem-community/visual-open-ecosystem
     kind: ownership

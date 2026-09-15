@@ -3,7 +3,7 @@ id: fpp:cloud-native-architecture-principles
 slug: cloud-native-architecture-principles
 title: Cloud-native architecture principles
 summary: Understand cloud-native systems as loosely coupled, declarative, observable, resilient, automated systems rather than as applications that merely happen to run in a cloud.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: architecture

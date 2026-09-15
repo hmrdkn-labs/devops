@@ -3,7 +3,7 @@ id: fpp:ip-subnets
 slug: ip-subnets
 title: IP addresses and subnets
 summary: Reason about interface addresses, prefixes, local delivery, and the route choice behind every packet.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: networking

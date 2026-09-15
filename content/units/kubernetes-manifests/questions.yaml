@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-manifests
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-manifests/q-apply-proof
     kind: scenario
@@ -18,3 +18,11 @@ questions:
       - Spec is intent.
       - Status is observed state and convergence evidence.
     objective_ids: [fpp:kubernetes-manifests/object-shape]
+  - id: fpp:kubernetes-manifests/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Pick one Deployment manifest and explain it without relying on memorized YAML blocks. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Identify apiVersion, kind, object name, namespace, labels, and desired fields. State which component should react after the API stores the object. Write one command or observation for API acceptance and one for runtime convergence. Treat the conclusion as justified only when The explanation separates desired state from observed state. At least one downstream proof is named beyond kubectl apply."
+    critical_points:
+      - "The explanation separates desired state from observed state."
+      - "At least one downstream proof is named beyond kubectl apply."
+    objective_ids: [fpp:kubernetes-manifests/object-shape, fpp:kubernetes-manifests/proof-boundary]

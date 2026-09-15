@@ -3,7 +3,7 @@ id: fpp:kubernetes-storage-lifecycle
 slug: kubernetes-storage-lifecycle
 title: Kubernetes persistent storage lifecycle
 summary: Trace durable storage from a workload claim through StorageClass and CSI provisioning to a bound volume, mounted Pod, topology constraints, and reclaim behavior.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

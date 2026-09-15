@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
-revision: 1
+revision: 2
 questions:
   - id: fpp:cloud-native-observability-signals/q-latency
     kind: scenario
@@ -18,3 +18,11 @@ questions:
       - OpenTelemetry focuses on generating/processing/exporting telemetry across signal types.
       - Prometheus is a metrics-oriented monitoring and query system.
     objective_ids: [fpp:cloud-native-observability-signals/tools]
+  - id: fpp:cloud-native-observability-signals/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Choose one application failure and write the smallest useful metric, log, trace, Kubernetes event, and end-to-end probe for it. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Define the user-visible symptom and time window. Name one metric that would quantify the symptom. Name one trace span or path that would localize the slow/failing boundary. Name one component log or Kubernetes event that could explain the local cause. Define one end-to-end request that proves recovery. Treat the conclusion as justified only when Each signal answers a different investigation question. Recovery is verified at the user or service boundary rather than only from telemetry ingestion."
+    critical_points:
+      - "Each signal answers a different investigation question."
+      - "Recovery is verified at the user or service boundary rather than only from telemetry ingestion."
+    objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools]

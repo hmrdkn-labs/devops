@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-domain-map
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kcna-domain-map/visual-reasoning-strategy
     kind: flow

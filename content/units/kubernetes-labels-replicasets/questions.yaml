@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-labels-replicasets
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-labels-replicasets/q-delete
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Selector defines controller membership.
       - Template labels must produce Pods that satisfy the selector.
     objective_ids: [fpp:kubernetes-labels-replicasets/selection]
+  - id: fpp:kubernetes-labels-replicasets/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Inspect one controller-managed ReplicaSet and connect its selector to the Pods that count toward desired replicas. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Record desired replicas, selector, and Pod-template labels from the ReplicaSet. List Pods using the same selector and compare actual count with desired count. Inspect one Pod owner reference and predict what happens if that Pod is deleted. Treat the conclusion as justified only when The selected set is derived from labels rather than Pod names. The prediction identifies the ReplicaSet control loop."
+    critical_points:
+      - "The selected set is derived from labels rather than Pod names."
+      - "The prediction identifies the ReplicaSet control loop."
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection, fpp:kubernetes-labels-replicasets/reconciliation]

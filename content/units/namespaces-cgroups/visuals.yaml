@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:namespaces-cgroups
-revision: 1
+revision: 2
 visuals:
   - id: fpp:namespaces-cgroups/visual-container-kernel
     kind: comparison

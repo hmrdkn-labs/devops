@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:config-secrets-storage
-revision: 1
+revision: 2
 questions:
   - id: fpp:config-secrets-storage/q-fresh
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - EBS volumes have AZ topology.
       - Pod rescheduling cannot erase storage failure domains.
     objective_ids: [fpp:config-secrets-storage/pv-topology]
+  - id: fpp:config-secrets-storage/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Inspect an existing non-production claim and explain every ownership boundary. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Read the PVC, bound PV, StorageClass, CSI driver, and selected Pod. Record access mode, reclaim policy, volume mode, and topology. State what happens on Pod deletion, claim deletion, node loss, and AZ loss. Treat the conclusion as justified only when You distinguish Pod, claim, volume, and cloud-resource lifecycle. Your AZ answer matches the storage topology."
+    critical_points:
+      - "You distinguish Pod, claim, volume, and cloud-resource lifecycle."
+      - "Your AZ answer matches the storage topology."
+    objective_ids: [fpp:config-secrets-storage/config-secret, fpp:config-secrets-storage/pv-topology]

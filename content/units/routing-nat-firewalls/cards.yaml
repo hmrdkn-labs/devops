@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:routing-nat-firewalls
-revision: 1
+revision: 2
 cards:
   - id: fpp:routing-nat-firewalls/c-routing
     type: short

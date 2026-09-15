@@ -3,7 +3,7 @@ id: fpp:processes-and-resources
 slug: processes-and-resources
 title: Processes and finite resources
 summary: Build the mental model that every service is a process competing for CPU time, memory, files, and input/output.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: architecture

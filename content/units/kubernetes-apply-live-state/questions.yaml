@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-apply-live-state
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-apply-live-state/q-configured
     kind: scenario
@@ -17,4 +17,12 @@ questions:
     critical_points:
       - Local configuration and live object are not automatically identical.
       - Live desired state and runtime convergence are separate layers.
+    objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]
+  - id: fpp:kubernetes-apply-live-state/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Apply one Deployment in a disposable namespace, then compare the local file with the live API object and runtime evidence. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Apply the manifest and record only what the command result actually proves. Fetch the live Deployment as YAML and identify fields added or updated by the cluster. Compare desired replicas with available replicas and then inspect the owning ReplicaSet and Pods. Treat the conclusion as justified only when The write result is not described as proof of application health. At least one difference between authored configuration and live/observed state is identified."
+    critical_points:
+      - "The write result is not described as proof of application health."
+      - "At least one difference between authored configuration and live/observed state is identified."
     objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]

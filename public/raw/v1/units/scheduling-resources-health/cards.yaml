@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:scheduling-resources-health
-revision: 1
+revision: 2
 cards:
   - id: fpp:scheduling-resources-health/c-request
     type: short

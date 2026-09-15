@@ -3,7 +3,7 @@ id: fpp:namespaces-cgroups
 slug: namespaces-cgroups
 title: Namespaces and control groups
 summary: See containers as ordinary processes given scoped views and enforceable resource boundaries by the Linux kernel.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: linux

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kcna-kubernetes-fundamentals-review/visual-component-ownership
     kind: ownership

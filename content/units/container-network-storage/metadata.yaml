@@ -3,7 +3,7 @@ id: fpp:container-network-storage
 slug: container-network-storage
 title: Container networking and storage
 summary: Follow interfaces, published ports, bind mounts, and volumes across the isolation boundary of a container.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: containers

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:ports-sockets-dns
-revision: 1
+revision: 2
 visuals:
   - id: fpp:ports-sockets-dns/visual-name-to-process
     kind: flow

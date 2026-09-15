@@ -3,7 +3,7 @@ id: fpp:routing-nat-firewalls
 slug: routing-nat-firewalls
 title: Routing, NAT, and firewalls
 summary: Follow packet decisions through routes, address translation, and stateful policy without collapsing them into one network box.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: networking

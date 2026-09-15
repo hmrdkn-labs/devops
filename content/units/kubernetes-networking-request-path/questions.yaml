@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-networking-request-path
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-networking-request-path/q-node-ip
     kind: explain
@@ -18,3 +18,11 @@ questions:
       - DNS success does not prove backend availability.
       - Endpoint selection depends on selectors and readiness.
     objective_ids: [fpp:kubernetes-networking-request-path/service-path]
+  - id: fpp:kubernetes-networking-request-path/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: In a disposable namespace, trace one Service from DNS name to a real backend response without changing networking components. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Record the Service name, ClusterIP, ports, and selector. Record the matching EndpointSlice addresses and readiness. Match one endpoint address to a Pod and inspect its node and Pod IP. From a client Pod, resolve the Service name and make one request. If it fails, identify the first layer where expected evidence diverges. Treat the conclusion as justified only when DNS, Service selection, endpoint readiness, Pod network identity, and application response are evidenced separately. A failed request is localized to the earliest unsupported hop rather than described as generic networking failure."
+    critical_points:
+      - "DNS, Service selection, endpoint readiness, Pod network identity, and application response are evidenced separately."
+      - "A failed request is localized to the earliest unsupported hop rather than described as generic networking failure."
+    objective_ids: [fpp:kubernetes-networking-request-path/service-path, fpp:kubernetes-networking-request-path/boundaries]

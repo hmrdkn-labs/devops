@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:ip-subnets
-revision: 1
+revision: 2
 visuals:
   - id: fpp:ip-subnets/visual-route-choice
     kind: flow

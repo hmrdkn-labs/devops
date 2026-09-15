@@ -116,6 +116,9 @@ export function validateGraph(units: LearningUnit[], paths: LearningPath[], cert
     if (metadata.status === 'published' && unit.visuals.length === 0) {
       throw new Error(`${metadata.id}: published units require at least one reference visual`);
     }
+    if (metadata.status === 'published' && unit.questions.length < 3) {
+      throw new Error(`${metadata.id}: published units require at least three retrieval/application questions`);
+    }
     for (const mapping of metadata.certification_mappings) {
       if (!certificationIds.has(mapping.certification)) {
         throw new Error(`${metadata.id}: unknown certification ${mapping.certification}`);

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-control-loop
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-control-loop/q-delete
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - kubectl remains a Kubernetes API client.
       - Authentication setup and API-server ownership differ.
     objective_ids: [fpp:kubernetes-control-loop/api-state]
+  - id: fpp:kubernetes-control-loop/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Inspect a disposable Deployment and trace desired state to a running process. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Create a small Deployment in an isolated namespace. Follow owner references from Pod to ReplicaSet to Deployment. Delete one Pod and watch the replacement events. Treat the conclusion as justified only when You can name the controller responsible for replacement. You can separate API object creation from node realization."
+    critical_points:
+      - "You can name the controller responsible for replacement."
+      - "You can separate API object creation from node realization."
+    objective_ids: [fpp:kubernetes-control-loop/api-state, fpp:kubernetes-control-loop/reconciliation]

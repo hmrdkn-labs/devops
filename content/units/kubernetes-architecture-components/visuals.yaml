@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-architecture-components
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kubernetes-architecture-components/visual-request-path
     kind: ownership

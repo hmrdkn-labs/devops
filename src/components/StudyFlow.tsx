@@ -156,19 +156,11 @@ interface AnswerHistoryMetadataResponse {
   answers: PrivateAnswerHistoryMetadataEntry[];
 }
 
-type LearningTransitionDirection = 'forward' | 'back' | 'crossfade';
-
-interface ViewTransitionLike {
-  finished: Promise<void>;
-}
-
-type ViewTransitionDocument = Document & {
-  startViewTransition?: (update: () => void) => ViewTransitionLike;
-};
+type ContextPanel = 'history' | 'reference' | 'notes';
 
 export default function StudyFlow(props: Props) {
   const [hydrated, setHydrated] = createSignal(false);
-  const [mode, setMode] = createSignal<'study' | 'reference'>('study');
+  const [contextPanel, setContextPanel] = createSignal<ContextPanel | null>(null);
   const [questionIndex, setQuestionIndex] = createSignal(0);
   const [answer, setAnswer] = createSignal('');
   const [revealed, setRevealed] = createSignal(false);
@@ -176,7 +168,6 @@ export default function StudyFlow(props: Props) {
   const [rating, setRating] = createSignal<'again' | 'hard' | 'good' | 'easy' | null>(null);
   const [finished, setFinished] = createSignal(false);
   const [showHint, setShowHint] = createSignal(false);
-  const [learningFirst, setLearningFirst] = createSignal(false);
   const [reflection, setReflection] = createSignal('');
   const [saveMessage, setSaveMessage] = createSignal('');
   const [checked, setChecked] = createSignal<string[]>([]);
@@ -188,7 +179,6 @@ export default function StudyFlow(props: Props) {
   const [guestLessonCompleted, setGuestLessonCompleted] = createSignal(false);
   const [guestPracticesCompleted, setGuestPracticesCompleted] = createSignal<string[]>([]);
   let saveSequence = 0;
-  let transitionSequence = 0;
   const [me] = createResource(() => typeof window !== 'undefined', async () => {
     const response = await fetch('/api/me', { credentials: 'include' });
     return response.json() as Promise<Me>;
@@ -210,7 +200,7 @@ export default function StudyFlow(props: Props) {
     },
   );
   const [answerHistory, { refetch: refetchAnswerHistory }] = createResource(
-    () => me()?.authenticated && (revealed() || mode() === 'reference' || finished()) ? props.unit.id : null,
+    () => me()?.authenticated && (revealed() || contextPanel() === 'history' || finished()) ? props.unit.id : null,
     async (unitId) => {
       const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId), { credentials: 'include' });
       if (!response.ok) return null;
@@ -235,116 +225,13 @@ export default function StudyFlow(props: Props) {
 
   onMount(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('mode') === 'reference') setMode('reference');
+    if (params.get('mode') === 'reference' || params.get('context') === 'reference') setContextPanel('reference');
     setHydrated(true);
   });
 
-  function transitionLearningState(
-    update: () => void,
-    options: {
-      direction?: LearningTransitionDirection;
-      focusSelector?: string;
-      alignSurface?: boolean;
-    } = {},
-  ) {
-    if (typeof window === 'undefined') {
-      update();
-      return;
-    }
-
-    const direction = options.direction ?? 'crossfade';
-    const sequence = ++transitionSequence;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const finish = () => {
-      if (sequence !== transitionSequence) return;
-      delete document.documentElement.dataset.studyTransition;
-      const target = options.focusSelector
-        ? document.querySelector<HTMLElement>(options.focusSelector)
-        : null;
-      target?.focus({ preventScroll: true });
-      if (options.alignSurface) {
-        document.querySelector<HTMLElement>('.study-surface')?.scrollIntoView({
-          behavior: reducedMotion ? 'auto' : 'smooth',
-          block: 'start',
-        });
-      }
-    };
-
-    if (reducedMotion) {
-      update();
-      queueMicrotask(finish);
-      return;
-    }
-
-    document.documentElement.dataset.studyTransition = direction;
-    const transitionDocument = document as ViewTransitionDocument;
-    if (transitionDocument.startViewTransition) {
-      try {
-        const transition = transitionDocument.startViewTransition(() => update());
-        void transition.finished.then(finish, finish);
-        return;
-      } catch {
-        // Fall through to the lightweight Web Animations fallback.
-      }
-    }
-
-    const outgoing = document.querySelector<HTMLElement>('.study-surface');
-    if (!outgoing) {
-      update();
-      queueMicrotask(finish);
-      return;
-    }
-
-    const exitOffset = direction === 'back' ? 4 : direction === 'forward' ? -5 : -2;
-    const enterOffset = direction === 'back' ? -6 : direction === 'forward' ? 8 : 3;
-    let exitAnimation: Animation;
-    try {
-      exitAnimation = outgoing.animate(
-        [
-          { opacity: 1, transform: 'translateY(0) scale(1)' },
-          { opacity: 0.12, transform: `translateY(${exitOffset}px) scale(.998)` },
-        ],
-        { duration: 80, easing: 'ease-out', fill: 'forwards' },
-      );
-    } catch {
-      update();
-      queueMicrotask(finish);
-      return;
-    }
-
-    const swap = () => {
-      if (sequence !== transitionSequence) return;
-      update();
-      queueMicrotask(() => {
-        const incoming = document.querySelector<HTMLElement>('.study-surface');
-        if (!incoming) {
-          finish();
-          return;
-        }
-        const enterAnimation = incoming.animate(
-          [
-            { opacity: 0.12, transform: `translateY(${enterOffset}px) scale(.998)` },
-            { opacity: 1, transform: 'translateY(0) scale(1)' },
-          ],
-          { duration: 160, easing: 'cubic-bezier(.2,.8,.2,1)' },
-        );
-        void enterAnimation.finished.then(finish, finish);
-      });
-    };
-
-    void exitAnimation.finished.then(swap, swap);
-  }
-
-  function switchMode(nextMode: 'study' | 'reference') {
-    if (mode() === nextMode) return;
-    transitionLearningState(() => {
-      setMode(nextMode);
-      const url = new URL(window.location.href);
-      if (nextMode === 'reference') url.searchParams.set('mode', 'reference');
-      else url.searchParams.delete('mode');
-      window.history.replaceState({}, '', url);
-    }, { direction: nextMode === 'reference' ? 'forward' : 'back' });
+  function openContext(panel: ContextPanel) {
+    setContextPanel((current) => current === panel ? null : panel);
+    if (panel === 'notes') void loadNote();
   }
 
   function hintFor(kind: Question['kind']) {
@@ -361,13 +248,11 @@ export default function StudyFlow(props: Props) {
   }
 
   async function learnFirst() {
-    transitionLearningState(() => {
-      setLearningFirst(true);
-      setShowHint(false);
-      setSaveMessage(me()?.authenticated
-        ? 'Marked as encountered only. No recall credit was created.'
-        : 'Guest mode: learn-first state stays on this page only.');
-    }, { direction: 'forward', alignSurface: true });
+    setContextPanel('reference');
+    setShowHint(false);
+    setSaveMessage(me()?.authenticated
+      ? 'Reference opened. Marked as encountered only; no recall credit was created.'
+      : 'Reference opened. Guest mode keeps this encounter on this page only.');
     if (!me()?.authenticated) return;
     const response = await fetch('/api/encounter', {
       method: 'POST',
@@ -533,20 +418,18 @@ export default function StudyFlow(props: Props) {
 
   function next() {
     if (questionIndex() + 1 < props.unit.questions.length) {
-      transitionLearningState(() => {
-        setQuestionIndex((value) => value + 1);
-        setAnswer('');
-        setRevealed(false);
-        setRated(false);
-        setRating(null);
-        setChecked([]);
-        setReflection('');
-        setShowHint(false);
-        setLearningFirst(false);
-        setSaveMessage('');
-      }, { direction: 'forward', focusSelector: '#private-answer', alignSurface: true });
+      setQuestionIndex((value) => value + 1);
+      setAnswer('');
+      setRevealed(false);
+      setRated(false);
+      setRating(null);
+      setChecked([]);
+      setReflection('');
+      setShowHint(false);
+      setSaveMessage('');
+      queueMicrotask(() => document.querySelector<HTMLTextAreaElement>('#private-answer')?.focus({ preventScroll: true }));
     } else {
-      transitionLearningState(() => setFinished(true), { direction: 'forward', alignSurface: true });
+      setFinished(true);
     }
   }
 
@@ -586,15 +469,19 @@ export default function StudyFlow(props: Props) {
         </div>
         <h1>{props.unit.title}</h1>
         <p>{props.unit.summary}</p>
-        <div class="study-mode-switch" role="group" aria-label="Learning mode">
-          <button type="button" aria-pressed={mode() === 'study'} onClick={() => switchMode('study')}>Study</button>
-          <button type="button" aria-pressed={mode() === 'reference'} onClick={() => switchMode('reference')}>Reference</button>
-          <span>{mode() === 'study' ? 'Retrieval first. Evidence is created only by your actions.' : 'Read directly. Reference mode creates no recall evidence.'}</span>
+        <div class="study-workspace-bar">
+          <strong>Study workspace</strong>
+          <div class="study-context-actions" role="group" aria-label="Learning context">
+            <button type="button" aria-pressed={contextPanel() === 'history'} onClick={() => openContext('history')}>History</button>
+            <button type="button" aria-pressed={contextPanel() === 'reference'} onClick={() => openContext('reference')}>Reference</button>
+            <button type="button" aria-pressed={contextPanel() === 'notes'} onClick={() => openContext('notes')}>Notes</button>
+          </div>
+          <span>Retrieval first. Context opens beside your work without leaving the question.</span>
         </div>
       </header>
 
-      <div class="study-layout shell" classList={{ 'is-reference': mode() === 'reference' }}>
-        <aside class="study-rail" aria-label="Unit context" aria-hidden={mode() === 'reference'}>
+      <div class="study-layout shell">
+        <aside class="study-rail" aria-label="Unit context">
           <div class="rail-card">
             <span class="section-kicker">Current unit</span>
             <strong>{props.unit.layer}</strong>
@@ -632,7 +519,7 @@ export default function StudyFlow(props: Props) {
             )}
           </Show>
           <div class="study-surface" data-testid="study-surface">
-            <Show when={mode() === 'study' && !learningFirst()}>
+            <Show when={!finished()}>
             <section class="question-stage" aria-labelledby="question-title">
             <div
               class="stage-progress"
@@ -662,19 +549,38 @@ export default function StudyFlow(props: Props) {
                 placeholder="Reason it through in your own words. Accuracy comes after retrieval."
                 rows={8}
               />
-              <Show when={me()?.authenticated && currentQuestionHistoryMetadata().length > 0}>
-                <aside class="answer-history-cue" data-testid="answer-history-cue" aria-label="Previous answer history">
-                  <div>
-                    <strong>Answered before</strong>
-                    <span>
-                      {currentQuestionHistoryMetadata().length} saved {currentQuestionHistoryMetadata().length === 1 ? 'attempt' : 'attempts'}
-                      {' · '}latest {new Date(currentQuestionHistoryMetadata()[0]!.createdAt).toLocaleString()}
-                    </span>
+              <aside class="answer-history-cue" data-testid="answer-history-cue" aria-label="Previous answer history">
+                <Show when={hydrated() && !me.loading && !answerHistoryMetadata.loading} fallback={
+                  <div class="history-status-loading" aria-live="polite">
+                    <strong>Checking your recall history…</strong>
+                    <span>The workspace reserves this space so loading does not move the answer controls.</span>
                   </div>
-                  <button type="button" class="text-button" onClick={() => switchMode('reference')}>Review previous answers</button>
-                  <small>Previous wording stays hidden in Study mode so you can still retrieve from memory first.</small>
-                </aside>
-              </Show>
+                }>
+                  <Show when={me()?.authenticated} fallback={
+                    <div>
+                      <strong>Guest study</strong>
+                      <span>Previous answers are available only to the signed-in owner.</span>
+                    </div>
+                  }>
+                    <Show when={currentQuestionHistoryMetadata().length > 0} fallback={
+                      <div>
+                        <strong>Fresh recall</strong>
+                        <span>No previous saved attempt for this question.</span>
+                      </div>
+                    }>
+                      <div>
+                        <strong>Answered before</strong>
+                        <span>
+                          {currentQuestionHistoryMetadata().length} saved {currentQuestionHistoryMetadata().length === 1 ? 'attempt' : 'attempts'}
+                          {' · '}latest {new Date(currentQuestionHistoryMetadata()[0]!.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      <button type="button" class="text-button" onClick={() => openContext('history')}>Review previous answers</button>
+                    </Show>
+                  </Show>
+                </Show>
+                <small>Previous wording stays hidden until you explicitly open History.</small>
+              </aside>
               <div class="stage-actions">
                 <button class="button primary" disabled={!hydrated() || !answer().trim()} onClick={reveal}>
                   Save privately & reveal
@@ -791,29 +697,9 @@ export default function StudyFlow(props: Props) {
             </section>
             </Show>
 
-            <Show when={mode() === 'study' && learningFirst()}>
-              <section class="learn-first-panel" aria-labelledby="learn-first-title">
-              <p class="section-kicker">New concept · learn before recall</p>
-              <h2 id="learn-first-title">Build the model first.</h2>
-              <p class="learn-first-intro">This path records an encounter, not a failed recall attempt. Read the lesson, then return to the same question and answer it from memory.</p>
-              <ReferenceVisuals visuals={props.unit.visuals} />
-              <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
-              <div class="stage-actions learn-first-return">
-                <button class="button primary" type="button" onClick={() => {
-                  transitionLearningState(() => {
-                    setLearningFirst(false);
-                    setAnswer('');
-                    setSaveMessage('');
-                  }, { direction: 'back', focusSelector: '#private-answer', alignSurface: true });
-                }}>Try the question now</button>
-                <span class="save-status" role="status">{saveMessage()}</span>
-              </div>
-              </section>
-            </Show>
-
-            <Show when={finished() || mode() === 'reference'}>
+            <Show when={finished()}>
               <article class="lesson">
-              <div class="lesson-divider"><span>{mode() === 'reference' ? 'Reference lesson' : 'Lesson revealed'}</span></div>
+              <div class="lesson-divider"><span>Lesson revealed</span></div>
               <ReferenceVisuals visuals={props.unit.visuals} />
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
               <div class="completion-action">
@@ -829,61 +715,6 @@ export default function StudyFlow(props: Props) {
                 <span>{taskMessage()}</span>
               </div>
             </article>
-
-            <Show when={mode() === 'reference' && me()?.authenticated}>
-              <section class="answer-history-panel" aria-labelledby="answer-history-title">
-                <p class="section-kicker">Private recall history</p>
-                <h2 id="answer-history-title">Your explanations</h2>
-                <p class="answer-history-intro">Every saved attempt for this unit is shown here, newest first within each question.</p>
-                <Show when={!answerHistory.loading} fallback={<p class="guest-note">Loading your saved explanations…</p>}>
-                  <Show when={answerHistoryByQuestion().current.length > 0 || answerHistoryByQuestion().retired.length > 0} fallback={
-                    <p class="guest-note">No saved explanation for this unit yet. Your answers will appear here after you reveal them in Study mode.</p>
-                  }>
-                    <div class="answer-history-question-list">
-                      <For each={answerHistoryByQuestion().current}>{({ question: item, entries }) => (
-                        <section class="answer-history-question">
-                          <div class="answer-history-question-head">
-                            <strong>{item.prompt}</strong>
-                            <small>{entries.length} saved {entries.length === 1 ? 'attempt' : 'attempts'}</small>
-                          </div>
-                          <div class="answer-history-list">
-                            <For each={entries}>{(entry, index) => (
-                              <article>
-                                <div>
-                                  <span>{index() === 0 ? 'Latest' : `Previous ${index()}`}</span>
-                                  <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
-                                </div>
-                                <p class="preserve-lines">{entry.answerMarkdown}</p>
-                              </article>
-                            )}</For>
-                          </div>
-                        </section>
-                      )}</For>
-                      <Show when={answerHistoryByQuestion().retired.length > 0}>
-                        <section class="answer-history-question">
-                          <div class="answer-history-question-head">
-                            <strong>Earlier content revisions</strong>
-                            <small>{answerHistoryByQuestion().retired.length} saved {answerHistoryByQuestion().retired.length === 1 ? 'attempt' : 'attempts'}</small>
-                          </div>
-                          <p class="answer-history-intro">These answers belong to question IDs that are no longer present in the current unit revision. They are preserved instead of being hidden.</p>
-                          <div class="answer-history-list">
-                            <For each={answerHistoryByQuestion().retired}>{(entry) => (
-                              <article>
-                                <div>
-                                  <span>{entry.questionId}</span>
-                                  <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
-                                </div>
-                                <p class="preserve-lines">{entry.answerMarkdown}</p>
-                              </article>
-                            )}</For>
-                          </div>
-                        </section>
-                      </Show>
-                    </div>
-                  </Show>
-                </Show>
-              </section>
-            </Show>
 
             <section class="depth-grid" aria-labelledby="practice-title">
               <div>
@@ -929,28 +760,6 @@ export default function StudyFlow(props: Props) {
               </div>
             </section>
 
-            <section class="notes-panel" aria-labelledby="notes-title">
-              <div>
-                <p class="section-kicker">Private notebook</p>
-                <h2 id="notes-title">What changed in your mental model?</h2>
-              </div>
-              <Show when={me()?.authenticated} fallback={
-                <p class="guest-note">Sign in as the allowlisted owner to keep per-unit Markdown notes.</p>
-              }>
-                <textarea
-                  rows={7}
-                  value={note()}
-                  onFocus={loadNote}
-                  onInput={(event) => setNote(event.currentTarget.value)}
-                  placeholder="Write a correction, connection, or question in Markdown."
-                />
-                <div class="stage-actions">
-                  <button class="button primary" onClick={saveNote}>Save note</button>
-                  <span role="status">{noteMessage()}</span>
-                </div>
-              </Show>
-            </section>
-
             <footer class="unit-sources">
               <h2>Primary references</h2>
               <ul><For each={props.unit.sources}>{(source) => (
@@ -970,6 +779,134 @@ export default function StudyFlow(props: Props) {
             </Show>
           </div>
         </div>
+
+        <aside
+          class="learning-context"
+          classList={{ 'is-open': contextPanel() !== null }}
+          aria-label="Learning context"
+          data-testid="learning-context"
+        >
+          <div class="learning-context-head">
+            <div>
+              <span class="section-kicker">Learning context</span>
+              <strong>
+                {contextPanel() === 'history' ? 'Previous answers'
+                  : contextPanel() === 'reference' ? 'Reference'
+                    : contextPanel() === 'notes' ? 'Private notes'
+                      : 'Stay on the question'}
+              </strong>
+            </div>
+            <button
+              type="button"
+              class="context-close"
+              aria-label="Close learning context"
+              disabled={contextPanel() === null}
+              onClick={() => setContextPanel(null)}
+            >×</button>
+          </div>
+          <div class="learning-context-tabs" role="tablist" aria-label="Context tools">
+            <button type="button" role="tab" aria-selected={contextPanel() === 'history'} onClick={() => openContext('history')}>History</button>
+            <button type="button" role="tab" aria-selected={contextPanel() === 'reference'} onClick={() => openContext('reference')}>Reference</button>
+            <button type="button" role="tab" aria-selected={contextPanel() === 'notes'} onClick={() => openContext('notes')}>Notes</button>
+          </div>
+          <div class="learning-context-body">
+            <Show when={contextPanel() !== null} fallback={
+              <div class="context-empty">
+                <p>Open context only when you need it. The question and your draft stay exactly where they are.</p>
+                <small>History is intentionally closed during fresh recall so previous wording does not leak into the attempt.</small>
+              </div>
+            }>
+              <Show when={contextPanel() === 'history'}>
+                <section aria-labelledby="context-history-title">
+                  <h2 id="context-history-title">Your explanations</h2>
+                  <p class="answer-history-intro">Every saved attempt for this unit, newest first. Opening this panel is explicit and does not change your Study state.</p>
+                  <Show when={me()?.authenticated} fallback={
+                    <p class="guest-note">Sign in as the allowlisted owner to access private answer history.</p>
+                  }>
+                    <Show when={!answerHistory.loading} fallback={<p class="guest-note">Loading saved explanations…</p>}>
+                      <Show when={answerHistoryByQuestion().current.length > 0 || answerHistoryByQuestion().retired.length > 0} fallback={
+                        <p class="guest-note">No saved explanations for this unit yet.</p>
+                      }>
+                        <div class="answer-history-question-list">
+                          <For each={answerHistoryByQuestion().current}>{({ question: item, entries }) => (
+                            <section class="answer-history-question">
+                              <div class="answer-history-question-head">
+                                <strong>{item.prompt}</strong>
+                                <small>{entries.length} saved {entries.length === 1 ? 'attempt' : 'attempts'}</small>
+                              </div>
+                              <div class="answer-history-list">
+                                <For each={entries}>{(entry, index) => (
+                                  <article>
+                                    <div>
+                                      <span>{index() === 0 ? 'Latest' : `Previous ${index()}`}</span>
+                                      <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
+                                    </div>
+                                    <p class="preserve-lines">{entry.answerMarkdown}</p>
+                                  </article>
+                                )}</For>
+                              </div>
+                            </section>
+                          )}</For>
+                          <Show when={answerHistoryByQuestion().retired.length > 0}>
+                            <section class="answer-history-question">
+                              <div class="answer-history-question-head">
+                                <strong>Earlier content revisions</strong>
+                                <small>{answerHistoryByQuestion().retired.length} saved {answerHistoryByQuestion().retired.length === 1 ? 'attempt' : 'attempts'}</small>
+                              </div>
+                              <p class="answer-history-intro">Preserved answers whose question IDs are no longer in the current revision.</p>
+                              <div class="answer-history-list">
+                                <For each={answerHistoryByQuestion().retired}>{(entry) => (
+                                  <article>
+                                    <div>
+                                      <span>{entry.questionId}</span>
+                                      <small>{new Date(entry.createdAt).toLocaleString()} · revision {entry.unitRevision}</small>
+                                    </div>
+                                    <p class="preserve-lines">{entry.answerMarkdown}</p>
+                                  </article>
+                                )}</For>
+                              </div>
+                            </section>
+                          </Show>
+                        </div>
+                      </Show>
+                    </Show>
+                  </Show>
+                </section>
+              </Show>
+
+              <Show when={contextPanel() === 'reference'}>
+                <section class="context-reference" aria-labelledby="context-reference-title">
+                  <div class="context-reference-intro">
+                    <h2 id="context-reference-title">Build or inspect the model</h2>
+                    <p>Use this without leaving the current question. Reading here creates no recall evidence.</p>
+                  </div>
+                  <ReferenceVisuals visuals={props.unit.visuals} />
+                  <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
+                </section>
+              </Show>
+
+              <Show when={contextPanel() === 'notes'}>
+                <section class="context-notes" aria-labelledby="context-notes-title">
+                  <h2 id="context-notes-title">What changed in your mental model?</h2>
+                  <Show when={me()?.authenticated} fallback={
+                    <p class="guest-note">Sign in as the allowlisted owner to keep per-unit Markdown notes.</p>
+                  }>
+                    <textarea
+                      rows={10}
+                      value={note()}
+                      onInput={(event) => setNote(event.currentTarget.value)}
+                      placeholder="Write a correction, connection, or question in Markdown."
+                    />
+                    <div class="stage-actions">
+                      <button class="button primary" onClick={saveNote}>Save note</button>
+                      <span role="status">{noteMessage()}</span>
+                    </div>
+                  </Show>
+                </section>
+              </Show>
+            </Show>
+          </div>
+        </aside>
       </div>
     </div>
   );

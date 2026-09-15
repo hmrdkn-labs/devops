@@ -3,7 +3,7 @@ id: fpp:http-tls
 slug: http-tls
 title: HTTP requests and TLS identity
 summary: Trace application requests above TCP and understand the separate guarantees provided by TLS encryption and certificate identity.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: networking

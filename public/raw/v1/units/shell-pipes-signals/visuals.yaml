@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:shell-pipes-signals
-revision: 1
+revision: 2
 visuals:
   - id: fpp:shell-pipes-signals/visual-process-composition
     kind: flow

@@ -3,7 +3,7 @@ id: fpp:kubernetes-labels-replicasets
 slug: kubernetes-labels-replicasets
 title: Labels, selectors, and ReplicaSets
 summary: Connect label-based selection to ReplicaSet ownership and explain how a controller continuously repairs replica-count drift.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

@@ -3,7 +3,7 @@ id: fpp:config-secrets-storage
 slug: config-secrets-storage
 title: Configuration, secrets, and persistent storage
 summary: Separate non-secret configuration, sensitive values, and stateful volume lifecycle while respecting identity and topology.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

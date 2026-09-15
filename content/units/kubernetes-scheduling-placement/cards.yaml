@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-scheduling-placement
-revision: 1
+revision: 2
 cards:
   - id: fpp:kubernetes-scheduling-placement/c-request
     type: short

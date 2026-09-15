@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:routing-nat-firewalls
-revision: 1
+revision: 2
 visuals:
   - id: fpp:routing-nat-firewalls/visual-packet-policy
     kind: flow

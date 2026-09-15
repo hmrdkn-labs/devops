@@ -3,7 +3,7 @@ id: fpp:ports-sockets-dns
 slug: ports-sockets-dns
 title: Ports, sockets, and DNS
 summary: Connect process sockets to transport ports and use DNS as name-to-record lookup rather than magical connectivity.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: networking

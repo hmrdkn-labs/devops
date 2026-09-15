@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:container-lifecycle
-revision: 1
+revision: 2
 questions:
   - id: fpp:container-lifecycle/q-exit
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Process memory is not resumed.
       - Durable state must live outside the process.
     objective_ids: [fpp:container-lifecycle/create-start-stop]
+  - id: fpp:container-lifecycle/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Run a trusted short-lived image and account for every state transition. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Create and run a container whose command prints once and exits. Inspect its command, logs, state, and exit code. Remove the container and confirm the image remains. Treat the conclusion as justified only when You can distinguish create, start, exit, and remove. You can explain which artifacts persist after each transition."
+    critical_points:
+      - "You can distinguish create, start, exit, and remove."
+      - "You can explain which artifacts persist after each transition."
+    objective_ids: [fpp:container-lifecycle/create-start-stop, fpp:container-lifecycle/pid1-exit]

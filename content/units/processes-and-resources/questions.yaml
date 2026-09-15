@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:processes-and-resources
-revision: 1
+revision: 2
 questions:
   - id: fpp:processes-and-resources/q-process
     kind: explain
@@ -18,3 +18,11 @@ questions:
       - Idle CPU does not imply spare end-to-end capacity.
       - A blocked process waits for a resource other than CPU.
     objective_ids: [fpp:processes-and-resources/resource-pressure]
+  - id: fpp:processes-and-resources/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Start a harmless long-running command and connect its PID to kernel-exposed state. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Run sleep 300 in one terminal and record its PID. Inspect ps output and selected files under /proc/PID. Identify its state, command line, and open descriptors. Treat the conclusion as justified only when You can distinguish the executable from this execution. You can name at least two resources represented in /proc."
+    critical_points:
+      - "You can distinguish the executable from this execution."
+      - "You can name at least two resources represented in /proc."
+    objective_ids: [fpp:processes-and-resources/process-model, fpp:processes-and-resources/resource-pressure]

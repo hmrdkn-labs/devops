@@ -3,7 +3,7 @@ id: fpp:kcna-domain-map
 slug: kcna-domain-map
 title: KCNA domain map and reasoning strategy
 summary: Map the current KCNA blueprint to a small set of Kubernetes and cloud-native mental models so study is driven by reasoning rather than isolated terms.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: architecture

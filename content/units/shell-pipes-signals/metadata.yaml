@@ -3,7 +3,7 @@ id: fpp:shell-pipes-signals
 slug: shell-pipes-signals
 title: Shells, pipes, exit status, and signals
 summary: Treat the shell as a process launcher and composition tool, then reason precisely about streams, status, and shutdown.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: linux

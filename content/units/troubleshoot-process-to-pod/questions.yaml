@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:troubleshoot-process-to-pod
-revision: 1
+revision: 2
 questions:
   - id: fpp:troubleshoot-process-to-pod/q-crashloop
     kind: scenario
@@ -18,3 +18,12 @@ questions:
       - Let evidence choose the next layer.
       - Change only after localizing the failed relationship.
     objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]
+  - id: fpp:troubleshoot-process-to-pod/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Diagnose one deliberately broken disposable service without making an early fix. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Have a partner introduce one selector, port, readiness, command, or policy fault. Record the failed transaction and evidence at each relevant layer. State and test one hypothesis at a time, then make the smallest fix. Verify the original transaction and write the causal chain. Treat the conclusion as justified only when The diagnosis names the exact broken relationship. The verification repeats the original user-visible check. The final note separates evidence, inference, change, and result."
+    critical_points:
+      - "The diagnosis names the exact broken relationship."
+      - "The verification repeats the original user-visible check."
+      - "The final note separates evidence, inference, change, and result."
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder, fpp:troubleshoot-process-to-pod/cross-layer]

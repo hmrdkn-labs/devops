@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 1
+revision: 2
 questions:
   - id: fpp:kcna-kubernetes-fundamentals-review/q-request-path
     kind: scenario
@@ -19,3 +19,12 @@ questions:
       - OCI-compatible images still run.
       - Kubernetes uses CRI-compatible runtimes.
     objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Without looking back, map API entry, durable state, placement, reconciliation, node execution, and container creation to the responsible Kubernetes component. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Write the six responsibilities as separate rows. Fill in kube-apiserver, etcd, kube-scheduler, controller manager/controllers, kubelet, and container runtime. Add one sentence describing what each component does not do. Treat the conclusion as justified only when Scheduler is not described as starting containers. Kubelet is not described as selecting cluster-wide desired replica counts. etcd is identified as state storage rather than a controller."
+    critical_points:
+      - "Scheduler is not described as starting containers."
+      - "Kubelet is not described as selecting cluster-wide desired replica counts."
+      - "etcd is identified as state storage rather than a controller."
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership, fpp:kcna-kubernetes-fundamentals-review/runtime]

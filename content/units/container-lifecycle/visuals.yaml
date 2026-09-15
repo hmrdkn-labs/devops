@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:container-lifecycle
-revision: 1
+revision: 2
 visuals:
   - id: fpp:container-lifecycle/visual-runtime-lifecycle
     kind: lifecycle

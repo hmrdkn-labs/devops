@@ -3,7 +3,7 @@ id: fpp:container-lifecycle
 slug: container-lifecycle
 title: Container runtime and lifecycle
 summary: Connect an image to the runtime-created process, writable layer, isolation settings, logs, exit status, and restart behavior.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: containers

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-namespaces-scope
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kubernetes-namespaces-scope/visual-object-scope
     kind: ownership

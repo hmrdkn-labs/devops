@@ -3,7 +3,7 @@ id: fpp:cloud-native-delivery-gitops
 slug: cloud-native-delivery-gitops
 title: CI, CD, declarative delivery, and GitOps
 summary: Distinguish artifact creation from release reconciliation and explain how GitOps turns version-controlled desired state into continuously reconciled application delivery.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: delivery

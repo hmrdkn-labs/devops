@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-architecture-principles
-revision: 1
+revision: 2
 questions:
   - id: fpp:cloud-native-architecture-principles/q-cloud
     kind: explain
@@ -18,3 +18,11 @@ questions:
       - Replication does not automatically imply elasticity.
       - Autoscaling changes desired capacity based on signals or policy.
     objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Compare a manually maintained single VM application with a declaratively deployed replicated service and identify the exact properties that change. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Describe how each design records desired configuration. Describe how each design replaces a failed instance. Describe how each design deploys a new version. Describe what runtime evidence is available. Identify one shared failure mode that replication alone would not solve. Treat the conclusion as justified only when The comparison uses concrete operating properties rather than only the word cloud-native. Replication is not treated as sufficient proof of resilience or elasticity."
+    critical_points:
+      - "The comparison uses concrete operating properties rather than only the word cloud-native."
+      - "Replication is not treated as sufficient proof of resilience or elasticity."
+    objective_ids: [fpp:cloud-native-architecture-principles/properties, fpp:cloud-native-architecture-principles/scale]

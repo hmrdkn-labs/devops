@@ -3,7 +3,7 @@ id: fpp:files-users-permissions
 slug: files-users-permissions
 title: Files, users, and permissions
 summary: Understand Linux paths, ownership, mode bits, and why service identity is part of both reliability and security.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: linux

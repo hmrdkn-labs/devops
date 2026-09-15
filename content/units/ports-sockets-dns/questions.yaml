@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:ports-sockets-dns
-revision: 1
+revision: 2
 questions:
   - id: fpp:ports-sockets-dns/q-loopback
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Successful resolution does not prove transport reachability.
       - Test the next layer with evidence.
     objective_ids: [fpp:ports-sockets-dns/dns-resolution, fpp:ports-sockets-dns/socket-endpoint]
+  - id: fpp:ports-sockets-dns/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Connect a listening socket to its process and DNS-independent reachability. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Start a local development server on loopback. Inspect the listener with ss and identify its PID. Resolve localhost and compare the address with the listener binding. Treat the conclusion as justified only when You can name address, port, protocol, namespace, and process. You can explain why remote reachability differs."
+    critical_points:
+      - "You can name address, port, protocol, namespace, and process."
+      - "You can explain why remote reachability differs."
+    objective_ids: [fpp:ports-sockets-dns/socket-endpoint, fpp:ports-sockets-dns/dns-resolution]

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:images-layers-registries
-revision: 1
+revision: 2
 questions:
   - id: fpp:images-layers-registries/q-delete
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Tags are references that can change.
       - Digests are content-addressed identifiers.
     objective_ids: [fpp:images-layers-registries/tag-digest]
+  - id: fpp:images-layers-registries/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Inspect a small public image without running untrusted code. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Pull a trusted minimal image from its official repository. Inspect its resolved digest, configuration, and layer history. Compare the tag reference with the content digest. Treat the conclusion as justified only when You can identify the immutable digest. You can distinguish metadata, layers, and the writable runtime layer."
+    critical_points:
+      - "You can identify the immutable digest."
+      - "You can distinguish metadata, layers, and the writable runtime layer."
+    objective_ids: [fpp:images-layers-registries/image-content, fpp:images-layers-registries/tag-digest]

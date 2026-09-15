@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:scheduling-resources-health
-revision: 1
+revision: 2
 questions:
   - id: fpp:scheduling-resources-health/q-bigger
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Restart must be a plausible repair.
       - Liveness should avoid shared dependency coupling.
     objective_ids: [fpp:scheduling-resources-health/probe-semantics]
+  - id: fpp:scheduling-resources-health/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Calculate whether a hypothetical Pod can be scheduled before looking at live usage. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Record allocatable node CPU and memory. Sum existing Pod requests and the new Pod requests. Check non-resource constraints and identify the first binding limit. Treat the conclusion as justified only when Your answer uses allocatable capacity and requests. You list at least one non-CPU capacity dimension."
+    critical_points:
+      - "Your answer uses allocatable capacity and requests."
+      - "You list at least one non-CPU capacity dimension."
+    objective_ids: [fpp:scheduling-resources-health/requests-limits, fpp:scheduling-resources-health/probe-semantics]

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kubernetes-pod-model/visual-pod-lifecycle
     kind: lifecycle

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:shell-pipes-signals
-revision: 1
+revision: 2
 questions:
   - id: fpp:shell-pipes-signals/q-pipe
     kind: explain
@@ -18,3 +18,11 @@ questions:
       - SIGTERM is cooperative.
       - The signal must reach the intended process.
     objective_ids: [fpp:shell-pipes-signals/signal-shutdown]
+  - id: fpp:shell-pipes-signals/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Compare a failing left-hand command with and without pipeline failure propagation. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Run a pipeline whose first command exits non-zero and whose last command succeeds. Inspect the pipeline exit status. Enable your shell's pipefail option and repeat. Treat the conclusion as justified only when You can state which status the shell returned in each case. You can explain why automation should choose this behavior deliberately."
+    critical_points:
+      - "You can state which status the shell returned in each case."
+      - "You can explain why automation should choose this behavior deliberately."
+    objective_ids: [fpp:shell-pipes-signals/stream-composition, fpp:shell-pipes-signals/signal-shutdown]

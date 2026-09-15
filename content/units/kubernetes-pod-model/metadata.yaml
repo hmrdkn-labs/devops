@@ -3,7 +3,7 @@ id: fpp:kubernetes-pod-model
 slug: kubernetes-pod-model
 title: Pod model, lifecycle, and ownership
 summary: Reason about Pods as disposable execution records with one scheduled node, shared network identity, lifecycle phases, and controller ownership.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

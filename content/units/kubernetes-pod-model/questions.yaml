@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-pod-model/q-delete
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Pod phase is not a complete health signal.
       - Container restart can occur inside the same Pod identity.
     objective_ids: [fpp:kubernetes-pod-model/lifecycle]
+  - id: fpp:kubernetes-pod-model/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Use any disposable test cluster with a three-replica Deployment and trace one manual Pod deletion. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Record the Deployment, ReplicaSet, and three Pod names and UIDs. Delete one Pod and watch Pods and ReplicaSets change. Compare the deleted and replacement Pod UID, node, and IP, then inspect owner references. Treat the conclusion as justified only when The replacement is identified as a new Pod object. The ReplicaSet is named as the direct replica-count owner."
+    critical_points:
+      - "The replacement is identified as a new Pod object."
+      - "The ReplicaSet is named as the direct replica-count owner."
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle, fpp:kubernetes-pod-model/ownership]

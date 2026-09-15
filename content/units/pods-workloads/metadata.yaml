@@ -3,7 +3,7 @@ id: fpp:pods-workloads
 slug: pods-workloads
 title: Pods and workload controllers
 summary: Choose the smallest Kubernetes execution unit and the controller whose identity and replacement semantics match the workload.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

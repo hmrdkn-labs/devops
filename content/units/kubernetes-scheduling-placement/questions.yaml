@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-scheduling-placement
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-scheduling-placement/q-low-usage
     kind: scenario
@@ -18,3 +18,11 @@ questions:
       - Toleration permits eligibility; it does not force placement.
       - Other constraints and scheduler scoring still apply.
     objective_ids: [fpp:kubernetes-scheduling-placement/policy]
+  - id: fpp:kubernetes-scheduling-placement/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Use a disposable cluster with at least two nodes or reason from a recorded node inventory and one hypothetical Pod specification. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Record node labels, taints, and allocatable CPU and memory. Write the Pod's requests and hard placement requirements. Eliminate every node that fails one hard condition and explain why. Compare the predicted feasible set with scheduler events or the actual assigned node. Treat the conclusion as justified only when Resource requests and hard constraints are evaluated before preferences. A toleration is not described as a force-placement rule."
+    critical_points:
+      - "Resource requests and hard constraints are evaluated before preferences."
+      - "A toleration is not described as a force-placement rule."
+    objective_ids: [fpp:kubernetes-scheduling-placement/feasibility, fpp:kubernetes-scheduling-placement/policy]

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:container-network-storage
-revision: 1
+revision: 2
 questions:
   - id: fpp:container-network-storage/q-port
     kind: explain
@@ -18,3 +18,11 @@ questions:
       - Writable layers belong to a container instance.
       - Persistence must be explicit.
     objective_ids: [fpp:container-network-storage/storage-boundary]
+  - id: fpp:container-network-storage/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: Observe a disposable container before and after explicit network and volume configuration. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Run a trusted service without port publication and inspect its container address. Recreate it with a loopback-only published host port. Mount a temporary managed volume and write a non-sensitive marker. Treat the conclusion as justified only when You can state which endpoint is host-visible. You can verify the marker survives container replacement."
+    critical_points:
+      - "You can state which endpoint is host-visible."
+      - "You can verify the marker survives container replacement."
+    objective_ids: [fpp:container-network-storage/network-boundary, fpp:container-network-storage/storage-boundary]

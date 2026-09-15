@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-networking-request-path
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kubernetes-networking-request-path/visual-service-request
     kind: flow

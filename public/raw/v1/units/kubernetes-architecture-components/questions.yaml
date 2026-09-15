@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-architecture-components
-revision: 1
+revision: 2
 questions:
   - id: fpp:kubernetes-architecture-components/q-scheduler
     kind: predict
@@ -18,3 +18,11 @@ questions:
       - Controllers create/reconcile API objects.
       - Scheduler chooses nodes and kubelet/runtime execute on those nodes.
     objective_ids: [fpp:kubernetes-architecture-components/request-path]
+  - id: fpp:kubernetes-architecture-components/q-practice-transfer
+    kind: scenario
+    prompt: "Plan this exercise before touching the system: In a disposable cluster, create or reuse one Deployment and collect evidence at each ownership boundary. What sequence would you follow, and what evidence would prove success?"
+    model_answer: "A strong evidence-first plan is: Record the Deployment and ReplicaSet owner relationship. Record one Pod owner reference and assigned node. Inspect Pod events to identify scheduling and container-start transitions. Compare API status with one real request to the running workload. Treat the conclusion as justified only when Deployment, ReplicaSet, scheduler placement, kubelet/runtime execution, and request proof are described as separate boundaries. The final proof is stronger than merely showing that the manifest exists."
+    critical_points:
+      - "Deployment, ReplicaSet, scheduler placement, kubelet/runtime execution, and request proof are described as separate boundaries."
+      - "The final proof is stronger than merely showing that the manifest exists."
+    objective_ids: [fpp:kubernetes-architecture-components/roles, fpp:kubernetes-architecture-components/request-path]
