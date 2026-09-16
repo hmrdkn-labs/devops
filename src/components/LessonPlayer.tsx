@@ -1,6 +1,7 @@
 import { For, Show, createMemo, createResource, createSignal, onMount } from 'solid-js';
 import type { Lesson, LessonExercise } from '@/lib/content/schema';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
+import { focusTask } from '@/lib/task-focus';
 
 interface Props {
   lesson: Lesson;
@@ -61,7 +62,10 @@ export default function LessonPlayer(props: Props) {
   const [learnFirst, setLearnFirst] = createSignal(false);
   const [variant, setVariant] = createSignal(false);
   const [status, setStatus] = createSignal('');
+  const [authError, setAuthError] = createSignal(false);
   let persistSequence = 0;
+  let taskHeading: HTMLHeadingElement | undefined;
+  let completeHeading: HTMLHeadingElement | undefined;
 
   const checkpointLabel = createMemo(() => ({
     fundamentals: 'Kubernetes Fundamentals',
@@ -71,9 +75,13 @@ export default function LessonPlayer(props: Props) {
   })[props.lesson.checkpoint] ?? props.lesson.title.replace(/^KCNA\s+/, ''));
   const checkpointHref = createMemo(() => `/kcna#${props.lesson.checkpoint}`);
 
-  const [me] = createResource(() => typeof window !== 'undefined', async () => {
-    const response = await fetch('/api/me', { credentials: 'include' });
-    return response.json() as Promise<Me>;
+  const [me, { refetch: refetchMe }] = createResource(() => typeof window !== 'undefined', async () => {
+    setAuthError(false);
+    try {
+      const response = await fetch('/api/me', { credentials: 'include' });
+      if (!response.ok) throw new Error('identity unavailable');
+      return await response.json() as Me;
+    } catch { setAuthError(true); return null; }
   });
   const exercise = createMemo(() => props.lesson.exercises[step()]!);
   const progress = createMemo(() => ((finished() ? props.lesson.exercises.length : step() + 1) / props.lesson.exercises.length) * 100);
@@ -190,13 +198,13 @@ export default function LessonPlayer(props: Props) {
   }
 
   function revealFeedback() {
-    queueMicrotask(() => document.querySelector<HTMLElement>('.lesson-feedback')?.scrollIntoView({ block: 'nearest' }));
+    // Keep the selected answer in place; the compact verdict follows the interaction.
   }
 
   function animateLessonTask() {
     if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     queueMicrotask(() => {
-      document.querySelector<HTMLElement>('[data-lesson-task]')?.animate(
+      taskHeading?.animate(
         [
           { opacity: 0, transform: 'translateY(8px)' },
           { opacity: 1, transform: 'translateY(0)' },
@@ -290,7 +298,7 @@ export default function LessonPlayer(props: Props) {
     setBlankAnswers({});
     setAnswer('');
     setCheckedPoints([]);
-    queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus());
+    focusTask(taskHeading);
   }
 
   function retryExercise() {
@@ -303,21 +311,20 @@ export default function LessonPlayer(props: Props) {
     setStatus('Correction attempt: feedback was revealed, so this remains encounter evidence.');
     if (choiceExercise()) setSelected([]);
     if (explainExercise()) setAnswer('');
-    queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus());
+    focusTask(taskHeading);
   }
 
   function continueLesson() {
     if (step() + 1 >= props.lesson.exercises.length) {
       setFinished(true);
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      focusTask(() => completeHeading);
       return;
     }
     const nextIndex = step() + 1;
     setStep(nextIndex);
     resetInteraction(props.lesson.exercises[nextIndex]!);
-    window.scrollTo({ top: 0, behavior: 'auto' });
     animateLessonTask();
-    queueMicrotask(() => document.querySelector<HTMLElement>('[data-lesson-task]')?.focus({ preventScroll: true }));
+    focusTask(taskHeading);
   }
 
   function kindLabel(kind: LessonExercise['kind']) {
@@ -357,17 +364,18 @@ export default function LessonPlayer(props: Props) {
       </header>
 
       <main class="lesson-player-main">
+        <Show when={authError()}><p class="workspace-message" role="status">Could not verify sign-in. This session stays in memory. <button class="text-button" type="button" onClick={() => void refetchMe()}>Retry sign-in check</button></p></Show>
         <Show when={!finished()} fallback={
           <section class="lesson-complete" data-testid="lesson-complete">
             <p class="lesson-kicker">Checkpoint lesson complete</p>
-            <h1>You completed {checkpointLabel()}.</h1>
+            <h1 ref={completeHeading} tabindex="-1">You completed {checkpointLabel()}.</h1>
             <p>Completion is separate from mastery. Retention still comes from later scheduled review.</p>
             <a class="lesson-primary" href={checkpointHref()}>Back to {checkpointLabel()}</a>
           </section>
         }>
           <section class="lesson-task-card" data-lesson-task data-testid="lesson-active-task" tabindex="-1">
             <p class="lesson-kicker">{kindLabel(exercise().kind)} · {assisted() ? 'assisted' : 'retrieval first'}</p>
-            <h1>{prompt()}</h1>
+            <h1 ref={taskHeading} tabindex="-1">{prompt()}</h1>
             <Show when={learnFirst() && exercise().learn_first}>
               {(concept) => (
                 <div class="lesson-learn-first" data-testid="learn-first-panel">
@@ -478,7 +486,7 @@ export default function LessonPlayer(props: Props) {
                         return (
                           <label class="lesson-connect-row" data-state={revealed() ? rowIsCorrect() ? 'correct' : 'incorrect' : 'idle'}>
                             <strong>{left.text}</strong>
-                            <span aria-hidden="true">→</span>
+                            <span class="lesson-connect-arrow" aria-hidden="true">→</span>
                             <span class="lesson-field-response">
                               <select
                                 aria-label={`Responsibility for ${left.text}`}
@@ -489,6 +497,9 @@ export default function LessonPlayer(props: Props) {
                                 <option value="">Choose responsibility</option>
                                 <For each={current().right}>{(right) => <option value={right.id}>{right.text}</option>}</For>
                               </select>
+                              <Show when={connections()[left.id]}>
+                                <small class="lesson-selected-response" data-testid="lesson-selected-response">Your selection: {current().right.find((right) => right.id === connections()[left.id])?.text}</small>
+                              </Show>
                               <Show when={revealed()}>
                                 <small class="lesson-row-result">{rowIsCorrect() ? '✓ Correct match' : `Expected: ${expectedText()}`}</small>
                               </Show>
@@ -591,25 +602,28 @@ export default function LessonPlayer(props: Props) {
                       </div>
                     )}
                   </Show>
+                  <p>{exercise().feedback.explanation}</p>
+                  <details class="feedback-depth" data-testid="lesson-feedback-depth">
+                    <summary>Explore the causal model</summary>
                   <LessonVisualGuide
                     lines={exercise().feedback.visual}
                     eyebrow="See what changed"
                     title="Replay the causal model"
                     components={exercise().feedback.components}
                   />
-                  <p>{exercise().feedback.explanation}</p>
                   <ul><For each={exercise().feedback.points}>{(point) => <li>{point}</li>}</For></ul>
+                  </details>
                   <Show when={choiceExercise()}>
                     {(current) => (
-                      <div class="lesson-rationales">
-                        <h3>Why each option behaves this way</h3>
+                      <details class="lesson-rationales feedback-depth" data-testid="lesson-rationales">
+                        <summary>Why each option behaves this way</summary>
                         <For each={current().options}>{(option) => (
                           <div class="lesson-rationale" classList={{ selected: selected().includes(option.id) }}>
                             <strong>{option.text}</strong>
                             <p>{option.rationale}</p>
                           </div>
                         )}</For>
-                      </div>
+                      </details>
                     )}
                   </Show>
                   <Show when={explainExercise()}>
@@ -620,6 +634,7 @@ export default function LessonPlayer(props: Props) {
                           <label>
                             <input
                               type="checkbox"
+                              disabled={rated()}
                               checked={checkedPoints().includes(point)}
                               onChange={(event) => setCheckedPoints((items) => event.currentTarget.checked
                                 ? [...items, point]
@@ -650,7 +665,7 @@ export default function LessonPlayer(props: Props) {
                     class="lesson-primary"
                     type="button"
                     data-testid="lesson-check"
-                    disabled={!hydrated() || !canCheck(exercise())}
+                    disabled={!hydrated() || me.loading || !canCheck(exercise())}
                     onClick={checkAnswer}
                   >
                     Check

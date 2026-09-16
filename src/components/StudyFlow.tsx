@@ -1,5 +1,6 @@
-import { For, Show, createMemo, createResource, createSignal, onMount } from 'solid-js';
+import { For, Show, createMemo, createResource, createSignal, onMount, onCleanup } from 'solid-js';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
+import { focusTask } from '@/lib/task-focus';
 
 interface Question {
   id: string;
@@ -101,6 +102,31 @@ function ReferenceVisuals(props: { visuals: ReferenceVisual[] }) {
   );
 }
 
+function ReferenceMarkdown(props: { html: string }) {
+  let body: HTMLDivElement | undefined;
+  onMount(() => {
+    for (const table of body?.querySelectorAll<HTMLTableElement>('table') ?? []) {
+      const columns = Math.max(...Array.from(table.rows, (row) => row.cells.length));
+      table.dataset.columns = String(columns);
+      if (columns <= 2) continue;
+      const scroll = document.createElement('div');
+      scroll.className = 'reference-table-scroll';
+      scroll.dataset.testid = 'reference-table-scroll';
+      scroll.tabIndex = 0;
+      scroll.setAttribute('role', 'region');
+      const headings = Array.from(table.querySelectorAll('th'), (cell) => cell.textContent?.trim()).filter(Boolean).join(', ');
+      scroll.setAttribute('aria-label', `Reference table${headings ? `: ${headings}` : ''}. Scroll horizontally to see all columns.`);
+      table.parentNode?.insertBefore(scroll, table);
+      scroll.appendChild(table);
+      const hint = document.createElement('p');
+      hint.className = 'reference-table-hint';
+      hint.textContent = 'More columns → Swipe sideways, or focus the table and use arrow keys.';
+      scroll.parentNode?.insertBefore(hint, scroll);
+    }
+  });
+  return <div ref={body} class="markdown-body" innerHTML={props.html} />;
+}
+
 interface Me {
   authenticated: boolean;
   authConfigured: boolean;
@@ -173,38 +199,69 @@ export default function StudyFlow(props: Props) {
   const [checked, setChecked] = createSignal<string[]>([]);
   const [note, setNote] = createSignal('');
   const [noteLoaded, setNoteLoaded] = createSignal(false);
+  const [noteLoading, setNoteLoading] = createSignal(false);
+  const [noteSaving, setNoteSaving] = createSignal(false);
+  const [noteError, setNoteError] = createSignal('');
+  const [noteDirty, setNoteDirty] = createSignal(false);
+  const [correctionPending, setCorrectionPending] = createSignal(false);
+  const [failedCorrection, setFailedCorrection] = createSignal('');
+  const [metadataError, setMetadataError] = createSignal(false);
+  const [historyError, setHistoryError] = createSignal(false);
+  const [progressError, setProgressError] = createSignal(false);
+  const [authError, setAuthError] = createSignal(false);
   const [noteMessage, setNoteMessage] = createSignal('');
   const [taskSaving, setTaskSaving] = createSignal<string | null>(null);
   const [taskMessage, setTaskMessage] = createSignal('');
   const [guestLessonCompleted, setGuestLessonCompleted] = createSignal(false);
   const [guestPracticesCompleted, setGuestPracticesCompleted] = createSignal<string[]>([]);
   let saveSequence = 0;
-  const [me] = createResource(() => typeof window !== 'undefined', async () => {
-    const response = await fetch('/api/me', { credentials: 'include' });
-    return response.json() as Promise<Me>;
+  let noteMutationSequence = 0;
+  let taskHeading: HTMLHeadingElement | undefined;
+  let lessonHeading: HTMLDivElement | undefined;
+  let contextElement: HTMLElement | undefined;
+  let contextOpener: HTMLElement | undefined;
+  const [me, { refetch: refetchMe }] = createResource(() => typeof window !== 'undefined', async () => {
+    setAuthError(false);
+    try {
+      const response = await fetch('/api/me', { credentials: 'include' });
+      if (!response.ok) throw new Error('identity unavailable');
+      return await response.json() as Me;
+    } catch {
+      setAuthError(true);
+      return null;
+    }
   });
   const [learningProgress, { refetch: refetchLearningProgress }] = createResource(
     () => Boolean(me()?.authenticated),
     async () => {
-      const response = await fetch('/api/progress', { credentials: 'include' });
-      if (!response.ok) return null;
-      return response.json() as Promise<ProgressResponse>;
+      setProgressError(false);
+      try {
+        const response = await fetch('/api/progress', { credentials: 'include' });
+        if (!response.ok) throw new Error('progress unavailable');
+        return await response.json() as ProgressResponse;
+      } catch { setProgressError(true); return null; }
     },
   );
   const [answerHistoryMetadata, { refetch: refetchAnswerHistoryMetadata }] = createResource(
     () => me()?.authenticated ? props.unit.id : null,
     async (unitId) => {
-      const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId) + '&view=metadata', { credentials: 'include' });
-      if (!response.ok) return null;
-      return response.json() as Promise<AnswerHistoryMetadataResponse>;
+      setMetadataError(false);
+      try {
+        const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId) + '&view=metadata', { credentials: 'include' });
+        if (!response.ok) throw new Error('history unavailable');
+        return await response.json() as AnswerHistoryMetadataResponse;
+      } catch { setMetadataError(true); return null; }
     },
   );
   const [answerHistory, { refetch: refetchAnswerHistory }] = createResource(
     () => me()?.authenticated && (revealed() || contextPanel() === 'history' || finished()) ? props.unit.id : null,
     async (unitId) => {
-      const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId), { credentials: 'include' });
-      if (!response.ok) return null;
-      return response.json() as Promise<AnswerHistoryResponse>;
+      setHistoryError(false);
+      try {
+        const response = await fetch('/api/answers?unitId=' + encodeURIComponent(unitId), { credentials: 'include' });
+        if (!response.ok) throw new Error('history unavailable');
+        return await response.json() as AnswerHistoryResponse;
+      } catch { setHistoryError(true); return null; }
     },
   );
   const question = createMemo(() => props.unit.questions[questionIndex()]);
@@ -227,11 +284,43 @@ export default function StudyFlow(props: Props) {
     const params = new URLSearchParams(window.location.search);
     if (params.get('mode') === 'reference' || params.get('context') === 'reference') setContextPanel('reference');
     setHydrated(true);
+    const escapeContext = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && contextPanel() !== null) {
+        event.preventDefault();
+        closeContext();
+      }
+    };
+    document.addEventListener('keydown', escapeContext);
+    onCleanup(() => document.removeEventListener('keydown', escapeContext));
   });
 
-  function openContext(panel: ContextPanel) {
-    setContextPanel((current) => current === panel ? null : panel);
-    if (panel === 'notes') void loadNote();
+  function closeContext() {
+    setContextPanel(null);
+    contextOpener?.focus({ preventScroll: true });
+  }
+
+  function openContext(panel: ContextPanel, opener?: HTMLElement, loadNotes = true) {
+    if (opener && !contextElement?.contains(opener)) contextOpener = opener;
+    setContextPanel(panel);
+    if (panel === 'notes' && loadNotes) void loadNote();
+    if (window.matchMedia('(max-width: 1240px)').matches) {
+      queueMicrotask(() => contextElement?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus({ preventScroll: true }));
+    }
+  }
+
+  function contextKey(event: KeyboardEvent) {
+    const tabs = Array.from(contextElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]') ?? []);
+    const index = tabs.indexOf(event.target as HTMLButtonElement);
+    if (index < 0) return;
+    let next = index;
+    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    tabs[next]?.click();
+    tabs[next]?.focus({ preventScroll: true });
   }
 
   function hintFor(kind: Question['kind']) {
@@ -248,12 +337,13 @@ export default function StudyFlow(props: Props) {
   }
 
   async function learnFirst() {
-    setContextPanel('reference');
+    openContext('reference', document.activeElement as HTMLElement);
     setShowHint(false);
     setSaveMessage(me()?.authenticated
       ? 'Reference opened. Marked as encountered only; no recall credit was created.'
       : 'Reference opened. Guest mode keeps this encounter on this page only.');
     if (!me()?.authenticated) return;
+    try {
     const response = await fetch('/api/encounter', {
       method: 'POST',
       credentials: 'include',
@@ -267,6 +357,7 @@ export default function StudyFlow(props: Props) {
     });
     if (!response.ok) setSaveMessage('Learn-first mode opened; encounter evidence could not be saved.');
     else void refetchLearningProgress();
+    } catch { setSaveMessage('Reference opened; encounter evidence could not be saved.'); }
   }
 
   async function persistAttempt(questionId: string, answerMarkdown: string, sequence: number) {
@@ -311,8 +402,10 @@ export default function StudyFlow(props: Props) {
   }
 
   async function persistRating(value: 'again' | 'hard' | 'good' | 'easy', reflectionMarkdown: string, sequence: number) {
+    let ratingSaved = false;
     const questionId = question().id;
     const questionPrompt = question().prompt;
+    const correction = reflectionMarkdown ? `### Correction — ${questionPrompt}\n\n${reflectionMarkdown}` : '';
     const preferredType = question().kind === 'scenario' ? 'scenario' : 'prompt';
     const card = props.unit.cards.find((candidate) =>
       candidate.type === preferredType &&
@@ -320,6 +413,10 @@ export default function StudyFlow(props: Props) {
     ) ?? props.unit.cards.find((candidate) => candidate.type === preferredType) ?? props.unit.cards[0];
     if (!card) {
       if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating kept in memory; no review card is configured.');
+      if (correction) {
+        setFailedCorrection(correction);
+        setCorrectionPending(false);
+      }
       return;
     }
     try {
@@ -335,38 +432,62 @@ export default function StudyFlow(props: Props) {
           idempotencyKey: crypto.randomUUID(),
         }),
       });
-      if (!response.ok) {
+      const scheduled = response.ok;
+      ratingSaved = scheduled;
+      if (!scheduled) {
         if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating kept in memory; scheduling failed.');
       } else {
         if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating scheduled.');
         void refetchLearningProgress();
       }
       if (reflectionMarkdown) {
+        setCorrectionPending(true);
+        noteMutationSequence += 1;
         const noteResponse = await fetch('/api/notes', {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             unitId: props.unit.id,
-            markdown: `### Correction — ${questionPrompt}\n\n${reflectionMarkdown}`,
+            markdown: correction,
           }),
         });
-        if (noteResponse.ok && question().id === questionId && saveSequence === sequence) {
-          setSaveMessage('Rating scheduled. Correction appended to your private notes.');
+        if (noteResponse.ok) {
+          noteMutationSequence += 1;
+          if (noteLoaded()) {
+            if (noteDirty()) setNote((current) => `${current.trimEnd()}\n\n${correction}`.trim());
+            else {
+              setNoteLoaded(false);
+              await loadNote(true);
+            }
+          }
+          if (question().id === questionId && saveSequence === sequence) {
+            setSaveMessage(`${scheduled ? 'Rating scheduled.' : 'Rating scheduling failed.'} Correction appended to your private notes.`);
+          }
+        } else if (question().id === questionId && saveSequence === sequence) {
+          setFailedCorrection(correction);
+          setSaveMessage(`${scheduled ? 'Rating scheduled.' : 'Rating scheduling failed.'} Correction could not be saved. Move the preserved correction to your Notes draft before continuing.`);
         }
       }
     } catch {
-      if (question().id === questionId && saveSequence === sequence) setSaveMessage('Rating kept in memory; scheduling failed.');
+      if (correction) setFailedCorrection(correction);
+      if (question().id === questionId && saveSequence === sequence) setSaveMessage(ratingSaved
+        ? 'Rating scheduled. Correction save was not confirmed; the correction is preserved below.'
+        : `Rating scheduling failed.${correction ? ' Your correction is preserved below.' : ''}`);
+    } finally {
+      if (correction) setCorrectionPending(false);
     }
   }
 
   function rate(value: 'again' | 'hard' | 'good' | 'easy') {
+    if (noteSaving() || correctionPending() || failedCorrection() || rated()) return;
     const reflectionSnapshot = reflection().trim();
     setRating(value);
     setRated(true);
     if (!me()?.authenticated) return;
     const sequence = ++saveSequence;
     setSaveMessage('Scheduling review…');
+    if (reflectionSnapshot) setCorrectionPending(true);
     void persistRating(value, reflectionSnapshot, sequence);
   }
 
@@ -395,6 +516,7 @@ export default function StudyFlow(props: Props) {
 
     setTaskSaving(key);
     setTaskMessage('Saving progress…');
+    try {
     const response = await fetch('/api/unit-progress', {
       method: 'POST',
       credentials: 'include',
@@ -413,10 +535,12 @@ export default function StudyFlow(props: Props) {
     } else {
       setTaskMessage('Could not save progress.');
     }
-    setTaskSaving(null);
+    } catch { setTaskMessage('Could not save progress. Your completion was not confirmed; try again.'); }
+    finally { setTaskSaving(null); }
   }
 
   function next() {
+    if (correctionPending() || failedCorrection()) return;
     if (questionIndex() + 1 < props.unit.questions.length) {
       setQuestionIndex((value) => value + 1);
       setAnswer('');
@@ -427,26 +551,61 @@ export default function StudyFlow(props: Props) {
       setReflection('');
       setShowHint(false);
       setSaveMessage('');
-      queueMicrotask(() => document.querySelector<HTMLTextAreaElement>('#private-answer')?.focus({ preventScroll: true }));
+      focusTask(taskHeading);
     } else {
       setFinished(true);
+      focusTask(() => lessonHeading);
     }
   }
 
-  async function loadNote() {
-    if (!me()?.authenticated || noteLoaded()) return;
+  async function loadNote(refresh = false) {
+    if (!me()?.authenticated || (noteLoaded() && !refresh) || noteLoading()) return;
+    const sequence = noteMutationSequence;
+    setNoteLoading(true);
+    setNoteError('');
+    try {
     const response = await fetch('/api/notes?unitId=' + encodeURIComponent(props.unit.id), {
       credentials: 'include',
     });
-    if (response.ok) {
-      const data = await response.json() as { markdown: string };
+    if (!response.ok) throw new Error('notes unavailable');
+    const data = await response.json() as { markdown: string };
+    if (sequence === noteMutationSequence && !noteDirty()) {
       setNote(data.markdown);
       setNoteLoaded(true);
     }
+    } catch { setNoteError('Could not load your notes. Your existing notes have not been replaced.'); }
+    finally {
+      setNoteLoading(false);
+      if (sequence !== noteMutationSequence && !noteLoaded() && contextPanel() === 'notes') void loadNote();
+    }
+  }
+
+  async function moveFailedCorrection(opener: HTMLElement) {
+    const correction = failedCorrection();
+    if (!correction || correctionPending() || noteSaving() || noteLoading()) return;
+    setCorrectionPending(true);
+    openContext('notes', opener, false);
+    // The notes append endpoint has no idempotency contract. Recover into an
+    // editable draft instead of repeating an uncertain POST and duplicating it.
+    try {
+      await loadNote();
+      if (!noteLoaded()) {
+        setSaveMessage('Your correction is preserved. Retry moving it after Notes can be loaded.');
+        return;
+      }
+      if (!note().includes(correction)) setNote((current) => `${current.trimEnd()}\n\n${correction}`.trim());
+      setNoteDirty(true);
+      setNoteMessage('Correction recovered into this draft. Save note to persist it.');
+      setSaveMessage('Correction preserved in your Notes draft. Save note to persist it.');
+      setFailedCorrection('');
+    } finally { setCorrectionPending(false); }
   }
 
   async function saveNote() {
+    if (!me()?.authenticated || !noteLoaded() || noteLoading() || noteSaving() || correctionPending()) return;
+    setNoteSaving(true);
     setNoteMessage('Saving…');
+    try {
     const response = await fetch('/api/notes', {
       method: 'PUT',
       credentials: 'include',
@@ -454,6 +613,9 @@ export default function StudyFlow(props: Props) {
       body: JSON.stringify({ unitId: props.unit.id, markdown: note() }),
     });
     setNoteMessage(response.ok ? 'Saved privately.' : 'Could not save.');
+    if (response.ok) setNoteDirty(false);
+    } catch { setNoteMessage('Could not save. Your draft is still here; try again.'); }
+    finally { setNoteSaving(false); }
   }
 
   return (
@@ -472,9 +634,9 @@ export default function StudyFlow(props: Props) {
         <div class="study-workspace-bar">
           <strong>Study workspace</strong>
           <div class="study-context-actions" role="group" aria-label="Learning context">
-            <button type="button" aria-pressed={contextPanel() === 'history'} onClick={() => openContext('history')}>History</button>
-            <button type="button" aria-pressed={contextPanel() === 'reference'} onClick={() => openContext('reference')}>Reference</button>
-            <button type="button" aria-pressed={contextPanel() === 'notes'} onClick={() => openContext('notes')}>Notes</button>
+            <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
+              <button type="button" aria-controls="learning-context-panel" aria-expanded={contextPanel() === panel} aria-pressed={contextPanel() === panel} onClick={(event) => openContext(panel, event.currentTarget)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
+            )}</For>
           </div>
           <span>Retrieval first. Context opens beside your work without leaving the question.</span>
         </div>
@@ -498,6 +660,10 @@ export default function StudyFlow(props: Props) {
         </aside>
 
         <div class="study-main">
+          <Show when={authError()}>
+            <p class="workspace-message" role="status">Could not verify sign-in. This attempt stays in memory. <button type="button" class="text-button" onClick={() => void refetchMe()}>Retry sign-in check</button></p>
+          </Show>
+          <div class="learning-status-slot" data-testid="learning-status-slot" aria-busy={me.loading || learningProgress.loading}>
           <Show when={unitLearningProgress()}>
             {(unitProgress) => (
               <section class="unit-learning-status" aria-label="Learning progress">
@@ -518,6 +684,15 @@ export default function StudyFlow(props: Props) {
               </section>
             )}
           </Show>
+          <Show when={!unitLearningProgress() && !me.loading && !learningProgress.loading && !progressError()}>
+            <section class="unit-learning-status" aria-label="Session progress">
+              <div><span>This session</span><strong>{finished() ? 'Questions complete' : `Question ${questionIndex() + 1} of ${props.unit.questions.length}`}</strong><small>Your explanation stays in this workspace.</small></div>
+              <div><span>Learning record</span><strong>{me()?.authenticated ? 'No saved progress yet' : 'Memory only'}</strong><small>{me()?.authenticated ? 'Saved evidence appears here after your attempt.' : 'Guest activity stays on this page and does not change mastery.'}</small></div>
+            </section>
+          </Show>
+          <Show when={me.loading || learningProgress.loading}><p class="workspace-message" role="status">Loading learning progress…</p></Show>
+          <Show when={progressError()}><p class="workspace-message" role="status">Progress is unavailable. <button type="button" class="text-button" onClick={() => void refetchLearningProgress()}>Retry progress</button></p></Show>
+          </div>
           <div class="study-surface" data-testid="study-surface">
             <Show when={!finished()}>
             <section class="question-stage" aria-labelledby="question-title">
@@ -538,7 +713,7 @@ export default function StudyFlow(props: Props) {
                 <small>{questionIndex() + 1} of {props.unit.questions.length} · {question().kind}</small>
               </div>
             </div>
-            <h2 id="question-title">{question().prompt}</h2>
+            <h2 ref={taskHeading} tabindex="-1" id="question-title">{question().prompt}</h2>
             <Show when={!revealed()}>
               <label class="answer-label" for="private-answer">Your explanation</label>
               <textarea
@@ -562,6 +737,7 @@ export default function StudyFlow(props: Props) {
                       <span>Previous answers are available only to the signed-in owner.</span>
                     </div>
                   }>
+                    <Show when={!metadataError()} fallback={<div><strong>History unavailable</strong><button type="button" class="text-button" onClick={() => void refetchAnswerHistoryMetadata()}>Retry recall history</button></div>}>
                     <Show when={currentQuestionHistoryMetadata().length > 0} fallback={
                       <div>
                         <strong>Fresh recall</strong>
@@ -575,15 +751,16 @@ export default function StudyFlow(props: Props) {
                           {' · '}latest {new Date(currentQuestionHistoryMetadata()[0]!.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <button type="button" class="text-button" onClick={() => openContext('history')}>Review previous answers</button>
+                      <button type="button" class="text-button" onClick={(event) => openContext('history', event.currentTarget)}>Review previous answers</button>
+                    </Show>
                     </Show>
                   </Show>
                 </Show>
                 <small>Previous wording stays hidden until you explicitly open History.</small>
               </aside>
               <div class="stage-actions">
-                <button class="button primary" disabled={!hydrated() || !answer().trim()} onClick={reveal}>
-                  Save privately & reveal
+                <button class="button primary" disabled={!hydrated() || me.loading || !answer().trim()} onClick={reveal}>
+                  {me()?.authenticated ? 'Save privately & reveal' : 'Reveal & compare'}
                 </button>
                 <span class="microcopy">No AI grading. You compare the reasoning yourself.</span>
               </div>
@@ -635,6 +812,7 @@ export default function StudyFlow(props: Props) {
                   <label>
                     <input
                       type="checkbox"
+                      disabled={rated()}
                       checked={checked().includes(point)}
                       onChange={(event) => setChecked((items) =>
                         event.currentTarget.checked ? [...items, point] : items.filter((item) => item !== point))}
@@ -647,6 +825,7 @@ export default function StudyFlow(props: Props) {
                 <span>What was missing or wrong in your model?</span>
                 <textarea
                   id="model-correction"
+                  disabled={rated()}
                   rows={3}
                   value={reflection()}
                   onInput={(event) => setReflection(event.currentTarget.value)}
@@ -674,8 +853,14 @@ export default function StudyFlow(props: Props) {
                       </div>
                     </Show>
                   </div>
+                  <Show when={failedCorrection()}>
+                    <div class="workspace-message" data-testid="correction-recovery">
+                      <p>Your correction is still preserved in the explanation above. Move it into Notes before continuing.</p>
+                      <button class="button" type="button" data-testid="correction-move-to-notes" disabled={correctionPending() || noteLoading() || noteSaving()} onClick={(event) => void moveFailedCorrection(event.currentTarget)}>Move correction to Notes</button>
+                    </div>
+                  </Show>
                   <div class="stage-actions">
-                    <button class="button primary" onClick={next}>
+                    <button class="button primary" disabled={correctionPending() || Boolean(failedCorrection())} onClick={next}>
                       {questionIndex() + 1 < props.unit.questions.length ? 'Next question' : 'Open the lesson'}
                     </button>
                     <span class="save-status" role="status">{saveMessage()}</span>
@@ -685,10 +870,10 @@ export default function StudyFlow(props: Props) {
                 <div class="rating-block">
                   <p>How effortful was accurate recall?</p>
                   <div class="rating-buttons" role="group" aria-label="Recall rating">
-                    <button onClick={() => rate('again')}>Again</button>
-                    <button onClick={() => rate('hard')}>Hard</button>
-                    <button onClick={() => rate('good')}>Good</button>
-                    <button onClick={() => rate('easy')}>Easy</button>
+                    <button disabled={noteSaving()} onClick={() => rate('again')}>Again</button>
+                    <button disabled={noteSaving()} onClick={() => rate('hard')}>Hard</button>
+                    <button disabled={noteSaving()} onClick={() => rate('good')}>Good</button>
+                    <button disabled={noteSaving()} onClick={() => rate('easy')}>Easy</button>
                   </div>
                   <span class="save-status" role="status">{saveMessage()}</span>
                 </div>
@@ -699,7 +884,7 @@ export default function StudyFlow(props: Props) {
 
             <Show when={finished()}>
               <article class="lesson">
-              <div class="lesson-divider"><span>Lesson revealed</span></div>
+              <div ref={lessonHeading} tabindex="-1" class="lesson-divider"><span>Lesson revealed</span></div>
               <ReferenceVisuals visuals={props.unit.visuals} />
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
               <div class="completion-action">
@@ -707,7 +892,7 @@ export default function StudyFlow(props: Props) {
                   type="button"
                   class="completion-toggle"
                   aria-pressed={taskIsCompleted('lesson', 'lesson')}
-                  disabled={taskSaving() === 'lesson:lesson'}
+                  disabled={taskSaving() !== null || learningProgress.loading || progressError()}
                   onClick={() => setTaskCompleted('lesson', 'lesson', !taskIsCompleted('lesson', 'lesson'))}
                 >
                   {taskIsCompleted('lesson', 'lesson') ? 'Lesson read ✓' : 'Mark lesson read'}
@@ -737,7 +922,7 @@ export default function StudyFlow(props: Props) {
                       type="button"
                       class="completion-toggle"
                       aria-pressed={taskIsCompleted('practice', practice.id)}
-                      disabled={taskSaving() === `practice:${practice.id}`}
+                      disabled={taskSaving() !== null || learningProgress.loading || progressError()}
                       onClick={() => setTaskCompleted('practice', practice.id, !taskIsCompleted('practice', practice.id))}
                     >
                       {taskIsCompleted('practice', practice.id) ? 'Practice completed ✓' : 'Mark practice complete'}
@@ -781,6 +966,8 @@ export default function StudyFlow(props: Props) {
         </div>
 
         <aside
+          ref={contextElement}
+          id="learning-context-panel"
           class="learning-context"
           classList={{ 'is-open': contextPanel() !== null }}
           aria-label="Learning context"
@@ -801,13 +988,13 @@ export default function StudyFlow(props: Props) {
               class="context-close"
               aria-label="Close learning context"
               disabled={contextPanel() === null}
-              onClick={() => setContextPanel(null)}
+              onClick={closeContext}
             >×</button>
           </div>
-          <div class="learning-context-tabs" role="tablist" aria-label="Context tools">
-            <button type="button" role="tab" aria-selected={contextPanel() === 'history'} onClick={() => openContext('history')}>History</button>
-            <button type="button" role="tab" aria-selected={contextPanel() === 'reference'} onClick={() => openContext('reference')}>Reference</button>
-            <button type="button" role="tab" aria-selected={contextPanel() === 'notes'} onClick={() => openContext('notes')}>Notes</button>
+          <div class="learning-context-tabs" role="tablist" aria-label="Context tools" onKeyDown={contextKey}>
+            <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
+              <button type="button" role="tab" id={`context-tab-${panel}`} aria-controls={`context-${panel}`} tabindex={contextPanel() === panel || (contextPanel() === null && panel === 'history') ? 0 : -1} aria-selected={contextPanel() === panel} onClick={() => openContext(panel)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
+            )}</For>
           </div>
           <div class="learning-context-body">
             <Show when={contextPanel() !== null} fallback={
@@ -817,13 +1004,14 @@ export default function StudyFlow(props: Props) {
               </div>
             }>
               <Show when={contextPanel() === 'history'}>
-                <section aria-labelledby="context-history-title">
+                <section role="tabpanel" id="context-history" aria-labelledby="context-tab-history">
                   <h2 id="context-history-title">Your explanations</h2>
                   <p class="answer-history-intro">Every saved attempt for this unit, newest first. Opening this panel is explicit and does not change your Study state.</p>
                   <Show when={me()?.authenticated} fallback={
                     <p class="guest-note">Sign in as the allowlisted owner to access private answer history.</p>
                   }>
                     <Show when={!answerHistory.loading} fallback={<p class="guest-note">Loading saved explanations…</p>}>
+                      <Show when={!historyError()} fallback={<div data-testid="history-error"><p role="status">Saved explanations are unavailable.</p><button type="button" class="button" onClick={() => void refetchAnswerHistory()}>Retry saved explanations</button></div>}>
                       <Show when={answerHistoryByQuestion().current.length > 0 || answerHistoryByQuestion().retired.length > 0} fallback={
                         <p class="guest-note">No saved explanations for this unit yet.</p>
                       }>
@@ -869,36 +1057,45 @@ export default function StudyFlow(props: Props) {
                           </Show>
                         </div>
                       </Show>
+                      </Show>
                     </Show>
                   </Show>
                 </section>
               </Show>
 
               <Show when={contextPanel() === 'reference'}>
-                <section class="context-reference" aria-labelledby="context-reference-title">
+                <section role="tabpanel" id="context-reference" class="context-reference" aria-labelledby="context-tab-reference">
                   <div class="context-reference-intro">
                     <h2 id="context-reference-title">Build or inspect the model</h2>
                     <p>Use this without leaving the current question. Reading here creates no recall evidence.</p>
                   </div>
-                  <ReferenceVisuals visuals={props.unit.visuals} />
-                  <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
+                  <details class="feedback-depth reference-models" data-testid="reference-models">
+                    <summary>Visual models ({props.unit.visuals.length})</summary>
+                    <ReferenceVisuals visuals={props.unit.visuals} />
+                  </details>
+                  <ReferenceMarkdown html={props.unit.lessonHtml} />
                 </section>
               </Show>
 
               <Show when={contextPanel() === 'notes'}>
-                <section class="context-notes" aria-labelledby="context-notes-title">
+                <section role="tabpanel" id="context-notes" class="context-notes" aria-labelledby="context-tab-notes">
                   <h2 id="context-notes-title">What changed in your mental model?</h2>
                   <Show when={me()?.authenticated} fallback={
                     <p class="guest-note">Sign in as the allowlisted owner to keep per-unit Markdown notes.</p>
                   }>
+                    <Show when={noteLoading()}><p role="status" data-testid="notes-loading">Loading your private notes…</p></Show>
+                    <Show when={noteError()}><div data-testid="notes-error"><p role="status">{noteError()}</p><button type="button" class="button" disabled={noteLoading()} onClick={() => void loadNote()}>Retry loading notes</button></div></Show>
+                    <label class="answer-label" for="private-unit-note">Private unit notes</label>
                     <textarea
+                      id="private-unit-note"
+                      disabled={!noteLoaded() || noteLoading() || noteSaving() || correctionPending()}
                       rows={10}
                       value={note()}
-                      onInput={(event) => setNote(event.currentTarget.value)}
+                      onInput={(event) => { setNote(event.currentTarget.value); setNoteDirty(true); }}
                       placeholder="Write a correction, connection, or question in Markdown."
                     />
                     <div class="stage-actions">
-                      <button class="button primary" onClick={saveNote}>Save note</button>
+                      <button class="button primary" disabled={!noteLoaded() || noteLoading() || noteSaving() || correctionPending()} onClick={saveNote}>Save note</button>
                       <span role="status">{noteMessage()}</span>
                     </div>
                   </Show>

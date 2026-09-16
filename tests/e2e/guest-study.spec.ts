@@ -7,7 +7,7 @@ test('guest completes the question-first study flow without persistence', async 
   await expect(page.getByText('Concise model')).toBeHidden();
 
   await page.getByLabel('Your explanation').fill('A running process has an identity and consumes finite resources.');
-  await page.getByRole('button', { name: 'Save privately & reveal' }).click();
+  await page.getByRole('button', { name: 'Reveal & compare' }).click();
   await expect(page.getByText('Concise model')).toBeVisible();
   await page.getByRole('button', { name: 'Good' }).click();
   await expect(page.getByText('Review needed', { exact: true })).toBeVisible();
@@ -15,15 +15,16 @@ test('guest completes the question-first study flow without persistence', async 
   await expect(page.getByText('Add these missing ideas:')).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Guest answer kept in memory');
   await page.getByRole('button', { name: 'Next question' }).click();
-  await expect(page.getByLabel('Your explanation')).toBeFocused();
+  await expect(page.locator('.question-stage h2').first()).toBeFocused();
+  await expect(page.locator('.question-stage h2').first()).toBeInViewport();
 
   await page.getByLabel('Your explanation').fill('CPU time, memory, file descriptors, and I/O are finite.');
-  await page.getByRole('button', { name: 'Save privately & reveal' }).click();
+  await page.getByRole('button', { name: 'Reveal & compare' }).click();
   await page.getByRole('button', { name: 'Hard' }).click();
   await page.getByRole('button', { name: 'Next question' }).click();
 
   await page.getByLabel('Your explanation').fill('I would inspect the PID and read-only process state before changing anything, then compare the evidence with the expected resource model.');
-  await page.getByRole('button', { name: 'Save privately & reveal' }).click();
+  await page.getByRole('button', { name: 'Reveal & compare' }).click();
   await page.getByRole('button', { name: 'Good' }).click();
   await page.getByRole('button', { name: 'Open the lesson' }).click();
   await expect(page.getByText('Lesson revealed')).toBeVisible();
@@ -128,10 +129,12 @@ test('authenticated reveal is immediate even while persistence is still pending'
 
 test('Kubernetes reference visual names component position, responsibility, target, and proof', async ({ page }) => {
   await page.goto('/learn/kubernetes-architecture-components?mode=reference');
+  await page.getByTestId('reference-models').locator(':scope > summary').click();
   const visual = page.getByTestId('lesson-visual-guide').first();
   await expect(visual).toContainText('kube-apiserver ↔ etcd: persist API state');
   await expect(visual).toContainText('ReplicaSet controller ↔ kube-apiserver: observe ReplicaSet, create Pod');
-  const map = page.getByRole('region', { name: 'Component responsibility map' });
+  const map = page.getByTestId('component-map-details').first();
+  await map.locator(':scope > summary').click();
   await expect(map).toBeVisible();
   await expect(map).toContainText('ReplicaSet controller');
   await expect(map).toContainText('control plane');
@@ -142,7 +145,7 @@ test('Kubernetes reference visual names component position, responsibility, targ
 test('new learners can open reference context without leaving the retrieval workspace', async ({ page }) => {
   await page.goto('/learn/ip-subnets');
 
-  const reveal = page.getByRole('button', { name: 'Save privately & reveal' });
+  const reveal = page.getByRole('button', { name: 'Reveal & compare' });
   await expect(reveal).toBeDisabled();
 
   const hint = page.getByRole('button', { name: 'Give me a hint' });
@@ -153,6 +156,7 @@ test('new learners can open reference context without leaving the retrieval work
 
   await page.getByRole('button', { name: "I haven't learned this yet" }).click();
   await expect(page.getByRole('heading', { name: 'Build or inspect the model' })).toBeVisible();
+  await page.getByTestId('reference-models').locator(':scope > summary').click();
   await expect(page.getByTestId('reference-visuals')).toBeVisible();
   await expect(page.getByTestId('lesson-visual-guide').first()).toBeVisible();
   await expect(page.getByLabel('Your explanation')).toBeVisible();
@@ -181,6 +185,7 @@ test('reduced-motion workspace uses no full-surface transition state', async ({ 
 
 test('reference lessons with long technical literals stay inside the viewport', async ({ page }) => {
   await page.goto('/learn/kubernetes-networking-request-path?mode=reference');
+  await page.getByTestId('reference-models').locator(':scope > summary').click();
   await expect(page.getByTestId('reference-visuals')).toBeVisible();
   await expect(page.getByTestId('learning-context').getByText('http://catalog.default.svc.cluster.local:8080')).toBeVisible();
   const viewport = page.viewportSize();

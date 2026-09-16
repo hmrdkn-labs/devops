@@ -1,4 +1,5 @@
 import { For, Show, createMemo, createSignal } from 'solid-js';
+import { focusTask } from '@/lib/task-focus';
 
 type Checkpoint = 'fundamentals' | 'resources' | 'cluster-behavior' | 'cloud-native';
 
@@ -55,6 +56,8 @@ export default function KcnaMcqPractice(props: Props) {
   const [score, setScore] = createSignal(0);
   const [finished, setFinished] = createSignal(false);
   const [firstAttemptCorrect, setFirstAttemptCorrect] = createSignal<boolean | null>(null);
+  let questionHeading: HTMLHeadingElement | undefined;
+  let resultHeading: HTMLHeadingElement | undefined;
 
   const sessionQuestions = createMemo(() => mode() === 'all' ? props.questions : quickMix(props.questions, mixOffset()));
   const question = createMemo(() => sessionQuestions()[questionIndex()]);
@@ -66,7 +69,7 @@ export default function KcnaMcqPractice(props: Props) {
   function animateQuestionCard() {
     if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     queueMicrotask(() => {
-      document.querySelector<HTMLElement>('.mcq-question-card')?.animate(
+      questionHeading?.animate(
         [
           { opacity: 0, transform: 'translateY(8px)' },
           { opacity: 1, transform: 'translateY(0)' },
@@ -86,6 +89,7 @@ export default function KcnaMcqPractice(props: Props) {
     setFinished(false);
     setFirstAttemptCorrect(null);
     animateQuestionCard();
+    focusTask(() => questionHeading);
   }
 
   function choose(optionId: string) {
@@ -119,12 +123,13 @@ export default function KcnaMcqPractice(props: Props) {
   function retryAnswer() {
     setSelected([]);
     setChecked(false);
-    queueMicrotask(() => document.querySelector<HTMLElement>('.mcq-question-card')?.focus());
+    focusTask(() => questionHeading);
   }
 
   function nextQuestion() {
     if (questionIndex() >= sessionQuestions().length - 1) {
       setFinished(true);
+      focusTask(() => resultHeading);
       return;
     }
     setQuestionIndex((value) => value + 1);
@@ -132,7 +137,7 @@ export default function KcnaMcqPractice(props: Props) {
     setChecked(false);
     setFirstAttemptCorrect(null);
     animateQuestionCard();
-    queueMicrotask(() => document.querySelector<HTMLElement>('.mcq-question-card')?.focus({ preventScroll: true }));
+    focusTask(() => questionHeading);
   }
 
   function optionState(optionId: string) {
@@ -178,7 +183,7 @@ export default function KcnaMcqPractice(props: Props) {
       <Show when={!finished()} fallback={
         <section class="mcq-result" aria-labelledby="mcq-result-title">
           <p class="section-kicker">Session complete</p>
-          <h2 id="mcq-result-title">{score()} / {sessionQuestions().length} correct</h2>
+          <h2 ref={resultHeading} tabindex="-1" id="mcq-result-title">{score()} / {sessionQuestions().length} correct</h2>
           <p>{score() === sessionQuestions().length
             ? 'Clean run. Use a new mix later so recall has to survive a different question order.'
             : 'Use the option rationales you missed as the next review targets, then run another mix.'}</p>
@@ -204,7 +209,7 @@ export default function KcnaMcqPractice(props: Props) {
             <span>{question().category === 'kubectl' ? 'kubectl' : question().category}</span>
             <span>{question().select === 'multiple' ? 'Select all that apply' : 'Select one'}</span>
           </div>
-          <h2 id="mcq-question-title">{question().prompt}</h2>
+          <h2 ref={questionHeading} tabindex="-1" id="mcq-question-title">{question().prompt}</h2>
 
           <form onSubmit={checkAnswer}>
             <fieldset aria-labelledby="mcq-question-title">
@@ -236,9 +241,6 @@ export default function KcnaMcqPractice(props: Props) {
                                 : 'Your answer · Incorrect'}
                           </span>
                         </Show>
-                        <Show when={checked()}>
-                          <small>{option.rationale}</small>
-                        </Show>
                       </span>
                     </label>
                   );
@@ -258,6 +260,10 @@ export default function KcnaMcqPractice(props: Props) {
                 <strong>{answerIsCorrect() ? firstAttemptCorrect() === false ? 'Corrected' : 'Correct' : 'Not quite'}</strong>
                 <p class="mcq-feedback-detail">{feedbackDetail()}</p>
                 <p>{question().explanation}</p>
+                <details class="feedback-depth" data-testid="mcq-rationales">
+                  <summary>Why each option behaves this way</summary>
+                  <For each={question().options}>{(option) => <div class="lesson-rationale"><strong>{option.text}</strong><p>{option.rationale}</p></div>}</For>
+                </details>
                 <div class="mcq-source-links">
                   <span>Review:</span>
                   <For each={question().sourceUnits}>{(unit) => <a href={unit.href}>{unit.title}</a>}</For>
