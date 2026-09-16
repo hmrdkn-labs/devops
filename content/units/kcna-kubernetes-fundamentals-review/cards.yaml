@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 2
+revision: 3
 cards:
   - id: fpp:kcna-kubernetes-fundamentals-review/c-apiserver
     type: short
@@ -49,4 +49,16 @@ cards:
     front: What changed when Kubernetes removed dockershim?
     back: Kubernetes stopped carrying the built-in Docker Engine shim. It continued using OCI container images through CRI-compatible runtimes such as containerd and CRI-O.
     critical_points: [dockershim removal did not remove OCI image support]
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-crictl-endpoint
+    type: prompt
+    front: Name three supported ways to tell crictl which CRI runtime endpoint to use.
+    back: Use the --runtime-endpoint/-r flag, set CONTAINER_RUNTIME_ENDPOINT, or configure runtime-endpoint in the crictl config file such as /etc/crictl.yaml.
+    critical_points: [flag, environment variable, and config file are separate supported mechanisms]
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/c-runtime-cli-boundaries
+    type: prompt
+    front: Distinguish crictl, ctr, and nerdctl by the boundary each tool is meant to operate at.
+    back: crictl is CRI-focused troubleshooting, ctr is a low-level containerd debugging utility, and nerdctl is a Docker-compatible user-facing CLI for containerd.
+    critical_points: [the three tools target different operational boundaries]
     objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]

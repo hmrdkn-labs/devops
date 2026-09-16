@@ -49,6 +49,37 @@ An **image** is a packaged filesystem plus metadata used as input to create a co
 
 The Docker/Kubernetes historical trap is simple: Kubernetes removed the built-in **dockershim** integration. Kubernetes still runs OCI-compatible container images. Modern clusters commonly use CRI-compatible runtimes such as containerd or CRI-O.
 
+## Runtime tooling: `crictl`, `ctr`, and `nerdctl`
+
+These tools can all appear around a containerd-based Kubernetes node, but they
+represent different operational boundaries.
+
+| Tool | Boundary | Best mental model |
+| --- | --- | --- |
+| `crictl` | CRI | Inspect and troubleshoot the runtime through the same standardized interface family Kubernetes uses. |
+| `ctr` | containerd internals | Low-level debugging utility bundled with containerd; useful when you deliberately want containerd-level inspection. |
+| `nerdctl` | user-facing containerd CLI | Docker-compatible workflow for containerd, including familiar run/build/logs/Compose-style operations and containerd-oriented features. |
+
+For `crictl`, the runtime endpoint is part of the boundary. Current `cri-tools`
+supports three explicit mechanisms:
+
+```text
+crictl --runtime-endpoint unix:///run/containerd/containerd.sock ...
+
+CONTAINER_RUNTIME_ENDPOINT=unix:///run/containerd/containerd.sock crictl ...
+
+# /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+```
+
+Do not memorize these as three unrelated trivia answers. They all answer the
+same question: **which CRI socket should this client inspect?**
+
+Likewise, do not treat `nerdctl` as merely a nicer spelling of `ctr`. The
+containerd project describes `ctr` as a debugging utility, while `nerdctl`
+deliberately provides a Docker-compatible user experience and higher-level
+features. Tool choice should follow the layer you are trying to observe.
+
 ## Why Kubernetes exists
 
 Running one container is a runtime problem. Running hundreds of replaceable workloads across machines introduces scheduling, failure recovery, service discovery, rollouts, configuration, storage, and capacity problems. Kubernetes gives you an API for desired state plus controllers that keep reconciling actual state toward it.

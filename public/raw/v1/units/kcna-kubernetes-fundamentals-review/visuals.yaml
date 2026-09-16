@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 2
+revision: 3
 visuals:
   - id: fpp:kcna-kubernetes-fundamentals-review/visual-component-ownership
     kind: ownership
@@ -9,3 +9,12 @@ visuals:
     lines:
       - "kubectl → API server → durable cluster state → controllers and scheduler → kubelet → CRI runtime → containers"
     teaching_point: Control-plane components decide and record intent; node-side kubelet and the container runtime turn assigned Pod state into running processes.
+  - id: fpp:kcna-kubernetes-fundamentals-review/visual-runtime-tools
+    kind: ownership
+    eyebrow: Runtime tooling
+    title: Pick the CLI by the boundary you are inspecting
+    lines:
+      - "Kubernetes runtime troubleshooting → crictl → CRI endpoint"
+      - "Low-level containerd debugging → ctr → containerd"
+      - "Docker-like containerd workflow → nerdctl → containerd"
+    teaching_point: Similar-looking container commands are not interchangeable mental models; first identify whether the task is about the CRI boundary, containerd internals, or a user-facing container workflow.

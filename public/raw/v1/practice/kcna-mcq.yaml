@@ -3,9 +3,9 @@ id: practice:kcna
 slug: kcna-mcq
 title: KCNA MCQ refresher
 summary: Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.
-revision: 1
+revision: 2
 certification: cncf:kcna
-verified_at: 2026-09-11
+verified_at: 2026-09-16
 questions:
   - id: practice:kcna/q-api-entry
     checkpoint: fundamentals
@@ -116,6 +116,53 @@ questions:
     answer_ids: [a, b, c]
     explanation: CRI, CNI, and CSI deliberately separate runtime, networking, and storage integration so Kubernetes can use interchangeable implementations.
     unit_ids: [fpp:kubernetes-architecture-components, fpp:kubernetes-networking-request-path, fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-crictl-endpoint
+    checkpoint: fundamentals
+    category: scenario
+    select: multiple
+    prompt: You want crictl to inspect the containerd CRI socket explicitly. Which approaches are valid ways to select the runtime endpoint? Select all that apply.
+    options:
+      - id: a
+        text: crictl --runtime-endpoint unix:///run/containerd/containerd.sock ps
+        code: true
+        rationale: The global --runtime-endpoint/-r option explicitly selects the CRI runtime endpoint for that invocation.
+      - id: b
+        text: CONTAINER_RUNTIME_ENDPOINT=unix:///run/containerd/containerd.sock crictl ps
+        code: true
+        rationale: cri-tools supports CONTAINER_RUNTIME_ENDPOINT as an environment-variable mechanism for selecting the runtime endpoint.
+      - id: c
+        text: "runtime-endpoint: unix:///run/containerd/containerd.sock in the crictl config file"
+        rationale: runtime-endpoint can be persisted in the crictl configuration, commonly /etc/crictl.yaml on Linux.
+      - id: d
+        text: kubectl config set-context --runtime-endpoint=unix:///run/containerd/containerd.sock
+        code: true
+        rationale: kubectl context configuration selects Kubernetes API context information; it does not configure crictl's CRI socket.
+    answer_ids: [a, b, c]
+    explanation: "Flags, environment variables, and the crictl config file are three configuration surfaces for the same boundary: which CRI endpoint crictl should contact."
+    unit_ids: [fpp:kcna-kubernetes-fundamentals-review, fpp:container-lifecycle]
+
+  - id: practice:kcna/q-containerd-tool-boundaries
+    checkpoint: fundamentals
+    category: concept
+    select: single
+    prompt: Which mapping best matches the intended role of three common runtime-side CLIs on a containerd-based Kubernetes node?
+    options:
+      - id: a
+        text: "crictl → CRI troubleshooting; ctr → low-level containerd debugging; nerdctl → Docker-compatible containerd workflow"
+        rationale: This keeps the Kubernetes CRI boundary, containerd's debugging utility, and the user-facing containerd CLI as distinct layers.
+      - id: b
+        text: "crictl → Kubernetes scheduler; ctr → CNI configuration; nerdctl → etcd administration"
+        rationale: None of these tools owns scheduling, cluster networking configuration, or etcd administration.
+      - id: c
+        text: "crictl → Docker Compose; ctr → Kubernetes API management; nerdctl → kubelet configuration"
+        rationale: These responsibilities do not match the tools; nerdctl provides Compose-style workflows, while crictl and ctr operate at different runtime layers.
+      - id: d
+        text: "All three are interchangeable aliases for the same containerd command set"
+        rationale: They expose different interfaces and operational goals even when they may be used around the same runtime ecosystem.
+    answer_ids: [a]
+    explanation: Start by identifying the boundary you are debugging. That is more durable than memorizing individual command names without context.
+    unit_ids: [fpp:kcna-kubernetes-fundamentals-review, fpp:container-lifecycle]
 
   - id: practice:kcna/q-control-loop
     checkpoint: fundamentals

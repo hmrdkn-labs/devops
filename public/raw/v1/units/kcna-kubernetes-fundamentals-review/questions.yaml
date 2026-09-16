@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 2
+revision: 3
 questions:
   - id: fpp:kcna-kubernetes-fundamentals-review/q-request-path
     kind: scenario
@@ -28,3 +28,22 @@ questions:
       - "Kubelet is not described as selecting cluster-wide desired replica counts."
       - "etcd is identified as state storage rather than a controller."
     objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership, fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/q-runtime-endpoint
+    kind: explain
+    prompt: A worker node uses containerd and crictl must inspect the CRI state. What are three supported ways to select the runtime endpoint, and why is choosing the endpoint explicitly useful?
+    model_answer: crictl can receive the runtime endpoint through the --runtime-endpoint/-r flag, the CONTAINER_RUNTIME_ENDPOINT environment variable, or runtime-endpoint in its config file such as /etc/crictl.yaml. An explicit endpoint makes the client/runtime boundary unambiguous and avoids relying on deprecated probing of default sockets.
+    critical_points:
+      - The --runtime-endpoint/-r flag can select the endpoint.
+      - CONTAINER_RUNTIME_ENDPOINT can select the endpoint.
+      - The crictl config file can persist runtime-endpoint.
+      - The endpoint identifies the CRI socket crictl should actually inspect.
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
+  - id: fpp:kcna-kubernetes-fundamentals-review/q-runtime-tool-choice
+    kind: scenario
+    prompt: "You have three tasks on a containerd-based node: inspect the CRI view used for Kubernetes troubleshooting, debug containerd at a low level, and use a Docker-like CLI for an interactive container workflow. Which tool fits each task, and why?"
+    model_answer: Use crictl for CRI-focused Kubernetes runtime troubleshooting, ctr for low-level containerd debugging, and nerdctl for a Docker-compatible containerd workflow. The commands may reach the same runtime ecosystem, but they expose different operational boundaries and user experiences.
+    critical_points:
+      - crictl maps to CRI-focused troubleshooting.
+      - ctr maps to low-level containerd debugging.
+      - nerdctl maps to a Docker-compatible containerd CLI workflow.
+    objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]

@@ -396,6 +396,28 @@
     "unit_slug": "kcna-kubernetes-fundamentals-review"
   },
   {
+    "id": "source:kcna-fundamentals-crictl",
+    "title": "crictl user guide",
+    "url": "https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md",
+    "publisher": "Kubernetes SIG Node",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Upstream reference for CRI endpoint flags, environment variables, and configuration.",
+    "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
+    "unit_slug": "kcna-kubernetes-fundamentals-review"
+  },
+  {
+    "id": "source:kcna-fundamentals-nerdctl",
+    "title": "nerdctl README and tool comparison",
+    "url": "https://github.com/containerd/nerdctl",
+    "publisher": "containerd",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Upstream reference for nerdctl's Docker-compatible workflow and its distinction from ctr and crictl.",
+    "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
+    "unit_slug": "kcna-kubernetes-fundamentals-review"
+  },
+  {
     "id": "source:kcna-fundamentals-kodekloud-context",
     "title": "KCNA Kubernetes Fundamentals module",
     "url": "https://learn.kodekloud.com/learn/courses/kubernetes-and-cloud-native-associate-kcna/module/8403f56b-91f8-42f9-89e9-5c27a7438ef2/lesson/690c3950-12e6-4bbe-9b9b-10f512ec92a4",

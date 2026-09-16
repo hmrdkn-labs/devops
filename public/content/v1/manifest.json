@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "content_version": "2026.08.1",
-  "generated_at": "2026-09-15T00:00:00.000Z",
+  "generated_at": "2026-09-16T00:00:00.000Z",
   "canonical_base_url": "https://devops.hamardikan.com",
   "licenses": {
     "prose_and_diagrams": "CC-BY-SA-4.0",
@@ -374,7 +374,7 @@
       "slug": "kcna-kubernetes-fundamentals-review",
       "title": "KCNA Kubernetes Fundamentals quiz companion",
       "summary": "A fast review of containers, orchestration, Kubernetes architecture, CRI, and container runtimes for use beside the KCNA fundamentals quiz.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "architecture",
@@ -386,15 +386,15 @@
       "aliases": [],
       "objective_hashes": {
         "fpp:kcna-kubernetes-fundamentals-review/ownership": "37825f692d172a366a2bbb9032c210da55ad71c46f8bb7824ee5b03eb8e90988",
-        "fpp:kcna-kubernetes-fundamentals-review/runtime": "6543cd8c26ead3b0b5d2349be06d89b88bec4efbfba442f389e502a06c6c7c91"
+        "fpp:kcna-kubernetes-fundamentals-review/runtime": "9bb53c0ec38c181a642a6478f9c2cb71514d64bcb47898f491cf0b9aa5c976c3"
       },
-      "mastery_hash": "20ed8e44383c92c6f2d322addea622990d2721c006a9df84fd114c203d45edf5",
-      "enrichment_hash": "bd6efde339965e5d6fe8753887189527e5bc288bcd7d2723a9edfb9b7b3f3194",
-      "editorial_hash": "bb83c206523ce7a69462a256fd26697c44c31df10088c7bbe4d3a6cc47523eca",
-      "content_hash": "6056aba1940dcffeeedbc52902f4368498d226ae4f54495719dbcf27286c5f47",
+      "mastery_hash": "be9682d742f12dd6ae5490857716402f2489cb0e02d4b8b2742dc89dcc58bad3",
+      "enrichment_hash": "e353a0a0aee6fbabe7d1d4a5c20b6afc581b27b9d961cb7e30101102a5ca1a1a",
+      "editorial_hash": "a831b22cc1848118b57b95ad53aecb4bd17955247e2ec3fff8e65ede74e02272",
+      "content_hash": "8250177048fe2fe320e496b2a1aef12c7a03cdc2346c7d26b0bdb411d7da7f72",
       "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/visuals.yaml",
-      "visual_count": 1
+      "visual_count": 2
     },
     {
       "id": "fpp:kcna-kubernetes-resources-review",
@@ -4272,13 +4272,13 @@
       "slug": "kcna-mcq",
       "title": "KCNA MCQ refresher",
       "summary": "Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.",
-      "revision": 1,
+      "revision": 2,
       "certification": "cncf:kcna",
-      "verified_at": "2026-09-11",
-      "question_count": 26,
-      "content_hash": "822576b81bdad42f75d87290114fdb551530277ca2c55ea42570edb8c7e31d72",
+      "verified_at": "2026-09-16",
+      "question_count": 28,
+      "content_hash": "3c6ee30c2c3d952f1683b7459b72f6ced1428521467b1f9b5920c36b217b7e14",
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "f155ce6116583331e4aa83fb614d4b67aedd0072cf038182864aa5fa7e822ac8"
+  "manifest_sha256": "af8d2ac89c3ed2f9bea7f73eb8930ef38a7a302e3838cdc895bdaac3700729f9"
 }
