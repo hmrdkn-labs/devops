@@ -3,7 +3,10 @@ import { parse } from 'yaml';
 import { expect, test } from '@playwright/test';
 
 // Canonical answers drive traversal; these tests verify UI state, not pedagogy.
-const lesson = parse(readFileSync('content/lessons/kcna-cluster-behavior.yaml', 'utf8'));
+const traversalLessons = ['kcna-cluster-behavior', 'kcna-kubernetes-fundamentals', 'kcna-cloud-native-context'].map((slug) => ({
+  slug,
+  lesson: parse(readFileSync(`content/lessons/${slug}.yaml`, 'utf8')),
+}));
 
 test('KCNA MCQ link opens working practice through public navigation', async ({ page }, info) => {
   if (info.project.name === 'tablet') await page.setViewportSize({ width: 768, height: 1024 });
@@ -129,12 +132,11 @@ test('late notes load and failed save preserve edits', async ({ page }, info) =>
   await expect(note).toHaveValue('New note before load');
 });
 
-test('all eighteen Cluster Behavior tasks check and complete', async ({ page }, info) => {
+for (const { slug, lesson } of traversalLessons) test(`${lesson.title}: every canonical task checks and completes`, async ({ page }, info) => {
   test.skip(info.project.name !== 'desktop', 'Full task traversal once');
-  await page.goto('/lesson/kcna-cluster-behavior');
-  expect(lesson.exercises).toHaveLength(18);
+  await page.goto(`/lesson/${slug}`);
   for (const [index, task] of lesson.exercises.entries()) {
-    await expect(page.locator('.lesson-step-count')).toHaveText(`${index + 1} / 18`);
+    await expect(page.locator('.lesson-step-count')).toHaveText(`${index + 1} / ${lesson.exercises.length}`);
     await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
     if (task.correct_order) {
       for (const [position, id] of task.correct_order.entries()) {
@@ -150,7 +152,9 @@ test('all eighteen Cluster Behavior tasks check and complete', async ({ page }, 
         await page.getByLabel(`Responsibility for ${text}`, { exact: true }).selectOption(match.right_id);
       }
     } else if (task.kind === 'explain') {
-      await page.getByLabel('Your explanation').fill('Scheduling must satisfy resource requests and required placement policy; storage needs compatible topology and attachment. Dedicated GPU nodes need taints with tolerations plus required affinity to constrain eligible workloads.');
+      await page.getByLabel('Your explanation').fill(task.model_answer);
+    } else if (task.kind === 'manifest_fill') {
+      for (const [index, blank] of task.blanks.entries()) await page.locator('.lesson-blank-grid select').nth(index).selectOption(blank.answer_id);
     } else {
       for (const id of task.answer_ids) {
         const text = task.options.find((option: { id: string }) => option.id === id).text;
@@ -293,7 +297,7 @@ test('mobile matching exposes readable selected responses and retry focus', asyn
   // Ordering allows checking the initial wrong arrangement, then continuing.
   await page.getByTestId('lesson-check').click();
   await page.getByTestId('lesson-continue').click();
-  const task = lesson.exercises[1];
+  const task = traversalLessons.find(({ slug }) => slug === 'kcna-cluster-behavior')!.lesson.exercises[1];
   for (const match of task.matches) {
     const left = task.left.find((item: { id: string }) => item.id === match.left_id).text;
     const right = task.right.find((item: { id: string }) => item.id === match.right_id).text;

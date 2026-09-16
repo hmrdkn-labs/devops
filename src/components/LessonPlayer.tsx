@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createResource, createSignal, onMount } from 'solid-js';
+import { For, Show, batch, createMemo, createResource, createSignal, onMount } from 'solid-js';
 import type { Lesson, LessonExercise } from '@/lib/content/schema';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
 import { focusTask } from '@/lib/task-focus';
@@ -321,8 +321,13 @@ export default function LessonPlayer(props: Props) {
       return;
     }
     const nextIndex = step() + 1;
-    setStep(nextIndex);
-    resetInteraction(props.lesson.exercises[nextIndex]!);
+    // Exercise identity and its response state must become visible together.
+    // Adjacent ordered tasks have different item IDs; rendering between these
+    // updates would resolve the previous order against the next task's items.
+    batch(() => {
+      setStep(nextIndex);
+      resetInteraction(props.lesson.exercises[nextIndex]!);
+    });
     animateLessonTask();
     focusTask(taskHeading);
   }
