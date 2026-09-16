@@ -8,9 +8,9 @@ visuals:
     title: A Pod is a disposable execution record, not a durable machine
     lines:
       - "UID p7, node-a, restarts 0 → 4: kubelet restarts container"
-      - "p7 disappears; ReplicaSet/api-55 maintains desired count"
-      - "new UID p8 → scheduling decision → node-b runtime"
-      - "new node/IP is replacement evidence, not migration of p7"
+      - "p7 deleted; api-55 desired=3 unchanged, matching=2 → count deficit"
+      - "api-55 SuccessfulCreate → api-55-y UID p8 → assigned node-b"
+      - "creation history supports count repair; new UID proves a distinct Pod"
     teaching_point: A Pod has one scheduling lifetime and shared network identity for its containers; durable availability comes from controller ownership and replacement semantics.
     components:
       - name: Workload controller

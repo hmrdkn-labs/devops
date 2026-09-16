@@ -20,7 +20,7 @@ questions:
     objective_ids: [fpp:shell-pipes-signals/signal-shutdown]
   - id: fpp:shell-pipes-signals/q-practice-transfer
     kind: scenario
-    prompt: "In Bash, an exporter runs as sh -c 'exporter | gzip' in a container. exporter exits 7 and gzip exits 0; pipefail is off. The runtime later sends TERM to the wrapper PID 1. What does a zero pipeline status actually prove, and does it prove the exporter received TERM?"
+    prompt: "A container uses a Bash wrapper running bash -c 'exporter | gzip'. exporter exits 7 and gzip exits 0; pipefail is off. On a later execution, the runtime sends TERM to wrapper PID 1 while its pipeline is active. What did the earlier zero pipeline status actually prove, and does it establish that the later exporter received TERM?"
     model_answer: "With pipefail off, the pipeline status is the last command's status, so zero reports gzip's success, not the exporter's success. Bash pipefail would expose the earlier nonzero failure; it changes status selection, not signal forwarding. A TERM sent to PID 1 is a separate kernel signal delivery boundary. Inspect the process tree and wrapper signal-handling behavior to establish whether a live child receives it; neither a pipe nor an exit status proves forwarding."
     critical_points:
       - "Pipeline bytes and pipeline exit-status selection are distinct."
