@@ -5,6 +5,37 @@
 
 ## Read this first
 
+**Kubernetes object lexicon v20 is live:** the user-provided object reference is
+now represented as an independently written, portable learning unit rather than
+being dumped into the existing Resources quiz companion. The new
+`fpp:kubernetes-object-lexicon` unit teaches object choice by responsibility,
+scope, API group, and payload shape across workloads, networking, configuration,
+storage, RBAC, and namespace policy. It modernizes the reference around
+**EndpointSlice** for current Service backend state, keeps Ingress as a stable
+but frozen API with Gateway as the newer extensible direction, distinguishes
+ResourceQuota from LimitRange, and makes `kubectl api-resources` / `kubectl
+explain` the authoritative discovery path instead of memorized YAML. It ships
+with **6 retrieval/application questions, 10 review cards, guided practice, two
+portable visuals, and 14 upstream Kubernetes references**.
+
+The KCNA path now contains **30 units** and the full public corpus contains
+**38 units, 203 review cards, 28 MCQs, 4 interactive lessons, and 45 lesson
+exercises**. The existing KCNA Kubernetes Resources lesson remains exactly
+**12 interactions**; its object-responsibility matching exercise was enriched
+from four to eight objects (Pod, ReplicaSet, Deployment, Service, StatefulSet,
+DaemonSet, ResourceQuota, LimitRange) instead of adding another screen. Local
+validation passed content/revision contracts, Astro typecheck, **37 unit tests**,
+D1 checks, production build, and the full Playwright matrix with **63 passes / 18
+intentional skips**. Exact public source
+`76864adf12c767c29e042163e1f1d940d48b9801` passed CI run `35077717201` and
+protected owner deployment run `35078043286`. Independent production
+verification confirmed health `ok`, D1 `ready`, manifest SHA
+`4a12fdeac5edddee439f9db7874aeb7e44e6bd0539505915f22fabcaa512225d`, the live
+`/learn/kubernetes-object-lexicon/` page, KCNA checkpoint placement, and the
+Resources lesson route. The distilled private reference is committed separately
+as `624253f0141be80370bec947f459e818fe9f10de`; pre-existing private EKS edits
+remain untouched. **No implementation or deployment blocker.**
+
 **Practice evidence → remediation loop v19 is live:** the private
 `hamardikan/devops-knowledge-base` now treats owner practice screenshots as a
 provenance-backed learning journal rather than loose files. The 2026-09-16 KCNA
