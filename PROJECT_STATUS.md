@@ -1,9 +1,39 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-15 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-16 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**KCNA critical retrieval depth v16 is live and production-verified:** the
+three-question floor remains the corpus-wide minimum, but it is no longer the
+target for high-value KCNA material. All **18 high-weight KCNA units** now have
+**five bespoke retrieval/application questions each**, adding two targeted
+prompts per unit around the actual objective boundaries: control-loop failure,
+API object validity, component ownership, Pod identity, controller choice,
+selector semantics, rollout/rollback, declarative drift, namespace scope,
+Service/Ingress behavior, networking-policy enforcement, requests/probes,
+scheduler constraints, storage topology/lifecycle, request security,
+evidence-first troubleshooting, and release proof. The KCNA path now contains
+**123 unit questions**; the complete 37-unit corpus contains **147**. These are
+mastery-affecting changes, so only the affected 18 units advanced from revision
+2 to **revision 3**, with metadata/questions/cards/visuals kept in lockstep and
+the normal evidence-revalidation semantics preserved. Portable raw YAML,
+manifest, and downloadable archive were regenerated.
+
+Local gates are green: content contract, revision classification, Astro
+typecheck, **36 unit tests**, D1 migration/idempotency/revalidation checks,
+production build, `git diff --check`, and a final full Playwright
+desktop/tablet/mobile matrix with **57 passed / 18 intentional skips**. An
+earlier single tablet MCQ timeout was non-reproducible; the isolated test and
+the complete rerun both passed. Exact public source
+`3066124f11eebc5b68c78518d1b4607c9ecec046` passed public CI run
+`35056666608` and protected owner deployment run `35056857616`. Production
+health reports `ok`, D1 `ready`, and manifest SHA
+`f155ce6116583331e4aa83fb614d4b67aedd0072cf038182864aa5fa7e822ac8`.
+Independent live browser verification on `kubernetes-control-loop` confirmed
+`1 of 5 · predict`, the expected title, and no horizontal overflow at 1440px.
+**No implementation or deployment blocker.**
 
 **Stable learning workspace + question depth v15 is live and production-verified:** the
 standard `/learn/*` experience no longer treats History, Reference, or Notes as
