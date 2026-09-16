@@ -50,6 +50,24 @@ test('every generated unit keeps retrieval and reference within the viewport', a
   }
 });
 
+test('overflowing reference code supports keyboard scrolling', async ({ page }, info) => {
+  test.skip(info.project.name !== 'mobile', 'Focused narrow code scrolling contract');
+  await page.goto('/learn/container-network-storage');
+  await page.locator('.study-context-actions').getByRole('button', { name: 'Reference', exact: true }).click();
+  const blocks = page.getByTestId('learning-context').getByRole('region', { name: /Reference code example/ });
+  let overflowing = 0;
+  for (const block of await blocks.all()) {
+    if (!await block.evaluate((element) => element.scrollWidth > element.clientWidth)) continue;
+    overflowing++;
+    await expect(block).toHaveAttribute('tabindex', '0');
+    await block.focus();
+    await expect(block).toBeFocused();
+    await block.press('ArrowRight');
+    await expect.poll(() => block.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+  }
+  expect(overflowing).toBeGreaterThan(0);
+});
+
 test('KCNA MCQ link opens working practice through public navigation', async ({ page }, info) => {
   if (info.project.name === 'tablet') await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto('/kcna');

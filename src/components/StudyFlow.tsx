@@ -105,6 +105,11 @@ function ReferenceVisuals(props: { visuals: ReferenceVisual[] }) {
 function ReferenceMarkdown(props: { html: string }) {
   let body: HTMLDivElement | undefined;
   onMount(() => {
+    for (const code of body?.querySelectorAll<HTMLPreElement>('pre') ?? []) {
+      code.tabIndex = 0;
+      code.setAttribute('role', 'region');
+      code.setAttribute('aria-label', 'Reference code example. Scroll horizontally with arrow keys when needed.');
+    }
     for (const table of body?.querySelectorAll<HTMLTableElement>('table') ?? []) {
       const columns = Math.max(...Array.from(table.rows, (row) => row.cells.length));
       table.dataset.columns = String(columns);
