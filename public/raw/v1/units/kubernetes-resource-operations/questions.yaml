@@ -1,0 +1,77 @@
+schema_version: 1
+unit_id: fpp:kubernetes-resource-operations
+revision: 1
+questions:
+  - id: fpp:kubernetes-resource-operations/q-selector-path
+    kind: scenario
+    prompt: You are reading an apps/v1 ReplicaSet. Which field path identifies the Pods that belong to the ReplicaSet, and which nearby field gives labels to newly created Pods?
+    model_answer: The membership rule lives under spec.selector, commonly spec.selector.matchLabels for equality matches. Labels assigned to newly created Pods live under spec.template.metadata.labels. The selector and template labels must be compatible, but they serve different roles.
+    critical_points:
+      - spec.selector is the membership rule.
+      - matchLabels is nested under selector rather than being a sibling of selector.
+      - spec.template.metadata.labels labels newly created Pods.
+    objective_ids: [fpp:kubernetes-resource-operations/selectors-defaults]
+  - id: fpp:kubernetes-resource-operations/q-rc-defaulting
+    kind: explain
+    prompt: A legacy ReplicationController manifest omits spec.selector but its Pod template has labels. What happens, and why should you not generalize that rule to an apps/v1 Deployment?
+    model_answer: ReplicationController can default an omitted selector from its Pod-template labels. apps/v1 Deployment does not use that legacy defaulting rule; its selector must be explicitly specified and match the Pod-template labels.
+    critical_points:
+      - ReplicationController selector can default from template labels.
+      - Deployment selector must be explicit in apps/v1.
+      - ReplicationController is legacy recognition material, not the preferred application rollout controller.
+    objective_ids: [fpp:kubernetes-resource-operations/selectors-defaults]
+  - id: fpp:kubernetes-resource-operations/q-command-map
+    kind: scenario
+    prompt: You need to list Pods across every namespace, update a Deployment image, inspect rollout revisions, and undo the latest rollout. Give the command family for each operation.
+    model_answer: Use kubectl get pods -A (or --all-namespaces), kubectl set image deployment/<name> <container>=<image>, kubectl rollout history deployment/<name>, and kubectl rollout undo deployment/<name>.
+    critical_points:
+      - -A or --all-namespaces changes query scope.
+      - set image changes the Deployment Pod template.
+      - rollout history inspects revisions.
+      - rollout undo reverts Deployment rollout state.
+    objective_ids: [fpp:kubernetes-resource-operations/command-intent]
+  - id: fpp:kubernetes-resource-operations/q-initial-namespaces
+    kind: explain
+    prompt: Name the four namespaces present in a normal newly initialized Kubernetes cluster and state the special purpose of kube-public and kube-node-lease.
+    model_answer: The initial namespaces are default, kube-system, kube-public, and kube-node-lease. kube-public is intended for cluster information readable by all clients, while kube-node-lease stores per-node Lease objects used for node heartbeats.
+    critical_points:
+      - default and kube-system are only two of four initial namespaces.
+      - kube-public is intended for broadly readable cluster information.
+      - kube-node-lease contains node heartbeat Lease objects.
+    objective_ids: [fpp:kubernetes-resource-operations/scope-capacity]
+  - id: fpp:kubernetes-resource-operations/q-apply-state
+    kind: explain
+    prompt: Why does classic client-side kubectl apply keep a last-applied-configuration annotation, and how does that differ from Server-Side Apply?
+    model_answer: Client-side apply compares the local configuration, live object, and previous last-applied configuration to calculate its patch, including fields removed from the local file. Server-Side Apply moves field ownership tracking to the API server using field managers and managedFields rather than depending on the same three-way annotation mechanism.
+    critical_points:
+      - Client-side apply uses local, live, and last-applied state.
+      - Last-applied helps detect fields removed from declared configuration.
+      - Server-Side Apply tracks field ownership on the server with managed fields.
+    objective_ids: [fpp:kubernetes-resource-operations/apply-state]
+  - id: fpp:kubernetes-resource-operations/q-ownership
+    kind: scenario
+    prompt: A Deployment is created for three replicas. Which Kubernetes objects should you expect the workload-controller chain to create or manage, and which common networking object is not created automatically by that fact alone?
+    model_answer: The Deployment manages a ReplicaSet, and the ReplicaSet creates or maintains the needed Pods. A Service is separate and is not created automatically merely because a Deployment exists.
+    critical_points:
+      - Deployment manages ReplicaSets.
+      - ReplicaSet directly maintains matching Pods.
+      - Service is a separate networking resource.
+    objective_ids: [fpp:kubernetes-resource-operations/selectors-defaults]
+  - id: fpp:kubernetes-resource-operations/q-capacity
+    kind: scenario
+    prompt: New replicas are Pending because the existing Nodes have insufficient allocatable CPU. Does creating still more Pods add physical cluster capacity, and what layer must change to add compute capacity?
+    model_answer: No. More Pods increase workload demand against existing node capacity. Additional physical capacity requires suitable Nodes to be provisioned or added, manually or through node autoscaling; those Nodes then give the scheduler somewhere to place Pending Pods.
+    critical_points:
+      - Workload replicas and node capacity are different dimensions.
+      - Unschedulable Pods do not create compute capacity.
+      - Node provisioning or node autoscaling adds cluster compute capacity.
+    objective_ids: [fpp:kubernetes-resource-operations/scope-capacity]
+  - id: fpp:kubernetes-resource-operations/q-pod-reachability
+    kind: explain
+    prompt: Explain why neither “Pod IP is public” nor “a Pod is only reachable from its own Node” is a good default Kubernetes networking model.
+    model_answer: Pod IPs belong to the cluster network. Kubernetes expects Pods across Nodes to communicate directly unless policy or implementation constraints intentionally segment traffic. Pod IPs are nevertheless replaceable cluster endpoints, not stable public application addresses; Services provide stable discovery and external routing requires additional exposure such as Ingress, Gateway, or a LoadBalancer Service.
+    critical_points:
+      - Pod IP is a cluster-network endpoint.
+      - Cross-node Pod communication is part of the Kubernetes network model absent intentional segmentation.
+      - Stable or external application access is a separate Service/routing problem.
+    objective_ids: [fpp:kubernetes-resource-operations/scope-capacity]

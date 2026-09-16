@@ -17,7 +17,7 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Stay inside the KCNA lane.' })).toBeVisible();
   await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText('KCNA');
   await expect(page.locator('.kcna-checkpoint')).toHaveCount(4);
-  await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(30);
+  await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(31);
   await expect(page.getByRole('heading', { name: /Continue:/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /Start focused session/ })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Review KCNA only' })).toBeVisible();

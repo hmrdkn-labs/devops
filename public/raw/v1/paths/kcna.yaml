@@ -3,7 +3,7 @@ id: path:kcna
 slug: kcna
 title: KCNA Learning Path
 summary: Build KCNA-ready Kubernetes and cloud-native understanding from networking and containers through Kubernetes resources, delivery, operations, and troubleshooting.
-revision: 4
+revision: 5
 status: published
 units:
   - unit_id: fpp:kcna-domain-map
@@ -40,6 +40,8 @@ units:
     weight: 1
   - unit_id: fpp:kubernetes-object-lexicon
     weight: 1
+  - unit_id: fpp:kubernetes-resource-operations
+    weight: 2
   - unit_id: fpp:services-dns-ingress
     weight: 2
   - unit_id: fpp:kubernetes-networking-request-path

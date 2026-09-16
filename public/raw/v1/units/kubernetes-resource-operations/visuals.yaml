@@ -1,0 +1,35 @@
+schema_version: 1
+unit_id: fpp:kubernetes-resource-operations
+revision: 1
+visuals:
+  - id: fpp:kubernetes-resource-operations/visual-command-map
+    kind: comparison
+    eyebrow: kubectl intent map
+    title: Choose the command from the state transition
+    lines:
+      - "observe across namespaces → kubectl get pods -A"
+      - "change replica count → kubectl scale ... --replicas=N"
+      - "change Deployment image → kubectl set image ..."
+      - "observe rollout now → kubectl rollout status ..."
+      - "observe rollout revisions → kubectl rollout history ..."
+      - "revert rollout → kubectl rollout undo ..."
+    teaching_point: The verb family follows the responsibility being observed or changed; commands are easier to recall when grouped by intent.
+  - id: fpp:kubernetes-resource-operations/visual-state-map
+    kind: ownership
+    eyebrow: apply state
+    title: Keep local, last-applied, live, and runtime state separate
+    lines:
+      - "local file + last-applied + live object → client-side apply patch"
+      - "server-side apply → API field manager ownership → managedFields"
+      - "live spec → controllers → Pods/runtime"
+    teaching_point: Apply state is configuration-management evidence; it is not the same as observed workload health.
+  - id: fpp:kubernetes-resource-operations/visual-capacity-map
+    kind: comparison
+    eyebrow: scaling layers
+    title: More Pods and more compute are different operations
+    lines:
+      - "Deployment / ReplicaSet / HPA → desired Pods"
+      - "scheduler → places Pods onto Nodes with capacity"
+      - "node provisioning / node autoscaling → adds Node CPU and memory"
+      - "Pod IP → cluster network; Service/routing → stable or external access"
+    teaching_point: A workload controller can demand more replicas, but only node provisioning changes physical cluster capacity.

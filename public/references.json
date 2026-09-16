@@ -880,6 +880,127 @@
     "unit_slug": "kubernetes-pod-model"
   },
   {
+    "id": "source:kubernetes-resource-operations-replicaset-api",
+    "title": "ReplicaSet v1 apps API reference",
+    "url": "https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Current ReplicaSet selector, replica, and Pod-template schema reference.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-rc",
+    "title": "ReplicationController",
+    "url": "https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Legacy selector defaulting, Pod-template, and selection behavior.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-deployment",
+    "title": "Deployments",
+    "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Deployment ownership, scaling, rollout history, and rollback behavior.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-namespaces",
+    "title": "Namespaces",
+    "url": "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Four initial namespaces and their purposes.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-kubectl-get",
+    "title": "kubectl get",
+    "url": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Query syntax and -A/--all-namespaces behavior.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-kubectl-scale",
+    "title": "kubectl scale",
+    "url": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_scale/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Direct scaling of Deployments, ReplicaSets, ReplicationControllers, and StatefulSets.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-kubectl-rollout",
+    "title": "kubectl rollout",
+    "url": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Rollout status, history, restart, and undo command family.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-declarative",
+    "title": "Declarative Management of Kubernetes Objects Using Configuration Files",
+    "url": "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Client-side apply three-way merge and last-applied-configuration semantics.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-ssa",
+    "title": "Server-Side Apply",
+    "url": "https://kubernetes.io/docs/reference/using-api/server-side-apply/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "API-server field management and migration from client-side apply.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-networking",
+    "title": "Services, Load Balancing, and Networking",
+    "url": "https://kubernetes.io/docs/concepts/services-networking/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Cluster-wide Pod IP and Pod-to-Pod network model.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
+    "id": "source:kubernetes-resource-operations-node-autoscaling",
+    "title": "Node Autoscaling",
+    "url": "https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Node provisioning as the cluster-capacity layer for unschedulable Pods.",
+    "unit_id": "fpp:kubernetes-resource-operations",
+    "unit_slug": "kubernetes-resource-operations"
+  },
+  {
     "id": "source:kubernetes-scheduler-concepts",
     "title": "Kubernetes Scheduler",
     "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",

@@ -3,7 +3,7 @@ id: lesson:kcna-kubernetes-resources
 slug: kcna-kubernetes-resources
 title: KCNA Kubernetes Resources
 summary: Build the Kubernetes resource model by predicting reconciliation, tracing ownership, reading manifests, and proving live state.
-revision: 3
+revision: 4
 certification: cncf:kcna
 checkpoint: resources
 estimated_minutes: 16
@@ -17,6 +17,7 @@ source_unit_ids:
   - fpp:kubernetes-namespaces-scope
   - fpp:kcna-kubernetes-resources-review
   - fpp:kubernetes-object-lexicon
+  - fpp:kubernetes-resource-operations
 exercises:
   - id: lesson:kcna-kubernetes-resources/predict-replacement
     kind: predict_state
@@ -409,15 +410,17 @@ exercises:
     hint: The selector and Pod-template labels must describe the same membership set.
     learn_first:
       title: A selector is the controller's membership rule.
-      body: A Deployment selector must match the labels on the Pods its template creates. Replicas states how many matching Pods should exist.
+      body: A Deployment or ReplicaSet selector is its membership rule. In apps/v1, equality labels are nested under spec.selector.matchLabels, while spec.template.metadata.labels labels newly created Pods. Replicas states how many matching Pods should exist.
       visual:
-        - "selector app=payments ⇄ template label app=payments"
+        - "spec.selector.matchLabels.app = payments"
+        - "spec.template.metadata.labels.app = payments"
       variant_prompt: Reconstruct the same three-replica payments Deployment by focusing on which selector and template labels must agree.
     feedback:
       title: The selector and template agree.
       explanation: replicas controls desired count while selector and template labels establish which Pods belong to the controller.
       points:
         - A selector mismatch is a semantic ownership problem, not cosmetic YAML.
+        - matchLabels is nested inside selector; selector is not the label value itself.
         - The label value itself is arbitrary; consistency is what matters.
       visual:
         - "replicas: 3"
@@ -491,7 +494,7 @@ exercises:
     hint: Ask which object represents a Deployment revision.
     learn_first:
       title: Rollouts create revisions, not in-place Pod edits.
-      body: The Deployment manages ReplicaSets. A changed Pod template creates a new ReplicaSet, then the Deployment adjusts old and new replica counts according to rollout strategy.
+      body: The Deployment manages ReplicaSets. A changed Pod template creates a new ReplicaSet, then the Deployment adjusts old and new replica counts according to rollout strategy. Operationally, set image changes the template, rollout history inspects revisions, and rollout undo reverts rollout state.
       visual:
         - "Deployment"
         - "├─ ReplicaSet v1 ↓"
@@ -503,6 +506,7 @@ exercises:
       points:
         - Pod-template change means a new Deployment revision.
         - Service endpoint changes are an effect of Pod replacement, not the rollout controller.
+        - "Command map: set image → change template; rollout history → inspect revisions; rollout undo → revert."
       visual:
         - "RS v1: ● ● ● → ● ● → ●"
         - "RS v2: ○ → ○ ○ → ○ ○ ○"
@@ -539,9 +543,10 @@ exercises:
       variant_prompt: You are troubleshooting the payments namespace from another context. Build the command that lists its Pods with wide output.
     feedback:
       title: Verb, resource, scope, output.
-      explanation: Reading command structure is more durable than memorizing one string. This command asks the API for Pod objects in one namespace and requests wider presentation.
+      explanation: Reading command structure is more durable than memorizing one string. This command asks the API for Pod objects in one namespace and requests wider presentation. To query Pods across every namespace, replace the explicit namespace with -A or --all-namespaces.
       points:
         - -n payments changes namespace scope.
+        - -A and --all-namespaces query across namespaces; --namespace=all does not mean the same thing.
         - -o wide changes presentation, not cluster state.
       visual:
         - "kubectl get pods -n payments -o wide"
@@ -638,9 +643,10 @@ exercises:
     hint: Separate organization and object identity from authorization and packet reachability.
     learn_first:
       title: Namespace is primarily an API scope.
-      body: Namespaces partition the names of many Kubernetes objects and give policy systems something to target, but policy must still be configured. RBAC controls API actions; NetworkPolicy controls allowed traffic where supported.
+      body: Namespaces partition the names of many Kubernetes objects and give policy systems something to target, but policy must still be configured. A new cluster starts with default, kube-system, kube-public, and kube-node-lease. RBAC controls API actions; NetworkPolicy controls allowed traffic where supported.
       visual:
         - "namespace = scope"
+        - "initial: default · kube-system · kube-public · kube-node-lease"
         - "RBAC = API authorization"
         - "NetworkPolicy = traffic policy"
       variant_prompt: A team creates namespaces dev and prod. Explain why that alone does not prevent dev users from accessing prod objects or dev Pods from reaching prod Pods.
@@ -650,6 +656,7 @@ exercises:
       points:
         - RBAC answers who may do what to API resources.
         - NetworkPolicy answers which traffic paths are allowed.
+        - kube-public is intended for broadly readable cluster information; kube-node-lease holds node heartbeat Leases.
       visual:
         - "Namespace ── scopes objects"
         - "RBAC ─────── controls API access"

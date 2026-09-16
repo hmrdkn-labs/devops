@@ -688,6 +688,33 @@
       "visual_count": 1
     },
     {
+      "id": "fpp:kubernetes-resource-operations",
+      "slug": "kubernetes-resource-operations",
+      "title": "Kubernetes resource operations and defaults",
+      "summary": "Operate Kubernetes resources without guessing by connecting selectors, namespace defaults, kubectl command families, rollout history, apply state, and cluster capacity to the API model.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-object-lexicon"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-resource-operations/command-intent": "80fe26b65a7ca28226326782c5a3c29caf2fefd243ebc6d16d184b6127305657",
+        "fpp:kubernetes-resource-operations/selectors-defaults": "7c73407dd5fdaad883efbfbc6aa7a5ab21ea90ef6c0292e674c1807e09a70d01",
+        "fpp:kubernetes-resource-operations/apply-state": "59c1d43629e655ccc46a9d3c60e8bc3235c1aee0c20309f482c2fc06278b2919",
+        "fpp:kubernetes-resource-operations/scope-capacity": "95067b1a31d24609425a0869a964cb7dfd4759562bd40d4ee07d7eaf1a8a0bdc"
+      },
+      "mastery_hash": "ddef81ee2e74bef123c67c109e99f854adf861db4705b71b64d2a91f9b268fa5",
+      "enrichment_hash": "298a70d470426986990158d189be6f15c67e877fe4de7b25332df23bb6ccd936",
+      "editorial_hash": "3bf93389f64c8d22e21e3557d9efc0dc24012b4767962ea2b32207e78d5833d0",
+      "content_hash": "6eddff88ea1f280d3bfcf3bd89cadf23fe870d0222802ad2931eea57570f252a",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-resource-operations/unit.md",
+      "raw_visuals_url": "/raw/v1/units/kubernetes-resource-operations/visuals.yaml",
+      "visual_count": 3
+    },
+    {
       "id": "fpp:kubernetes-scheduling-placement",
       "slug": "kubernetes-scheduling-placement",
       "title": "Kubernetes scheduling and placement constraints",
@@ -1088,7 +1115,7 @@
       "slug": "kcna",
       "title": "KCNA Learning Path",
       "summary": "Build KCNA-ready Kubernetes and cloud-native understanding from networking and containers through Kubernetes resources, delivery, operations, and troubleshooting.",
-      "revision": 4,
+      "revision": 5,
       "status": "published",
       "units": [
         {
@@ -1158,6 +1185,10 @@
         {
           "unit_id": "fpp:kubernetes-object-lexicon",
           "weight": 1
+        },
+        {
+          "unit_id": "fpp:kubernetes-resource-operations",
+          "weight": 2
         },
         {
           "unit_id": "fpp:services-dns-ingress",
@@ -3392,7 +3423,7 @@
       "slug": "kcna-kubernetes-resources",
       "title": "KCNA Kubernetes Resources",
       "summary": "Build the Kubernetes resource model by predicting reconciliation, tracing ownership, reading manifests, and proving live state.",
-      "revision": 3,
+      "revision": 4,
       "certification": "cncf:kcna",
       "checkpoint": "resources",
       "estimated_minutes": 16,
@@ -3405,7 +3436,8 @@
         "fpp:kubernetes-apply-live-state",
         "fpp:kubernetes-namespaces-scope",
         "fpp:kcna-kubernetes-resources-review",
-        "fpp:kubernetes-object-lexicon"
+        "fpp:kubernetes-object-lexicon",
+        "fpp:kubernetes-resource-operations"
       ],
       "exercises": [
         {
@@ -3946,9 +3978,10 @@
           "hint": "The selector and Pod-template labels must describe the same membership set.",
           "learn_first": {
             "title": "A selector is the controller's membership rule.",
-            "body": "A Deployment selector must match the labels on the Pods its template creates. Replicas states how many matching Pods should exist.",
+            "body": "A Deployment or ReplicaSet selector is its membership rule. In apps/v1, equality labels are nested under spec.selector.matchLabels, while spec.template.metadata.labels labels newly created Pods. Replicas states how many matching Pods should exist.",
             "visual": [
-              "selector app=payments ⇄ template label app=payments"
+              "spec.selector.matchLabels.app = payments",
+              "spec.template.metadata.labels.app = payments"
             ],
             "components": [],
             "variant_prompt": "Reconstruct the same three-replica payments Deployment by focusing on which selector and template labels must agree."
@@ -3958,6 +3991,7 @@
             "explanation": "replicas controls desired count while selector and template labels establish which Pods belong to the controller.",
             "points": [
               "A selector mismatch is a semantic ownership problem, not cosmetic YAML.",
+              "matchLabels is nested inside selector; selector is not the label value itself.",
               "The label value itself is arbitrary; consistency is what matters."
             ],
             "visual": [
@@ -4081,7 +4115,7 @@
           "hint": "Ask which object represents a Deployment revision.",
           "learn_first": {
             "title": "Rollouts create revisions, not in-place Pod edits.",
-            "body": "The Deployment manages ReplicaSets. A changed Pod template creates a new ReplicaSet, then the Deployment adjusts old and new replica counts according to rollout strategy.",
+            "body": "The Deployment manages ReplicaSets. A changed Pod template creates a new ReplicaSet, then the Deployment adjusts old and new replica counts according to rollout strategy. Operationally, set image changes the template, rollout history inspects revisions, and rollout undo reverts rollout state.",
             "visual": [
               "Deployment",
               "├─ ReplicaSet v1 ↓",
@@ -4095,7 +4129,8 @@
             "explanation": "The Deployment expresses rollout policy by managing old and new ReplicaSets; Pods are replaced according to the new template.",
             "points": [
               "Pod-template change means a new Deployment revision.",
-              "Service endpoint changes are an effect of Pod replacement, not the rollout controller."
+              "Service endpoint changes are an effect of Pod replacement, not the rollout controller.",
+              "Command map: set image → change template; rollout history → inspect revisions; rollout undo → revert."
             ],
             "visual": [
               "RS v1: ● ● ● → ● ● → ●",
@@ -4149,9 +4184,10 @@
           },
           "feedback": {
             "title": "Verb, resource, scope, output.",
-            "explanation": "Reading command structure is more durable than memorizing one string. This command asks the API for Pod objects in one namespace and requests wider presentation.",
+            "explanation": "Reading command structure is more durable than memorizing one string. This command asks the API for Pod objects in one namespace and requests wider presentation. To query Pods across every namespace, replace the explicit namespace with -A or --all-namespaces.",
             "points": [
               "-n payments changes namespace scope.",
+              "-A and --all-namespaces query across namespaces; --namespace=all does not mean the same thing.",
               "-o wide changes presentation, not cluster state."
             ],
             "visual": [
@@ -4321,9 +4357,10 @@
           "hint": "Separate organization and object identity from authorization and packet reachability.",
           "learn_first": {
             "title": "Namespace is primarily an API scope.",
-            "body": "Namespaces partition the names of many Kubernetes objects and give policy systems something to target, but policy must still be configured. RBAC controls API actions; NetworkPolicy controls allowed traffic where supported.",
+            "body": "Namespaces partition the names of many Kubernetes objects and give policy systems something to target, but policy must still be configured. A new cluster starts with default, kube-system, kube-public, and kube-node-lease. RBAC controls API actions; NetworkPolicy controls allowed traffic where supported.",
             "visual": [
               "namespace = scope",
+              "initial: default · kube-system · kube-public · kube-node-lease",
               "RBAC = API authorization",
               "NetworkPolicy = traffic policy"
             ],
@@ -4335,7 +4372,8 @@
             "explanation": "Namespace boundaries organize object identity and policy targeting. Security emerges only when authorization and networking policy are attached to those scopes.",
             "points": [
               "RBAC answers who may do what to API resources.",
-              "NetworkPolicy answers which traffic paths are allowed."
+              "NetworkPolicy answers which traffic paths are allowed.",
+              "kube-public is intended for broadly readable cluster information; kube-node-lease holds node heartbeat Leases."
             ],
             "visual": [
               "Namespace ── scopes objects",
@@ -4361,13 +4399,13 @@
       "slug": "kcna-mcq",
       "title": "KCNA MCQ refresher",
       "summary": "Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.",
-      "revision": 2,
+      "revision": 3,
       "certification": "cncf:kcna",
       "verified_at": "2026-09-16",
-      "question_count": 28,
-      "content_hash": "3c6ee30c2c3d952f1683b7459b72f6ced1428521467b1f9b5920c36b217b7e14",
+      "question_count": 37,
+      "content_hash": "d9bd9faf64678873000fbe390204911e017cba67b4f37be123bcff4909db1e7e",
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "4a12fdeac5edddee439f9db7874aeb7e44e6bd0539505915f22fabcaa512225d"
+  "manifest_sha256": "c5560e24a818f5ead389f09e307d34ac2acb06d24d6dc07ee6d994549fb77f19"
 }

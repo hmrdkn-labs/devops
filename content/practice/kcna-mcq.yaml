@@ -3,7 +3,7 @@ id: practice:kcna
 slug: kcna-mcq
 title: KCNA MCQ refresher
 summary: Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.
-revision: 2
+revision: 3
 certification: cncf:kcna
 verified_at: 2026-09-16
 questions:
@@ -333,6 +333,219 @@ questions:
     answer_ids: [a]
     explanation: Namespace scope is explicit API scope; using -n keeps the operation local to one command and avoids hidden context changes.
     unit_ids: [fpp:kubernetes-namespaces-scope]
+
+  - id: practice:kcna/q-rs-selector-path
+    checkpoint: resources
+    category: concept
+    select: single
+    prompt: In an apps/v1 ReplicaSet manifest, where would you normally put an equality-based label rule that decides which Pods count toward the ReplicaSet?
+    options:
+      - id: a
+        text: spec.selector.matchLabels
+        code: true
+        rationale: ReplicaSet uses a structured LabelSelector under spec.selector; matchLabels holds equality-based label requirements.
+      - id: b
+        text: spec.replicas.matchLabels
+        code: true
+        rationale: replicas is a numeric desired count and does not contain label-selection rules.
+      - id: c
+        text: spec.template.spec.matchLabels
+        code: true
+        rationale: The Pod spec describes execution; Pod labels belong under template metadata, while controller membership belongs under selector.
+      - id: d
+        text: metadata.selector
+        code: true
+        rationale: Object metadata can contain labels and annotations, but the ReplicaSet membership selector belongs in spec.
+    answer_ids: [a]
+    explanation: "Keep the membership rule separate from both desired count and Pod-template labels: selector identifies the set; template metadata labels newly created Pods."
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-labels-replicasets]
+
+  - id: practice:kcna/q-rc-selector-default
+    checkpoint: resources
+    category: concept
+    select: single
+    prompt: A legacy ReplicationController has Pod-template labels but omits spec.selector. What behavior should you recognize?
+    options:
+      - id: a
+        text: The selector can default from the Pod-template labels
+        rationale: ReplicationController supports this legacy defaulting behavior when spec.selector is omitted.
+      - id: b
+        text: The controller becomes cluster-scoped
+        rationale: Selector omission does not change the resource scope; ReplicationController remains namespaced.
+      - id: c
+        text: The scheduler invents a selector after placing the first Pod
+        rationale: The scheduler places Pods on nodes and does not define controller membership rules.
+      - id: d
+        text: The controller automatically becomes a Deployment
+        rationale: Kubernetes does not convert a ReplicationController object into a Deployment.
+    answer_ids: [a]
+    explanation: This is legacy API recognition. Do not transfer the rule to apps/v1 Deployment, where the selector is explicit and must match the Pod template labels.
+    unit_ids: [fpp:kubernetes-resource-operations]
+
+  - id: practice:kcna/q-all-namespaces
+    checkpoint: resources
+    category: kubectl
+    select: single
+    prompt: You are in an arbitrary kubectl context and need to list Pods across every namespace without changing that context. Which command is most direct?
+    options:
+      - id: a
+        text: kubectl get pods -A
+        code: true
+        rationale: -A is the shorthand for --all-namespaces and ignores the current namespace for this query.
+      - id: b
+        text: kubectl get pods --namespace=all
+        code: true
+        rationale: This asks for a namespace literally named all; it is not the all-namespaces flag.
+      - id: c
+        text: kubectl get pods --global
+        code: true
+        rationale: kubectl get does not use --global as its namespace-wide query flag.
+      - id: d
+        text: kubectl get namespaces/pods
+        code: true
+        rationale: Namespace scope is supplied by flags or resource identity rather than this resource path.
+    answer_ids: [a]
+    explanation: "Scope is part of the query grammar: -n chooses one namespace, while -A/--all-namespaces asks for all namespaces."
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-namespaces-scope]
+
+  - id: practice:kcna/q-initial-namespaces
+    checkpoint: resources
+    category: concept
+    select: multiple
+    prompt: Which namespaces are created as Kubernetes initial namespaces in a normal cluster? Select all that apply.
+    options:
+      - id: a
+        text: default
+        rationale: default is the fallback namespace for namespaced objects when another namespace is not selected.
+      - id: b
+        text: kube-system
+        rationale: kube-system is reserved for objects created by the Kubernetes system.
+      - id: c
+        text: kube-public
+        rationale: kube-public is an initial namespace intended for cluster information readable by all clients.
+      - id: d
+        text: kube-node-lease
+        rationale: kube-node-lease holds Lease objects used for node heartbeat signaling.
+      - id: e
+        text: primary
+        rationale: Kubernetes does not define an initial namespace named primary.
+    answer_ids: [a, b, c, d]
+    explanation: "The default cluster namespace set is four, not two. Their names also hint at distinct responsibilities: general default scope, system objects, readable cluster information, and node leases."
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-namespaces-scope]
+
+  - id: practice:kcna/q-rollout-command-map
+    checkpoint: resources
+    category: kubectl
+    select: multiple
+    prompt: Which command-to-intent mappings are correct for a Deployment? Select all that apply.
+    options:
+      - id: a
+        text: kubectl set image deployment/web app=repo/app:v2 → change the Pod template image
+        code: true
+        rationale: set image imperatively updates container image fields in the workload Pod template.
+      - id: b
+        text: kubectl rollout history deployment/web → inspect recorded rollout revisions
+        code: true
+        rationale: rollout history is the read operation for previous rollout revisions.
+      - id: c
+        text: kubectl rollout undo deployment/web → revert rollout state to a previous revision
+        code: true
+        rationale: rollout undo performs the Deployment rollback operation.
+      - id: d
+        text: kubectl describe rollout deployment/web → revert the Deployment
+        code: true
+        rationale: This is not the kubectl rollback command shape; describe is an inspection family, not rollout undo.
+    answer_ids: [a, b, c]
+    explanation: "Keep rollout commands as a small state machine: set image mutates the template, history observes revisions, and undo changes desired rollout state back toward an earlier revision."
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-deployments-rollouts]
+
+  - id: practice:kcna/q-client-side-last-applied
+    checkpoint: resources
+    category: concept
+    select: single
+    prompt: In classic client-side kubectl apply, why is the last-applied configuration useful when a field disappears from your local file?
+    options:
+      - id: a
+        text: It helps kubectl recognize that the field used to be part of your declared configuration and may need to be cleared from live state
+        rationale: Client-side apply compares local, live, and last-applied state to calculate its patch, including fields removed from the declaration.
+      - id: b
+        text: It stores Pod logs so apply can replay them after an update
+        rationale: Logs are runtime output and are unrelated to apply merge calculation.
+      - id: c
+        text: It permanently pins the object to one API version
+        rationale: The annotation records prior applied configuration; it is not an API-version lock.
+      - id: d
+        text: It proves the new Pods became Ready
+        rationale: Apply configuration metadata says nothing about downstream runtime readiness.
+    answer_ids: [a]
+    explanation: Treat this as client-side apply behavior. Server-Side Apply uses API-server field managers and managedFields as its ownership mechanism.
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-apply-live-state]
+
+  - id: practice:kcna/q-node-capacity
+    checkpoint: resources
+    category: scenario
+    select: single
+    prompt: Several new replicas are Pending because every existing Node lacks enough allocatable CPU. Which change actually adds physical cluster capacity?
+    options:
+      - id: a
+        text: Provision or add suitable Nodes, manually or through node autoscaling
+        rationale: New Nodes add CPU and memory that the scheduler can use for previously unschedulable Pods.
+      - id: b
+        text: Increase the Deployment replica count again
+        rationale: More desired Pods increase demand but do not manufacture node resources.
+      - id: c
+        text: Add another Service selector
+        rationale: Service selection changes traffic membership, not scheduler capacity.
+      - id: d
+        text: Add more labels to the Pending Pods
+        rationale: Labels can affect selection or policy but do not create CPU or memory.
+    answer_ids: [a]
+    explanation: Workload scaling and node scaling are separate layers. Controllers can request more Pods; only node provisioning changes the compute pool available to the scheduler.
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:scheduling-resources-health]
+
+  - id: practice:kcna/q-pod-network-model
+    checkpoint: resources
+    category: concept
+    select: single
+    prompt: Which statement best matches the default Kubernetes Pod network model, ignoring intentionally configured segmentation?
+    options:
+      - id: a
+        text: Pods have cluster-network IPs and Pods on different Nodes can communicate directly; stable or public exposure is a separate Service/routing concern
+        rationale: Kubernetes expects cluster-wide Pod connectivity while treating stable service identity and external exposure as separate layers.
+      - id: b
+        text: A Pod can only be reached from the Node that hosts it
+        rationale: The Kubernetes network model is designed for Pod-to-Pod communication across Nodes, not host-local reachability only.
+      - id: c
+        text: Every Pod IP is automatically reachable from the public internet
+        rationale: Cluster-network reachability is not the same as public exposure.
+      - id: d
+        text: Pods need host-port mappings before they can communicate with Pods on other Nodes
+        rationale: Kubernetes networking is designed so Pod-to-Pod communication does not require host-port mappings between nodes.
+    answer_ids: [a]
+    explanation: Keep execution endpoints, stable Service identity, and external routing as separate layers. Pod IP is a cluster-network concept, not a public-ingress guarantee.
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-networking-request-path]
+
+  - id: practice:kcna/q-get-all-caveat
+    checkpoint: resources
+    category: kubectl
+    select: single
+    prompt: You run kubectl get all to get a quick workload-oriented view. What should you remember before treating that output as a complete cluster inventory?
+    options:
+      - id: a
+        text: Use kubectl api-resources to discover the API resource kinds; get all is a convenience grouping rather than proof that every kind was enumerated
+        rationale: API discovery is the reliable way to enumerate resource kinds supported by the server.
+      - id: b
+        text: get all automatically includes every namespaced and cluster-scoped object kind
+        rationale: The all category is not a guarantee that every Kubernetes resource kind is included.
+      - id: c
+        text: get all only prints Deployments
+        rationale: It includes multiple common resource categories, not just Deployments.
+      - id: d
+        text: get all changes desired state before printing it
+        rationale: kubectl get is a read operation and does not mutate workload desired state.
+    answer_ids: [a]
+    explanation: Quick views and API discovery solve different problems. Use get for object reads and api-resources when the question is what resource types the server supports.
+    unit_ids: [fpp:kubernetes-resource-operations, fpp:kubernetes-object-lexicon]
 
   - id: practice:kcna/q-describe-pending
     checkpoint: cluster-behavior

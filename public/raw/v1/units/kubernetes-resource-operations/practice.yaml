@@ -1,0 +1,24 @@
+schema_version: 1
+unit_id: fpp:kubernetes-resource-operations
+practices:
+  - id: fpp:kubernetes-resource-operations/p-operation-map
+    title: Rebuild the Kubernetes resource-operation map
+    mode: guided_markdown
+    prompt: Use a disposable learning cluster to prove the command, selector, namespace, apply, and capacity distinctions from this unit instead of accepting them as memorized facts.
+    steps:
+      - Create or inspect an apps/v1 Deployment and locate spec.selector.matchLabels and spec.template.metadata.labels in the live object.
+      - Run kubectl get pods in one namespace, then repeat with -A and explain what scope changed.
+      - Change a disposable Deployment image with kubectl set image, then inspect rollout status and rollout history.
+      - On a disposable Deployment, inspect the client-side last-applied configuration after kubectl apply and compare it with the live object.
+      - Run kubectl api-resources and identify which common resource kinds are namespaced versus cluster-scoped.
+      - Inspect the four initial namespaces and explain the role of kube-public and kube-node-lease.
+      - Write down separately what action increases workload replicas and what action actually adds node compute capacity.
+    success_checks:
+      - Selector path and template-label path are not conflated.
+      - -A is recognized as all namespaces rather than a namespace literally named all.
+      - set image, rollout history, and rollout undo are mapped to different intents.
+      - Client-side last-applied state is distinguished from the live object and from Server-Side Apply managed fields.
+      - Workload replicas are not described as physical node capacity.
+      - Pod IP is described as cluster networking rather than stable public exposure.
+    safety:
+      - Use read-only inspection against shared clusters; perform scaling, image updates, rollback, and apply experiments only in a disposable namespace or learning cluster.

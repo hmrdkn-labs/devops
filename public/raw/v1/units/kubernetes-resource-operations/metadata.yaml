@@ -1,0 +1,37 @@
+schema_version: 1
+id: fpp:kubernetes-resource-operations
+slug: kubernetes-resource-operations
+title: Kubernetes resource operations and defaults
+summary: Operate Kubernetes resources without guessing by connecting selectors, namespace defaults, kubectl command families, rollout history, apply state, and cluster capacity to the API model.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 24
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: v1.33-current
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:kubernetes-object-lexicon]
+objectives:
+  - id: fpp:kubernetes-resource-operations/command-intent
+    title: Choose kubectl commands from the operation being performed instead of from memorized command fragments
+    critical: true
+  - id: fpp:kubernetes-resource-operations/selectors-defaults
+    title: Distinguish current ReplicaSet selector structure from legacy ReplicationController selector defaulting and explain why selectors can adopt existing Pods
+    critical: true
+  - id: fpp:kubernetes-resource-operations/apply-state
+    title: Distinguish local configuration, live configuration, client-side last-applied state, and server-side field ownership
+    critical: true
+  - id: fpp:kubernetes-resource-operations/scope-capacity
+    title: Reason about initial namespaces, cross-namespace queries, Pod-network reachability, and workload versus node capacity
+    critical: true
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals, container-orchestration]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-16

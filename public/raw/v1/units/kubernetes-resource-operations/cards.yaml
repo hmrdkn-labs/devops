@@ -1,0 +1,76 @@
+schema_version: 1
+unit_id: fpp:kubernetes-resource-operations
+revision: 1
+cards:
+  - id: fpp:kubernetes-resource-operations/c-selector-path
+    type: short
+    front: Where do equality-based ReplicaSet membership labels usually live?
+    back: Under spec.selector.matchLabels.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/selectors-defaults]
+  - id: fpp:kubernetes-resource-operations/c-rc-selector
+    type: short
+    front: If a ReplicationController omits spec.selector, what can Kubernetes default it from?
+    back: The Pod template labels in spec.template.metadata.labels.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/selectors-defaults]
+  - id: fpp:kubernetes-resource-operations/c-all-namespaces
+    type: short
+    front: kubectl shorthand for querying Pods across all namespaces?
+    back: kubectl get pods -A, equivalent to --all-namespaces.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/command-intent]
+  - id: fpp:kubernetes-resource-operations/c-set-image
+    type: short
+    front: Which kubectl command family updates a Deployment container image imperatively?
+    back: kubectl set image deployment/<name> <container>=<image>.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/command-intent]
+  - id: fpp:kubernetes-resource-operations/c-rollout-history
+    type: short
+    front: Which command shows Deployment rollout revisions?
+    back: kubectl rollout history deployment/<name>.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/command-intent]
+  - id: fpp:kubernetes-resource-operations/c-rollout-undo
+    type: short
+    front: Which command returns a Deployment to a previous rollout revision?
+    back: kubectl rollout undo deployment/<name>.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/command-intent]
+  - id: fpp:kubernetes-resource-operations/c-initial-namespaces
+    type: short
+    front: Name the four initial Kubernetes namespaces.
+    back: default, kube-system, kube-public, and kube-node-lease.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-resource-operations/scope-capacity]
+  - id: fpp:kubernetes-resource-operations/c-apply-three-way
+    type: prompt
+    front: What three states participate in classic client-side kubectl apply patch calculation?
+    back: Local configuration, live object configuration, and the previous last-applied configuration annotation.
+    critical_points: [last-applied state is specifically part of classic client-side apply]
+    objective_ids: [fpp:kubernetes-resource-operations/apply-state]
+  - id: fpp:kubernetes-resource-operations/c-ssa
+    type: prompt
+    front: Client-side last-applied annotation versus Server-Side Apply managedFields?
+    back: Client-side apply uses the last-applied annotation in its merge calculation; Server-Side Apply tracks field managers and ownership on the API server in managedFields.
+    critical_points: [do not generalize last-applied annotation semantics to every apply mode]
+    objective_ids: [fpp:kubernetes-resource-operations/apply-state]
+  - id: fpp:kubernetes-resource-operations/c-scale-layers
+    type: prompt
+    front: Workload scale-out versus cluster capacity scale-out?
+    back: Workload scale-out asks controllers for more Pods; cluster capacity scale-out provisions or adds Nodes so more CPU and memory exist for scheduling.
+    critical_points: [more Pods do not create node capacity]
+    objective_ids: [fpp:kubernetes-resource-operations/scope-capacity]
+  - id: fpp:kubernetes-resource-operations/c-command-scenario
+    type: scenario
+    front: You changed a Deployment image and now need to see prior revisions before reverting. What two commands follow?
+    back: kubectl rollout history deployment/<name>, then kubectl rollout undo deployment/<name> if you decide to revert.
+    critical_points: [history observes; undo mutates desired rollout state]
+    objective_ids: [fpp:kubernetes-resource-operations/command-intent]
+  - id: fpp:kubernetes-resource-operations/c-network-scenario
+    type: scenario
+    front: A Pod has an IP but users outside the cluster cannot reliably reach the app. Which conceptual layer is missing?
+    back: Stable service/exposure. Pod IP belongs to cluster networking; use Service for stable selection/discovery and an external routing mechanism when public access is required.
+    critical_points: [Pod IP is not equivalent to stable public exposure]
+    objective_ids: [fpp:kubernetes-resource-operations/scope-capacity]
