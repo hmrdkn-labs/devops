@@ -8,6 +8,15 @@ const traversalLessons = ['kcna-cluster-behavior', 'kcna-kubernetes-fundamentals
   lesson: parse(readFileSync(`content/lessons/${slug}.yaml`, 'utf8')),
 }));
 
+test('KCNA curriculum, practice, and lesson expose one main landmark', async ({ page }) => {
+  for (const route of ['/kcna', '/practice/kcna', '/lesson/kcna-cloud-native-context']) {
+    await page.goto(route);
+    await expect(page.getByRole('main')).toHaveCount(1);
+    await expect(page.locator('a[href="#main"]')).toHaveAttribute('href', '#main');
+    await expect(page.locator('#main')).toHaveAttribute('id', 'main');
+  }
+});
+
 test('KCNA MCQ link opens working practice through public navigation', async ({ page }, info) => {
   if (info.project.name === 'tablet') await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto('/kcna');

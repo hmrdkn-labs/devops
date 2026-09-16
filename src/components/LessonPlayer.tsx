@@ -368,7 +368,7 @@ export default function LessonPlayer(props: Props) {
         </div>
       </header>
 
-      <main class="lesson-player-main">
+      <div class="lesson-player-main">
         <Show when={authError()}><p class="workspace-message" role="status">Could not verify sign-in. This session stays in memory. <button class="text-button" type="button" onClick={() => void refetchMe()}>Retry sign-in check</button></p></Show>
         <Show when={!finished()} fallback={
           <section class="lesson-complete" data-testid="lesson-complete">
@@ -699,7 +699,7 @@ export default function LessonPlayer(props: Props) {
             </Show>
           </section>
         </Show>
-      </main>
+      </div>
     </div>
   );
 }

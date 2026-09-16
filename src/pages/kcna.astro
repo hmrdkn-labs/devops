@@ -115,7 +115,7 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
       <a class="kcna-secondary-link" href="/paths/kcna">Open the plain {pathUnits.length}-unit path →</a>
     </aside>
 
-    <main class="kcna-curriculum" aria-label="KCNA curriculum">
+    <section class="kcna-curriculum" aria-label="KCNA curriculum">
       {checkpoints.map((checkpoint, checkpointIndex) => (
         <details id={checkpoint.id} class="kcna-checkpoint" data-checkpoint={checkpoint.id} open={checkpointIndex === 0}>
           <summary>
@@ -157,6 +157,6 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
           </ol>
         </details>
       ))}
-    </main>
+    </section>
   </div>
 </BaseLayout>
