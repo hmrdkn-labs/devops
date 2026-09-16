@@ -47,7 +47,9 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
   expect(box!.y + box!.height).toBeLessThan(viewport!.height);
 
   const answer = page.locator('.lesson-option').nth(1);
+  await expect(answer).toBeEnabled();
   await answer.focus();
+  await expect(answer).toBeFocused();
   const focusStyle = await answer.evaluate((element) => {
     const style = getComputedStyle(element);
     return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
