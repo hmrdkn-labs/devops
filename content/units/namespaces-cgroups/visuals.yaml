@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:namespaces-cgroups
-revision: 2
+revision: 3
 visuals:
   - id: fpp:namespaces-cgroups/visual-container-kernel
     kind: comparison
     eyebrow: Kernel primitives
-    title: Containers are processes with scoped views and resource controls
+    title: "Separate network views, one shared CPU quota"
     lines:
-      - "ordinary process → namespaces restrict what it can see → cgroups account and limit resources → container isolation model"
-    teaching_point: Namespaces isolate views such as processes and networking, while cgroups control resource accounting and limits; neither creates a separate guest kernel like a virtual machine.
+      - "PID 701 → network view A ┐"
+      - "PID 702 → network view B ├→ cgroup /batch"
+      - "/batch cpu.max 50000/100000 → shared CPU bandwidth ceiling"
+      - "kernel cpu.stat deltas → evidence of quota throttling"
+    teaching_point: "Network namespace identity and cgroup membership describe separate boundaries. A shared cgroup CPU quota applies to aggregate member use. Throttling deltas and ancestor constraints qualify the resource conclusion."

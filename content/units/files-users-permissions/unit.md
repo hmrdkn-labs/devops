@@ -14,7 +14,8 @@ For regular files, read exposes bytes, write changes bytes, and execute permits
 the file to be used as a program. For directories, the meanings shift:
 
 - read lists directory entries;
-- write creates, removes, or renames entries;
+- write, together with execute/search, permits creating, removing, or renaming
+  entries subject to additional restrictions such as sticky-bit rules;
 - execute traverses the directory and reaches named entries.
 
 That directory distinction explains why reading a file can fail even when the
@@ -31,3 +32,17 @@ manual fixes.
 
 Permissions answer “may this identity perform this operation?” They do not
 encrypt data, validate its contents, or replace application authorization.
+
+## Worked case: A directory can hide names without protecting known files
+
+Assume all ancestors are searchable and the service identity has no ACL or capability exceptions. These mode values are a paper case; no deletion experiment is required.
+
+~~~text
+process: UID=1200 GID=1200
+/srv/reports           owner 1200:1200 mode 0300 (-wx------)
+/srv/reports/daily.txt owner 1200:1200 mode 0400 (r--------)
+~~~
+
+The owner can traverse the directory and read a known file but cannot enumerate directory names. Directory write plus search also allows removing an entry under the stated assumptions. Use `id` and `namei -l /srv/reports/daily.txt` to inspect the identity and every path component; an ACL or immutable flag would require separate inspection. This case explains why removing file write is insufficient protection against deletion and why testing as root can conceal a mode error.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

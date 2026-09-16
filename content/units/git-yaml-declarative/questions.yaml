@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:git-yaml-declarative
-revision: 3
+revision: 4
 questions:
   - id: fpp:git-yaml-declarative/q-valid
     kind: predict
@@ -20,12 +20,14 @@ questions:
     objective_ids: [fpp:git-yaml-declarative/versioned-intent]
   - id: fpp:git-yaml-declarative/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Demonstrate that parseable YAML and schema-valid configuration are different claims. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Create a harmless sample manifest with valid syntax and one wrong field type. Parse it with a YAML-aware tool. Validate it against the target API schema using a client dry run. Treat the conclusion as justified only when Parsing succeeds. Schema validation identifies the wrong type without creating a resource."
+    prompt: "Commit c7 records a Deployment with replicas: 3. The live API object's spec.replicas is 5 after a manual scale, and five Pods run. No GitOps agent is installed. Will the Deployment controller restore three from Git? What evidence distinguishes versioned intent, live desired state and observed execution?"
+    model_answer: "No. Git stores a reviewed snapshot but the built-in Deployment controller watches API objects, not arbitrary Git commits. It reconciles the live API desired count of five. Compare the commit's file, the live Deployment spec and status, and owned ReplicaSets/Pods. A chosen GitOps agent or an explicit reviewed apply workflow must transfer repository intent into API state. Parsing or server-side dry-run acceptance can validate a candidate without proving it has been persisted or executed."
     critical_points:
-      - "Parsing succeeds."
-      - "Schema validation identifies the wrong type without creating a resource."
+      - "Git intent is not automatically input to the built-in controller."
+      - "Live spec is desired API state; status/Pods report observed execution."
+      - "Validation/dry-run, persistence and reconciliation are distinct claims."
     objective_ids: [fpp:git-yaml-declarative/versioned-intent, fpp:git-yaml-declarative/yaml-schema]
+
   - id: fpp:git-yaml-declarative/q-schema-boundary
     kind: scenario
     prompt: A file is valid YAML, but spec.replicas is written as a string instead of the integer required by the Kubernetes API. Which check has passed, which check should fail, and what does that tell you?

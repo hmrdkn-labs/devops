@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:git-yaml-declarative
-revision: 3
+revision: 4
 visuals:
   - id: fpp:git-yaml-declarative/visual-intent-pipeline
     kind: flow
     eyebrow: Intent pipeline
-    title: Versioned text becomes desired state only after validation
+    title: "Git and the API can hold competing desired values"
     lines:
-      - "reviewed Git change → YAML parsing → application schema validation → accepted desired state → reconciliation"
-    teaching_point: YAML only encodes data; the receiving system defines the schema and semantics that turn reviewed text into actionable desired state.
+      - "Git c7: replicas 3 → inert reviewed snapshot"
+      - "manual scale → API spec replicas 5"
+      - "Deployment controller watches API → reconciles five"
+      - "GitOps/apply would be a separate Git → API transfer boundary"
+    teaching_point: "Git intent is not automatically input to the built-in controller. Live spec is desired API state; status/Pods report observed execution. Validation/dry-run, persistence and reconciliation are distinct claims."

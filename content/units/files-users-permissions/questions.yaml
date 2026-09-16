@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:files-users-permissions
-revision: 2
+revision: 3
 questions:
   - id: fpp:files-users-permissions/q-directory-x
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:files-users-permissions/path-identity]
   - id: fpp:files-users-permissions/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Create a temporary directory tree and predict access before changing each mode. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Create a private temporary directory containing one readable file. Remove directory read permission, then test access by exact filename. Restore read and remove execute permission, then test again. Treat the conclusion as justified only when You can explain listing versus traversal. You restore or remove the temporary directory afterward."
+    prompt: "A non-root service runs as UID 1200, GID 1200 with no supplementary groups, ACLs or permission-bypass capabilities. /srv is traversable, /srv/reports is owned by 1200:1200 with mode 0300, and daily.txt inside is mode 0400 owned by 1200. Predict ls /srv/reports, reading the exact file path, and unlinking daily.txt. Which checks differ?"
+    model_answer: "Listing fails because the owner lacks directory read. Reading the exact known path succeeds because directory search and file read are present. Unlinking the entry is permitted by directory write plus search, even though the file is not writable, assuming no sticky-bit, immutable, read-only-mount or other restriction. The kernel evaluates the process identity at each boundary; modes describe permission, not encryption."
     critical_points:
-      - "You can explain listing versus traversal."
-      - "You restore or remove the temporary directory afterward."
+      - "Directory read lists names; search reaches a known name."
+      - "Unlink permission is primarily on the parent directory, not the file write bit."
+      - "The prediction depends on the explicitly unprivileged identity and absent additional restrictions."
     objective_ids: [fpp:files-users-permissions/path-identity, fpp:files-users-permissions/mode-bits]

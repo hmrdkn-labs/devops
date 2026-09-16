@@ -8,3 +8,10 @@ sources:
     type: manual
     verified_at: 2026-08-27
     note: Primary reference for traversal and pathname permission checks.
+  - id: source:linux-path-checks
+    title: "path_resolution — pathname permission checks"
+    url: https://man7.org/linux/man-pages/man7/path_resolution.7.html
+    publisher: "Linux man-pages"
+    type: manual
+    verified_at: 2026-09-16
+    note: "Search permission at path components, identity classes, and capability exceptions."

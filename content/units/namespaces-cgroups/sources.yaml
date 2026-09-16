@@ -15,3 +15,10 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: Primary cgroup v2 interface and behavior reference.
+  - id: source:cgroup-quota
+    title: "Control Group v2 — CPU controller"
+    url: https://docs.kernel.org/admin-guide/cgroup-v2.html
+    publisher: "Linux kernel documentation"
+    type: documentation
+    verified_at: 2026-09-16
+    note: "CPU quota is group bandwidth; cpu.stat records throttling and hierarchy can impose constraints."
