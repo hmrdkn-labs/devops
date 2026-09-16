@@ -20,7 +20,7 @@ questions:
     objective_ids: [fpp:namespaces-cgroups/resource-control]
   - id: fpp:namespaces-cgroups/q-practice-transfer
     kind: scenario
-    prompt: "Processes A and B have different /proc/PID/ns/net link IDs, but /proc/PID/cgroup shows 0::/batch for both. On cgroup v2, /batch/cpu.max is 50000 100000 and /batch/cpu.stat shows nr_throttled increasing during load. Does separate networking give each process an independent half-CPU budget?"
+    prompt: "Ordinary fair-scheduled processes A and B have different /proc/PID/ns/net link IDs, but /proc/PID/cgroup shows 0::/batch for both. On cgroup v2 with no configured quota burst, /batch/cpu.max is 50000 100000 and /batch/cpu.stat shows nr_throttled increasing during load. Does separate networking give each process an independent half-CPU budget?"
     model_answer: "No. Different network namespace IDs identify distinct networking views, while both processes are members of the same cgroup. Its aggregate CPU quota is 50 ms per 100 ms period, approximately half a CPU of bandwidth shared by the group, not a separate entitlement per process. The kernel enforces the quota and reports throttling. Compare membership and cpu.stat deltas; namespace links alone cannot establish resource limits, and an ancestor cgroup can impose a tighter effective constraint."
     critical_points:
       - "Network namespace identity and cgroup membership describe separate boundaries."

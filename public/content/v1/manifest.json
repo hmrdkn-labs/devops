@@ -258,13 +258,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:git-yaml-declarative/versioned-intent": "559f4a3b1155f63d92e794fc94dc3cf91314764517c7bc7725453592fa94d302",
-        "fpp:git-yaml-declarative/yaml-schema": "6bb5666258494f40c7a4a01f3750a32209be001315228c6e16ba4311dc514ef2"
+        "fpp:git-yaml-declarative/versioned-intent": "ba805e73b4a5ebdb23f4fdb0e305bb41e409607af76f8d09eb74d65e8bfd59db",
+        "fpp:git-yaml-declarative/yaml-schema": "5e1c5917f06dfbbf9dc04b7b468f1bc878f96d31a1ac96247770b6b1a4aad09c"
       },
-      "mastery_hash": "42f099831efcda4f4bf16208ba7b27a3b4915b960d71beac1d693a57b821b00c",
+      "mastery_hash": "17e08ab535e2ebf24f5405de1cdb3590e8103a6a8d6b01edd71f64dd88b2912e",
       "enrichment_hash": "5eead35f47c05d8b4f45be1ca776efa35d6dc49fb7b9482591339354c99872e4",
       "editorial_hash": "e1f2e15bfc00cd8b7b5b422695a019d6776656c2e527999ed419ed48f4167c02",
-      "content_hash": "770424f64d0b55445f5a93f2f8e16b4ce6e9e45c1abe23723484abe422166fe7",
+      "content_hash": "efd5568273f6a4e64d44f334d090ba03da53dc6107d6f2c93bce0f808395df0a",
       "raw_markdown_url": "/raw/v1/units/git-yaml-declarative/unit.md",
       "raw_visuals_url": "/raw/v1/units/git-yaml-declarative/visuals.yaml",
       "visual_count": 1
@@ -707,13 +707,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-pod-model/lifecycle": "03623a115dd0f355922f275d1f603188228da1b2ea21cffee86aafe0aa729941",
-        "fpp:kubernetes-pod-model/ownership": "9bdea9895d170e5b411f282b6d4475b2ac7ce0ef22298a8dc78f3aa1ea6addb8"
+        "fpp:kubernetes-pod-model/lifecycle": "cc0a48ef95f350dd59d8770b56ba5557b75092a2567b3d427eef6b86dec9a27a",
+        "fpp:kubernetes-pod-model/ownership": "0d44acc3bddb061fc2dccbfc1350a11487a896411a75607fdb7e070fc4a674a5"
       },
-      "mastery_hash": "266afde00a957903304c871b8c253187e0d93912af4882b57674ef925f3e5646",
-      "enrichment_hash": "69fea0b24c21725cbeacfd3b98e565a352942903fa42b3106033ce1cd09d6a25",
+      "mastery_hash": "a2a04c81a797a4d39efd8079571531970e4da0a5ec346dcc39c2b3f2b696dbb1",
+      "enrichment_hash": "32cebb891fcccd08f73cd5395414fd69383e53407a3505e2d33f0fff678719a0",
       "editorial_hash": "964b15d55dbb7f8c10395c4487f7dd8e87c846379d6a5347b55417a01ee6f835",
-      "content_hash": "f8c45695359666ab5999f18e7445e0be3b5099442e612f43a420cee4861fc13c",
+      "content_hash": "fab1af09e7022a949e24c6f3dc5cdbf69868f14c89ce99a95a7dab44a89c96ee",
       "raw_markdown_url": "/raw/v1/units/kubernetes-pod-model/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-pod-model/visuals.yaml",
       "visual_count": 1
@@ -838,13 +838,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:namespaces-cgroups/isolation": "bfc09a6d8e7e589105c3ba2bde8ba92c651d2a54da30e7a5d33d6d413b484a30",
-        "fpp:namespaces-cgroups/resource-control": "f433c04cc2c1800ce6d8076cbb29f2cc6b4c8545eb6c257ed1046f8ce42f4d98"
+        "fpp:namespaces-cgroups/isolation": "1850e5a392f5c9994897708254c510ec369dc79c6e1faeb51c3d0ce082bc3b36",
+        "fpp:namespaces-cgroups/resource-control": "82a43cf1772f78f7153ac95a48c48be927926dc7f9361936863c4200d278fe90"
       },
-      "mastery_hash": "128130fcb4bda70deb038ad1646f7d9478b6ba285a3adec1fb8682b11b52ddbe",
+      "mastery_hash": "227eb628962ae4a6bca41692bb7d696866b84c16a4b40cc12d165e25540bb2cb",
       "enrichment_hash": "269a78db3084107923654ad05b28fe4bf16cb623078a353967b03b6b78f695fb",
       "editorial_hash": "e0c14d69db49aa468501382124af84ab28adb84bd78039655d542370a870203a",
-      "content_hash": "243f23229eaf5893beed2de8d42db606ac7588cab953d29ad5fba85513741eb3",
+      "content_hash": "9731a28264ceac4a88e0ab752a57e071eb3b6a3c758879376d3849bee195a125",
       "raw_markdown_url": "/raw/v1/units/namespaces-cgroups/unit.md",
       "raw_visuals_url": "/raw/v1/units/namespaces-cgroups/visuals.yaml",
       "visual_count": 1
@@ -1016,13 +1016,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:shell-pipes-signals/stream-composition": "a29e1139194adb542b21f9f61cd7659e02cb5b927504d81d3d1d0ed700f2dc70",
-        "fpp:shell-pipes-signals/signal-shutdown": "62dab1835c6bc665a69c219c329db05a102d24150bc0624089ebf0b48c4ef450"
+        "fpp:shell-pipes-signals/stream-composition": "ab2a078ea6fe72de34dc21af109ad32ffe4adc4c8d6c9669a0fe1940708d1271",
+        "fpp:shell-pipes-signals/signal-shutdown": "7e220a556940ee85432c0141044516aedc07fccf8953d2cf44174f239bade40e"
       },
-      "mastery_hash": "64b0580515405b9ce6d18498169c968869c69acb71261560040118fa68911832",
+      "mastery_hash": "74ae7586a015dcdcf57d78ad3b9eecb2756dd2c5fe1714383d047e04d1b15e18",
       "enrichment_hash": "ac85255e73ed529c5918c212cc1aeaf8b7df885e395af7d95bd11f2a3d970fd5",
       "editorial_hash": "626ab17315ee69b4b4d6193c0f07ef3c3dfb56c6fda297fd09b68a92dc6bb48f",
-      "content_hash": "6b75d44a3aa9c5b0776f0b5977d9a676bfee16de8567a0573cde1897f2f73a6e",
+      "content_hash": "eb9d97e6a9cff895b9d2736cf7520e9e67a132f7881194c34b7e6cc579c62ca5",
       "raw_markdown_url": "/raw/v1/units/shell-pipes-signals/unit.md",
       "raw_visuals_url": "/raw/v1/units/shell-pipes-signals/visuals.yaml",
       "visual_count": 1
@@ -4903,5 +4903,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "d0bb7a8416cb4510d508f793b1bd6126218f3f51157bf0fce3dee21bb489ead3"
+  "manifest_sha256": "435617b2795f2f12c2259ece57d736d25d94f81841cdea240228b20f56604e6a"
 }

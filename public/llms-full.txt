@@ -2716,13 +2716,17 @@ The goal is not to memorize output columns. It is to answer: **who owns this sta
 ~~~text
 10:00 api-55-x  UID=p7  node=node-a  restarts=0
 10:05 api-55-x  UID=p7  node=node-a  restarts=4  last reason=Error
+10:18 p7 deleted; api-55 desired=3 unchanged; matching Pods=2
+10:19 ReplicaSet/api-55 SuccessfulCreate: created Pod api-55-y
 10:20 api-55-y  UID=p8  node=node-b  owner=ReplicaSet/api-55
 ~~~
 
 The first transition stays within one Pod record. Read that container's previous
-logs and termination state to explain the crash. The later record belongs to a
-new Pod, so inspect the old Pod's deletion/failure evidence and the ReplicaSet's
-replica intent. The table alone does not explain why p7 disappeared.
+logs and termination state to explain the crash. The deletion, stable desired
+count, deficit and creation event support ReplicaSet count repair. The later
+UID identifies a different Pod. New UID and ownership alone would not prove
+that history: scale-up or adoption could also yield another owned Pod. This
+authored fixture supplies the missing history; it does not diagnose why p7 was deleted.
 
 The scheduler chooses placement for a new unscheduled Pod; kubelet/runtime own
 execution on that node. A bare Pod without a controller owner has no ReplicaSet
