@@ -5,15 +5,26 @@
 
 ## Read this first
 
-**Active continuation: complete the remaining 29 curriculum units, verify, push,
-and merge.** The accepted baseline is committed on
+**Current step: curriculum and local gates complete; root browser acceptance,
+PR checks, and merge pending.** The accepted baseline is committed on
 `feat/learning-curriculum-rewrite`: `71dcecd` content/generated, `be7e907`
-workspace/tests, `9717375` documentation. Content cohorts are being rewritten and
-independently reviewed; final gates and PR review remain pending. Production
+workspace/tests, `9717375` documentation. Four topical content cohorts are
+committed, with generated artifacts in `178042f`; the full corpus now has bespoke
+transfer questions rather than the retired generated boilerplate. New full-lesson
+traversal exposed and fixed an adjacent ordered-task transition crash. Single-main
+landmarks are repaired in `a9fa452`. Latest settled gates pass content contracts,
+Astro diagnostics (0 errors/warnings), **77 unit tests** (37 existing behavior
+tests plus 40 per-unit boilerplate regressions), D1, build, and revision checks
+against both `origin/main` and `9717375`. Final browser matrix: **87 passes / 36
+intentional skips**, 123 cases, 47.0s, including all 52 lesson exercises and
+retrieval/reference smoke across all 40 units at 320px and 1440px. Canonical peer
+review and corrections are complete (`76a52c1`, regenerated `266b158`). Stable
+guest server: port 4321, session `29349`, manifest `435617b2795f`.
+Production
 deployment is a separate protected release step. No learner-efficacy claim is
 made. The historical bounded acceptance below remains evidence for the baseline.
 
-**Current step: audit → plan → implementation → tests → bounded local acceptance
+**Historical bounded baseline: audit → plan → implementation → tests → local acceptance
 complete; protected release pending.** Eight targeted content rewrites
 and the learner-workspace reliability/layout repairs are implemented, preserving
 the Scheduling additions. Final gates are green: production build, content and
@@ -28,6 +39,16 @@ Plan: `docs/LEARNING-EXPERIENCE-PLAN.md`. Guest server: port 4321, session `9028
 manifest `8dcb7debe9da`, no D1/auth binding.
 
 ## 2026-09-16 learning experience verification log
+
+Completion-phase independent review sampled process waits, permissions,
+namespace/cgroup accounting, route selection/NAT hooks, TLS identity, container
+recreation/storage, Kubernetes controller/runtime ownership, storage reclamation,
+admission and telemetry scope against primary documentation. Authored fixtures
+remain predictions rather than claims of live experiments. No migrations, APIs,
+bindings, dependencies, or workflows changed. The final guest server was stopped
+before rebuilding and restarted from the settled dist to avoid stale-build
+navigation evidence. Owner persistence remains mocked; learner efficacy remains
+unmeasured.
 
 Initial regressions reproduced aborted review saves sticking busy state and late
 notes loads overwriting edits. Intermediate matrices exposed stale expectations

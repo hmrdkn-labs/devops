@@ -1,6 +1,6 @@
 # Learning experience acceptance plan
 
-2026-09-16 · Bounded acceptance committed; remaining curriculum rewrite in progress. Production deployment is outside this push/merge task.
+2026-09-16 · Curriculum and local gates complete; parent browser acceptance, PR checks, and merge pending. Production deployment is outside this task.
 
 ## Authorized completion phase
 
@@ -96,6 +96,18 @@ Rewrite the eight audit-selected generic sections as explanations built around a
 Use the established compact developer workspace: display type at most 40px, restrained spacing, readable prose measure, visible focus indicators, 44px mobile control targets, and native controls with readable response text. Context should open in place without moving the retrieval column. Keep short counters unbroken and allow long code literals to wrap or scroll within their own surface. Respect reduced motion in task transitions and playback; never require animation to understand an answer. Test light and dark colors rather than assuming shared tokens guarantee contrast.
 
 ## Recorded acceptance evidence
+
+Completion-phase settled gates pass content/type/D1/build and revision checks
+against `origin/main` and accepted baseline `9717375`. Unit tests: 77 passes,
+comprising 37 existing behavior tests and 40 per-unit retired-boilerplate
+regressions. Final browser matrix: 87 passes / 36 intentional skips, 123 cases,
+47.0s. All 52 exercises reach checking/completion; the new traversal caught an
+adjacent ordered-task transition failure repaired by atomic task-state updates.
+Rendered landmark checks cover KCNA, MCQ and lesson routes in all viewports.
+All 40 generated units pass 320px/1440px retrieval/reference smoke, including
+expanded reference models and contained tables. Independent canonical review,
+peer corrections, regeneration and final-source gates are complete. The bounded
+baseline evidence below remains historical and does not measure learner efficacy.
 
 Final settled build: content checks, production build, Astro typecheck (0
 errors/warnings), 37 unit tests, D1 checks, and revision classification pass.
