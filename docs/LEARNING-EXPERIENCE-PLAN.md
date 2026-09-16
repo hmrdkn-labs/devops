@@ -1,6 +1,11 @@
 # Learning experience acceptance plan
 
-2026-09-16 · Curriculum and parent browser acceptance complete; PR #10 checks and merge pending. Production deployment is outside this task.
+2026-09-16 · Audit → Plan → Rewrite → Acceptance → Merged → Protected deployment pending.
+
+[PR #10](https://github.com/hmrdkn-labs/devops/pull/10) merged with commits
+preserved at `fae8d045cfdb11c14fa6beb7224d7ddb7bcd7c6d`. All final-head CI jobs
+passed in [run 35118173684](https://github.com/hmrdkn-labs/devops/actions/runs/35118173684).
+No implementation blocker. Production deployment is outside this task.
 
 ## Authorized completion phase
 
