@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { parse } from 'yaml';
 import { expect, test } from '@playwright/test';
 
@@ -14,6 +14,39 @@ test('KCNA curriculum, practice, and lesson expose one main landmark', async ({ 
     await expect(page.getByRole('main')).toHaveCount(1);
     await expect(page.locator('a[href="#main"]')).toHaveAttribute('href', '#main');
     await expect(page.locator('#main')).toHaveAttribute('id', 'main');
+  }
+});
+
+test('every generated unit keeps retrieval and reference within the viewport', async ({ page }, info) => {
+  test.skip(info.project.name === 'tablet', 'Corpus smoke covers 320px and 1440px');
+  test.setTimeout(120_000);
+  const width = info.project.name === 'mobile' ? 320 : 1440;
+  await page.setViewportSize({ width, height: 900 });
+  for (const slug of readdirSync('content/units')) {
+    await page.goto(`/learn/${slug}`);
+    const answer = page.getByLabel('Your explanation', { exact: true });
+    await expect(answer, slug).toBeEnabled();
+    await answer.fill(`Draft for ${slug}`);
+    const heading = page.locator('.question-stage h2').first();
+    const before = await heading.boundingBox();
+    await page.locator('.study-context-actions').getByRole('button', { name: 'Reference', exact: true }).click();
+    const context = page.getByTestId('learning-context');
+    await expect(context).toBeVisible();
+    const models = context.getByTestId('reference-models');
+    if (await models.count()) await models.locator(':scope > summary').click();
+    await expect(answer, slug).toHaveValue(`Draft for ${slug}`);
+    const after = await heading.boundingBox();
+    expect(after?.x, slug).toBe(before?.x);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth), slug).toBeLessThanOrEqual(width);
+    for (const table of await context.locator('.markdown-body table').all()) {
+      const contained = await table.evaluate((element) => {
+        const parent = element.parentElement!;
+        const table = element.getBoundingClientRect();
+        const wrapper = parent.getBoundingClientRect();
+        return table.width <= wrapper.width + 1 || ['auto', 'scroll'].includes(getComputedStyle(parent).overflowX);
+      });
+      expect(contained, `${slug} reference table`).toBe(true);
+    }
   }
 });
 
