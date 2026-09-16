@@ -37,26 +37,30 @@ export const GET: APIRoute = async ({ url, locals }) => {
     FROM fsrs_card WHERE user_id = ? AND due_at <= ?
     ORDER BY due_at ASC LIMIT 200`).bind(locals.user.id, Date.now()).all<DueRow>();
   const scopedRows = pathUnits ? rows.results.filter((row) => pathUnits.has(row.unit_id)) : rows.results;
-  const queue = mixedReviewQueue(
-    scopedRows.map((row) => ({ ...row, cardType: row.card_type, dueAt: row.due_at })),
-    limit,
-  ).flatMap((row) => {
+  const reviewableRows = scopedRows.flatMap((row) => {
     const content = contentCards.get(row.card_id);
-    return content ? [{
-      cardId: row.card_id,
-      unitId: row.unit_id,
-      unitRevision: row.unit_revision,
-      type: row.card_type,
+    if (!content || content.unit.metadata.id !== row.unit_id) return [];
+    return [{
+      ...row,
+      cardType: content.type,
       dueAt: row.due_at,
-      front: content.front,
-      back: content.back,
-      criticalPoints: content.critical_points,
-      unitTitle: content.unit.metadata.title,
-    }] : [];
+      content,
+    }];
   });
+  const queue = mixedReviewQueue(reviewableRows, limit).map((row) => ({
+    cardId: row.card_id,
+    unitId: row.content.unit.metadata.id,
+    unitRevision: row.content.unit.metadata.revision,
+    type: row.content.type,
+    dueAt: row.due_at,
+    front: row.content.front,
+    back: row.content.back,
+    criticalPoints: row.content.critical_points,
+    unitTitle: row.content.unit.metadata.title,
+  }));
   return json({
     queue,
-    dueCount: scopedRows.length,
+    dueCount: reviewableRows.length,
     path: path ? { id: path.id, slug: path.slug, title: path.title } : null,
     mix: { short: 0.6, prompt: 0.2, scenario: 0.2 },
   });

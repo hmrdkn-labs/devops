@@ -22,7 +22,8 @@ export default function ReviewDeck(props: Props) {
   const [revealed, setRevealed] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
   const [completed, setCompleted] = createSignal(0);
-  const [queue, { refetch }] = createResource(() => typeof window !== 'undefined', async () => {
+  const [message, setMessage] = createSignal<string | null>(null);
+  const [queue, { refetch, mutate }] = createResource(() => typeof window !== 'undefined', async () => {
     const params = new URLSearchParams({ limit: '20' });
     if (props.pathSlug) params.set('path', props.pathSlug);
     const response = await fetch('/api/review?' + params.toString(), { credentials: 'include' });
@@ -35,6 +36,7 @@ export default function ReviewDeck(props: Props) {
     const card = current();
     if (!card) return;
     setBusy(true);
+    setMessage(null);
     const response = await fetch('/api/review', {
       method: 'POST',
       credentials: 'include',
@@ -50,7 +52,17 @@ export default function ReviewDeck(props: Props) {
     if (response.ok) {
       setCompleted((value) => value + 1);
       setRevealed(false);
+      mutate((cards) => cards ? cards.filter((item) => item.cardId !== card.cardId) : cards);
       await refetch();
+    } else {
+      const body = await response.json().catch(() => null) as { error?: string } | null;
+      if (response.status === 409 && body?.error === 'content_revision_changed') {
+        setMessage('Content changed since this review was scheduled. Refreshing the queue…');
+        setRevealed(false);
+        await refetch();
+      } else {
+        setMessage('Could not save this review. Your card was not advanced; try again.');
+      }
     }
     setBusy(false);
   }
@@ -102,6 +114,9 @@ export default function ReviewDeck(props: Props) {
                   </div>
                 }>
                   <button class="button primary reveal-card" onClick={() => setRevealed(true)}>Reveal answer</button>
+                </Show>
+                <Show when={message()}>
+                  {(text) => <p class="review-message" role="status">{text()}</p>}
                 </Show>
               </>
             )}

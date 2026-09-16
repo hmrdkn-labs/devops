@@ -97,6 +97,44 @@ test('review reveal state is explicit and ratings start visually neutral', async
   expect(new Set(borderColors).size, 'no rating should look preselected').toBe(1);
 });
 
+test('rating a review advances to the next due card', async ({ page }) => {
+  let getCount = 0;
+  let postedCardId: string | null = null;
+  const first = {
+    cardId: 'test:first', unitId: 'fpp:container-lifecycle', unitRevision: 2,
+    type: 'short', dueAt: Date.now(), front: 'First review card?', back: 'First answer.',
+    criticalPoints: [], unitTitle: 'Container runtime and lifecycle',
+  } as const;
+  const second = {
+    cardId: 'test:second', unitId: 'fpp:container-lifecycle', unitRevision: 2,
+    type: 'short', dueAt: Date.now(), front: 'Second review card?', back: 'Second answer.',
+    criticalPoints: [], unitTitle: 'Container runtime and lifecycle',
+  } as const;
+
+  await page.route('**/api/review**', async (route) => {
+    if (route.request().method() === 'POST') {
+      postedCardId = (route.request().postDataJSON() as { cardId: string }).cardId;
+      await route.fulfill({ contentType: 'application/json', body: JSON.stringify({ persisted: true }) });
+      return;
+    }
+    getCount += 1;
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({ queue: getCount === 1 ? [first, second] : [second] }),
+    });
+  });
+
+  await page.goto('/review?path=kcna');
+  await expect(page.getByRole('heading', { name: 'First review card?' })).toBeVisible();
+  await page.getByRole('button', { name: 'Reveal answer' }).click();
+  await page.getByRole('button', { name: 'Good' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Second review card?' })).toBeVisible();
+  await expect(page.getByText('Retrieve before revealing', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 done', { exact: false })).toBeVisible();
+  expect(postedCardId).toBe(first.cardId);
+});
+
 test('UI v3 primary surfaces stay compact, readable, and overflow-free', async ({ page }, testInfo) => {
   for (const theme of ['light', 'dark'] as const) {
     await page.goto('/');

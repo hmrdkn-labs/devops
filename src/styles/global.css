@@ -1098,6 +1098,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .review-answer { margin-top: 1.1rem; padding: .9rem; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-radius: var(--radius-control); background: var(--accent-soft); color: var(--muted); }
 .reveal-card { width: 100%; margin-top: .65rem; }
 .review-rating { padding: .85rem 0; }
+.review-message { margin: .7rem 0 0; color: var(--warning); font-size: .72rem; }
 
 /* KCNA MCQ practice */
 .mcq-hero {
