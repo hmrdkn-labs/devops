@@ -24,7 +24,13 @@ A DaemonSet is useful when you want one Pod on all or selected eligible nodes, f
 
 The DaemonSet controller creates Pods for eligible nodes. Those Pods still participate in Kubernetes placement semantics; the controller is expressing per-node desired state rather than becoming the node-side process executor.
 
-## Read Pending as a decision failure
+## Pending is a phase, not a diagnosis
+
+First separate three boundaries. An API validation or admission rejection can
+prevent a new object from being stored at all. An accepted Pod without
+`.spec.nodeName` still needs placement. An assigned Pod can remain `Pending`
+while kubelet sets up containers or downloads images. Read the live assignment,
+conditions, container waiting reasons, and events before choosing a component.
 
 If a Pod remains `Pending`, inspect events before changing random settings. Common scheduling reasons include:
 
@@ -33,7 +39,7 @@ If a Pod remains `Pending`, inspect events before changing random settings. Comm
 - untolerated taints;
 - volume topology constraints;
 - topology spread constraints that cannot be satisfied;
-- other admission or scheduling policy constraints.
+- other hard scheduling policy constraints.
 
 `kubectl describe pod` often exposes scheduler events describing why no node was feasible. The useful question is not merely "is it Pending?" but **which constraint eliminated every candidate node?**
 

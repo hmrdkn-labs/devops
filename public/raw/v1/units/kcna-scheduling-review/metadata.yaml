@@ -1,0 +1,41 @@
+schema_version: 1
+id: fpp:kcna-scheduling-review
+slug: kcna-scheduling-review
+title: KCNA Scheduling quiz companion
+summary: A first-principles review of Kubernetes scheduling, node-placement policy, resources, DaemonSets, static Pods, and scheduler customization for KCNA study.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 32
+aliases: []
+applicable_versions:
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:kubernetes-architecture-components, fpp:kubernetes-labels-replicasets, fpp:scheduling-resources-health, fpp:kubernetes-scheduling-placement]
+objectives:
+  - id: fpp:kcna-scheduling-review/decision-path
+    title: Trace an unscheduled Pod through scheduler filtering, scoring, binding, and kubelet execution
+    critical: true
+  - id: fpp:kcna-scheduling-review/placement-policy
+    title: Distinguish direct node assignment, selectors, affinity, taints, tolerations, and dedicated-node patterns
+    critical: true
+  - id: fpp:kcna-scheduling-review/resource-policy
+    title: Separate resource requests, runtime limits, LimitRange, and ResourceQuota responsibilities
+    critical: true
+  - id: fpp:kcna-scheduling-review/node-ownership
+    title: Distinguish DaemonSet controller ownership from kubelet-owned static Pods
+    critical: true
+  - id: fpp:kcna-scheduling-review/scheduler-extension
+    title: Explain schedulerName, multiple schedulers, profiles, and plugin extension points at the KCNA level
+    critical: false
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals, container-orchestration]
+    advisory: false
+  - certification: cncf:cka
+    domains: [workloads-and-scheduling]
+    advisory: true
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-16

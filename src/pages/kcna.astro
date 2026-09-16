@@ -35,15 +35,15 @@ const checkpoints = [
   {
     id: 'cluster-behavior',
     title: 'Cluster Behavior',
-    note: 'Networking, scheduling, storage, health, configuration, and access boundaries across a running cluster.',
+    note: 'Networking, scheduling, storage, health, configuration, and access boundaries across a running cluster, including a dedicated scheduling checkpoint.',
     start: 18,
-    end: 25,
+    end: 26,
   },
   {
     id: 'cloud-native',
     title: 'Cloud-Native Context',
     note: 'Delivery, troubleshooting, observability, architecture principles, and the CNCF ecosystem around Kubernetes.',
-    start: 25,
+    start: 26,
     end: pathUnits.length,
   },
 ].map((checkpoint) => ({
@@ -112,7 +112,7 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
         ))}
       </section>
 
-      <a class="kcna-secondary-link" href="/paths/kcna">Open the plain 29-unit path →</a>
+      <a class="kcna-secondary-link" href="/paths/kcna">Open the plain {pathUnits.length}-unit path →</a>
     </aside>
 
     <main class="kcna-curriculum" aria-label="KCNA curriculum">

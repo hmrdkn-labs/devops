@@ -427,6 +427,37 @@
       "visual_count": 1
     },
     {
+      "id": "fpp:kcna-scheduling-review",
+      "slug": "kcna-scheduling-review",
+      "title": "KCNA Scheduling quiz companion",
+      "summary": "A first-principles review of Kubernetes scheduling, node-placement policy, resources, DaemonSets, static Pods, and scheduler customization for KCNA study.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kubernetes-architecture-components",
+        "fpp:kubernetes-labels-replicasets",
+        "fpp:scheduling-resources-health",
+        "fpp:kubernetes-scheduling-placement"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kcna-scheduling-review/decision-path": "c2fde7b6e6968ce16a81995e64743ce9441a2c2fb2646e709e4f8a9a6c1261e3",
+        "fpp:kcna-scheduling-review/placement-policy": "062d37ba2218393fd4fa2987be61944cfff642f553e012f9bfda596ae507bd2e",
+        "fpp:kcna-scheduling-review/resource-policy": "f8046c0aedca751907a580089c0688a9f88e3ee6be4324b71acae4b46d126d43",
+        "fpp:kcna-scheduling-review/node-ownership": "b8f3583dea52548c1e6c67c383d76a9906591f47c0b0d8cac329f48f7df3f879",
+        "fpp:kcna-scheduling-review/scheduler-extension": "3328e1efbb6ed15be649cd1513a58f695db8c651b7d2063894eea7e9d70af457"
+      },
+      "mastery_hash": "22f9ee5d807773c41f790a924dbc031c57937e93e91c97b914dbcc922d23ff89",
+      "enrichment_hash": "cf032ab08cd4ff58d43f542a8f3a7b914f813f61120b71a1250a573d5238b06b",
+      "editorial_hash": "c7acb835a219fed3289497da0c8001193c5e74ca5b5dc293f6d24bcdac9763b9",
+      "content_hash": "6c386d2209bdc9f1403ee1c717097508c46a99edd77d977a4e01e7e993b5ec0b",
+      "raw_markdown_url": "/raw/v1/units/kcna-scheduling-review/unit.md",
+      "raw_visuals_url": "/raw/v1/units/kcna-scheduling-review/visuals.yaml",
+      "visual_count": 4
+    },
+    {
       "id": "fpp:kubernetes-apply-live-state",
       "slug": "kubernetes-apply-live-state",
       "title": "kubectl apply and live state",
@@ -457,7 +488,7 @@
       "slug": "kubernetes-architecture-components",
       "title": "Kubernetes components and the API request path",
       "summary": "Trace a Kubernetes change from kubectl through the API, control-plane reconciliation, scheduling, kubelet execution, runtime, and status feedback.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -467,13 +498,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-architecture-components/roles": "570c64d3106db91e79b3afdc8aad291d6a110d6937b432590028f18bd446f52f",
-        "fpp:kubernetes-architecture-components/request-path": "220cb64c00aa297cd95870b0289130bbaa3641261edca5773a7d75782c1dd414"
+        "fpp:kubernetes-architecture-components/roles": "4684110b2066198503d1a1af736c84043ae2c7e5ea2337416c515f39dba3b36f",
+        "fpp:kubernetes-architecture-components/request-path": "338b335c23cffe57f72c1baf18a57db62e00104fa29e1aed5a35e26bd9a10df6"
       },
-      "mastery_hash": "b5b0569ce59f87269e50eb892e0a59caea4682232ca8402ff792358638739018",
+      "mastery_hash": "93fbb8a4acc1ba71b6f068697ce9994397d2cfa976bba438fe56d85e2e35a649",
       "enrichment_hash": "cf1526d859d24bd4d8f09f5f6374ff3e343b80c9b6f4138f87840a5aeae7b5c8",
       "editorial_hash": "ffe9f400e5def70953493d3c54963e0ee08f6cfc199831d0ecf2a1195247dd92",
-      "content_hash": "4b094de57d753f9b0b6b67f63eddb0f9cbd6effa6cf143e48a60dca57cb7a48a",
+      "content_hash": "9f5ce124403c2be4f865a625e375133ed239f2ceb1c73e1e52e97495938e4744",
       "raw_markdown_url": "/raw/v1/units/kubernetes-architecture-components/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-architecture-components/visuals.yaml",
       "visual_count": 1
@@ -483,7 +514,7 @@
       "slug": "kubernetes-control-loop",
       "title": "Kubernetes API and control loops",
       "summary": "Understand Kubernetes as an API-driven system where controllers continuously reconcile declared intent with observed state.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -493,13 +524,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-control-loop/api-state": "b60e2e40cccb775fecb6cc8de101c4f6c979d5c45a6008e9cf13d222a6202c2f",
-        "fpp:kubernetes-control-loop/reconciliation": "44e63352f4305d2bcbb864436f546f6f9a8f150afa37bb2b064bc407dd5771f7"
+        "fpp:kubernetes-control-loop/api-state": "43d68f90da3467efe0982cf2e68bd6ddb327386384fe41e82d1784136a0a1f55",
+        "fpp:kubernetes-control-loop/reconciliation": "ebae5006ded87a93fe5a2ba64a8bb36881f6d564f52008499af92874622ef312"
       },
-      "mastery_hash": "40ccdc1bfe4b1292308c6b03db0e5bb85998c71ae2e221a4eca29d2d38928869",
+      "mastery_hash": "4bf56f96aac75ab47577d9df4eaef403c90d5ec0f517cd5ae38a0a682ccfb708",
       "enrichment_hash": "c9d17837e03c2f2ae384d703f6d6c801c5bdaf7e73ad0bb6c96c477abb320201",
       "editorial_hash": "fb8d1c25fab6c49772667c0e3627cdae0f4dc241379056a5854b71bb0e5f3d7a",
-      "content_hash": "c01f58af747a10f17ee22c0e8074c9fccc879e9de39c4da5488674978b4310ab",
+      "content_hash": "9c329b88f4c9d135d405af32dff2318b4f2d4ffb151af3ea3669ceb84c3fb035",
       "raw_markdown_url": "/raw/v1/units/kubernetes-control-loop/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-control-loop/visuals.yaml",
       "visual_count": 1
@@ -509,7 +540,7 @@
       "slug": "kubernetes-deployments-rollouts",
       "title": "Deployments, rollouts, and rollbacks",
       "summary": "Trace how a Deployment manages ReplicaSets, why template changes create rollout revisions, and how rollout evidence differs from application health.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -518,13 +549,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-deployments-rollouts/ownership-chain": "6a6409115e904a0b2a3b892d9dcf88708d8c844ba058335e1cab1ee3c84033bb",
-        "fpp:kubernetes-deployments-rollouts/revision": "74cbc45b835d4b65972be7a4c1163a935d21f0873f3f228edd5d1ebd021291ba"
+        "fpp:kubernetes-deployments-rollouts/ownership-chain": "3d5b52d4413368f4329dfbf5963dae35cdb68c75c99bc7eb32c1401261002dac",
+        "fpp:kubernetes-deployments-rollouts/revision": "e9dbaf456a9bc79071f311a8d743362a9d97de5c1993d56f532a76c8ff1f7b0c"
       },
-      "mastery_hash": "a5885d159123f8b9ee5799a97025f223451e12bbecf5ad5e43aa3df77a86975a",
+      "mastery_hash": "1e38143688bf0bcc6f76df10f9c882b01b5e97164bf96566a816c31f0240d9db",
       "enrichment_hash": "a61cd0b9b854d963e642c5e64a49441d9296659e338d3f85725d07193dec5a61",
       "editorial_hash": "63cb55fb6afbf717d1568b54d34079ad5d143d58e8856d348a243d74526cdb37",
-      "content_hash": "fe75b03a3fbc2f95e10a6211e8a7a7eba2f23d85b13a314b488d7ee2454f0ede",
+      "content_hash": "d81309fc59f65785f2cd6cbcbaaaddc463468299f9f5eae9c64d96b443495c20",
       "raw_markdown_url": "/raw/v1/units/kubernetes-deployments-rollouts/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-deployments-rollouts/visuals.yaml",
       "visual_count": 1
@@ -534,7 +565,7 @@
       "slug": "kubernetes-labels-replicasets",
       "title": "Labels, selectors, and ReplicaSets",
       "summary": "Connect label-based selection to ReplicaSet ownership and explain how a controller continuously repairs replica-count drift.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -544,13 +575,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-labels-replicasets/selection": "10c06e9cc3b96b6c4011d9c111a78f06fe1331c56656d7434f1778914e930eff",
-        "fpp:kubernetes-labels-replicasets/reconciliation": "8ea62ede4c5d7f2223daf1c7a2d6048dd79b776df4a54886f6c5bd570bdc00fd"
+        "fpp:kubernetes-labels-replicasets/selection": "a4f04bc2ebdc0d4b735dfbf8a27b2a522dae1af0ffd60ea1594a2273d6c05606",
+        "fpp:kubernetes-labels-replicasets/reconciliation": "9c40d596616cf21a0d80c08014db94b20b65b0bce5c96b34afc325e67f827fa5"
       },
-      "mastery_hash": "101956b30388e8f7f2c82e4407ea1b02a4015043b9085005c5c7ca2b98c8dc11",
+      "mastery_hash": "ae5f6c1914a6cb62558910d75d9b0668137b64c82100190e40e43103ad80d6a9",
       "enrichment_hash": "c69dc436527cc806a3efcb1bdb6e5107e0f4abbc8c9e9b55caada288d7678115",
       "editorial_hash": "81941966196ad5ef89b16342ba4632e9a89a2996a3f3b21dff0bdfab14c32e20",
-      "content_hash": "4c5eb89adec9302a019d4ad3fdbd3f324debb9cd6e5b66bc7350afe0448475c8",
+      "content_hash": "1414f014cbd3a58bff70583cf870601a59abf7c9bf97d858f8ef344bc90b9bd2",
       "raw_markdown_url": "/raw/v1/units/kubernetes-labels-replicasets/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-labels-replicasets/visuals.yaml",
       "visual_count": 1
@@ -560,7 +591,7 @@
       "slug": "kubernetes-manifests",
       "title": "Kubernetes manifests and API objects",
       "summary": "Read a Kubernetes manifest as a request to the API, separate desired spec from observed status, and prove what the cluster accepted.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -570,13 +601,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-manifests/object-shape": "02441b5bbf968d7884040877d8b8385e575c904bbcaf2e56fbd994081d61967a",
-        "fpp:kubernetes-manifests/proof-boundary": "c365a35afd48bb8b547351edb414a55aa1a71f7eea4c219bf7e1d3fd72c7a99d"
+        "fpp:kubernetes-manifests/object-shape": "9719256a95b738f95321dda5d7dd0cde957ee9cddd69a97a99d3ada51ccda97f",
+        "fpp:kubernetes-manifests/proof-boundary": "deac0d8e45cfe7cbc24e7c261c968dcb532f6e090df425a70d34eef32f3ac79e"
       },
-      "mastery_hash": "70982756ead45c3c4b550929e61a968365cc41eee661f0924097eba1a75720e1",
+      "mastery_hash": "194bdb661e4fbac544123712655af8cdab798b0f27978b1e79f59fb5b62d9536",
       "enrichment_hash": "99e251f8accb10d9b5545e01e74ff716252ce00b172afde3e069568d4f921c92",
       "editorial_hash": "0ee5ea210405a10ca3d4b914f00f4fa91649f302bc3129418c035b62df12ee76",
-      "content_hash": "af6ecf9a442da4c1082ba5b9b3368ddf7ccc63bb8830f35da5234a162007012c",
+      "content_hash": "e12f9647f890f1e67bbea20688bcd865aa59987e4783cccbffe0a1c78cbbab16",
       "raw_markdown_url": "/raw/v1/units/kubernetes-manifests/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-manifests/visuals.yaml",
       "visual_count": 1
@@ -612,7 +643,7 @@
       "slug": "kubernetes-networking-request-path",
       "title": "Kubernetes networking request path",
       "summary": "Trace a request from DNS through a Service and EndpointSlice to a Pod while separating CNI connectivity, Service forwarding, ingress routing, and policy.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "networking",
@@ -624,13 +655,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-networking-request-path/service-path": "057c4b21f7e14dbbb6e25cad147a1a9806183a59168c87cca041372864e133f5",
-        "fpp:kubernetes-networking-request-path/boundaries": "8c1d605bbaccf027d6124383b88e95db8e809084f792eaac9de981aa832d6258"
+        "fpp:kubernetes-networking-request-path/service-path": "a538855e70c9dccf3cf4f5ec3585baeac043591ef42013f6dd986c065b1ac187",
+        "fpp:kubernetes-networking-request-path/boundaries": "4cfeea229a6a91f1ce8b89141154b63784ecb0b781184691d80e4fa98ef280e5"
       },
-      "mastery_hash": "183446bb2740e29c1347556c17c882bf3fa303155717187192257ad56ff8747e",
+      "mastery_hash": "591fa984cbf3a17c8be15c9b8afd73cb5e1916db7d8419723b567552e9882cc5",
       "enrichment_hash": "66eb3e88ec060a99fa0d9b4fa4ec07adcb631ed4031c08def01b5cfa4d44e806",
       "editorial_hash": "2116bf34e7627d32bf386f797a69fcc98edeb00778bbb7defba4206a9c17eb21",
-      "content_hash": "38a974ad4c4a5829dbbe5d16035a6dd9cd4a3e869fa28c1eb3010f549a0a1d90",
+      "content_hash": "92ed5caf46976c017e8810f6e167bc39ca15e2635c9055fe7a64114fa1fbf155",
       "raw_markdown_url": "/raw/v1/units/kubernetes-networking-request-path/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-networking-request-path/visuals.yaml",
       "visual_count": 1
@@ -719,7 +750,7 @@
       "slug": "kubernetes-scheduling-placement",
       "title": "Kubernetes scheduling and placement constraints",
       "summary": "Predict where a Pod can run by separating resource requests, node selection, affinity, taints and tolerations, topology spreading, and controller intent.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -729,13 +760,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-scheduling-placement/feasibility": "10b118a935a1359199d688dcb6795fdf8c5baddeb744ffef3fac9c722d09fe77",
-        "fpp:kubernetes-scheduling-placement/policy": "5ccd5649bdcc9955a022eeba805d3b6cd3be63692f5df3421fb2af87d7e06933"
+        "fpp:kubernetes-scheduling-placement/feasibility": "7fcb423e8f3d3049a03244a7caa9c60b8f755ef1efb93cd3595f315b7503c8c8",
+        "fpp:kubernetes-scheduling-placement/policy": "c8ccb430d4f303838a7ca636914a16bc24748524a9521268d9ea2fa8a0f5c11e"
       },
-      "mastery_hash": "cda56d72faf8cf8ce8a9239538cc34cba5a9891e7fa3585b410aacd17b3b9c08",
-      "enrichment_hash": "78804a6fcfd98f839f086a5c17df6d369699e13ff5dfec0789782be7e7fcf575",
+      "mastery_hash": "e16be3ecd24523ebee3b1b8f4ba57fbef17e31029879c83cc43ed7ebe2405022",
+      "enrichment_hash": "16723c44497df4562168daee7ae3b0705a6197f53fc2a0b72b6bf4d82c6746f1",
       "editorial_hash": "4afee044a670fe1b9e76a2641b53396ea9fb9ef730a3adb786315b7decc2191c",
-      "content_hash": "f76df0d010b552e4f83402135615e1ce4db3e206f1f9cbd37c5894260f9ca6d2",
+      "content_hash": "08032e0501fac8cb0d74fa09a4b46fe0eb2003251c738ded744196085375baf4",
       "raw_markdown_url": "/raw/v1/units/kubernetes-scheduling-placement/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-scheduling-placement/visuals.yaml",
       "visual_count": 1
@@ -949,7 +980,7 @@
       "slug": "services-dns-ingress",
       "title": "Services, cluster DNS, and ingress",
       "summary": "Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.",
-      "revision": 3,
+      "revision": 4,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -959,13 +990,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:services-dns-ingress/service-endpoints": "5a53978055da2eff3c6890bd5003f81aec1c848054d9098989263e3484a4c335",
-        "fpp:services-dns-ingress/external-routing": "51ee92907535be6e878187e5ce902dc076544cfc828c44779a22cfb5bced1ed6"
+        "fpp:services-dns-ingress/service-endpoints": "7acd697fe296ca95405be1d06525126477c6782eacd99df94556414a8076fea3",
+        "fpp:services-dns-ingress/external-routing": "56dab465a6d457a09b360d3406fbf037464b8dd0ac68a33bb5829e3848447543"
       },
-      "mastery_hash": "fb4f68f44d1c67d970eaf6396eb9da46e27c0447ae3f8745aa47f1caa503497c",
+      "mastery_hash": "af4c60558c6bb3495032ddac63e7f99ed7734794eb5447ce29e88ca83dcadfc6",
       "enrichment_hash": "d1da60bae30b7d18efd72a4c82ff7f0f791c3b425792ff0a6607ea2db5ed76f4",
       "editorial_hash": "199c4a8cb7ee5232c9087161c0a4181a147de6731d104df6aa0fe46b741202e4",
-      "content_hash": "7ba4279596f978e98d3b208da3011fb212b8c7d4a38c44d428a4fdf1fbe70f39",
+      "content_hash": "b1b96e533d3b59815b7a4ae95b2319a3019562b56cb64823fcf250f692e09c0b",
       "raw_markdown_url": "/raw/v1/units/services-dns-ingress/unit.md",
       "raw_visuals_url": "/raw/v1/units/services-dns-ingress/visuals.yaml",
       "visual_count": 1
@@ -1115,7 +1146,7 @@
       "slug": "kcna",
       "title": "KCNA Learning Path",
       "summary": "Build KCNA-ready Kubernetes and cloud-native understanding from networking and containers through Kubernetes resources, delivery, operations, and troubleshooting.",
-      "revision": 5,
+      "revision": 6,
       "status": "published",
       "units": [
         {
@@ -1204,6 +1235,10 @@
         },
         {
           "unit_id": "fpp:kubernetes-scheduling-placement",
+          "weight": 2
+        },
+        {
+          "unit_id": "fpp:kcna-scheduling-review",
           "weight": 2
         },
         {
@@ -2001,16 +2036,17 @@
       "slug": "kcna-cluster-behavior",
       "title": "KCNA Cluster Behavior",
       "summary": "Reason through a running Kubernetes cluster by tracing service traffic, scheduling, health, storage, configuration, and security boundaries.",
-      "revision": 1,
+      "revision": 2,
       "certification": "cncf:kcna",
       "checkpoint": "cluster-behavior",
-      "estimated_minutes": 20,
+      "estimated_minutes": 30,
       "verified_at": "2026-09-15",
       "source_unit_ids": [
         "fpp:services-dns-ingress",
         "fpp:kubernetes-networking-request-path",
         "fpp:scheduling-resources-health",
         "fpp:kubernetes-scheduling-placement",
+        "fpp:kcna-scheduling-review",
         "fpp:config-secrets-storage",
         "fpp:kubernetes-storage-lifecycle",
         "fpp:kubernetes-security-access"
@@ -2690,6 +2726,466 @@
             "A controller can create the replacement Pod without guaranteeing placement.",
             "The scheduler must satisfy resource and placement constraints.",
             "Persistent storage adds its own access and topology constraints before the Pod can run."
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/trace-scheduler-decision",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/decision-path"
+          ],
+          "evidence": "application",
+          "prompt": "Arrange the normal path from an unscheduled Pod to node-side execution.",
+          "hint": "Separate the placement decision from the node-side execution that follows it.",
+          "learn_first": {
+            "title": "Filter, score, bind, then execute.",
+            "body": "An ordinary Pod first needs a feasible node. kube-scheduler eliminates impossible nodes, ranks the survivors, and records placement. Only then does the selected node's kubelet drive container execution.",
+            "visual": [
+              "unassigned Pod → filter → score → bind",
+              "bind → kubelet → runtime"
+            ],
+            "components": [],
+            "variant_prompt": "A Pod has passed admission but has no nodeName yet. Trace the remaining control-plane decision and node-side execution boundaries."
+          },
+          "feedback": {
+            "title": "Placement and execution are separate ownership boundaries.",
+            "explanation": "kube-scheduler decides where the Pod belongs and records that decision. It does not SSH to a node or start the containers itself; kubelet owns the next execution boundary.",
+            "points": [
+              "Hard feasibility is evaluated before preferences matter.",
+              "Binding is the transition from unscheduled intent to a node assignment.",
+              "Kubelet executes after the assignment exists."
+            ],
+            "visual": [
+              "scheduler: where?",
+              "kubelet/runtime: run it"
+            ],
+            "components": [
+              {
+                "name": "kube-scheduler",
+                "location": "control-plane",
+                "responsibility": "Filters, scores, and binds an ordinary unscheduled Pod.",
+                "acts_on": "Pod placement",
+                "proof": "kubectl describe pod <name>"
+              },
+              {
+                "name": "kubelet",
+                "location": "worker-node",
+                "responsibility": "Executes Pods assigned to its node and reports status.",
+                "acts_on": "Bound Pods",
+                "proof": "kubectl get pod <name> -o wide"
+              }
+            ]
+          },
+          "kind": "trace",
+          "items": [
+            {
+              "id": "kubelet",
+              "text": "Kubelet on the selected node observes the assigned Pod and drives execution"
+            },
+            {
+              "id": "filter",
+              "text": "Scheduler filters out nodes that violate hard constraints"
+            },
+            {
+              "id": "bind",
+              "text": "Scheduler records the selected node by binding the Pod"
+            },
+            {
+              "id": "pending",
+              "text": "Pod exists in API state without a node assignment"
+            },
+            {
+              "id": "score",
+              "text": "Scheduler scores the nodes that remain feasible"
+            }
+          ],
+          "correct_order": [
+            "pending",
+            "filter",
+            "score",
+            "bind",
+            "kubelet"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/predict-direct-node-assignment",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/decision-path",
+            "fpp:kcna-scheduling-review/placement-policy"
+          ],
+          "evidence": "application",
+          "prompt": "A Pod explicitly sets spec.nodeName to worker-gpu. That node has a NoSchedule taint and the Pod has no matching toleration. Which statement is the best model?",
+          "hint": "Ask whether this field is input to the scheduler or a direct assignment that bypasses normal scheduler choice.",
+          "learn_first": {
+            "title": "nodeName is not another affinity rule.",
+            "body": "nodeSelector and affinity constrain kube-scheduler. nodeName directly identifies the target node and therefore bypasses ordinary scheduler selection. It also bypasses the scheduler's normal NoSchedule taint filtering.",
+            "visual": [
+              "nodeSelector / affinity → scheduler constraint",
+              "nodeName → direct assignment"
+            ],
+            "components": [],
+            "variant_prompt": "Compare a Pod that requires node label gpu=true with a Pod whose nodeName is hard-coded to worker-gpu. Which one still asks the scheduler to choose?"
+          },
+          "feedback": {
+            "title": "Direct assignment skips a decision; it does not prove execution.",
+            "explanation": "A direct nodeName can bypass the scheduler, but it does not make the target node healthy or create missing resources. NoExecute taints can also evict an intolerant Pod after assignment.",
+            "points": [
+              "nodeName is stronger and less flexible than scheduler constraints.",
+              "NoSchedule and NoExecute have different consequences."
+            ],
+            "visual": [
+              "nodeName → scheduler bypass",
+              "assignment ≠ successful runtime"
+            ],
+            "components": []
+          },
+          "kind": "predict_state",
+          "state": [
+            "spec.nodeName: worker-gpu",
+            "worker-gpu taint: dedicated=gpu:NoSchedule",
+            "Pod tolerations: none"
+          ],
+          "options": [
+            {
+              "id": "normal-filter",
+              "text": "kube-scheduler must reject worker-gpu because the taint is untolerated.",
+              "rationale": "Setting nodeName directly bypasses normal scheduler selection, so the scheduler's NoSchedule filtering is not the mechanism making this assignment."
+            },
+            {
+              "id": "direct-assignment",
+              "text": "The Pod is directly assigned, bypassing normal scheduler selection; that still does not guarantee healthy execution.",
+              "rationale": "nodeName is direct assignment rather than a scheduler preference. Capacity, node health, kubelet/runtime behavior, and NoExecute semantics remain separate concerns."
+            },
+            {
+              "id": "toleration-attracts",
+              "text": "Kubernetes automatically adds a toleration because nodeName attracts the Pod to the node.",
+              "rationale": "Kubernetes does not infer a matching toleration from nodeName, and tolerations are permissions rather than attraction rules."
+            }
+          ],
+          "answer_ids": [
+            "direct-assignment"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/connect-placement-mechanisms",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/placement-policy"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each placement mechanism to the job it actually performs.",
+          "hint": "One mechanism permits a tainted node without attracting the Pod; another only influences scoring.",
+          "learn_first": {
+            "title": "Classify mechanisms by direction before memorizing syntax.",
+            "body": "nodeSelector and required affinity remove nonmatching nodes from the feasible set. Preferred affinity affects scoring. A toleration merely stops a matching taint from excluding or evicting the Pod under that effect.",
+            "visual": [
+              "hard label rule → filter",
+              "preferred label rule → score",
+              "taint → repel",
+              "toleration → permit"
+            ],
+            "components": [],
+            "variant_prompt": "You need GPU Pods to prefer GPU nodes but still allow general nodes in an emergency. Which rule should be soft rather than required?"
+          },
+          "feedback": {
+            "title": "A toleration is not a destination selector.",
+            "explanation": "Many scheduling mistakes come from treating every placement field as an attraction rule. First decide whether the rule filters, scores, repels, or permits.",
+            "points": [
+              "Required rules affect feasibility.",
+              "Preferred rules affect ranking.",
+              "Tolerations do not guarantee a tainted node will be selected."
+            ],
+            "visual": [
+              "filter ≠ score ≠ repel ≠ permit"
+            ],
+            "components": []
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "selector",
+              "text": "nodeSelector"
+            },
+            {
+              "id": "required-affinity",
+              "text": "required node affinity"
+            },
+            {
+              "id": "preferred-affinity",
+              "text": "preferred node affinity"
+            },
+            {
+              "id": "toleration",
+              "text": "toleration"
+            }
+          ],
+          "right": [
+            {
+              "id": "exact-hard",
+              "text": "Simple hard node-label requirement"
+            },
+            {
+              "id": "expressive-hard",
+              "text": "Richer hard node-label expression used during filtering"
+            },
+            {
+              "id": "scoring",
+              "text": "Weighted preference among otherwise feasible nodes"
+            },
+            {
+              "id": "permission",
+              "text": "Removes a matching taint as a rejection or eviction reason"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "selector",
+              "right_id": "exact-hard"
+            },
+            {
+              "left_id": "required-affinity",
+              "right_id": "expressive-hard"
+            },
+            {
+              "left_id": "preferred-affinity",
+              "right_id": "scoring"
+            },
+            {
+              "left_id": "toleration",
+              "right_id": "permission"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/choose-resource-policy-layer",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/resource-policy"
+          ],
+          "evidence": "application",
+          "prompt": "A namespace should allow at most 20 total CPU requests across its workloads, while individual containers should default to a 250m CPU request if authors omit one. Which pair best matches those two policies?",
+          "hint": "Separate aggregate namespace governance from defaults or bounds applied to individual objects.",
+          "learn_first": {
+            "title": "Resource policy exists at more than one scope.",
+            "body": "Requests participate in scheduling and limits constrain runtime use. LimitRange governs defaults and per-object bounds inside a namespace; ResourceQuota caps aggregate namespace consumption or object counts.",
+            "visual": [
+              "request → scheduling",
+              "limit → runtime",
+              "LimitRange → individual objects",
+              "ResourceQuota → namespace aggregate"
+            ],
+            "components": [],
+            "variant_prompt": "A team may create at most 30 Pods in one namespace, while every container should have a default memory limit. Which mechanism owns each policy?"
+          },
+          "feedback": {
+            "title": "Namespace policy is not the same as Pod runtime policy.",
+            "explanation": "Keep placement capacity, runtime enforcement, per-object admission defaults, and aggregate namespace governance as four distinct responsibilities.",
+            "points": [
+              "Requests are scheduling inputs.",
+              "ResourceQuota is aggregate.",
+              "LimitRange is per-object/default policy."
+            ],
+            "visual": [
+              "schedule | run | default/bound | aggregate budget"
+            ],
+            "components": []
+          },
+          "kind": "choose",
+          "options": [
+            {
+              "id": "quota-limitrange",
+              "text": "ResourceQuota for the aggregate 20 CPU budget; LimitRange for the per-container default request.",
+              "rationale": "ResourceQuota governs aggregate namespace consumption, while LimitRange can apply per-object defaults and bounds within the namespace."
+            },
+            {
+              "id": "limitrange-quota",
+              "text": "LimitRange for the aggregate 20 CPU budget; ResourceQuota for each container's default request.",
+              "rationale": "This reverses their normal policy scopes: LimitRange is per object and ResourceQuota is aggregate."
+            },
+            {
+              "id": "node-selector",
+              "text": "nodeSelector for the aggregate budget; a taint for the default request.",
+              "rationale": "Placement metadata cannot express namespace compute budgets or default resource requests."
+            }
+          ],
+          "answer_ids": [
+            "quota-limitrange"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/connect-node-local-ownership",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/node-ownership"
+          ],
+          "evidence": "recall",
+          "prompt": "Match each node-local workload concept to its owning control path.",
+          "hint": "Ask what remains authoritative if the API-visible Pod object disappears.",
+          "learn_first": {
+            "title": "Similar node-local workloads can have different owners.",
+            "body": "DaemonSets are controller-managed API workloads. Static Pods are directly owned by kubelet from node-local/static configuration, while mirror Pods make them visible through the API without transferring ownership.",
+            "visual": [
+              "DaemonSet → controller → scheduler → kubelet",
+              "static manifest → kubelet → mirror in API"
+            ],
+            "components": [],
+            "variant_prompt": "Why can deleting a kubeadm control-plane mirror Pod fail to remove the underlying static control-plane workload?"
+          },
+          "feedback": {
+            "title": "Ownership determines where you must debug and change state.",
+            "explanation": "A DaemonSet problem begins with API/controller intent and placement. A static Pod problem begins with the kubelet's static configuration source; its mirror object is observational.",
+            "points": [
+              "DaemonSet is desired state reconciled by a controller.",
+              "Static Pod is desired state local to one kubelet."
+            ],
+            "visual": [
+              "API/controller-owned ≠ kubelet-owned"
+            ],
+            "components": []
+          },
+          "kind": "connect",
+          "left": [
+            {
+              "id": "daemonset",
+              "text": "DaemonSet Pod"
+            },
+            {
+              "id": "static",
+              "text": "Static Pod"
+            },
+            {
+              "id": "mirror",
+              "text": "Mirror Pod"
+            }
+          ],
+          "right": [
+            {
+              "id": "controller-path",
+              "text": "DaemonSet controller creates the Pod, scheduler normally binds it, kubelet executes it"
+            },
+            {
+              "id": "kubelet-path",
+              "text": "One kubelet directly watches local/static configuration and keeps the Pod running"
+            },
+            {
+              "id": "api-visibility",
+              "text": "API-visible reflection of a kubelet-owned static Pod, not the underlying owner"
+            }
+          ],
+          "matches": [
+            {
+              "left_id": "daemonset",
+              "right_id": "controller-path"
+            },
+            {
+              "left_id": "static",
+              "right_id": "kubelet-path"
+            },
+            {
+              "left_id": "mirror",
+              "right_id": "api-visibility"
+            }
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/inspect-missing-custom-scheduler",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/scheduler-extension",
+            "fpp:kcna-scheduling-review/decision-path"
+          ],
+          "evidence": "application",
+          "prompt": "A Pod remains Pending with no node assigned. Which configuration detail is the most important clue in this excerpt?",
+          "hint": "The Pod explicitly names the component family that should make its placement decision.",
+          "learn_first": {
+            "title": "schedulerName is a routing decision for placement responsibility.",
+            "body": "Pods normally use the default scheduler name. A custom scheduler or a configured scheduler profile can use another name; if nothing serves that name, the Pod can remain unscheduled.",
+            "visual": [
+              "Pod.schedulerName → matching scheduler/profile → placement"
+            ],
+            "components": [],
+            "variant_prompt": "A Pod works when schedulerName is omitted but remains unassigned when schedulerName is set to batch-scheduler. What should you verify first?"
+          },
+          "feedback": {
+            "title": "A named scheduler must have a matching executor of that scheduling policy.",
+            "explanation": "Multiple schedulers and profiles let clusters expose different placement behavior, but the Pod's schedulerName must correspond to a scheduler/profile that actually handles it.",
+            "points": [
+              "Default scheduler does not become a fallback for arbitrary scheduler names.",
+              "schedulerName affects placement ownership, not container runtime choice."
+            ],
+            "visual": [
+              "schedulerName mismatch → nobody binds → Pending"
+            ],
+            "components": []
+          },
+          "kind": "terminal_inspect",
+          "terminal": [
+            "spec:",
+            "  schedulerName: latency-scheduler",
+            "status:",
+            "  phase: Pending",
+            "spec.nodeName: <unset>"
+          ],
+          "options": [
+            {
+              "id": "missing-scheduler",
+              "text": "Verify that a scheduler or scheduler profile named latency-scheduler actually exists and is running.",
+              "rationale": "schedulerName delegates placement responsibility. If nobody handles that name, the default scheduler should not silently take ownership of the Pod."
+            },
+            {
+              "id": "kubelet-restart",
+              "text": "Restart every kubelet because kubelets choose nodes for unscheduled Pods.",
+              "rationale": "Kubelets execute Pods already assigned to their nodes; they do not normally choose cluster-level placement for unscheduled Pods."
+            },
+            {
+              "id": "dns",
+              "text": "Reconfigure CoreDNS because DNS must assign the Pod to a node first.",
+              "rationale": "CoreDNS provides name resolution and has no responsibility for Pod-to-node scheduling."
+            }
+          ],
+          "answer_ids": [
+            "missing-scheduler"
+          ]
+        },
+        {
+          "id": "lesson:kcna-cluster-behavior/explain-dedicated-gpu-node",
+          "unit_id": "fpp:kcna-scheduling-review",
+          "objective_ids": [
+            "fpp:kcna-scheduling-review/placement-policy"
+          ],
+          "evidence": "recall",
+          "prompt": "You want general workloads kept off GPU nodes, while GPU workloads must use GPU nodes. Explain why taint plus toleration is only half of the policy and what you add for the other direction.",
+          "hint": "Express both directions independently: keep ordinary Pods out, then require special Pods in the intended class of nodes.",
+          "learn_first": {
+            "title": "Dedicated-node policy usually needs repulsion and attraction.",
+            "body": "Taints and tolerations answer whether a Pod may use a tainted node. Node labels plus required selection or affinity answer whether the Pod must use a particular node class.",
+            "visual": [
+              "taint → keep ordinary Pods out",
+              "toleration → permit GPU Pod",
+              "required affinity → require GPU node class"
+            ],
+            "components": [],
+            "variant_prompt": "A database Pod tolerates a dedicated=db taint but has no affinity. Can the scheduler still place it on an untainted general worker if all other constraints allow it?"
+          },
+          "feedback": {
+            "title": "Permission is not attraction.",
+            "explanation": "Combining taints with required label-based placement makes the two policy directions explicit: who is excluded from the special nodes and which workloads must actually use them.",
+            "points": [
+              "Tolerations are permissive.",
+              "Required selectors or affinity are placement constraints."
+            ],
+            "visual": [
+              "repel + permit + require"
+            ],
+            "components": []
+          },
+          "kind": "explain",
+          "model_answer": "Taint the GPU nodes so ordinary Pods without the toleration are repelled. Give GPU workloads the matching toleration so those nodes remain eligible. Then give GPU workloads a required nodeSelector or required node affinity matching a trusted GPU node label so those workloads are constrained to GPU nodes rather than merely allowed onto them.",
+          "critical_points": [
+            "The taint repels ordinary workloads.",
+            "The toleration permits GPU workloads but does not attract them.",
+            "Required node selection or affinity constrains GPU workloads to GPU-labeled nodes."
           ]
         }
       ]
@@ -4399,13 +4895,13 @@
       "slug": "kcna-mcq",
       "title": "KCNA MCQ refresher",
       "summary": "Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.",
-      "revision": 3,
+      "revision": 4,
       "certification": "cncf:kcna",
       "verified_at": "2026-09-16",
-      "question_count": 37,
-      "content_hash": "d9bd9faf64678873000fbe390204911e017cba67b4f37be123bcff4909db1e7e",
+      "question_count": 47,
+      "content_hash": "7e0df3715a6d98a4053d97374d0d9d36a4a73f270537adef18b70ce027422eff",
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "c5560e24a818f5ead389f09e307d34ac2acb06d24d6dc07ee6d994549fb77f19"
+  "manifest_sha256": "8dcb7debe9da34be52b21e78040b43ca4c6d05b119dfc78a057b1e333ba743dd"
 }

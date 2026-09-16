@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
-revision: 3
+revision: 4
 cards:
   - id: fpp:services-dns-ingress/c-stable
     type: short

@@ -1,0 +1,94 @@
+schema_version: 1
+unit_id: fpp:kcna-scheduling-review
+sources:
+  - id: source:kcna-scheduling-kubernetes-scheduler
+    title: Kubernetes Scheduler
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official scheduling overview covering unscheduled Pods, feasible nodes, scoring, and binding.
+  - id: source:kcna-scheduling-assign-pods
+    title: Assigning Pods to Nodes
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official nodeName, nodeSelector, node-affinity, and pod-affinity reference.
+  - id: source:kcna-scheduling-taints
+    title: Taints and Tolerations
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official taint effects, matching, eviction behavior, and dedicated-node guidance.
+  - id: source:kcna-scheduling-resources
+    title: Resource Management for Pods and Containers
+    url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official requests, limits, and compute-resource semantics.
+  - id: source:kcna-scheduling-limitrange
+    title: Limit Ranges
+    url: https://kubernetes.io/docs/concepts/policy/limit-range/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official per-object resource defaults and namespace constraint behavior.
+  - id: source:kcna-scheduling-resourcequota
+    title: Resource Quotas
+    url: https://kubernetes.io/docs/concepts/policy/resource-quotas/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official aggregate namespace quota behavior for compute and object counts.
+  - id: source:kcna-scheduling-daemonset
+    title: DaemonSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official DaemonSet controller, node eligibility, toleration, and scheduling behavior.
+  - id: source:kcna-scheduling-static-pods
+    title: Static Pods
+    url: https://kubernetes.io/docs/concepts/workloads/pods/static-pods/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official kubelet ownership, mirror Pod, limitations, and control-plane bootstrap reference.
+  - id: source:kcna-scheduling-multiple-schedulers
+    title: Configure Multiple Schedulers
+    url: https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official schedulerName, custom scheduler, and verification reference.
+  - id: source:kcna-scheduling-profiles
+    title: Scheduler Configuration
+    url: https://kubernetes.io/docs/reference/scheduling/config/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Official scheduler profiles, plugins, and extension-point reference.
+  - id: source:kcna-scheduling-kodekloud-context
+    title: KCNA Scheduling module
+    url: https://kodekloud.com/courses/kubernetes-and-cloud-native-associate-kcna
+    publisher: KodeKloud
+    type: reference
+    verified_at: 2026-09-16
+    note: Coverage context for the owner's current study module; all public teaching text and questions here are independently authored.
+  - id: source:kcna-scheduling-review-pod-lifecycle-boundaries
+    title: Pod Lifecycle
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Pending includes both unscheduled and assigned Pods undergoing container setup; inspect assignment and conditions to distinguish boundaries.
+  - id: source:kcna-scheduling-resourcequota-admission
+    title: ResourceQuota admission example
+    url: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Requested resource usage is accounted against namespace quota; excessive create requests are rejected before scheduling.

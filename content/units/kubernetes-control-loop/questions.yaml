@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-control-loop
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-control-loop/q-delete
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-control-loop/api-state]
   - id: fpp:kubernetes-control-loop/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Inspect a disposable Deployment and trace desired state to a running process. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Create a small Deployment in an isolated namespace. Follow owner references from Pod to ReplicaSet to Deployment. Delete one Pod and watch the replacement events. Treat the conclusion as justified only when You can name the controller responsible for replacement. You can separate API object creation from node realization."
+    prompt: "A ReplicaSet has spec.replicas=3 and three owned Pods. One Pod is deleted; the API now shows two while spec.replicas remains 3. Predict the next controller action and name the evidence that would distinguish replacement from resurrection."
+    model_answer: "The ReplicaSet controller should create a replacement Pod to restore three replicas. Compare Pod metadata.uid and ownerReferences before and after: the replacement has a new UID and refers to the same ReplicaSet. Reconciliation restores desired count, not the deleted Pod identity."
     critical_points:
-      - "You can name the controller responsible for replacement."
-      - "You can separate API object creation from node realization."
+      - "Desired count remains three."
+      - "Replacement has a new UID and the same controller owner."
     objective_ids: [fpp:kubernetes-control-loop/api-state, fpp:kubernetes-control-loop/reconciliation]
+
   - id: fpp:kubernetes-control-loop/q-controller-outage
     kind: predict
     prompt: The controller manager is unavailable for several minutes while existing Pods keep running. What continues to work, and what kind of behavior should stop converging?

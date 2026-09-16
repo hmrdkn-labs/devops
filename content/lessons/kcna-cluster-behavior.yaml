@@ -3,16 +3,17 @@ id: lesson:kcna-cluster-behavior
 slug: kcna-cluster-behavior
 title: KCNA Cluster Behavior
 summary: Reason through a running Kubernetes cluster by tracing service traffic, scheduling, health, storage, configuration, and security boundaries.
-revision: 1
+revision: 2
 certification: cncf:kcna
 checkpoint: cluster-behavior
-estimated_minutes: 20
+estimated_minutes: 30
 verified_at: 2026-09-15
 source_unit_ids:
   - fpp:services-dns-ingress
   - fpp:kubernetes-networking-request-path
   - fpp:scheduling-resources-health
   - fpp:kubernetes-scheduling-placement
+  - fpp:kcna-scheduling-review
   - fpp:config-secrets-storage
   - fpp:kubernetes-storage-lifecycle
   - fpp:kubernetes-security-access
@@ -433,3 +434,292 @@ exercises:
         - Scheduler success does not imply storage mount success.
       visual:
         - "replace intent → placement → storage → runtime"
+
+  - id: lesson:kcna-cluster-behavior/trace-scheduler-decision
+    kind: trace
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/decision-path]
+    evidence: application
+    prompt: Arrange the normal path from an unscheduled Pod to node-side execution.
+    items:
+      - id: kubelet
+        text: Kubelet on the selected node observes the assigned Pod and drives execution
+      - id: filter
+        text: Scheduler filters out nodes that violate hard constraints
+      - id: bind
+        text: Scheduler records the selected node by binding the Pod
+      - id: pending
+        text: Pod exists in API state without a node assignment
+      - id: score
+        text: Scheduler scores the nodes that remain feasible
+    correct_order: [pending, filter, score, bind, kubelet]
+    hint: Separate the placement decision from the node-side execution that follows it.
+    learn_first:
+      title: Filter, score, bind, then execute.
+      body: An ordinary Pod first needs a feasible node. kube-scheduler eliminates impossible nodes, ranks the survivors, and records placement. Only then does the selected node's kubelet drive container execution.
+      visual:
+        - "unassigned Pod → filter → score → bind"
+        - "bind → kubelet → runtime"
+      variant_prompt: A Pod has passed admission but has no nodeName yet. Trace the remaining control-plane decision and node-side execution boundaries.
+    feedback:
+      title: Placement and execution are separate ownership boundaries.
+      explanation: kube-scheduler decides where the Pod belongs and records that decision. It does not SSH to a node or start the containers itself; kubelet owns the next execution boundary.
+      points:
+        - Hard feasibility is evaluated before preferences matter.
+        - Binding is the transition from unscheduled intent to a node assignment.
+        - Kubelet executes after the assignment exists.
+      visual:
+        - "scheduler: where?"
+        - "kubelet/runtime: run it"
+      components:
+        - name: kube-scheduler
+          location: control-plane
+          responsibility: Filters, scores, and binds an ordinary unscheduled Pod.
+          acts_on: Pod placement
+          proof: kubectl describe pod <name>
+        - name: kubelet
+          location: worker-node
+          responsibility: Executes Pods assigned to its node and reports status.
+          acts_on: Bound Pods
+          proof: kubectl get pod <name> -o wide
+
+  - id: lesson:kcna-cluster-behavior/predict-direct-node-assignment
+    kind: predict_state
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/decision-path, fpp:kcna-scheduling-review/placement-policy]
+    evidence: application
+    prompt: A Pod explicitly sets spec.nodeName to worker-gpu. That node has a NoSchedule taint and the Pod has no matching toleration. Which statement is the best model?
+    state:
+      - "spec.nodeName: worker-gpu"
+      - "worker-gpu taint: dedicated=gpu:NoSchedule"
+      - "Pod tolerations: none"
+    options:
+      - id: normal-filter
+        text: kube-scheduler must reject worker-gpu because the taint is untolerated.
+        rationale: Setting nodeName directly bypasses normal scheduler selection, so the scheduler's NoSchedule filtering is not the mechanism making this assignment.
+      - id: direct-assignment
+        text: The Pod is directly assigned, bypassing normal scheduler selection; that still does not guarantee healthy execution.
+        rationale: nodeName is direct assignment rather than a scheduler preference. Capacity, node health, kubelet/runtime behavior, and NoExecute semantics remain separate concerns.
+      - id: toleration-attracts
+        text: Kubernetes automatically adds a toleration because nodeName attracts the Pod to the node.
+        rationale: Kubernetes does not infer a matching toleration from nodeName, and tolerations are permissions rather than attraction rules.
+    answer_ids: [direct-assignment]
+    hint: Ask whether this field is input to the scheduler or a direct assignment that bypasses normal scheduler choice.
+    learn_first:
+      title: nodeName is not another affinity rule.
+      body: nodeSelector and affinity constrain kube-scheduler. nodeName directly identifies the target node and therefore bypasses ordinary scheduler selection. It also bypasses the scheduler's normal NoSchedule taint filtering.
+      visual:
+        - "nodeSelector / affinity → scheduler constraint"
+        - "nodeName → direct assignment"
+      variant_prompt: Compare a Pod that requires node label gpu=true with a Pod whose nodeName is hard-coded to worker-gpu. Which one still asks the scheduler to choose?
+    feedback:
+      title: Direct assignment skips a decision; it does not prove execution.
+      explanation: A direct nodeName can bypass the scheduler, but it does not make the target node healthy or create missing resources. NoExecute taints can also evict an intolerant Pod after assignment.
+      points:
+        - nodeName is stronger and less flexible than scheduler constraints.
+        - NoSchedule and NoExecute have different consequences.
+      visual:
+        - "nodeName → scheduler bypass"
+        - "assignment ≠ successful runtime"
+
+  - id: lesson:kcna-cluster-behavior/connect-placement-mechanisms
+    kind: connect
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+    evidence: recall
+    prompt: Match each placement mechanism to the job it actually performs.
+    left:
+      - id: selector
+        text: nodeSelector
+      - id: required-affinity
+        text: required node affinity
+      - id: preferred-affinity
+        text: preferred node affinity
+      - id: toleration
+        text: toleration
+    right:
+      - id: exact-hard
+        text: Simple hard node-label requirement
+      - id: expressive-hard
+        text: Richer hard node-label expression used during filtering
+      - id: scoring
+        text: Weighted preference among otherwise feasible nodes
+      - id: permission
+        text: Removes a matching taint as a rejection or eviction reason
+    matches:
+      - left_id: selector
+        right_id: exact-hard
+      - left_id: required-affinity
+        right_id: expressive-hard
+      - left_id: preferred-affinity
+        right_id: scoring
+      - left_id: toleration
+        right_id: permission
+    hint: One mechanism permits a tainted node without attracting the Pod; another only influences scoring.
+    learn_first:
+      title: Classify mechanisms by direction before memorizing syntax.
+      body: nodeSelector and required affinity remove nonmatching nodes from the feasible set. Preferred affinity affects scoring. A toleration merely stops a matching taint from excluding or evicting the Pod under that effect.
+      visual:
+        - "hard label rule → filter"
+        - "preferred label rule → score"
+        - "taint → repel"
+        - "toleration → permit"
+      variant_prompt: You need GPU Pods to prefer GPU nodes but still allow general nodes in an emergency. Which rule should be soft rather than required?
+    feedback:
+      title: A toleration is not a destination selector.
+      explanation: Many scheduling mistakes come from treating every placement field as an attraction rule. First decide whether the rule filters, scores, repels, or permits.
+      points:
+        - Required rules affect feasibility.
+        - Preferred rules affect ranking.
+        - Tolerations do not guarantee a tainted node will be selected.
+      visual:
+        - "filter ≠ score ≠ repel ≠ permit"
+
+  - id: lesson:kcna-cluster-behavior/choose-resource-policy-layer
+    kind: choose
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/resource-policy]
+    evidence: application
+    prompt: A namespace should allow at most 20 total CPU requests across its workloads, while individual containers should default to a 250m CPU request if authors omit one. Which pair best matches those two policies?
+    options:
+      - id: quota-limitrange
+        text: ResourceQuota for the aggregate 20 CPU budget; LimitRange for the per-container default request.
+        rationale: ResourceQuota governs aggregate namespace consumption, while LimitRange can apply per-object defaults and bounds within the namespace.
+      - id: limitrange-quota
+        text: LimitRange for the aggregate 20 CPU budget; ResourceQuota for each container's default request.
+        rationale: "This reverses their normal policy scopes: LimitRange is per object and ResourceQuota is aggregate."
+      - id: node-selector
+        text: nodeSelector for the aggregate budget; a taint for the default request.
+        rationale: Placement metadata cannot express namespace compute budgets or default resource requests.
+    answer_ids: [quota-limitrange]
+    hint: Separate aggregate namespace governance from defaults or bounds applied to individual objects.
+    learn_first:
+      title: Resource policy exists at more than one scope.
+      body: Requests participate in scheduling and limits constrain runtime use. LimitRange governs defaults and per-object bounds inside a namespace; ResourceQuota caps aggregate namespace consumption or object counts.
+      visual:
+        - "request → scheduling"
+        - "limit → runtime"
+        - "LimitRange → individual objects"
+        - "ResourceQuota → namespace aggregate"
+      variant_prompt: A team may create at most 30 Pods in one namespace, while every container should have a default memory limit. Which mechanism owns each policy?
+    feedback:
+      title: Namespace policy is not the same as Pod runtime policy.
+      explanation: Keep placement capacity, runtime enforcement, per-object admission defaults, and aggregate namespace governance as four distinct responsibilities.
+      points:
+        - Requests are scheduling inputs.
+        - ResourceQuota is aggregate.
+        - LimitRange is per-object/default policy.
+      visual:
+        - "schedule | run | default/bound | aggregate budget"
+
+  - id: lesson:kcna-cluster-behavior/connect-node-local-ownership
+    kind: connect
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/node-ownership]
+    evidence: recall
+    prompt: Match each node-local workload concept to its owning control path.
+    left:
+      - id: daemonset
+        text: DaemonSet Pod
+      - id: static
+        text: Static Pod
+      - id: mirror
+        text: Mirror Pod
+    right:
+      - id: controller-path
+        text: DaemonSet controller creates the Pod, scheduler normally binds it, kubelet executes it
+      - id: kubelet-path
+        text: One kubelet directly watches local/static configuration and keeps the Pod running
+      - id: api-visibility
+        text: API-visible reflection of a kubelet-owned static Pod, not the underlying owner
+    matches:
+      - left_id: daemonset
+        right_id: controller-path
+      - left_id: static
+        right_id: kubelet-path
+      - left_id: mirror
+        right_id: api-visibility
+    hint: Ask what remains authoritative if the API-visible Pod object disappears.
+    learn_first:
+      title: Similar node-local workloads can have different owners.
+      body: DaemonSets are controller-managed API workloads. Static Pods are directly owned by kubelet from node-local/static configuration, while mirror Pods make them visible through the API without transferring ownership.
+      visual:
+        - "DaemonSet → controller → scheduler → kubelet"
+        - "static manifest → kubelet → mirror in API"
+      variant_prompt: Why can deleting a kubeadm control-plane mirror Pod fail to remove the underlying static control-plane workload?
+    feedback:
+      title: Ownership determines where you must debug and change state.
+      explanation: A DaemonSet problem begins with API/controller intent and placement. A static Pod problem begins with the kubelet's static configuration source; its mirror object is observational.
+      points:
+        - DaemonSet is desired state reconciled by a controller.
+        - Static Pod is desired state local to one kubelet.
+      visual:
+        - "API/controller-owned ≠ kubelet-owned"
+
+  - id: lesson:kcna-cluster-behavior/inspect-missing-custom-scheduler
+    kind: terminal_inspect
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]
+    evidence: application
+    prompt: A Pod remains Pending with no node assigned. Which configuration detail is the most important clue in this excerpt?
+    terminal:
+      - "spec:"
+      - "  schedulerName: latency-scheduler"
+      - "status:"
+      - "  phase: Pending"
+      - "spec.nodeName: <unset>"
+    options:
+      - id: missing-scheduler
+        text: Verify that a scheduler or scheduler profile named latency-scheduler actually exists and is running.
+        rationale: schedulerName delegates placement responsibility. If nobody handles that name, the default scheduler should not silently take ownership of the Pod.
+      - id: kubelet-restart
+        text: Restart every kubelet because kubelets choose nodes for unscheduled Pods.
+        rationale: Kubelets execute Pods already assigned to their nodes; they do not normally choose cluster-level placement for unscheduled Pods.
+      - id: dns
+        text: Reconfigure CoreDNS because DNS must assign the Pod to a node first.
+        rationale: CoreDNS provides name resolution and has no responsibility for Pod-to-node scheduling.
+    answer_ids: [missing-scheduler]
+    hint: The Pod explicitly names the component family that should make its placement decision.
+    learn_first:
+      title: schedulerName is a routing decision for placement responsibility.
+      body: Pods normally use the default scheduler name. A custom scheduler or a configured scheduler profile can use another name; if nothing serves that name, the Pod can remain unscheduled.
+      visual:
+        - "Pod.schedulerName → matching scheduler/profile → placement"
+      variant_prompt: A Pod works when schedulerName is omitted but remains unassigned when schedulerName is set to batch-scheduler. What should you verify first?
+    feedback:
+      title: A named scheduler must have a matching executor of that scheduling policy.
+      explanation: Multiple schedulers and profiles let clusters expose different placement behavior, but the Pod's schedulerName must correspond to a scheduler/profile that actually handles it.
+      points:
+        - Default scheduler does not become a fallback for arbitrary scheduler names.
+        - schedulerName affects placement ownership, not container runtime choice.
+      visual:
+        - "schedulerName mismatch → nobody binds → Pending"
+
+  - id: lesson:kcna-cluster-behavior/explain-dedicated-gpu-node
+    kind: explain
+    unit_id: fpp:kcna-scheduling-review
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+    evidence: recall
+    prompt: You want general workloads kept off GPU nodes, while GPU workloads must use GPU nodes. Explain why taint plus toleration is only half of the policy and what you add for the other direction.
+    model_answer: Taint the GPU nodes so ordinary Pods without the toleration are repelled. Give GPU workloads the matching toleration so those nodes remain eligible. Then give GPU workloads a required nodeSelector or required node affinity matching a trusted GPU node label so those workloads are constrained to GPU nodes rather than merely allowed onto them.
+    critical_points:
+      - The taint repels ordinary workloads.
+      - The toleration permits GPU workloads but does not attract them.
+      - Required node selection or affinity constrains GPU workloads to GPU-labeled nodes.
+    hint: "Express both directions independently: keep ordinary Pods out, then require special Pods in the intended class of nodes."
+    learn_first:
+      title: Dedicated-node policy usually needs repulsion and attraction.
+      body: Taints and tolerations answer whether a Pod may use a tainted node. Node labels plus required selection or affinity answer whether the Pod must use a particular node class.
+      visual:
+        - "taint → keep ordinary Pods out"
+        - "toleration → permit GPU Pod"
+        - "required affinity → require GPU node class"
+      variant_prompt: A database Pod tolerates a dedicated=db taint but has no affinity. Can the scheduler still place it on an untainted general worker if all other constraints allow it?
+    feedback:
+      title: Permission is not attraction.
+      explanation: "Combining taints with required label-based placement makes the two policy directions explicit: who is excluded from the special nodes and which workloads must actually use them."
+      points:
+        - Tolerations are permissive.
+        - Required selectors or affinity are placement constraints.
+      visual:
+        - "repel + permit + require"

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-architecture-components
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-architecture-components/q-scheduler
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-architecture-components/request-path]
   - id: fpp:kubernetes-architecture-components/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: In a disposable cluster, create or reuse one Deployment and collect evidence at each ownership boundary. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record the Deployment and ReplicaSet owner relationship. Record one Pod owner reference and assigned node. Inspect Pod events to identify scheduling and container-start transitions. Compare API status with one real request to the running workload. Treat the conclusion as justified only when Deployment, ReplicaSet, scheduler placement, kubelet/runtime execution, and request proof are described as separate boundaries. The final proof is stronger than merely showing that the manifest exists."
+    prompt: "A Deployment create request succeeds and its object is visible, but no ReplicaSet exists yet. Nodes are Ready and kubelets are running. Which responsibility has not completed, and what observation separates this from a scheduling failure?"
+    model_answer: "The API accepted and stored intent. The Deployment controller must reconcile it into a ReplicaSet before the ReplicaSet controller creates Pods. Inspect Deployment status/events and owned ReplicaSets. A scheduler failure requires an existing unassigned Pod; healthy kubelets do not create the missing ReplicaSet."
     critical_points:
-      - "Deployment, ReplicaSet, scheduler placement, kubelet/runtime execution, and request proof are described as separate boundaries."
-      - "The final proof is stronger than merely showing that the manifest exists."
+      - "API acceptance is separate from reconciliation."
+      - "Deployment controller creates ReplicaSets; scheduler places existing Pods."
     objective_ids: [fpp:kubernetes-architecture-components/roles, fpp:kubernetes-architecture-components/request-path]
+
   - id: fpp:kubernetes-architecture-components/q-node-boundary
     kind: scenario
     prompt: A Pod has a nodeName assigned, but its container is still Waiting and has never started. Which component has already completed its main decision, and which components now own the next execution boundary?

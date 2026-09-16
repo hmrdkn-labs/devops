@@ -1,0 +1,34 @@
+schema_version: 1
+unit_id: fpp:kcna-scheduling-review
+practices:
+  - id: fpp:kcna-scheduling-review/p-pending-proof
+    title: Explain one Pending Pod without changing it
+    mode: guided_markdown
+    prompt: Use the authored three-node CPU/label/taint dataset in unit.md. Predict the feasible set for 600m, then for 400m, and explain which live fields would test each prediction. A cluster is optional.
+    steps:
+      - Inspect the Pod spec for requests, nodeSelector, affinity, tolerations, nodeName, and schedulerName.
+      - Inspect candidate node labels, taints, and allocatable resources.
+      - Read Pod events and classify each FailedScheduling reason as a hard filter or a later preference issue.
+      - State which component must act next and what exact evidence would prove placement succeeded.
+      - Compare a quota-rejected create with an accepted unassigned Pod and an assigned Pod waiting for image setup; name a discriminating observation for each.
+    success_checks:
+      - The explanation separates filtering from scoring and binding.
+      - The explanation does not claim that kube-scheduler starts containers.
+      - The first proposed change follows from an observed FailedScheduling reason rather than guesswork.
+    safety:
+      - Prefer read-only kubectl inspection or a disposable cluster before changing node policy.
+  - id: fpp:kcna-scheduling-review/p-node-ownership
+    title: Prove DaemonSet versus static-Pod ownership
+    mode: guided_markdown
+    prompt: Compare a Pod with a controller ownerReference to a DaemonSet UID against an API Pod with a kubernetes.io/config.mirror annotation. Use the documented ownership paths in unit.md; no runtime observations or cluster are required.
+    steps:
+      - Trace the DaemonSet from controller object to generated Pod, scheduler placement, and kubelet execution.
+      - Trace the static Pod from kubelet manifest or configuration source to running container and API mirror Pod.
+      - Identify one action that the API can perform on the DaemonSet workload but cannot use to own the underlying static Pod.
+      - Write the smallest observation that distinguishes a mirror Pod from a controller-owned Pod.
+    success_checks:
+      - DaemonSet ownership is attributed to the DaemonSet controller plus normal scheduling and execution layers.
+      - Static Pod ownership is attributed directly to the node's kubelet.
+      - A mirror Pod is described as visibility, not control-plane ownership of the static workload.
+    safety:
+      - Do not edit or remove control-plane static Pod manifests on a live cluster for this exercise.

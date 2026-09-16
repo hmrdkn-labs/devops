@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-manifests
-revision: 3
+revision: 4
 cards:
   - id: fpp:kubernetes-manifests/c-kind
     type: short

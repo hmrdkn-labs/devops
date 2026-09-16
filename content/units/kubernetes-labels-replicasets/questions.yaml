@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-labels-replicasets
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-labels-replicasets/q-delete
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-labels-replicasets/selection]
   - id: fpp:kubernetes-labels-replicasets/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Inspect one controller-managed ReplicaSet and connect its selector to the Pods that count toward desired replicas. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record desired replicas, selector, and Pod-template labels from the ReplicaSet. List Pods using the same selector and compare actual count with desired count. Inspect one Pod owner reference and predict what happens if that Pod is deleted. Treat the conclusion as justified only when The selected set is derived from labels rather than Pod names. The prediction identifies the ReplicaSet control loop."
+    prompt: "A ReplicaSet wants two Pods and selects app=web. It owns two matching Pods; a third matching Pod is owned by another controller. Should this ReplicaSet count or adopt the third Pod merely because its label matches? Name the fields that justify your answer."
+    model_answer: "No. Matching labels identify candidates, but a Pod already controlled by another controller is not adopted as this ReplicaSet's replica. Inspect each Pod's metadata.ownerReferences, including controller=true and owner UID, alongside labels and the ReplicaSet selector. Label equality alone does not prove ownership."
     critical_points:
-      - "The selected set is derived from labels rather than Pod names."
-      - "The prediction identifies the ReplicaSet control loop."
+      - "Selector match alone does not prove controller membership."
+      - "Another controller's owned Pod is not adopted."
     objective_ids: [fpp:kubernetes-labels-replicasets/selection, fpp:kubernetes-labels-replicasets/reconciliation]
+
   - id: fpp:kubernetes-labels-replicasets/q-template-selector
     kind: predict
     prompt: A ReplicaSet selector requires app=web, but its Pod template labels only contain app=api. Should that controller definition be accepted as a coherent ReplicaSet?

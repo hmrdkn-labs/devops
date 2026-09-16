@@ -29,3 +29,17 @@ sources:
     type: documentation
     verified_at: 2026-09-09
     note: Per-node workload controller behavior and common use cases.
+  - id: source:kubernetes-scheduling-placement-pod-lifecycle-boundaries
+    title: Pod Lifecycle
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: Pending includes both unscheduled and assigned Pods undergoing container setup; inspect assignment and conditions to distinguish boundaries.
+  - id: source:scheduling-placement-limitrange-admission
+    title: Limit Ranges
+    url: https://kubernetes.io/docs/concepts/policy/limit-range/
+    publisher: Kubernetes
+    type: reference
+    verified_at: 2026-09-16
+    note: LimitRange violations reject API requests rather than becoming scheduler feasibility failures.
