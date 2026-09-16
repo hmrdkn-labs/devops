@@ -1,13 +1,16 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 3
+revision: 4
 visuals:
   - id: fpp:kubernetes-pod-model/visual-pod-lifecycle
     kind: lifecycle
     eyebrow: Pod lifecycle
     title: A Pod is a disposable execution record, not a durable machine
     lines:
-      - "controller intent → Pod object → scheduler chooses one node → kubelet runs containers → Pod ends → controller may create replacement"
+      - "UID p7, node-a, restarts 0 → 4: kubelet restarts container"
+      - "p7 disappears; ReplicaSet/api-55 maintains desired count"
+      - "new UID p8 → scheduling decision → node-b runtime"
+      - "new node/IP is replacement evidence, not migration of p7"
     teaching_point: A Pod has one scheduling lifetime and shared network identity for its containers; durable availability comes from controller ownership and replacement semantics.
     components:
       - name: Workload controller

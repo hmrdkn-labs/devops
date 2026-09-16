@@ -3,7 +3,7 @@ id: fpp:troubleshoot-process-to-pod
 slug: troubleshoot-process-to-pod
 title: Troubleshoot from process to pod
 summary: Localize failures with an evidence ladder that moves from desired state to process, network, policy, and user-visible behavior.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: operations
@@ -33,4 +33,4 @@ certification_mappings:
     advisory: true
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-08-27
+verified_at: 2026-09-16

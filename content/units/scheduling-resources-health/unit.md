@@ -29,3 +29,24 @@ needs care to avoid removing all capacity at once.
 
 Scheduling answers “where may it run?” Probes answer “what should the node and
 traffic data plane do now?” Neither proves the user-visible transaction works.
+
+## Worked case: calculate placement before choosing a health fix
+
+~~~text
+node-a allocatable: 2000m CPU, 4Gi memory
+existing requests: 1700m CPU, 2Gi memory
+new request:        400m CPU, 1Gi memory
+remaining:          300m CPU, 2Gi memory
+~~~
+
+For this authored ordinary-container fixture, memory fits but CPU does not.
+A Pending Pod event such as `Insufficient cpu` supports that calculation; a
+usage graph showing 200m does not refute it. Placement still has other dimensions:
+Pod count/IP availability, taints, selectors and volume topology can independently
+exclude a node. Init containers and Pod overhead require their own accounting.
+
+After successful placement elsewhere, liveness failure invokes node-side restart
+behavior. A shared database outage belongs in dependency-aware readiness or
+service monitoring when restart cannot repair it; removing every replica from
+traffic also has availability consequences. Check restarts and actual transaction
+results before declaring recovery.

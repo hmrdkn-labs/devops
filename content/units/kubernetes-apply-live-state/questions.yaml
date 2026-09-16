@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-apply-live-state
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-apply-live-state/q-configured
     kind: scenario
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]
   - id: fpp:kubernetes-apply-live-state/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Apply one Deployment in a disposable namespace, then compare the local file with the live API object and runtime evidence. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Apply the manifest and record only what the command result actually proves. Fetch the live Deployment as YAML and identify fields added or updated by the cluster. Compare desired replicas with available replicas and then inspect the owning ReplicaSet and Pods. Treat the conclusion as justified only when The write result is not described as proof of application health. At least one difference between authored configuration and live/observed state is identified."
+    prompt: "Your file sets web replicas=3 and image=v2. Apply prints configured. The live Deployment has generation=8, observedGeneration=7 and availableReplicas=2; an old Pod still reports image=v1. Is the API write lost, the rollout complete, or neither? Name the next evidence and its owner."
+    model_answer: "Neither conclusion follows. Read the live spec to confirm replicas and image were accepted; generation 8 versus observedGeneration 7 indicates status has not yet caught up to that desired generation. The Deployment controller reconciles rollout state through ReplicaSets; inspect its conditions and owned ReplicaSets, then Pod specs, events and runtime image IDs. Available replicas and an old Pod do not alone establish whether the new rollout will fail or is still progressing."
     critical_points:
-      - "The write result is not described as proof of application health."
-      - "At least one difference between authored configuration and live/observed state is identified."
+      - "Confirm the live desired fields separately from observed status."
+      - "A lagging observedGeneration is incomplete reconciliation evidence, not proof of a lost write or permanent failure."
     objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]
+
   - id: fpp:kubernetes-apply-live-state/q-live-defaults
     kind: explain
     prompt: Why can kubectl get -o yaml show fields that were never written in your local manifest without proving someone manually changed the object?

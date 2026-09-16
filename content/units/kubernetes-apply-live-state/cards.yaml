@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-apply-live-state
-revision: 3
+revision: 4
 cards:
   - id: fpp:kubernetes-apply-live-state/c-apply
     type: short

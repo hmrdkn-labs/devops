@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:troubleshoot-process-to-pod
-revision: 3
+revision: 4
 questions:
   - id: fpp:troubleshoot-process-to-pod/q-crashloop
     kind: scenario
@@ -20,13 +20,14 @@ questions:
     objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder]
   - id: fpp:troubleshoot-process-to-pod/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Diagnose one deliberately broken disposable service without making an early fix. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Have a partner introduce one selector, port, readiness, command, or policy fault. Record the failed transaction and evidence at each relevant layer. State and test one hypothesis at a time, then make the smallest fix. Verify the original transaction and write the causal chain. Treat the conclusion as justified only when The diagnosis names the exact broken relationship. The verification repeats the original user-visible check. The final note separates evidence, inference, change, and result."
+    prompt: "In namespace demo, checkout resolves to 10.96.20.4. The Service selects app=checkout and targetPort 8080. The only Running, Ready Pod has label app=cart and listens on 0.0.0.0:8080. Its direct Pod-IP probe returns HTTP 200, but checkout has no EndpointSlice backend addresses. What exact relationship is broken, and what would verify a reviewed repair?"
+    model_answer: "The Service selector does not match the intended Pod label, so the endpoint controller cannot populate that Pod as this Service's backend. DNS resolution proves discovery of the Service address; the direct Pod probe supports one process path but not Service routing. Read Service selectors, Pod labels and relevant EndpointSlices before changing state. Correct the intended selector/label relationship through the owning workload configuration, observe the selected ready backend, then repeat the original checkout request from the same client. Endpoints alone are not proof that the Service packet path works."
     critical_points:
-      - "The diagnosis names the exact broken relationship."
-      - "The verification repeats the original user-visible check."
-      - "The final note separates evidence, inference, change, and result."
+      - "The observed selector-to-label mismatch localizes missing backend membership."
+      - "Running/Ready and a direct Pod probe do not prove the Service path."
+      - "Verification must repeat the original user-visible transaction after endpoint membership updates."
     objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder, fpp:troubleshoot-process-to-pod/cross-layer]
+
   - id: fpp:troubleshoot-process-to-pod/q-pending
     kind: scenario
     prompt: A Pod has never left Pending. Why should logs usually not be your first diagnostic step, and what evidence should you inspect instead?

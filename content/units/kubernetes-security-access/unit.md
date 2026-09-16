@@ -48,3 +48,23 @@ For a workload that only needs to read one ConfigMap and call one backend:
 6. Verify the workload can perform its required transaction and cannot perform a nearby forbidden action.
 
 Security evidence includes both positive and negative tests: prove the intended action works and the disallowed action fails.
+
+## Worked case: known caller, permitted verb, rejected object
+
+~~~text
+subject: system:serviceaccount:sandbox:deployer
+can create pods in sandbox: yes
+privileged Pod create: denied by restricted Pod Security policy
+can list secrets in sandbox: no
+~~~
+
+These authored outputs represent different checks. Authentication establishes
+the subject; authorization permits Pod creation; admission evaluates the proposed
+Pod. The API rejection names the policy that stopped persistence. A `can-i` yes
+checks authorization and cannot promise every proposed Pod will pass admission.
+
+Inspect the Role/RoleBinding scope and admission error before proposing a change.
+Use the existing identity or authorized impersonation for diagnostic checks;
+impersonation itself needs permission. Do not expose Secret values as evidence.
+A successful create would still require node-side execution and separate network
+connectivity evidence.

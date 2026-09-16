@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-pod-model/q-delete
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-pod-model/lifecycle]
   - id: fpp:kubernetes-pod-model/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Use any disposable test cluster with a three-replica Deployment and trace one manual Pod deletion. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record the Deployment, ReplicaSet, and three Pod names and UIDs. Delete one Pod and watch Pods and ReplicaSets change. Compare the deleted and replacement Pod UID, node, and IP, then inspect owner references. Treat the conclusion as justified only when The replacement is identified as a new Pod object. The ReplicaSet is named as the direct replica-count owner."
+    prompt: "Two incident snapshots show api Pod UID=p7 with restartCount rising from 0 to 4, then later a Pod named api-new with UID=p8 and owner ReplicaSet/api-55. Which transition is node-side restart and which is controller replacement? What evidence would prevent assuming the Pod migrated?"
+    model_answer: "The restart-count increase with UID p7 is container restart within the same Pod, performed by kubelet according to restart policy. UID p8 identifies a different Pod; its owner reference points to the ReplicaSet that maintains desired Pod count. Compare UIDs, nodeName, owner references and container lastState. A Pod does not migrate its identity to a new node; the replacement may have a different node and IP."
     critical_points:
-      - "The replacement is identified as a new Pod object."
-      - "The ReplicaSet is named as the direct replica-count owner."
+      - "Same Pod UID with increasing restart count distinguishes container restart."
+      - "New UID and owner references distinguish replacement; a Pod is not live-migrated."
     objective_ids: [fpp:kubernetes-pod-model/lifecycle, fpp:kubernetes-pod-model/ownership]
+
   - id: fpp:kubernetes-pod-model/q-restart-vs-replace
     kind: explain
     prompt: What is the identity difference between a container restart inside one Pod and a controller replacing a failed Pod?

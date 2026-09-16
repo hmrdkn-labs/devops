@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 3
+revision: 4
 visuals:
   - id: fpp:kubernetes-security-access/visual-api-security
     kind: flow
     eyebrow: API security path
     title: Authentication, authorization, and admission answer different questions
     lines:
-      - "API request → authenticate identity → authorize action with RBAC → admission policy → API object mutation or rejection → persisted state"
+      - "identity deployer → authorization create Pods=yes"
+      - "privileged Pod → admission restricted policy denies persistence"
+      - "list Secrets → authorization=no; different denial boundary"
+      - "NetworkPolicy handles Pod traffic, not either API permission"
     teaching_point: "Kubernetes security is layered: request identity, permission, admission, workload identity, Pod security, Secret handling, and network policy are separate controls."

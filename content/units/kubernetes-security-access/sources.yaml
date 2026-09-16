@@ -36,3 +36,10 @@ sources:
     type: documentation
     verified_at: 2026-09-09
     note: Workload identity concepts for Pods and Kubernetes API access.
+  - id: fpp:kubernetes-security-access/source-worked-boundary
+    title: "Pod Security Admission"
+    url: https://kubernetes.io/docs/concepts/security/pod-security-admission/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified admission enforcement is distinct from authorization; authored denial comparison."
