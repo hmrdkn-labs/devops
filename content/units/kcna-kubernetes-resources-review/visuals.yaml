@@ -1,14 +1,16 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-resources-review
-revision: 2
+revision: 3
 visuals:
   - id: fpp:kcna-kubernetes-resources-review/visual-resource-ownership
     kind: ownership
     eyebrow: Resource chain
     title: Read Kubernetes resources as ownership and reconciliation
     lines:
-      - "manifest → API object → Deployment → ReplicaSet → Pods"
-      - "labels + selector → membership → desired replicas versus observed replicas → reconciliation"
+      - "delete old Pod → ReplicaSet/web-old restores count with a new UID"
+      - "change image template → Deployment creates ReplicaSet/web-new"
+      - "web-new Pods → kubelet image setup → ImagePullBackOff"
+      - "old-version HTTP success ≠ proof that web-new executes"
     teaching_point: Resource questions are easier when you track object identity, ownership, selectors, and which controller repairs drift instead of memorizing YAML shapes alone.
     components:
       - name: Deployment controller (kube-controller-manager)

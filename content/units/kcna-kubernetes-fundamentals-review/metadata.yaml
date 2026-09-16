@@ -3,7 +3,7 @@ id: fpp:kcna-kubernetes-fundamentals-review
 slug: kcna-kubernetes-fundamentals-review
 title: KCNA Kubernetes Fundamentals quiz companion
 summary: A fast review of containers, orchestration, Kubernetes architecture, CRI, and container runtimes for use beside the KCNA fundamentals quiz.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: architecture

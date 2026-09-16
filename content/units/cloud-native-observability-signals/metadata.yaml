@@ -3,7 +3,7 @@ id: fpp:cloud-native-observability-signals
 slug: cloud-native-observability-signals
 title: Metrics, logs, traces, events, and observability
 summary: Use metrics, logs, traces, Kubernetes events, and end-to-end probes as complementary evidence rather than treating one monitoring tool as complete observability.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: operations
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-09
+verified_at: 2026-09-16

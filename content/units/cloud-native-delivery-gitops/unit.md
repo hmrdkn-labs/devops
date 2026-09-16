@@ -50,3 +50,22 @@ Do not stop at a green pipeline. Verify:
 5. a user-visible or service-level check succeeds.
 
 This produces a causal chain from source to running behavior instead of equating "pipeline passed" with "release succeeded."
+
+## Worked case: synchronized to which revision?
+
+~~~text
+CI artifact: D2
+production Git R10: Deployment image D1
+reconciler applied revision: R10, synchronized
+runtime image ID: D1; GET /version: D1
+~~~
+
+The authored evidence is internally consistent: production has not been promoted
+to D2. The GitOps agent pulls and reconciles desired state; Kubernetes controllers
+roll out the declared template; node agents execute the artifact. A healthy
+reconciler status without its revision identity is incomplete release evidence.
+
+After a reviewed R11 declares D2, check that R11 was applied, Pods resolve the
+intended artifact, and the version request succeeds. If D2 performed a database
+migration, reverting R11 may restore D1 Pods while leaving migrated data intact.
+Compatibility and data recovery need a separate decision.

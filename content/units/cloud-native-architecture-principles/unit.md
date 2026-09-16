@@ -47,3 +47,23 @@ Containers and Kubernetes can reduce coupling to individual hosts, but applicati
 ## The useful exam question
 
 When comparing two designs, ask which one has clearer desired state, replaceable artifacts, automated reconciliation, explicit service boundaries, observable behavior, and failure handling. Those properties matter more than whether the diagram contains a cloud logo.
+
+## Worked case: failure-domain and demand tests answer different questions
+
+~~~text
+intent: checkout artifact v6; replicas=3
+instance failure: controller restores count to 3; checkout request succeeds
+database outage: all three checkout requests fail
+night demand: falls 90%; desired replicas remains 3
+~~~
+
+These authored observations support repeatable instance replacement, expose a
+shared failure boundary, and show fixed capacity. The controller changes desired
+workload objects; runtime instances handle transactions. A capacity policy would
+need suitable signals and safe scaling bounds before demand adaptation could be
+claimed.
+
+Replicas need not be microservices, and a modular monolith can use declarative
+recovery and observability. Conversely, dividing checkout into many services
+would not remove a shared database outage by itself. Identify the dependency's
+recovery or degradation contract rather than counting architectural labels.

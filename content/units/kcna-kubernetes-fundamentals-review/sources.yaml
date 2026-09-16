@@ -43,3 +43,10 @@ sources:
     type: reference
     verified_at: 2026-09-10
     note: Study-context link for the owner's completed module; the learning content here is independently authored.
+  - id: source:kubernetes-component-ownership
+    title: "Kubernetes Components"
+    url: https://kubernetes.io/docs/concepts/overview/components/
+    publisher: "Kubernetes"
+    type: reference
+    verified_at: 2026-09-16
+    note: "Controller, scheduler, kubelet and runtime responsibilities across API intent and node execution."

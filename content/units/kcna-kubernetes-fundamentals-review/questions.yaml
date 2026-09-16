@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 3
+revision: 4
 questions:
   - id: fpp:kcna-kubernetes-fundamentals-review/q-request-path
     kind: scenario
@@ -21,13 +21,14 @@ questions:
     objective_ids: [fpp:kcna-kubernetes-fundamentals-review/runtime]
   - id: fpp:kcna-kubernetes-fundamentals-review/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Without looking back, map API entry, durable state, placement, reconciliation, node execution, and container creation to the responsible Kubernetes component. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Write the six responsibilities as separate rows. Fill in kube-apiserver, etcd, kube-scheduler, controller manager/controllers, kubelet, and container runtime. Add one sentence describing what each component does not do. Treat the conclusion as justified only when Scheduler is not described as starting containers. Kubelet is not described as selecting cluster-wide desired replica counts. etcd is identified as state storage rather than a controller."
+    prompt: "A replacement Pod owned by a ReplicaSet already has spec.nodeName=worker-b and image registry.test/api@sha256:… . Its container is Waiting with ImagePullBackOff. The node uses containerd. Which cluster decision is already recorded, who owns the next execution boundary, and which evidence distinguishes this from the ReplicaSet failing to create a Pod?"
+    model_answer: "Placement on worker-b is recorded; ordinary scheduling is no longer the missing step. The kubelet on worker-b asks its CRI runtime, containerd, to realize the assigned Pod, including obtaining the image. Inspect Pod events and container waiting reason, then use crictl against the node's explicit CRI endpoint for runtime evidence. The Pod and its owner reference show that Pod creation occurred. The API and etcd store state; they do not fetch this image or execute its process. nodeName can also be set directly, so it alone does not prove a particular scheduler made the assignment."
     critical_points:
-      - "Scheduler is not described as starting containers."
-      - "Kubelet is not described as selecting cluster-wide desired replica counts."
-      - "etcd is identified as state storage rather than a controller."
+      - "nodeName records placement, but does not identify the placement actor by itself."
+      - "Kubelet and CRI runtime own node execution and image realization."
+      - "Existing Pod ownership and events separate controller creation from runtime failure."
     objective_ids: [fpp:kcna-kubernetes-fundamentals-review/ownership, fpp:kcna-kubernetes-fundamentals-review/runtime]
+
   - id: fpp:kcna-kubernetes-fundamentals-review/q-runtime-endpoint
     kind: explain
     prompt: A worker node uses containerd and crictl must inspect the CRI state. What are three supported ways to select the runtime endpoint, and why is choosing the endpoint explicitly useful?

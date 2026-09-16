@@ -3,7 +3,7 @@ id: fpp:kcna-kubernetes-resources-review
 slug: kcna-kubernetes-resources-review
 title: KCNA Kubernetes Resources quiz companion
 summary: A compact review of Pods, YAML objects, ReplicaSets, Deployments, rollouts, apply, imperative versus declarative management, kubectl explain, and namespaces.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-10
+verified_at: 2026-09-16
