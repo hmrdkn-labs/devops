@@ -15,3 +15,10 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: Concrete restart-policy behavior in Docker Engine.
+  - id: source:docker-run-state
+    title: "Running containers — filesystem and exit state"
+    url: https://docs.docker.com/engine/containers/run/
+    publisher: "Docker"
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Writable container layers, process execution and interpretation of runtime exit evidence."

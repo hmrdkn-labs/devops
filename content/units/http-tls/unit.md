@@ -29,3 +29,19 @@ In Kubernetes, Ingress or Gateway implementations commonly route HTTP by host
 and path. The API object describes intent; a controller and data-plane proxy
 must implement it. Always identify where TLS terminates and whether traffic is
 encrypted again to the backend.
+
+## Worked case: Pin the address without bypassing server identity
+
+The authored failure occurs after reaching a TLS listener but before an authenticated HTTP exchange.
+
+~~~text
+URL: https://orders.test/health
+DNS answer: 192.0.2.60
+certificate name: billing.test
+curl --resolve orders.test:443:192.0.2.60 https://orders.test/health
+# expected: hostname verification failure
+~~~
+
+The probe deliberately holds the destination address constant while preserving `orders.test` as the name to authenticate and send in the request. The TLS listener owns certificate selection; the client owns trust and hostname validation. A valid certificate and successful pinned probe would support that listener path, but would not verify normal DNS resolution. Repeat the original URL after correction. Merely receiving 200 with `-k` cannot establish the user's intended HTTPS identity.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

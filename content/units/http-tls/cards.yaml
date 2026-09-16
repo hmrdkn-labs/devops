@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:http-tls
-revision: 2
+revision: 3
 cards:
   - id: fpp:http-tls/c-method
     type: short

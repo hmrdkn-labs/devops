@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:container-network-storage
-revision: 2
+revision: 3
 questions:
   - id: fpp:container-network-storage/q-port
     kind: explain
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:container-network-storage/storage-boundary]
   - id: fpp:container-network-storage/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Observe a disposable container before and after explicit network and volume configuration. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Run a trusted service without port publication and inspect its container address. Recreate it with a loopback-only published host port. Mount a temporary managed volume and write a non-sensitive marker. Treat the conclusion as justified only when You can state which endpoint is host-visible. You can verify the marker survives container replacement."
+    prompt: "A Linux Docker bridge container serves 0.0.0.0:8080, publishes 127.0.0.1:18080:8080, mounts named volume notes at /data, and writes a marker both to /data and /tmp. It is removed without removing notes and recreated with the same mappings. Which client endpoint is intentionally published, and which marker survives? Assume Docker Engine 28+ default bridge publication behavior."
+    model_answer: "The published host endpoint is loopback TCP port 18080, forwarded to the container's port 8080; it is not an intentional remote-host publication. The Docker data plane executes the forwarding, while the app's listener belongs to the container network namespace. The /data marker survives in named volume notes; the /tmp marker in the removed writable layer does not. Inspect port bindings, mount identity and markers in the replacement. Same-container restart would retain the writable marker, and publication scope does not eliminate independent routed or privileged access paths."
     critical_points:
-      - "You can state which endpoint is host-visible."
-      - "You can verify the marker survives container replacement."
+      - "Host publication and container listener are separate endpoints."
+      - "A retained named volume survives removal/recreation; the writable layer does not."
+      - "Loopback publication describes a scoped path, not all possible access routes."
     objective_ids: [fpp:container-network-storage/network-boundary, fpp:container-network-storage/storage-boundary]

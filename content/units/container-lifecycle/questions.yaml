@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:container-lifecycle
-revision: 2
+revision: 3
 questions:
   - id: fpp:container-lifecycle/q-exit
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:container-lifecycle/create-start-stop]
   - id: fpp:container-lifecycle/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Run a trusted short-lived image and account for every state transition. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Create and run a container whose command prints once and exits. Inspect its command, logs, state, and exit code. Remove the container and confirm the image remains. Treat the conclusion as justified only when You can distinguish create, start, exit, and remove. You can explain which artifacts persist after each transition."
+    prompt: "A Docker container writes /tmp/run-marker in its writable layer and builds an in-memory cache. Its main process exits 2. An operator starts the same stopped container, then later removes it and creates a new one from the same image without mounts. Predict marker and cache state at each restart boundary. Is exit 2 alone enough to diagnose the cause?"
+    model_answer: "Starting the same container retains its writable layer, so the marker remains, but the new process has no old in-memory cache. Removing that container and creating another produces a new writable layer, so a marker absent from the image is lost without external storage. Docker/runtime lifecycle owns process execution and container state; image input remains separate. Inspect container identity, state/exit code, logs and mount configuration. Exit 2 is evidence of termination status, not a universal root-cause label."
     critical_points:
-      - "You can distinguish create, start, exit, and remove."
-      - "You can explain which artifacts persist after each transition."
+      - "Same-container start retains writable-layer state but not process memory."
+      - "Removal and recreation replace the writable layer unless data is externalized."
+      - "An exit code must be interpreted with application and runtime evidence."
     objective_ids: [fpp:container-lifecycle/create-start-stop, fpp:container-lifecycle/pid1-exit]

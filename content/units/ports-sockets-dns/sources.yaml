@@ -15,3 +15,10 @@ sources:
     type: standard
     verified_at: 2026-08-27
     note: Foundational DNS architecture reference.
+  - id: source:linux-ip-binding
+    title: "ip — local socket addresses"
+    url: https://man7.org/linux/man-pages/man7/ip.7.html
+    publisher: "Linux man-pages"
+    type: manual
+    verified_at: 2026-09-16
+    note: "Local binding and wildcard addressing semantics."

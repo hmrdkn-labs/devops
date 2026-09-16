@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:ports-sockets-dns
-revision: 2
+revision: 3
 visuals:
   - id: fpp:ports-sockets-dns/visual-name-to-process
     kind: flow
     eyebrow: Connection path
-    title: DNS finds an address; a socket reaches the process
+    title: "The sidecar and remote Pod reach different addresses"
     lines:
-      - "hostname → DNS record → IP address → transport port → listening socket → process"
-    teaching_point: DNS resolves names to records but does not create connectivity; successful communication still requires routing, transport reachability, and a process listening on the destination socket.
+      - "reports.test → DNS → 10.42.1.8 (record only)"
+      - "sidecar → Pod loopback 127.0.0.1:8080 → PID 33"
+      - "remote Pod → Pod interface 10.42.1.8:8080 → no matching listener"
+      - "kernel socket binding owns delivery to the process"
+    teaching_point: "Loopback belongs to a network namespace; normal Pod containers share it. The requested destination address must match the listener binding. DNS success proves record resolution, not listener or packet-path correctness."
