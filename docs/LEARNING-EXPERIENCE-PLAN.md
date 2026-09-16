@@ -1,6 +1,6 @@
 # Learning experience acceptance plan
 
-2026-09-16 · Curriculum and local gates complete; parent browser acceptance, PR checks, and merge pending. Production deployment is outside this task.
+2026-09-16 · Curriculum and parent browser acceptance complete; PR #10 checks and merge pending. Production deployment is outside this task.
 
 ## Authorized completion phase
 
@@ -100,13 +100,17 @@ Use the established compact developer workspace: display type at most 40px, rest
 Completion-phase settled gates pass content/type/D1/build and revision checks
 against `origin/main` and accepted baseline `9717375`. Unit tests: 77 passes,
 comprising 37 existing behavior tests and 40 per-unit retired-boilerplate
-regressions. Final browser matrix: 87 passes / 36 intentional skips, 123 cases,
-47.0s. All 52 exercises reach checking/completion; the new traversal caught an
+regressions. Final browser matrix: 88 passes / 38 intentional skips, 126 cases,
+41.6s. All 52 exercises reach checking/completion; the new traversal caught an
 adjacent ordered-task transition failure repaired by atomic task-state updates.
 Rendered landmark checks cover KCNA, MCQ and lesson routes in all viewports.
 All 40 generated units pass 320px/1440px retrieval/reference smoke, including
 expanded reference models and contained tables. Independent canonical review,
-peer corrections, regeneration and final-source gates are complete. The bounded
+peer corrections, regeneration and final-source gates are complete. Parent
+browser review confirms new mobile model playback and the repaired
+Cloud-Native trace→arrange transition. Overflowing reference code has named
+keyboard-focusable regions and verified ArrowRight scrolling with visible focus.
+The bounded
 baseline evidence below remains historical and does not measure learner efficacy.
 
 Final settled build: content checks, production build, Astro typecheck (0

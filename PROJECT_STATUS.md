@@ -5,8 +5,8 @@
 
 ## Read this first
 
-**Current step: curriculum and local gates complete; root browser acceptance,
-PR checks, and merge pending.** The accepted baseline is committed on
+**Current step: curriculum and parent browser acceptance complete; PR checks
+and merge pending.** PR #10 is open. The accepted baseline is committed on
 `feat/learning-curriculum-rewrite`: `71dcecd` content/generated, `be7e907`
 workspace/tests, `9717375` documentation. Four topical content cohorts are
 committed, with generated artifacts in `178042f`; the full corpus now has bespoke
@@ -15,11 +15,11 @@ traversal exposed and fixed an adjacent ordered-task transition crash. Single-ma
 landmarks are repaired in `a9fa452`. Latest settled gates pass content contracts,
 Astro diagnostics (0 errors/warnings), **77 unit tests** (37 existing behavior
 tests plus 40 per-unit boilerplate regressions), D1, build, and revision checks
-against both `origin/main` and `9717375`. Final browser matrix: **87 passes / 36
-intentional skips**, 123 cases, 47.0s, including all 52 lesson exercises and
+against both `origin/main` and `9717375`. Final browser matrix: **88 passes / 38
+intentional skips**, 126 cases, 41.6s, including all 52 lesson exercises and
 retrieval/reference smoke across all 40 units at 320px and 1440px. Canonical peer
 review and corrections are complete (`76a52c1`, regenerated `266b158`). Stable
-guest server: port 4321, session `29349`, manifest `435617b2795f`.
+guest server: port 4321, session `12099`, manifest `435617b2795f`.
 Production
 deployment is a separate protected release step. No learner-efficacy claim is
 made. The historical bounded acceptance below remains evidence for the baseline.
@@ -49,6 +49,13 @@ bindings, dependencies, or workflows changed. The final guest server was stopped
 before rebuilding and restarted from the settled dist to avoid stale-build
 navigation evidence. Owner persistence remains mocked; learner efficacy remains
 unmeasured.
+
+Parent manual acceptance confirms the new four-frame mobile container storage
+model, retained-volume transition, readable worked case, and the repaired
+Cloud-Native task 6→7 transition: five new rows, removed prior feedback, focused
+visible heading, one main landmark. Overflowing reference code now has named
+focusable regions; a 390px keyboard probe confirms ArrowRight scrolling and
+visible focus. A dedicated regression covers this behavior.
 
 Initial regressions reproduced aborted review saves sticking busy state and late
 notes loads overwriting edits. Intermediate matrices exposed stale expectations
