@@ -5,6 +5,14 @@
 
 ## Read this first
 
+**Active continuation: complete the remaining 29 curriculum units, verify, push,
+and merge.** The accepted baseline is committed on
+`feat/learning-curriculum-rewrite`: `71dcecd` content/generated, `be7e907`
+workspace/tests, `9717375` documentation. Content cohorts are being rewritten and
+independently reviewed; final gates and PR review remain pending. Production
+deployment is a separate protected release step. No learner-efficacy claim is
+made. The historical bounded acceptance below remains evidence for the baseline.
+
 **Current step: audit → plan → implementation → tests → bounded local acceptance
 complete; protected release pending.** Eight targeted content rewrites
 and the learner-workspace reliability/layout repairs are implemented, preserving

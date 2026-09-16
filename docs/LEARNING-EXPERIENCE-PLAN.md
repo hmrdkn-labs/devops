@@ -1,6 +1,28 @@
 # Learning experience acceptance plan
 
-2026-09-16 · Bounded local implementation and acceptance complete; deployment not performed.
+2026-09-16 · Bounded acceptance committed; remaining curriculum rewrite in progress. Production deployment is outside this push/merge task.
+
+## Authorized completion phase
+
+The accepted baseline is preserved in `71dcecd` (content/generated), `be7e907`
+(workspace/tests), and `9717375` (acceptance documentation) on
+`feat/learning-curriculum-rewrite`. Complete the other 29 generic-template units
+with independently authored explanations, concrete worked cases, observable
+proof, useful portable visuals, and verified primary sources. Keep unit and
+evidence IDs stable; classify mastery changes and regenerate their artifacts.
+
+Review the two content cohorts independently before committing each cohort.
+Reject the retired generated transfer-question boilerplate. Exercise every task
+in all four interactive lessons; retain focused responsive, focus, reduced-motion,
+network recovery, and privacy contracts. Run the settled check/build/revision
+gate against both `origin/main` and the accepted baseline, then the full browser
+matrix. Passing these checks establishes contract integrity and observed usable
+interactions; learner efficacy remains unmeasured.
+
+Push the feature branch after gates, open a descriptive PR, complete parent
+review and GitHub checks, then merge with commits preserved when allowed. Do not
+force, bypass repository rules, or deploy production. The existing private
+protected application-release workflow is a subsequent release step.
 
 ## Current phase
 
@@ -108,4 +130,7 @@ This phase finishes with a local reviewed diff and acceptance evidence. If relea
 
 ## Future backlog
 
-Corpus-wide bespoke templates, broader visualization upgrades, and real learner efficacy measurement remain separate work. Passing UI tests establishes usable interactions and preserved state, not learning effectiveness or complete coverage.
+The remaining 29 units and purposeful portable visual models are now authorized
+in the completion phase above. Real learner efficacy measurement remains future
+work. Passing UI tests establishes usable interactions and preserved state, not
+learning effectiveness.
