@@ -1,11 +1,16 @@
 # Learning experience acceptance plan
 
-2026-09-16 · Audit → Plan → Rewrite → Acceptance → Merged → Protected deployment pending.
+2026-09-16 · Audit → Plan → Rewrite → Acceptance → Merged → Deployed.
 
 [PR #10](https://github.com/hmrdkn-labs/devops/pull/10) merged with commits
 preserved at `fae8d045cfdb11c14fa6beb7224d7ddb7bcd7c6d`. All final-head CI jobs
 passed in [run 35118173684](https://github.com/hmrdkn-labs/devops/actions/runs/35118173684).
-No implementation blocker. Production deployment is outside this task.
+Post-merge CI also passed for exact deployment source
+`797fbfe59a90fa0b80fdf70b3b11c298048451f2`. Protected owner deployment
+[run 35119970871](https://github.com/hamardikan/hamardikan-infra/actions/runs/35119970871)
+successfully applied D1 migrations, deployed the Worker and route, restored the
+existing Google owner secrets, and verified production health, manifest, and
+auth. No implementation or deployment blocker.
 
 ## Authorized completion phase
 

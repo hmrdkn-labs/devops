@@ -5,21 +5,31 @@
 
 ## Read this first
 
-**Audit → Plan → Rewrite → Acceptance → Merged → Protected deployment pending.**
+**Audit → Plan → Rewrite → Acceptance → Merged → Deployed.**
 
 [PR #10](https://github.com/hmrdkn-labs/devops/pull/10) merged with commits
 preserved at `fae8d045cfdb11c14fa6beb7224d7ddb7bcd7c6d` on 2026-09-16.
 Latest-head [CI run 35118173684](https://github.com/hmrdkn-labs/devops/actions/runs/35118173684)
 passed validation, browser, and public-secret checks for `cd08d4d` before merge.
+Post-merge CI also passed for exact deployment source
+`797fbfe59a90fa0b80fdf70b3b11c298048451f2`. Protected owner deployment
+[run 35119970871](https://github.com/hamardikan/hamardikan-infra/actions/runs/35119970871)
+then rebuilt that immutable source, applied D1 migrations, deployed the Worker
+and route, restored the existing Google owner secrets, and passed its production
+health/manifest/auth checks.
 All 29 remaining transfer templates, the Scheduling additions, learner-state
 repairs, atomic lesson transitions, and keyboard-accessible reference regions
-are accepted. **No implementation blocker.**
+are accepted and live. **No implementation or deployment blocker.**
 
 Final local gates: **77 unit tests / 88 browser passes / 38 intentional skips**,
 content/type/D1/build and both revision baselines. Browser coverage includes all
 52 lesson exercises and all 40 units at 320px/1440px. Owner persistence is mocked;
-learner efficacy remains unmeasured. Production was not deployed and requires
-the separate private protected application-release workflow.
+learner efficacy remains unmeasured. Independent live probes after deployment
+returned 200 for `/`, `/kcna/`, the Kubernetes Resources lesson, KCNA practice,
+review, references, and the auth-session route. `/api/health` reports `ok`, D1
+`ready`, and manifest SHA
+`435617b2795f2f12c2259ece57d736d25d94f81841cdea240228b20f56604e6a`, matching
+the deployed public artifact.
 Plan: `docs/LEARNING-EXPERIENCE-PLAN.md`. Stable guest server: port 4321, session
 `12099`, manifest `435617b2795f`, no D1/auth binding.
 
