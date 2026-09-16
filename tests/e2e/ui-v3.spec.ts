@@ -59,6 +59,44 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await expect(page.getByText('0 correct', { exact: true })).toBeVisible();
 });
 
+test('review reveal state is explicit and ratings start visually neutral', async ({ page }) => {
+  await page.route('**/api/review?**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        queue: [{
+          cardId: 'test:stdout',
+          unitId: 'fpp:container-lifecycle',
+          unitRevision: 3,
+          type: 'short',
+          dueAt: Date.now(),
+          front: 'Default application log streams in a container?',
+          back: 'Standard output and standard error.',
+          criticalPoints: [],
+          unitTitle: 'Container runtime and lifecycle',
+        }],
+      }),
+    });
+  });
+
+  await page.goto('/review?path=kcna');
+
+  await expect(page.getByText('Retrieve before revealing', { exact: true })).toBeVisible();
+  await expect(page.getByText('Standard output and standard error.', { exact: true })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Reveal answer' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Again' })).toBeHidden();
+
+  await page.getByRole('button', { name: 'Reveal answer' }).click();
+
+  await expect(page.getByText('Answer revealed', { exact: true })).toBeVisible();
+  await expect(page.getByText('Retrieve before revealing', { exact: true })).toBeHidden();
+  await expect(page.getByText('Standard output and standard error.', { exact: true })).toBeVisible();
+
+  const borderColors = await page.locator('.review-rating .rating-buttons button').evaluateAll((buttons) =>
+    buttons.map((button) => getComputedStyle(button).borderColor));
+  expect(new Set(borderColors).size, 'no rating should look preselected').toBe(1);
+});
+
 test('UI v3 primary surfaces stay compact, readable, and overflow-free', async ({ page }, testInfo) => {
   for (const theme of ['light', 'dark'] as const) {
     await page.goto('/');

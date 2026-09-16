@@ -79,7 +79,7 @@ export default function ReviewDeck(props: Props) {
                   <span><strong>{cards().length}</strong> due · {completed()} done</span>
                 </div>
                 <section class="review-card" aria-live="polite">
-                  <p class="section-kicker">Retrieve before revealing</p>
+                  <p class="section-kicker">{revealed() ? 'Answer revealed' : 'Retrieve before revealing'}</p>
                   <h2>{card().front}</h2>
                   <Show when={revealed()}>
                     <div class="review-answer">
