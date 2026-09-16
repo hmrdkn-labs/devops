@@ -73,3 +73,24 @@ When an object appears missing or a reference resolves incorrectly:
 5. If the problem is access or traffic isolation, inspect the relevant RBAC or network policy rather than assuming namespace isolation.
 
 The durable KCNA rule: **namespace tells you where a namespaced API object lives; policy tells you what actors or traffic are allowed to do.**
+
+## Worked case: one name, two objects, three questions
+
+Assume ordinary cluster DNS configuration and an application listening on port
+8080. These authored results are independent observations:
+
+~~~text
+team-a client → api:8080 → response team=a
+team-a client → api.team-b:8080 → response team=b
+user can list pods in team-b → yes
+kubectl get nodes -n team-a → the cluster's Node objects
+~~~
+
+The first two results exercise discovery and connectivity. The third exercises
+API authorization. None says that the user can create workloads or read Secrets.
+The last lookup concerns a cluster-scoped kind whose identity has no namespace.
+
+If team isolation is intended, examine bindings and policy-selected Pods on both
+sides rather than changing the Service names. A denied API read would not by
+itself prove blocked Pod traffic, and a failed HTTP probe could also mean the
+application is unhealthy rather than a policy denial.

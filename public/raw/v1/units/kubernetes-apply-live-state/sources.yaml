@@ -22,3 +22,10 @@ sources:
     type: documentation
     verified_at: 2026-09-09
     note: Upstream field-management and field-ownership reference for modern apply behavior.
+  - id: fpp:kubernetes-apply-live-state/source-worked-boundary
+    title: "Deployments"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified observed generation, rollout status, and Pod-template replacement boundaries."

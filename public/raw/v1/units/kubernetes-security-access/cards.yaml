@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 3
+revision: 4
 cards:
   - id: fpp:kubernetes-security-access/c-authn
     type: short

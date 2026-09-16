@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-deployments-rollouts
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-deployments-rollouts/q-new-rs
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-deployments-rollouts/revision]
   - id: fpp:kubernetes-deployments-rollouts/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: In a disposable namespace, change one Deployment image and trace the ownership chain before, during, and after the rollout. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record the Deployment and current ReplicaSet names, revisions, and replica counts. Change the Pod-template image and watch Deployments, ReplicaSets, and Pods together. Explain which old and new ReplicaSet counts changed and verify one new Pod owner reference. Treat the conclusion as justified only when A new ReplicaSet is connected to the changed Pod template. The explanation separates Deployment rollout ownership from ReplicaSet replica ownership."
+    prompt: "A Deployment starts with image web:v1, ReplicaSet A at three replicas, and no ReplicaSet B. After its template image becomes web:v2, A decreases and B increases. What caused B, and which evidence would prove rollout progress without claiming that checkout requests now succeed?"
+    model_answer: "Changing the Deployment Pod template triggers rollout and a ReplicaSet for the new template. Compare Deployment template, ReplicaSet templates and ownerReferences, and Pod owners; inspect rollout status or available/updated replica counts. These establish rollout progress. A representative application request is separate evidence of user-visible health."
     critical_points:
-      - "A new ReplicaSet is connected to the changed Pod template."
-      - "The explanation separates Deployment rollout ownership from ReplicaSet replica ownership."
+      - "Template change causes the new ReplicaSet."
+      - "Controller rollout status differs from application transaction success."
     objective_ids: [fpp:kubernetes-deployments-rollouts/ownership-chain, fpp:kubernetes-deployments-rollouts/revision]
+
   - id: fpp:kubernetes-deployments-rollouts/q-rollback
     kind: predict
     prompt: What does a Deployment rollback conceptually change, and why is it wrong to think Kubernetes revives the old Pods themselves?

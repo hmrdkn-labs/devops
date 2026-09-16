@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:ip-subnets
-revision: 2
+revision: 3
 visuals:
   - id: fpp:ip-subnets/visual-route-choice
     kind: flow
     eyebrow: Packet decision
-    title: Decide whether the destination is on-link before routing
+    title: "A more-specific route overrides a connected prefix"
     lines:
-      - "destination IP + interface prefix → compare network prefix → on-link neighbor resolution or route lookup → next hop"
-    teaching_point: An interface address and its prefix define the local network; destinations outside that prefix require a route rather than direct neighbor delivery.
+      - "10.20.4.200 matches /24 and /25"
+      - "/25 wins → next hop 10.20.4.1 via eth0"
+      - "neighbor lookup targets gateway 10.20.4.1"
+      - "10.20.4.30 → broader connected /24 → direct neighbor"
+    teaching_point: "The most-specific matching route wins under the stated table assumptions. An explicit next-hop route can override the broader connected prefix. A route lookup proves selection rather than end-to-end connectivity."

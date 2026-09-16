@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:processes-and-resources
-revision: 2
+revision: 3
 questions:
   - id: fpp:processes-and-resources/q-process
     kind: explain
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:processes-and-resources/resource-pressure]
   - id: fpp:processes-and-resources/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Start a harmless long-running command and connect its PID to kernel-exposed state. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Run sleep 300 in one terminal and record its PID. Inspect ps output and selected files under /proc/PID. Identify its state, command line, and open descriptors. Treat the conclusion as justified only when You can distinguish the executable from this execution. You can name at least two resources represented in /proc."
+    prompt: "Two workers run the same /usr/local/bin/report program. PID 410 has state R and growing CPU time; PID 411 has state D during slow report writes. Requests handled by 411 lag while the machine has idle cores. Which state belongs to the program versus each execution, and would adding a core directly unblock 411?"
+    model_answer: "The executable bytes are shared input; each PID has its own execution state, descriptors and resource use. R means 410 is runnable or running, while D indicates an uninterruptible wait consistent with the stated I/O delay. The kernel schedules runnable work, but another core does not satisfy 411's pending I/O. Compare repeated process-state/CPU samples and storage latency before attributing the wait to storage; D alone does not identify the device."
     critical_points:
-      - "You can distinguish the executable from this execution."
-      - "You can name at least two resources represented in /proc."
+      - "Execution state belongs to a PID, not to the executable file."
+      - "An I/O wait and a runnable CPU queue are different resource boundaries."
+      - "Repeated process and storage evidence is needed; one state sample is not a root cause."
     objective_ids: [fpp:processes-and-resources/process-model, fpp:processes-and-resources/resource-pressure]

@@ -73,3 +73,23 @@ When an apply did not produce the expected result:
 5. Continue into Services/networking/application probes if necessary.
 
 The durable skill is not command recall. It is knowing where declared intent lives, which control loop consumes it, and what observation proves the next state transition.
+
+## Worked case: a status snapshot has a time boundary
+
+~~~text
+file: web replicas=3, image=registry.example/web:v2
+apply response: deployment.apps/web configured
+live spec: replicas=3, image=registry.example/web:v2
+metadata.generation: 8; status.observedGeneration: 7
+status.availableReplicas: 2
+~~~
+
+This authored snapshot proves that the API holds the intended fields. It does
+not yet prove the Deployment controller has reported on generation 8. Reinspect
+conditions and owner-linked ReplicaSets before labeling the rollout failed.
+Once generation 8 is observed, new Pod readiness and a request to `GET /version`
+answer downstream questions that the write response cannot answer.
+
+Defaults and controller-written status are expected differences from the local
+file. A live image different from the reviewed image is a different claim: use a
+field-aware diff and identify the managing actor before reconciling the disagreement.

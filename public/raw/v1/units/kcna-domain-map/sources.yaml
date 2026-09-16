@@ -15,3 +15,10 @@ sources:
     type: reference
     verified_at: 2026-09-09
     note: Official record of the post-November-2025 KCNA blueprint update.
+  - id: fpp:kcna-domain-map/source-worked-boundary
+    title: "EndpointSlices"
+    url: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified endpoint state and its separation from Service request execution."

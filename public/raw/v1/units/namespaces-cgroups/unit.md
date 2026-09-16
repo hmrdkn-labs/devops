@@ -34,3 +34,20 @@ seccomp, mandatory access controls, and careful runtime configuration.
 When Kubernetes applies requests and limits, a container runtime translates
 those declarations into host-level process and cgroup configuration. The
 abstraction is useful, but the underlying resource behavior remains Linux.
+
+## Worked case: Separate network views, one shared CPU quota
+
+The authored fixture assumes unified cgroup v2, the CPU controller enabled for
+`/batch`, ordinary fair-scheduled processes, and no configured quota burst.
+
+~~~text
+/proc/701/ns/net → net:[4026533001]
+/proc/702/ns/net → net:[4026533002]
+/proc/701/cgroup → 0::/batch
+/proc/702/cgroup → 0::/batch
+/batch/cpu.max → 50000 100000
+~~~
+
+The processes can have different interfaces and route tables while consuming one group quota. Read the matching `/sys/fs/cgroup/batch/cpu.stat` twice around load; an increase in `nr_throttled` supports quota enforcement in that interval. The quota controls bandwidth, not a permanent assignment to one half of a specific core. Inspect ancestors before claiming this local value is the only limit. A distinct cgroup path would change the accounting question without changing namespace visibility.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

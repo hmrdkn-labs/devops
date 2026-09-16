@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-delivery-gitops
-revision: 2
+revision: 3
 questions:
   - id: fpp:cloud-native-delivery-gitops/q-ci
     kind: explain
@@ -20,9 +20,9 @@ questions:
     objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
   - id: fpp:cloud-native-delivery-gitops/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Use a real or hypothetical Kubernetes release and identify the smallest evidence at each boundary from artifact creation to user-visible behavior. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record the immutable artifact identity produced by CI. Record the desired-state revision that references the artifact. Name the delivery or GitOps reconciler and what healthy state means for it. Record Kubernetes rollout evidence and ready replicas. Define one end-to-end request that proves the released behavior. Treat the conclusion as justified only when A green CI result is not used as the final deployment proof. Each boundary has a distinct observation or status signal."
+    prompt: "CI built image digest D2, but production Git revision R10 still declares D1. The GitOps reconciler reports R10 synchronized and production returns version D1. A teammate calls this a failed Kubernetes rollout and wants a Git revert. Which boundary has not changed, and what would a revert actually affect?"
+    model_answer: "Artifact creation succeeded, while production desired state still intentionally references D1; there is no evidence that Kubernetes was asked to roll out D2. Synchronization to R10 agrees with the D1 response. Inspect the environment manifest and reconciler's applied revision before diagnosing rollout. A reviewed promotion referencing D2 would change desired state; reverting a deployment commit changes that intent but does not reverse database writes or other external side effects."
     critical_points:
-      - "A green CI result is not used as the final deployment proof."
-      - "Each boundary has a distinct observation or status signal."
+      - "Built artifact, environment desired revision and synchronized runtime are separate identities."
+      - "A Git revert changes desired configuration, not external data history."
     objective_ids: [fpp:cloud-native-delivery-gitops/pipeline, fpp:cloud-native-delivery-gitops/gitops]

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
-revision: 3
+revision: 4
 questions:
   - id: fpp:services-dns-ingress/q-no-endpoints
     kind: scenario
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:services-dns-ingress/external-routing]
   - id: fpp:services-dns-ingress/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Trace one disposable Service from name to listening process. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Create a small Deployment and ClusterIP Service in an isolated namespace. Inspect its DNS answer, selector, EndpointSlice, ports, and ready Pods. Change one label so endpoints disappear, observe, then restore it. Treat the conclusion as justified only when You can localize the failure without changing DNS. You can name the controller-produced relationship."
+    prompt: "An Ingress rule maps shop.example/ to Service shop port 80. The API accepts the Ingress, but no Ingress controller is installed. Does the stored rule itself forward browser traffic, and what evidence separates declared routing from implementation?"
+    model_answer: "No. Ingress is API configuration; a suitable Ingress controller and its proxy/load balancer must implement it. Inspect IngressClass/controller availability, Ingress events/status and the actual external endpoint before sending a browser request. A stored rule is not proof that any data plane forwards traffic."
     critical_points:
-      - "You can localize the failure without changing DNS."
-      - "You can name the controller-produced relationship."
+      - "Ingress API intent needs an implementing controller."
+      - "External endpoint and request evidence test actual forwarding."
     objective_ids: [fpp:services-dns-ingress/service-endpoints, fpp:services-dns-ingress/external-routing]
+
   - id: fpp:services-dns-ingress/q-stable-service
     kind: predict
     prompt: A Deployment replaces every Pod during a rollout. Why can clients keep using the same Service name and ClusterIP even though all backend Pod IPs change?

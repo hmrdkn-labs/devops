@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:files-users-permissions
-revision: 2
+revision: 3
 visuals:
   - id: fpp:files-users-permissions/visual-access-check
     kind: flow
     eyebrow: Access decision
-    title: A process reaches a path using its identity
+    title: "A directory can hide names without protecting known files"
     lines:
-      - "process UID and GID → directory traversal → file owner/group/mode bits → kernel access decision"
-    teaching_point: File permissions are evaluated for a process identity at each path boundary, so service users and ownership are both reliability and security concerns.
+      - "UID 1200 → /srv traversal succeeds"
+      - "reports mode 0300 → listing denied; known-name lookup allowed"
+      - "daily.txt mode 0400 → open/read allowed"
+      - "reports write + search → unlink allowed under stated assumptions"
+    teaching_point: "Directory read lists names; search reaches a known name. Unlink permission is primarily on the parent directory, not the file write bit. The prediction depends on the explicitly unprivileged identity and absent additional restrictions."

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:http-tls
-revision: 2
+revision: 3
 questions:
   - id: fpp:http-tls/q-certificate
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:http-tls/http-message]
   - id: fpp:http-tls/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Inspect one public HTTPS exchange without sending sensitive data. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Use curl verbose mode against a public documentation URL. Identify DNS results, connection address, certificate hostname, request authority, and status. Write one sentence of evidence for each layer. Treat the conclusion as justified only when You do not use a successful status as proof of every lower layer. You can identify where TLS identity was checked."
+    prompt: "https://orders.test/health resolves to 192.0.2.60 and curl reports a certificate hostname mismatch: the server certificate covers billing.test. A colleague gets HTTP 200 by using -k and proposes changing only the HTTP Host header. Which identity has failed, and which probe can preserve orders.test identity while pinning the connection address?"
+    model_answer: "The client cannot authenticate the server for the URL hostname orders.test. -k bypasses certificate verification, so its 200 does not prove a valid authenticated HTTPS transaction. An HTTP Host override alone does not set the TLS verification name or SNI to that value. curl --resolve orders.test:443:192.0.2.60 https://orders.test/health pins the address while retaining the URL hostname for TLS and HTTP; it should still reject the wrong certificate until certificate/listener configuration is corrected. Then verify the original URL without the override."
     critical_points:
-      - "You do not use a successful status as proof of every lower layer."
-      - "You can identify where TLS identity was checked."
+      - "TLS verifies the URL's server identity before the HTTP request succeeds."
+      - "-k removes the identity check and weakens what HTTP 200 proves."
+      - "--resolve changes address lookup while preserving the requested hostname."
     objective_ids: [fpp:http-tls/http-message, fpp:http-tls/tls-identity]

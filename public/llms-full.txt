@@ -52,6 +52,26 @@ Containers and Kubernetes can reduce coupling to individual hosts, but applicati
 
 When comparing two designs, ask which one has clearer desired state, replaceable artifacts, automated reconciliation, explicit service boundaries, observable behavior, and failure handling. Those properties matter more than whether the diagram contains a cloud logo.
 
+## Worked case: failure-domain and demand tests answer different questions
+
+~~~text
+intent: checkout artifact v6; replicas=3
+instance failure: controller restores count to 3; checkout request succeeds
+database outage: all three checkout requests fail
+night demand: falls 90%; desired replicas remains 3
+~~~
+
+These authored observations support repeatable instance replacement, expose a
+shared failure boundary, and show fixed capacity. The controller changes desired
+workload objects; runtime instances handle transactions. A capacity policy would
+need suitable signals and safe scaling bounds before demand adaptation could be
+claimed.
+
+Replicas need not be microservices, and a modular monolith can use declarative
+recovery and observability. Conversely, dividing checkout into many services
+would not remove a shared database outage by itself. Identify the dependency's
+recovery or degradation contract rather than counting architectural labels.
+
 ---
 
 # CI, CD, declarative delivery, and GitOps
@@ -111,6 +131,25 @@ Do not stop at a green pipeline. Verify:
 
 This produces a causal chain from source to running behavior instead of equating "pipeline passed" with "release succeeded."
 
+## Worked case: synchronized to which revision?
+
+~~~text
+CI artifact: D2
+production Git R10: Deployment image D1
+reconciler applied revision: R10, synchronized
+runtime image ID: D1; GET /version: D1
+~~~
+
+The authored evidence is internally consistent: production has not been promoted
+to D2. The GitOps agent pulls and reconciles desired state; Kubernetes controllers
+roll out the declared template; node agents execute the artifact. A healthy
+reconciler status without its revision identity is incomplete release evidence.
+
+After a reviewed R11 declares D2, check that R11 was applied, Pods resolve the
+intended artifact, and the version request succeeds. If D2 performed a database
+migration, reverting R11 may restore D1 Pods while leaving migrated data intact.
+Compatibility and data recovery need a separate decision.
+
 ---
 
 # Metrics, logs, traces, events, and observability
@@ -169,6 +208,26 @@ If users report slowness:
 
 Evidence becomes stronger when independent signals agree. A dashboard is a view of measurements, not the system itself.
 
+## Worked case: telemetry transport is another system
+
+~~~text
+14:00–14:05 checkout p95: 120ms → 2s
+trace t42: checkout 2s; inventory call span 1.8s
+log trace_id=t42: inventory request timed out
+Prometheus target up=1; Collector exports succeeded
+~~~
+
+This authored fixture localizes t42's delay without proving inventory's underlying
+cause. Examine inventory-side traces/logs and compare other sampled requests;
+network delay, saturation and a downstream dependency remain possible explanations.
+The Collector receives/processes/exports telemetry, while the application handles
+checkout. An export acknowledgment is evidence about that transport boundary.
+
+Recovery evidence should include the same checkout transaction and a useful time
+window of latency/error measurements. One successful transaction cannot by itself
+establish restored p95 for the population. Avoid printing private transaction
+payloads or putting high-cardinality request IDs into every metric label.
+
 ---
 
 # Release strategies and application debugging
@@ -226,13 +285,36 @@ Each step has different evidence:
 
 ## Readiness protects traffic; liveness restarts processes
 
-A readiness failure can remove a Pod from Service endpoints without restarting the container. A liveness failure tells the kubelet to restart the container. Using liveness for a dependency outage can turn an external failure into a restart storm.
+A readiness failure can mark a Pod's EndpointSlice entry unready without restarting the container; ordinary Service routing then excludes it from ready backends. A liveness failure tells the kubelet to restart the container. Using liveness for a dependency outage can turn an external failure into a restart storm.
 
 ## Roll back only after naming the failure boundary
 
 Rollback can be the safest mitigation, but it is not a substitute for diagnosis. Record the failing revision and the smallest evidence first. If the failure is a shared database outage or invalid Secret, rolling back application Pods may not fix the incident.
 
 The durable skill is to localize the first broken boundary before choosing the mitigation.
+
+## Worked case: eligibility comes before exposure measurement
+
+~~~text
+Service selector: app=checkout; publishNotReadyAddresses=false
+v1: nine Ready Pods
+v2: one Running Pod, Ready=false
+EndpointSlice: v2 address present, ready=false
+GET /version results in sample: v1 only
+~~~
+
+This authored snapshot permits an unready endpoint address to exist in an
+EndpointSlice; it is not an ordinary ready backend. Probe events and application
+startup/listener evidence identify the earliest observed failure. The slice
+controller records endpoint conditions; the concrete network implementation
+executes forwarding.
+
+Once ready, replica proportion still does not guarantee request proportion:
+connections, client behavior and routing rules can skew exposure. A canary needs
+an explicit exposure mechanism, version-specific measurements and an expand/abort
+criterion. With `publishNotReadyAddresses=true`, the slice controller sets endpoint
+ready=true even for an unready Pod. That is a counterexample to treating Pod
+Ready=false as a universal prohibition in every Service configuration.
 
 ---
 
@@ -296,6 +378,27 @@ When you encounter an unfamiliar project, ask three questions:
 
 That method is more durable than memorizing the visual layout of the CNCF Landscape.
 
+## Worked case: route the technical question to its owner
+
+~~~text
+need: Pod networking compatible with kubelet/runtime integration
+contract: CNI conventions; implementation: selected network plugin/dataplane
+need: container process execution
+contract: CRI; implementation: containerd via its CRI integration
+question: Kubernetes networking integration → SIG Network + relevant project
+~~~
+
+This authored map explains ownership without prescribing a complete stack.
+A reproducible bug report should name versions, the interface call or object,
+expected behavior and the smallest observed failure. A Kubernetes integration
+issue and a plugin-internal forwarding defect may have different owners; start
+with the responsible project's documented reporting process.
+
+CNCF hosts projects and supports an ecosystem; it does not become the runtime
+executor or require every listed product. Open contracts make replacement and
+collaboration possible, but two implementations still need compatible versions
+and configuration before interoperability is demonstrated.
+
 ---
 
 # Configuration, secrets, and persistent storage
@@ -337,6 +440,26 @@ Pod scheduling must respect the PV topology
 Choose storage from durability, access mode, latency, backup, and failure-domain
 requirements rather than from the fact that it can be mounted.
 
+## Worked case: change configuration without confusing it with data
+
+These are authored fixture observations, not a live-cluster transcript:
+
+~~~text
+ConfigMap/report-settings: MODE changed fast → safe
+old Pod UID=a1: process mode=fast
+PVC/report-exports: Bound to PV/export-disk
+new Pod UID=b2: process mode=safe; /exports/2026-09.csv readable
+~~~
+
+The mode diagnostic proves what each process actually loaded. The claim and PV
+records identify storage intent; reading the existing export proves reuse at the
+application filesystem boundary. The kubelet and storage integration realize
+the mount, while the application loads configuration and reads data.
+
+A normal ConfigMap volume projection can update eventually, but the application
+must reread its files. A mount using `subPath` does not receive ConfigMap updates.
+None of these delivery choices makes the same zonal disk available in every zone.
+
 ---
 
 # Container runtime and lifecycle
@@ -356,7 +479,9 @@ object; it does not delete the immutable image or external volumes.
 The configured entry process becomes PID 1 inside the container's PID
 namespace. When it exits, the container stops and exposes its exit status. A
 restart policy or orchestrator may create another execution, but it does not
-resume the old process memory.
+resume the old process memory. Starting the same Docker container retains its
+writable layer; removing it and creating a replacement gives the replacement
+a fresh layer unless data is supplied from explicit external storage.
 
 Standard output and standard error are the default container log interface.
 Applications should emit useful structured events there and put durable data in
@@ -374,6 +499,21 @@ The useful debugging chain is: inspect configured command, current process,
 recent state transition, exit code, termination signal or reason, and restart
 policy. “The container crashed” is a label; the exit evidence is the diagnosis
 starting point.
+
+## Worked case: Restarting a process differs from replacing its container
+
+The case assumes ordinary Docker writable-layer storage, no automatic removal, no mounts and a marker absent from the image.
+
+~~~text
+container C1: /tmp/run-marker exists; memory cache warm
+main process exits 2 → C1 stopped
+docker start C1 → new process in existing C1
+remove C1; create C2 from same image → new container object
+~~~
+
+After starting C1, the disk marker remains while cache memory is rebuilt. C2 has neither C1's marker nor its memory. Inspect the container ID, `docker inspect` state and mounts, and application logs to tell these boundaries apart. A restart policy can start another execution but cannot resume old memory. An external volume would alter the disk prediction; it would not preserve an in-process cache. The exit status directs investigation but does not identify why the application chose that status.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
 
 ---
 
@@ -415,6 +555,21 @@ replacement but still be attached to one failure domain. Kubernetes storage
 classes and cloud volume topology later make that placement constraint
 explicit.
 
+## Worked case: One host endpoint, two different storage lifetimes
+
+Assume a current Linux Docker Engine 28+ bridge setup, a retained named volume, and a marker not present in the image. Older Engine versions have documented localhost-publication caveats.
+
+~~~text
+host publication: 127.0.0.1:18080 → container TCP :8080
+application bind: 0.0.0.0:8080 in container namespace
+/data → named volume notes → marker-data
+/tmp → container writable layer → marker-temp
+~~~
+
+The host's loopback endpoint provides the intended local entry path. Runtime networking supplies the forwarding; the namespace-local application socket accepts the resulting connection. Recreate the container while reattaching `notes`: marker-data remains and marker-temp disappears. Read port bindings and mount metadata before probing or removing anything. A volume attached to a different host is not automatically replicated; survival of container replacement is not proof of failure-domain availability.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # Files, users, and permissions
@@ -437,7 +592,8 @@ For regular files, read exposes bytes, write changes bytes, and execute permits
 the file to be used as a program. For directories, the meanings shift:
 
 - read lists directory entries;
-- write creates, removes, or renames entries;
+- write, together with execute/search, permits creating, removing, or renaming
+  entries subject to additional restrictions such as sticky-bit rules;
 - execute traverses the directory and reaches named entries.
 
 That directory distinction explains why reading a file can fail even when the
@@ -454,6 +610,20 @@ manual fixes.
 
 Permissions answer “may this identity perform this operation?” They do not
 encrypt data, validate its contents, or replace application authorization.
+
+## Worked case: A directory can hide names without protecting known files
+
+Assume all ancestors are searchable and the service identity has no ACL or capability exceptions. These mode values are a paper case; no deletion experiment is required.
+
+~~~text
+process: UID=1200 GID=1200
+/srv/reports           owner 1200:1200 mode 0300 (-wx------)
+/srv/reports/daily.txt owner 1200:1200 mode 0400 (r--------)
+~~~
+
+The owner can traverse the directory and read a known file but cannot enumerate directory names. Directory write plus search also allows removing an entry under the stated assumptions. Use `id` and `namei -l /srv/reports/daily.txt` to inspect the identity and every path component; an ACL or immutable flag would require separate inspection. This case explains why removing file write is insufficient protection against deletion and why testing as root can conceal a mode error.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
 
 ---
 
@@ -493,6 +663,22 @@ The same source can be portable Markdown or YAML while deployment adapters stay
 platform-specific. Keeping content and intent framework-independent makes later
 renderers and infrastructure migrations tractable.
 
+## Worked case: Git and the API can hold competing desired values
+
+This case intentionally has no GitOps reconciler. Symbolic commit c7 identifies the reviewed input; it is not a runnable repository command.
+
+~~~text
+Git c7: spec.replicas = 3
+live Deployment: spec.replicas = 5
+live Deployment: status.replicas = 5
+owned Pods: 5 running
+GitOps agent: absent
+~~~
+
+The controller's direct input is the API spec, so five is the active desired count. Git does not execute deployments by existing. Read the reviewed file and live API object to expose drift, then follow the project's chosen authority and review workflow. `kubectl apply --dry-run=server -f candidate.yaml` exercises server validation/admission without persisting the candidate; it requires API access and does not prove workload health. With a GitOps agent, inspect that agent's source/reconciliation status before claiming repository state will win.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # HTTP requests and TLS identity
@@ -531,6 +717,22 @@ and path. The API object describes intent; a controller and data-plane proxy
 must implement it. Always identify where TLS terminates and whether traffic is
 encrypted again to the backend.
 
+## Worked case: Pin the address without bypassing server identity
+
+The authored failure occurs after reaching a TLS listener but before an authenticated HTTP exchange.
+
+~~~text
+URL: https://orders.test/health
+DNS answer: 192.0.2.60
+certificate name: billing.test
+curl --resolve orders.test:443:192.0.2.60 https://orders.test/health
+# expected: hostname verification failure
+~~~
+
+The probe deliberately holds the destination address constant while preserving `orders.test` as the name to authenticate and send in the request. The TLS listener owns certificate selection; the client owns trust and hostname validation. A valid certificate and successful pinned probe would support that listener path, but would not verify normal DNS resolution. Repeat the original URL after correction. Merely receiving 200 with `-k` cannot establish the user's intended HTTPS identity.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # Container images, layers, and registries
@@ -568,6 +770,22 @@ Kubernetes records an image reference in a Pod template. The node runtime pulls
 and unpacks it, then adds a writable container layer. Persistent application
 data should not rely on that ephemeral writable layer.
 
+## Worked case: Hidden in the final view, present in the image history
+
+This paper fixture uses a dummy configuration marker, never a real credential. Digest labels A and B below are symbolic, not valid command arguments.
+
+~~~text
+layer 1: add /app/server
+layer 2: add /build/private-config (dummy marker)
+layer 3: remove /build/private-config
+running container: manifest digest A
+registry api:demo: now resolves to manifest digest B
+~~~
+
+The runtime applies ordered changes to form the visible root filesystem, while the registry still distributes the referenced lower-layer objects. Inspecting only the final path misses the marker in layer 2. Retagging changes future lookup input, not the current process. Use an image inspector to compare manifest/layer references and runtime inspection to identify the container's original input. An independently rebuilt image that never included the marker changes the exposure question; hiding it later does not.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # IP addresses and subnets
@@ -581,9 +799,11 @@ states which leading bits describe the network. In IPv4, `10.20.4.17/24`
 means the first 24 bits form the local prefix, so addresses from
 `10.20.4.0` through `10.20.4.255` share that prefix.
 
-The host compares a destination with its configured routes. If the destination
-is on-link, it resolves the next hop on the local network. Otherwise it sends
-the packet to a router selected by the most-specific matching route.
+The host looks up the destination in its configured routes. In a simple routing
+table, the most-specific matching prefix wins. A connected route normally
+selects direct neighbor delivery; a route with a gateway selects that gateway
+as the next hop. A more-specific route can override a broader connected prefix,
+and policy-routing rules can select a different table.
 
 ~~~text
 destination IP
@@ -610,6 +830,21 @@ address allocation affect how many pods can be scheduled.
 Always ask three separate questions: what address is assigned, what prefixes
 are reachable, and which next hop wins. Mixing them produces most subnet
 misdiagnoses.
+
+## Worked case: A more-specific route overrides a connected prefix
+
+A host is configured with these authored routes. Ask which next hop wins before assuming every address in its interface prefix is delivered directly.
+
+~~~text
+10.20.4.0/24 dev eth0
+10.20.4.128/25 via 10.20.4.1 dev eth0
+default via 10.20.4.254 dev eth0
+lookup destination: 10.20.4.200
+~~~
+
+Both /24 and /25 match; /25 covers 10.20.4.128–10.20.4.255 and is more specific. The kernel selects the gateway 10.20.4.1. A destination such as 10.20.4.30 instead matches the connected /24 and is normally resolved directly. `ip route get 10.20.4.200` checks the active lookup, including rules that this simplified table omits. A successful lookup says nothing yet about packet loss or application response.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
 
 ---
 
@@ -666,6 +901,26 @@ Derive operational answers from the layers. If a Pod is `Pending`, ask whether i
 ## Remember this
 
 KCNA readiness means you can explain the path from **declared intent → controller decision → executor → running state → proof**. Commands are useful observations, but the exam is testing the model behind them.
+
+## Worked case: study allocation follows a demonstrated gap
+
+The current advisory weights are Fundamentals 44%, Orchestration 28%,
+Application Delivery 16%, and Architecture 12%. For ten equal sessions this
+suggests roughly 4.4, 2.8, 1.6, and 1.2 sessions, not a mandatory timetable.
+
+~~~text
+retrieval: Service object role explained correctly
+application: Ready Pod exists; api:8080 fails
+next practice: selector → ready EndpointSlice → listener/port → request
+~~~
+
+The authored result identifies a cross-layer gap rather than ignorance of every
+Fundamentals topic. Spend a session tracing that request, then retest the weak
+boundary and adjust the remaining allocation. The controller updates API state;
+the network implementation forwards; the application produces the response.
+A successful `GET /health` proves that one request at that time, not every user
+transaction. Exam weights are advisory and should be checked against current
+upstream curriculum before exam booking.
 
 ---
 
@@ -834,6 +1089,22 @@ Ask three things in order:
 1. Is the question asking about **stored intent/state**, **a control decision**, or **runtime execution**?
 2. Which component owns that layer?
 3. Does the option describe the component's real responsibility, or does it make that component perform somebody else's job?
+
+## Worked case: A recorded node assignment is not a running container
+
+This companion case follows one ReplicaSet replacement across the control-to-execution boundary. The image digest is abbreviated display text, not a valid image reference to execute.
+
+~~~text
+Pod owner: ReplicaSet checkout-7b
+spec.nodeName: worker-b
+container state: Waiting
+waiting reason: ImagePullBackOff
+worker-b runtime: containerd
+~~~
+
+A controller has created a Pod object and placement is recorded. Node-side kubelet/runtime must still acquire the image and start the process; image-pull backoff describes retries after a pull failure, not the root cause. Pod events distinguish authentication, missing reference and other pull clues; CRI inspection can support node-side state. Do not print credentials while checking registry access. Direct node assignment is a counterexample to the shortcut 'nodeName proves the scheduler acted'; it still establishes which kubelet should realize the Pod.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
 
 ---
 
@@ -1035,6 +1306,335 @@ Creating a namespace alone does not automatically provide network isolation, RBA
 
 Trace the object ownership first. Then ask whether the question changed **desired state** or only **observed state**. Finally, distinguish an API-level success from runtime proof. Those three checks eliminate a large fraction of plausible wrong answers.
 
+## Worked case: the same desired count can hide different changes
+
+~~~text
+initial: Deployment/web replicas=3 → ReplicaSet/web-old → 3 Ready Pods
+delete old Pod: web-old creates new UID; desired replicas still 3
+template image changes: Deployment creates web-new
+web-new Pod event: Failed to pull image; waiting reason=ImagePullBackOff
+~~~
+
+This authored fixture separates count repair from rollout. An owner reference
+identifies the direct Pod owner; comparing ReplicaSet templates explains why the
+new rollout differs from the replacement. Kubelet/runtime and registry access
+own image realization after placement, so EndpointSlices are downstream of the
+first observed failure here.
+
+Check whether the intended image exists and is accessible before choosing a
+mitigation. A successful request served by an old Pod can prove availability
+while still failing to prove the new release. Use a version-identifying response
+and runtime artifact evidence for the release claim.
+
+---
+
+# KCNA Scheduling quiz companion
+
+Canonical ID: fpp:kcna-scheduling-review
+
+# KCNA Scheduling quiz companion
+
+Scheduling is the bridge between **declared Pod intent** and **a kubelet being able to run that Pod on one specific node**. The easiest way to get lost is to memorize every placement field independently. Keep one path in your head first:
+
+```text
+Pod exists with no node assignment
+        │
+        ▼
+kube-scheduler notices it
+        │
+        ▼
+filter impossible nodes
+        │
+        ▼
+score the feasible nodes
+        │
+        ▼
+bind the Pod to one node
+        │
+        ▼
+kubelet on that node executes the Pod
+```
+
+The scheduler chooses placement. It does **not** start containers. The kubelet and container runtime own node-side execution after placement is recorded through the API.
+
+## How to use this companion
+
+The resource/probe and placement units already introduce requests, limits,
+affinity and taints. Use the table below as a reference, then focus here on
+direct assignment, admission policy, static-Pod ownership and named schedulers.
+The worked cases are authored datasets, not observations from a running cluster.
+Predict each answer before reading its explanation; no cluster is required.
+
+## Reference scan
+
+| If the question is about... | Think... |
+| --- | --- |
+| Pod has no node yet | scheduler work is still needed |
+| `.spec.nodeName` | direct node assignment; normal scheduler selection is bypassed |
+| Labels | metadata attached to objects |
+| Selector | a rule that chooses objects by labels |
+| `nodeSelector` | simple hard node-label match |
+| Required node affinity | richer hard node-label rule |
+| Preferred node affinity | scoring preference, not a guarantee |
+| Taint | node repels Pods that do not tolerate it |
+| Toleration | removes a matching taint as a rejection reason; does not attract the Pod |
+| CPU/memory request | scheduling reservation/feasibility input |
+| CPU/memory limit | runtime consumption boundary |
+| LimitRange | per-object defaults/min/max policy inside a namespace |
+| ResourceQuota | aggregate namespace consumption/object-count budget |
+| DaemonSet | controller wants one Pod on each eligible node |
+| Static Pod | kubelet directly owns a Pod from node-local/static configuration |
+| `schedulerName` | select which scheduler/profile should handle the Pod |
+| Scheduler profile | one kube-scheduler process can expose different scheduling behavior under different names |
+
+## 1. The scheduling decision path
+
+An ordinary Pod is created without `.spec.nodeName`. The default scheduler watches for Pods that still need placement.
+
+For each candidate node, Kubernetes scheduling can be simplified into three questions:
+
+1. **Filter:** can this Pod run here at all?
+2. **Score:** among the feasible nodes, which one is preferable?
+3. **Bind:** record the chosen node for the Pod.
+
+Filtering can reject a node because of insufficient requested CPU or memory, required affinity or selector mismatch, an untolerated taint, topology constraints, or other hard policy. Scoring only matters after at least one feasible node remains.
+
+```text
+Node A: resource fit ✗     ┐
+Node B: required label ✗   ├─ filter → rejected
+Node C: all hard rules ✓   ┘
+
+only feasible nodes → score → bind
+```
+
+After binding, the kubelet on the selected node observes the assigned Pod and asks the container runtime to make the containers run.
+
+### Evidence ladder
+
+| Question | Small proof |
+| --- | --- |
+| Is the Pod assigned? | `kubectl get pod <name> -o wide` |
+| Why is it still Pending? | `kubectl describe pod <name>` and scheduling events |
+| What placement fields are live? | `kubectl get pod <name> -o yaml` |
+| What labels/taints/capacity does a node expose? | `kubectl describe node <name>` |
+
+`Pending` alone does not prove scheduling failed: an assigned Pod can still be
+waiting for image download or container setup. Check `.spec.nodeName`, the
+`PodScheduled` condition and events first. API admission rejection is earlier:
+the new Pod may never be stored. A controller can report `FailedCreate` while
+its attempted Pod creation is rejected by namespace policy.
+
+## 2. Direct assignment is different from scheduler policy
+
+`nodeSelector`, node affinity, taints, resource requests, and topology constraints are **inputs to scheduler reasoning**. `.spec.nodeName` is different: it directly assigns a Pod to a named node and bypasses ordinary scheduler selection.
+
+That distinction matters because a direct assignment can skip normal `NoSchedule` filtering. It does not make the chosen node healthy or magically create capacity. `NoExecute` taints can still cause the Pod to be evicted if it lacks the required toleration.
+
+The Binding API represents the act of assigning a Pod to a node. It is normally used by scheduling machinery; manually constructing bindings is an exceptional path, not a replacement for normal workload policy.
+
+## 3. Labels, selectors, `nodeSelector`, and affinity
+
+Labels describe objects. Selectors choose objects by those labels.
+
+For placement:
+
+- `nodeSelector` is a simple exact-match hard requirement against node labels.
+- `requiredDuringSchedulingIgnoredDuringExecution` node affinity is also hard, but supports richer expressions such as `In`, `NotIn`, `Exists`, and `DoesNotExist`.
+- `preferredDuringSchedulingIgnoredDuringExecution` is a weighted preference. A nonmatching node can still be chosen if it remains feasible and wins after scoring.
+
+The `IgnoredDuringExecution` part is important: if a node label later changes so that a running Pod no longer matches its scheduling-time node affinity, Kubernetes does not automatically evict that Pod just because of this rule.
+
+## 4. Taints and tolerations: repel versus allow
+
+Taints live on nodes. Tolerations live on Pods.
+
+```text
+node taint = dedicated=gpu:NoSchedule
+
+Pod without toleration → node rejected
+Pod with toleration    → node may be considered
+```
+
+The three common taint effects are:
+
+- `NoSchedule`: do not place new non-tolerating Pods there.
+- `PreferNoSchedule`: try to avoid placing non-tolerating Pods there.
+- `NoExecute`: also evict already-bound Pods that do not tolerate the taint, subject to toleration behavior.
+
+A toleration is **permission**, not attraction. If you want a Pod both to tolerate a dedicated GPU node **and** to require that class of node, combine the taint/toleration with node labels plus node affinity or a selector.
+
+Taints and tolerations are scheduling policy, not a security boundary.
+
+A matching `NoExecute` toleration with `tolerationSeconds: 60` delays eviction
+for 60 seconds after the taint is added; it does not promise indefinite residence.
+Removing the taint before expiry prevents eviction because of that taint.
+
+## 5. Requests, limits, LimitRange, and ResourceQuota
+
+Keep four different responsibilities separate.
+
+| Mechanism | Scope | Main question |
+| --- | --- | --- |
+| Request | container/Pod scheduling calculation | How much capacity must the node reserve for placement? |
+| Limit | container runtime enforcement | How much of this resource may the container consume? |
+| LimitRange | namespace admission policy for individual objects | What defaults/min/max ratios are acceptable per object? |
+| ResourceQuota | namespace aggregate policy | How much total resource/object budget may this namespace consume? |
+
+For CPU, reaching a configured limit normally means throttling. For memory, exceeding the cgroup memory limit can lead to OOM termination.
+
+The scheduler reasons primarily from requests and node allocatable capacity, not from a dashboard's instantaneous utilization graph. This is why a node can look idle but still reject a Pod whose request would exceed the remaining schedulable capacity.
+
+If a resource limit is set without a request, and admission has not supplied a
+default request, Kubernetes copies that limit into the request. Inspect the
+stored Pod, not only the submitted YAML. Runtime requests are accounting inputs;
+they are not a promise that observed usage stays below the requested amount.
+
+### Worked case: classify the failed boundary
+
+This authored dataset assumes ordinary single-container CPU requests and no
+other hard constraints. A Pod requests `600m`, requires `zone=east`, tolerates
+no taints, and prefers `zone=west`. Existing request totals include node agents.
+
+| Node | Labels | Allocatable CPU | Existing requests | Taint |
+| --- | --- | --- | --- | --- |
+| A | zone=east | 2000m | 1500m | none |
+| B | zone=west | 2000m | 500m | none |
+| C | zone=east | 2000m | 1100m | dedicated=gpu:NoSchedule |
+
+Write which nodes survive before reading on. A has `2000−1500=500m`, less than
+`600m`. B has `1500m` spare but fails the required label. C has `900m` spare but
+fails the taint rule. No feasible node remains; scoring cannot rescue B.
+
+On a real cluster, `kubectl get pod <name> -o yaml` exposes stored requests,
+selectors, tolerations and assignment. `kubectl describe node <name>` exposes
+allocatable, allocated requests, labels and taints. `kubectl describe pod <name>`
+can show `FailedScheduling`. These fields test the explanation; a low CPU graph
+alone does not. Event wording and aggregation can vary.
+
+Variant: lower the request to `400m`. A becomes feasible; B and C still fail.
+Variant: keep `600m` and add C's matching toleration. C becomes feasible. Neither
+change guarantees containers start: binding and node-side setup still follow.
+
+### Worked case: policy acts before placement
+
+Assume a namespace has no LimitRange, and admission supplies no default request.
+Its ResourceQuota hard limit for `requests.cpu` is `2000m`, with `1500m` used.
+A new Pod specifies only a CPU limit of `700m`. Predict the stored request and
+whether there will be a new Pod for the scheduler to place.
+
+The effective request is `700m` because the omitted request is copied from the
+limit. Namespace usage would become `1500+700=2200m`, exceeding `2000m`.
+Admission rejects this create request; it does not create an unscheduled Pod.
+The create error and `kubectl get resourcequota -o yaml` test quota admission;
+querying the new Pod name tests whether creation succeeded. A scheduler event
+cannot explain an object that was never stored.
+
+Variant: set an explicit request of `400m` with the same `700m` limit. Quota
+accounting becomes `1900m`, so this quota permits creation, assuming all other
+admission checks pass. The scheduler must still find capacity using `400m`.
+If instead a LimitRange defaults the missing request to `300m`, inspect that
+admitted value: the limit-copy fallback does not override an admission default.
+
+## 6. DaemonSet and Static Pod are different ownership models
+
+They can both produce node-local Pods, but the control path is completely different.
+
+### DaemonSet
+
+```text
+DaemonSet object
+    │
+    ▼
+DaemonSet controller decides eligible nodes
+    │
+    ▼
+Pod objects are created
+    │
+    ▼
+default scheduler normally binds each Pod
+    │
+    ▼
+kubelet executes on target node
+```
+
+Use DaemonSets for node agents such as log collectors, monitoring agents, CNI/node plugins, or storage/node components that should run on all or selected eligible nodes.
+
+### Static Pod
+
+```text
+node-local static Pod manifest/config
+    │
+    ▼
+kubelet watches it directly
+    │
+    ▼
+kubelet starts/restarts the Pod
+    │
+    └──► mirror Pod may appear in the API for visibility
+```
+
+A static Pod is bound to one kubelet and does not depend on a workload controller or normal scheduler. Deleting its mirror Pod through the API does not delete the underlying static Pod; the kubelet recreates the mirror record. kubeadm commonly runs control-plane components as static Pods.
+
+Static Pods are useful for bootstrap/control-plane cases. They are not a general substitute for DaemonSets and have important limitations, including inability to refer to normal API objects such as ConfigMaps, Secrets, or ServiceAccounts in the same way ordinary Pods do.
+
+For API-side ownership evidence, inspect `metadata.ownerReferences` and the
+controller owner's UID for a DaemonSet Pod. A static Pod's API mirror carries
+`metadata.annotations["kubernetes.io/config.mirror"]`. `crictl ps` can show a
+running container but does not alone prove who owns its Pod. These observations
+identify different boundaries; do not delete control-plane Pods to test them.
+
+## 7. Multiple schedulers and scheduler profiles
+
+Most Pods use the default scheduler. Kubernetes can also run additional scheduler implementations or expose multiple scheduler profiles.
+
+The Pod chooses a scheduler through:
+
+```yaml
+spec:
+  schedulerName: my-scheduler
+```
+
+If no running scheduler handles that name, the Pod can remain unscheduled.
+
+A `KubeSchedulerConfiguration` can define profiles. Profiles let one scheduler binary expose different behavior under different `schedulerName` values by enabling, disabling, or configuring scheduling plugins.
+
+At KCNA depth, remember this hierarchy:
+
+```text
+Pod.spec.schedulerName
+        │
+        ▼
+scheduler / scheduler profile
+        │
+        ▼
+plugins participate in queueing, filtering, scoring, binding, and related extension points
+```
+
+You do not need to memorize every plugin. You should recognize examples such as `NodeAffinity`, `TaintToleration`, and `NodeResourcesFit` and know that the scheduler framework composes these decisions rather than using one monolithic "best node" rule.
+
+## 8. Failure patterns worth recognizing
+
+| Symptom | First model to test |
+| --- | --- |
+| `Pending` + `Insufficient cpu` | requests cannot fit any candidate node |
+| `Pending` + node affinity mismatch | required placement rule removed candidates |
+| `Pending` + untolerated taint | matching toleration is missing |
+| `Pending` + custom `schedulerName` | is a scheduler/profile with that name actually running? |
+| Pod forced with `nodeName` but fails on node | direct assignment bypassed normal selection; inspect node/runtime constraints |
+| DaemonSet missing from one node | inspect eligibility, node affinity, taints, resources, and DaemonSet status |
+| Static control-plane Pod returns after API deletion | kubelet still owns the node-local static Pod manifest |
+
+## Before you answer a scheduling MCQ
+
+Ask in this order:
+
+1. Is this field a **hard filter**, a **preference**, or a **direct assignment**?
+2. Does it live on the **Pod**, the **Node**, a **controller**, or scheduler configuration?
+3. Who makes the decision: API server, controller, scheduler, or kubelet?
+4. What would prove the answer: live Pod assignment, scheduler event, node metadata, or kubelet-owned static configuration?
+
+If you can answer those four questions, most scheduling options stop looking interchangeable.
+
 ---
 
 # kubectl apply and live state
@@ -1116,6 +1716,26 @@ When an apply did not produce the expected result:
 5. Continue into Services/networking/application probes if necessary.
 
 The durable skill is not command recall. It is knowing where declared intent lives, which control loop consumes it, and what observation proves the next state transition.
+
+## Worked case: a status snapshot has a time boundary
+
+~~~text
+file: web replicas=3, image=registry.example/web:v2
+apply response: deployment.apps/web configured
+live spec: replicas=3, image=registry.example/web:v2
+metadata.generation: 8; status.observedGeneration: 7
+status.availableReplicas: 2
+~~~
+
+This authored snapshot proves that the API holds the intended fields. It does
+not yet prove the Deployment controller has reported on generation 8. Reinspect
+conditions and owner-linked ReplicaSets before labeling the rollout failed.
+Once generation 8 is observed, new Pod readiness and a request to `GET /version`
+answer downstream questions that the write response cannot answer.
+
+Defaults and controller-written status are expected differences from the local
+file. A live image different from the reviewed image is a different claim: use a
+field-aware diff and identify the managing actor before reconciling the disagreement.
 
 ---
 
@@ -1578,6 +2198,27 @@ When an object appears missing or a reference resolves incorrectly:
 5. If the problem is access or traffic isolation, inspect the relevant RBAC or network policy rather than assuming namespace isolation.
 
 The durable KCNA rule: **namespace tells you where a namespaced API object lives; policy tells you what actors or traffic are allowed to do.**
+
+## Worked case: one name, two objects, three questions
+
+Assume ordinary cluster DNS configuration and an application listening on port
+8080. These authored results are independent observations:
+
+~~~text
+team-a client → api:8080 → response team=a
+team-a client → api.team-b:8080 → response team=b
+user can list pods in team-b → yes
+kubectl get nodes -n team-a → the cluster's Node objects
+~~~
+
+The first two results exercise discovery and connectivity. The third exercises
+API authorization. None says that the user can create workloads or read Secrets.
+The last lookup concerns a cluster-scoped kind whose identity has no namespace.
+
+If team isolation is intended, examine bindings and policy-selected Pods on both
+sides rather than changing the Service names. A denied API read would not by
+itself prove blocked Pod traffic, and a failed HTTP probe could also mean the
+application is unhealthy rather than a policy denial.
 
 ---
 
@@ -2070,6 +2711,33 @@ When learning Pods, inspect the same event at several layers:
 
 The goal is not to memorize output columns. It is to answer: **who owns this state, what should happen next, and what evidence would show that it happened?**
 
+## Worked case: do not use a display name as durable identity
+
+~~~text
+10:00 api-55-x  UID=p7  node=node-a  restarts=0
+10:05 api-55-x  UID=p7  node=node-a  restarts=4  last reason=Error
+10:18 p7 deleted; api-55 desired=3 unchanged; matching Pods=2
+10:19 ReplicaSet/api-55 SuccessfulCreate: created Pod api-55-y
+10:20 api-55-y  UID=p8  node=node-b  owner=ReplicaSet/api-55
+~~~
+
+The first transition stays within one Pod record. Read that container's previous
+logs and termination state to explain the crash. The deletion, stable desired
+count, deficit and creation event support ReplicaSet count repair. The later
+UID identifies a different Pod. New UID and ownership alone would not prove
+that history: scale-up or adoption could also yield another owned Pod. This
+authored fixture supplies the missing history; it does not diagnose why p7 was deleted.
+
+The scheduler chooses placement for a new unscheduled Pod; kubelet/runtime own
+execution on that node. A bare Pod without a controller owner has no ReplicaSet
+promise to replace it after deletion. Running phase also cannot substitute for
+container state and Ready conditions.
+
+An `emptyDir` volume survives a container restart within that Pod, but its data
+is removed when the Pod is removed. A replacement Pod's identical volume name
+does not restore the old data. A PVC-backed volume has a separate lifecycle and
+must be evaluated using its claim, reclaim policy and storage topology.
+
 ---
 
 # Kubernetes resource operations and defaults
@@ -2406,7 +3074,13 @@ A DaemonSet is useful when you want one Pod on all or selected eligible nodes, f
 
 The DaemonSet controller creates Pods for eligible nodes. Those Pods still participate in Kubernetes placement semantics; the controller is expressing per-node desired state rather than becoming the node-side process executor.
 
-## Read Pending as a decision failure
+## Pending is a phase, not a diagnosis
+
+First separate three boundaries. An API validation or admission rejection can
+prevent a new object from being stored at all. An accepted Pod without
+`.spec.nodeName` still needs placement. An assigned Pod can remain `Pending`
+while kubelet sets up containers or downloads images. Read the live assignment,
+conditions, container waiting reasons, and events before choosing a component.
 
 If a Pod remains `Pending`, inspect events before changing random settings. Common scheduling reasons include:
 
@@ -2415,7 +3089,7 @@ If a Pod remains `Pending`, inspect events before changing random settings. Comm
 - untolerated taints;
 - volume topology constraints;
 - topology spread constraints that cannot be satisfied;
-- other admission or scheduling policy constraints.
+- other hard scheduling policy constraints.
 
 `kubectl describe pod` often exposes scheduler events describing why no node was feasible. The useful question is not merely "is it Pending?" but **which constraint eliminated every candidate node?**
 
@@ -2482,6 +3156,26 @@ For a workload that only needs to read one ConfigMap and call one backend:
 
 Security evidence includes both positive and negative tests: prove the intended action works and the disallowed action fails.
 
+## Worked case: known caller, permitted verb, rejected object
+
+~~~text
+subject: system:serviceaccount:sandbox:deployer
+can create pods in sandbox: yes
+privileged Pod create: denied by restricted Pod Security policy
+can list secrets in sandbox: no
+~~~
+
+These authored outputs represent different checks. Authentication establishes
+the subject; authorization permits Pod creation; admission evaluates the proposed
+Pod. The API rejection names the policy that stopped persistence. A `can-i` yes
+checks authorization and cannot promise every proposed Pod will pass admission.
+
+Inspect the Role/RoleBinding scope and admission error before proposing a change.
+Use the existing identity or authorized impersonation for diagnostic checks;
+impersonation itself needs permission. Do not expose Secret values as evidence.
+A successful create would still require node-side execution and separate network
+connectivity evidence.
+
 ---
 
 # Kubernetes persistent storage lifecycle
@@ -2535,6 +3229,26 @@ StatefulSets can use `volumeClaimTemplates` so each Pod identity receives its ow
 
 The durable mental model is: **Pod lifecycle and storage lifecycle intersect, but they are not the same lifecycle.**
 
+## Worked case: three deletions are three different boundaries
+
+~~~text
+StorageClass/zonal: volumeBindingMode=WaitForFirstConsumer
+before consumer: PVC/ledger Pending
+after consumer: PVC/ledger Bound → PV/ledger-a, zone=a, Retain
+delete consumer Pod only: PVC/ledger still Bound
+delete claim after use ends: PV/ledger-a Released; old data remains
+~~~
+
+This is an authored lifecycle comparison, not an instruction to delete storage.
+The provisioner creates backing storage; node-side operations make it usable.
+A replacement using the same claim must satisfy the zone and access constraints.
+`Retain` protects the reclamation boundary, but it is neither a backup nor an
+automatic clean volume for the next tenant.
+
+With delayed binding, assigning `spec.nodeName` directly bypasses the scheduler
+and can leave the claim Pending. Express an appropriate node selector instead
+when scheduler participation is needed; inspect events before changing placement.
+
 ---
 
 # Namespaces and control groups
@@ -2578,6 +3292,23 @@ When Kubernetes applies requests and limits, a container runtime translates
 those declarations into host-level process and cgroup configuration. The
 abstraction is useful, but the underlying resource behavior remains Linux.
 
+## Worked case: Separate network views, one shared CPU quota
+
+The authored fixture assumes unified cgroup v2, the CPU controller enabled for
+`/batch`, ordinary fair-scheduled processes, and no configured quota burst.
+
+~~~text
+/proc/701/ns/net → net:[4026533001]
+/proc/702/ns/net → net:[4026533002]
+/proc/701/cgroup → 0::/batch
+/proc/702/cgroup → 0::/batch
+/batch/cpu.max → 50000 100000
+~~~
+
+The processes can have different interfaces and route tables while consuming one group quota. Read the matching `/sys/fs/cgroup/batch/cpu.stat` twice around load; an increase in `nr_throttled` supports quota enforcement in that interval. The quota controls bandwidth, not a permanent assignment to one half of a specific core. Inspect ancestors before claiming this local value is the only limit. A distinct cgroup path would change the accounting question without changing namespace visibility.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # Pods and workload controllers
@@ -2609,9 +3340,29 @@ anonymous replica count. Scaling a StatefulSet changes a named ordinal set.
 A DaemonSet count follows eligible nodes rather than a requested replica
 number.
 
-Pod templates are snapshots for new Pods. Updating a controller template causes
-a rollout; it does not mutate the process memory or image filesystem of already
-running containers. This replacement model is central to predictable delivery.
+Pod templates are snapshots for new Pods. Updating a controller template changes the template for future Pods; rollout
+behavior depends on the controller and its update strategy. It does not mutate
+the process memory or image filesystem of already running containers. This replacement model is central to predictable delivery.
+
+## Worked case: completion is part of the requirement
+
+The authored import specification is: start at 02:00, validate one batch,
+write one result, and exit. The validator listens on `localhost:9000`; both
+containers mount the Pod volume at `/batch`.
+
+~~~text
+CronJob/import-nightly → Job/import-nightly-42 → one Pod
+  importer → localhost:9000 → validator
+  importer /batch ↔ declared shared volume ↔ validator /batch
+Job status: succeeded=1; batch ledger: batch-42 imported once
+~~~
+
+The controllers create API objects; kubelet/runtime execute the containers.
+Job status establishes the controller's completion criterion, and the batch
+ledger establishes the business result. Containers need coordinated termination:
+a validator that never exits can keep a Job incomplete unless its lifecycle is
+configured appropriately. CronJob scheduling alone does not guarantee exactly-once
+business processing, so retries should be safe for an already imported batch.
 
 ---
 
@@ -2650,6 +3401,21 @@ steer traffic to a ready endpoint.
 Debug in layers: resolve the name, inspect the returned address, test the
 transport endpoint, then validate the application protocol. Skipping straight
 to “DNS is broken” hides which layer actually failed.
+
+## Worked case: The sidecar and remote Pod reach different addresses
+
+This fixture assumes ordinary shared Pod networking rather than hostNetwork.
+
+~~~text
+DNS: reports.test → 10.42.1.8
+ss -lntp in target Pod: 127.0.0.1:8080 users:(("reports",pid=33))
+sidecar → 127.0.0.1:8080 → HTTP 200
+other Pod → 10.42.1.8:8080 → connection fails
+~~~
+
+The shared Pod kernel networking view makes localhost usable by the sidecar. The remote packet targets a different local address, so the loopback-only socket is insufficient. Compare the two address-specific probes within the target namespace to establish the bind mismatch, then test the original remote path after repair. A wildcard listener would falsify this specific hypothesis; it would move the investigation to routing, policy or the observed application behavior.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
 
 ---
 
@@ -2701,6 +3467,21 @@ average, memory use, or latency as isolated numbers.
 The container and the pod do not replace this model. They add isolation,
 metadata, and orchestration around processes that still consume host resources.
 
+## Worked case: Two executions, two different bottlenecks
+
+A report service starts two workers from the same binary. The following is an authored Linux snapshot, not a measurement of your machine.
+
+~~~text
+PID  COMMAND  STATE  CPU-time change over 5s
+410  report   R      +4.7s
+411  report   D      +0.0s
+storage write latency: elevated in the same interval
+~~~
+
+Worker 410 is receiving CPU time. Worker 411 is waiting in an uninterruptible state; the matching storage evidence supports an I/O hypothesis. The kernel owns scheduling and I/O completion, while the application owns the writes it issues. Read-only `ps -o pid,stat,time,comm -p 410,411` samples and the relevant device metrics distinguish the two demands. A later R sample would weaken the claim that 411 is continuously blocked; D is not proof of one particular disk failure.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # Routing, NAT, and firewalls
@@ -2721,12 +3502,17 @@ an internal endpoint. Translation does not automatically authorize traffic,
 and filtering does not necessarily translate it.
 
 ~~~text
-packet arrives
-  → classify connection and policy
-  → select route / next hop
-  → optionally rewrite address or port
-  → transmit through an interface
+received forwarded packet (simplified Linux example)
+  → prerouting hooks: possible destination NAT
+  → route selects outgoing interface using the resulting destination
+  → forward hooks: filtering policy
+  → postrouting hooks: possible source NAT
+  → outgoing interface
 ~~~
+
+This is a received-and-forwarded packet path, not a universal order for every
+packet. Locally generated or locally delivered packets traverse different
+hooks, and configured priorities order operations within a hook.
 
 Stateful firewalls remember flows. A rule permitting an outbound connection can
 allow its related return packets without a separate broad inbound rule. This is
@@ -2740,6 +3526,21 @@ The phrase “the network blocks it” is not a diagnosis.
 When debugging, compare both directions. Asymmetric routes, missing return
 policy, or translation state can let the request leave while preventing the
 response from returning.
+
+## Worked case: A published mapping can still be filtered
+
+The gateway fixture has a destination translation but deliberately denies forwarding of new connections to its selected backend.
+
+~~~text
+public target: 203.0.113.10:443
+DNAT target: 10.0.2.9:8443
+forward rule: NEW TCP to 10.0.2.9:8443 → DROP
+backend return route: via this gateway
+~~~
+
+The configured mapping names the intended destination; the gateway kernel executes translation and filtering at their configured hooks. Read-only `nft list ruleset` inspection locates rules and counters if present. Matching DNAT and drop-counter increases with no backend packet support the policy hypothesis. Without traffic observations this remains a configuration prediction. An allow rule or an alternate packet path could change the result; NAT is not a universal ordered step after all routing.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
 
 ---
 
@@ -2778,6 +3579,27 @@ needs care to avoid removing all capacity at once.
 
 Scheduling answers “where may it run?” Probes answer “what should the node and
 traffic data plane do now?” Neither proves the user-visible transaction works.
+
+## Worked case: calculate placement before choosing a health fix
+
+~~~text
+node-a allocatable: 2000m CPU, 4Gi memory
+existing requests: 1700m CPU, 2Gi memory
+new request:        400m CPU, 1Gi memory
+remaining:          300m CPU, 2Gi memory
+~~~
+
+For this authored ordinary-container fixture, memory fits but CPU does not.
+A Pending Pod event such as `Insufficient cpu` supports that calculation; a
+usage graph showing 200m does not refute it. Placement still has other dimensions:
+Pod count/IP availability, taints, selectors and volume topology can independently
+exclude a node. Init containers and Pod overhead require their own accounting.
+
+After successful placement elsewhere, liveness failure invokes node-side restart
+behavior. A shared database outage belongs in dependency-aware readiness or
+service monitoring when restart cannot repair it; removing every replica from
+traffic also has availability consequences. Check restarts and actual transaction
+results before declaring recovery.
 
 ---
 
@@ -2865,6 +3687,21 @@ Use pipelines for observable, bounded transformations. For automation, quote
 variables, make error handling explicit, and avoid parsing human-oriented
 output when a structured interface exists.
 
+## Worked case: A successful compressor can conceal a failed export
+
+This bounded Bash example has no file output and runs no exporter. It isolates status selection before considering container shutdown.
+
+~~~text
+bash -c '(exit 7) | cat; printf "status=%s\n" "$?"'
+# expected: status=0
+bash -o pipefail -c '(exit 7) | cat; printf "status=%s\n" "$?"'
+# expected: status=7
+~~~
+
+The shell connects stdout to stdin and chooses the returned pipeline status; the kernel runs the processes. `cat` can consume an empty stream successfully even when its producer failed. Separately, a container wrapper must arrange delivery of termination signals to children or replace itself with the intended main process where appropriate. `pipefail` neither forwards TERM nor guarantees that the application drains work. Shell variants differ, so this case names Bash deliberately.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.
+
 ---
 
 # Troubleshoot from process to pod
@@ -2909,3 +3746,19 @@ changing several layers at once.
 The goal is not a favorite command. It is a causal account from declared intent
 to the user's failed transaction, followed by the smallest reversible fix and a
 verification at the original boundary.
+
+## Worked case: A healthy process can be absent from its Service
+
+The following authored observations are in one namespace and time window, with no publishNotReadyAddresses override.
+
+~~~text
+checkout DNS → 10.96.20.4
+Service selector → app=checkout; targetPort=8080
+Pod labels → app=cart; Running=True; Ready=True
+Pod-IP:8080/health → HTTP 200
+checkout EndpointSlice backend addresses → none
+~~~
+
+The API endpoint controller derives backend membership from selectors and readiness. The mismatched label is enough to explain why this Pod is absent; neither the scheduler nor DNS owns that relationship. Read `kubectl get svc checkout -n demo -o yaml`, Pod labels and EndpointSlices labelled `kubernetes.io/service-name=checkout`. A reviewed correction should produce the intended endpoint, followed by a repeat of the original Service-name request. If endpoints already contain this Ready Pod, this selector hypothesis is falsified and the next checks are port mapping, listener and packet policy.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

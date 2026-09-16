@@ -15,3 +15,10 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: Upstream overview of pod and Service networking.
+  - id: source:linux-route-selection
+    title: "ip-route — route lookup"
+    url: https://man7.org/linux/man-pages/man8/ip-route.8.html
+    publisher: "iproute2 manual"
+    type: manual
+    verified_at: 2026-09-16
+    note: "Route lookup, gateway selection and ip route get evidence."

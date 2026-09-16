@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:ip-subnets
-revision: 2
+revision: 3
 questions:
   - id: fpp:ip-subnets/q-local
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:ip-subnets/address-prefix]
   - id: fpp:ip-subnets/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Use read-only commands to connect local addresses to route selection. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: List interface addresses with ip address. List routes with ip route. Ask ip route get for one local and one internet destination. Treat the conclusion as justified only when You can identify the selected interface and next hop. You can name the longest matching prefix for each destination."
+    prompt: "A Linux host has 10.20.4.17/24 on eth0. In one ordinary routing table it has 10.20.4.0/24 dev eth0, 10.20.4.128/25 via 10.20.4.1 dev eth0, and default via 10.20.4.254. For destination 10.20.4.200, which route wins and whose neighbor address should be resolved? Assume no policy routing or equal-cost ambiguity."
+    model_answer: "The /25 wins because it matches more destination bits than the connected /24. The selected next hop is 10.20.4.1 on eth0, so the host resolves the router's link-layer address rather than directly resolving 10.20.4.200. The interface prefix alone does not override a more-specific route. ip route get 10.20.4.200 supplies lookup evidence, not proof that the router or destination responds."
     critical_points:
-      - "You can identify the selected interface and next hop."
-      - "You can name the longest matching prefix for each destination."
+      - "The most-specific matching route wins under the stated table assumptions."
+      - "An explicit next-hop route can override the broader connected prefix."
+      - "A route lookup proves selection rather than end-to-end connectivity."
     objective_ids: [fpp:ip-subnets/address-prefix, fpp:ip-subnets/local-or-routed]

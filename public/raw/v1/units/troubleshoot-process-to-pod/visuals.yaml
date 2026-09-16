@@ -1,11 +1,15 @@
 schema_version: 1
 unit_id: fpp:troubleshoot-process-to-pod
-revision: 3
+revision: 4
 visuals:
   - id: fpp:troubleshoot-process-to-pod/visual-evidence-ladder
     kind: evidence
     eyebrow: Evidence ladder
-    title: Localize the broken layer before changing state
+    title: "A healthy process can be absent from its Service"
     lines:
-      - "declared intent → API status and events → controller or scheduler → kubelet and runtime → process → network and policy → user-visible probe"
-    teaching_point: Move down the evidence ladder until the first broken boundary is identified, then change the smallest relevant layer and verify from the user-visible path again.
+      - "checkout name → DNS → Service IP (discovery supported)"
+      - "Service app=checkout ≠ Pod app=cart"
+      - "endpoint controller → no matching Pod backend"
+      - "direct Pod HTTP 200 ≠ Service-path proof"
+      - "repair relationship → endpoint evidence → original client probe"
+    teaching_point: "The observed selector-to-label mismatch localizes missing backend membership. Running/Ready and a direct Pod probe do not prove the Service path. Verification must repeat the original user-visible transaction after endpoint membership updates."

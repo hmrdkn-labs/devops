@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:config-secrets-storage
-revision: 2
+revision: 3
 questions:
   - id: fpp:config-secrets-storage/q-fresh
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:config-secrets-storage/pv-topology]
   - id: fpp:config-secrets-storage/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Inspect an existing non-production claim and explain every ownership boundary. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Read the PVC, bound PV, StorageClass, CSI driver, and selected Pod. Record access mode, reclaim policy, volume mode, and topology. State what happens on Pod deletion, claim deletion, node loss, and AZ loss. Treat the conclusion as justified only when You distinguish Pod, claim, volume, and cloud-resource lifecycle. Your AZ answer matches the storage topology."
+    prompt: "Reports uses ConfigMap MODE=fast through an environment variable and writes exports to a bound PVC. MODE changes to safe, then the Deployment replaces a Pod while the PVC remains. A teammate also proposes storing the report API key in that ConfigMap. Predict configuration and data reuse, choose the credential boundary, and name evidence without revealing the key."
+    model_answer: "The existing process keeps its environment value; a newly started process receives safe. The replacement can reuse the unchanged claim where volume topology and access rules permit. MODE belongs in non-confidential configuration; the API key needs controlled Secret or external-secret delivery, not a ConfigMap. Secret manifest base64 is not encryption. Check a non-sensitive mode diagnostic, credential reference/access policy, PVC/PV binding, topology, mount events and an existing export. Do not print the credential; API records alone do not prove application consumption."
     critical_points:
-      - "You distinguish Pod, claim, volume, and cloud-resource lifecycle."
-      - "Your AZ answer matches the storage topology."
+      - "Environment-based configuration is captured when the process starts."
+      - "Confidential credentials need protected Secret or external delivery; base64 does not encrypt them."
+      - "An unchanged PVC can outlive a Pod; topology and a successful mount still matter."
     objective_ids: [fpp:config-secrets-storage/config-secret, fpp:config-secrets-storage/pv-topology]

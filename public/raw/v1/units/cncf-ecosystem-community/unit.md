@@ -53,3 +53,24 @@ When you encounter an unfamiliar project, ask three questions:
 3. Is it an implementation, a specification, a hosted project, or a catalog entry?
 
 That method is more durable than memorizing the visual layout of the CNCF Landscape.
+
+## Worked case: route the technical question to its owner
+
+~~~text
+need: Pod networking compatible with kubelet/runtime integration
+contract: CNI conventions; implementation: selected network plugin/dataplane
+need: container process execution
+contract: CRI; implementation: containerd via its CRI integration
+question: Kubernetes networking integration → SIG Network + relevant project
+~~~
+
+This authored map explains ownership without prescribing a complete stack.
+A reproducible bug report should name versions, the interface call or object,
+expected behavior and the smallest observed failure. A Kubernetes integration
+issue and a plugin-internal forwarding defect may have different owners; start
+with the responsible project's documented reporting process.
+
+CNCF hosts projects and supports an ecosystem; it does not become the runtime
+executor or require every listed product. Open contracts make replacement and
+collaboration possible, but two implementations still need compatible versions
+and configuration before interoperability is demonstrated.

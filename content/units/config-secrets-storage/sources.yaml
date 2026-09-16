@@ -1,6 +1,13 @@
 schema_version: 1
 unit_id: fpp:config-secrets-storage
 sources:
+  - id: fpp:config-secrets-storage/source-secret-delivery
+    title: Secrets
+    url: https://kubernetes.io/docs/concepts/configuration/secret/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: Verified confidential-data distinction and the need for encryption at rest and least-privilege access; no credential values are included.
   - id: source:kubernetes-persistent-volumes
     title: Persistent Volumes
     url: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
@@ -15,3 +22,10 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: EKS EBS CSI driver prerequisites and behavior.
+  - id: fpp:config-secrets-storage/source-worked-boundary
+    title: "ConfigMaps"
+    url: https://kubernetes.io/docs/concepts/configuration/configmap/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified environment capture, eventual projected-file updates, and the subPath update exception."

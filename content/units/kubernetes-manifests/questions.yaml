@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-manifests
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-manifests/q-apply-proof
     kind: scenario
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-manifests/object-shape]
   - id: fpp:kubernetes-manifests/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Pick one Deployment manifest and explain it without relying on memorized YAML blocks. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Identify apiVersion, kind, object name, namespace, labels, and desired fields. State which component should react after the API stores the object. Write one command or observation for API acceptance and one for runtime convergence. Treat the conclusion as justified only when The explanation separates desired state from observed state. At least one downstream proof is named beyond kubectl apply."
+    prompt: "A proposed apps/v1 Deployment has selector.matchLabels app=web, but template.metadata.labels app=api. Assume no object with that name exists. Does it reach scheduler filtering? What result would distinguish API validation failure from an unscheduled Pod?"
+    model_answer: "The Deployment is invalid because its selector does not match its Pod-template labels. The API rejects creation before this Deployment can produce Pods. Inspect the create error and query the Deployment by name: no new object is stored. Scheduler FailedScheduling applies to an accepted Pod waiting for placement, not this rejected manifest."
     critical_points:
-      - "The explanation separates desired state from observed state."
-      - "At least one downstream proof is named beyond kubectl apply."
+      - "Deployment selector must match template labels."
+      - "API rejection precedes controller and scheduler work."
     objective_ids: [fpp:kubernetes-manifests/object-shape, fpp:kubernetes-manifests/proof-boundary]
+
   - id: fpp:kubernetes-manifests/q-missing-api-version
     kind: predict
     prompt: A document is syntactically valid YAML and contains kind, metadata, and spec, but apiVersion is missing. Should Kubernetes treat it as a valid API object?

@@ -22,3 +22,10 @@ sources:
     type: documentation
     verified_at: 2026-09-09
     note: Probe semantics and runtime behavior.
+  - id: fpp:cloud-native-release-debugging/source-worked-boundary
+    title: "EndpointSlices"
+    url: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified endpoint readiness conditions and publishNotReadyAddresses exception."

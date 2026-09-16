@@ -1,0 +1,94 @@
+schema_version: 1
+unit_id: fpp:kcna-scheduling-review
+revision: 1
+cards:
+  - id: fpp:kcna-scheduling-review/c-filter-score-bind
+    type: short
+    front: What are the three useful KCNA-level phases to remember after an unscheduled Pod reaches kube-scheduler?
+    back: Filter infeasible nodes, score the feasible nodes, then bind the Pod to the selected node.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/c-who-executes
+    type: short
+    front: Does kube-scheduler start the Pod's containers after choosing a node?
+    back: No. The scheduler records placement; the kubelet on the chosen node drives container execution through the runtime.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/c-nodename
+    type: short
+    front: What is special about spec.nodeName compared with nodeSelector or node affinity?
+    back: nodeName directly assigns the Pod to a named node and bypasses ordinary scheduler selection; selectors and affinity are scheduler constraints.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/decision-path, fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/c-node-selector
+    type: short
+    front: What does nodeSelector express?
+    back: A simple hard requirement that the selected node match specified node labels.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/c-required-preferred
+    type: prompt
+    front: Required node affinity versus preferred node affinity?
+    back: Required affinity filters out nonmatching nodes; preferred affinity contributes to scoring among otherwise feasible nodes.
+    critical_points: [Hard rules filter; soft rules score]
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/c-ignored-execution
+    type: short
+    front: What does IgnoredDuringExecution mean in the common node-affinity terms?
+    back: The affinity is evaluated for scheduling, but later node-label changes do not automatically evict the running Pod because of that affinity rule alone.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/c-taint-toleration
+    type: short
+    front: What does a matching toleration guarantee?
+    back: It permits the Pod under the matching taint effect, rather than guaranteeing placement. For NoExecute, a finite tolerationSeconds permits staying only for that duration; expiry can still cause eviction.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/c-taint-effects
+    type: short
+    front: What are the three common taint effects?
+    back: NoSchedule, PreferNoSchedule, and NoExecute.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/c-request-limit
+    type: short
+    front: "Which value is a primary scheduling input: resource request or resource limit?"
+    back: The request. Limits are primarily runtime enforcement boundaries, while requests participate in scheduler feasibility and reservation accounting.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/resource-policy]
+  - id: fpp:kcna-scheduling-review/c-limitrange-quota
+    type: prompt
+    front: LimitRange versus ResourceQuota?
+    back: LimitRange governs per-object defaults and min/max-style constraints in one namespace; ResourceQuota governs aggregate namespace budgets and counts.
+    critical_points: [Individual-object policy versus aggregate namespace policy]
+    objective_ids: [fpp:kcna-scheduling-review/resource-policy]
+  - id: fpp:kcna-scheduling-review/c-daemonset
+    type: scenario
+    front: You need a log collector on every eligible worker node. Which controller pattern fits?
+    back: A DaemonSet. Its controller creates Pods for eligible nodes; the scheduler and kubelet still perform placement and execution responsibilities.
+    critical_points: [DaemonSet is controller intent, not a replacement for kubelet]
+    objective_ids: [fpp:kcna-scheduling-review/node-ownership]
+  - id: fpp:kcna-scheduling-review/c-static-pod
+    type: short
+    front: Who directly owns and restarts a static Pod?
+    back: The kubelet on that node, based on its static Pod configuration or manifest source.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/node-ownership]
+  - id: fpp:kcna-scheduling-review/c-mirror-pod
+    type: scenario
+    front: You delete a mirror Pod for a static Pod through the API. What happens to the underlying workload?
+    back: The kubelet-owned static Pod keeps running, and the kubelet can recreate the mirror object for API visibility.
+    critical_points: [Mirror Pod is not the owner]
+    objective_ids: [fpp:kcna-scheduling-review/node-ownership]
+  - id: fpp:kcna-scheduling-review/c-scheduler-name
+    type: short
+    front: Which Pod field selects a non-default scheduler or scheduler profile?
+    back: spec.schedulerName. Its value must match a scheduler or profile that actually handles that name.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension]
+  - id: fpp:kcna-scheduling-review/c-profile
+    type: prompt
+    front: What is the KCNA-level mental model of a kube-scheduler profile?
+    back: A named scheduling behavior in kube-scheduler configuration that can enable, disable, or configure scheduling plugins and is selected through schedulerName.
+    critical_points: [Profiles name behavior; plugins implement phase-specific logic]
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension]

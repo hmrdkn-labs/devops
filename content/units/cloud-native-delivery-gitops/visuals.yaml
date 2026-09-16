@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:cloud-native-delivery-gitops
-revision: 2
+revision: 3
 visuals:
   - id: fpp:cloud-native-delivery-gitops/visual-delivery-loop
     kind: flow
     eyebrow: Delivery path
     title: Separate artifact creation from release reconciliation
     lines:
-      - "source commit → CI builds artifact → desired deployment state in Git → reconciler → runtime"
+      - "CI builds D2; production Git R10 still declares D1"
+      - "GitOps reconciler applies R10 → Kubernetes desired image D1"
+      - "runtime D1 + GET /version D1 agrees with current intent"
+      - "promotion/revert changes intent; database side effects need separate recovery"
     teaching_point: CI creates and verifies artifacts; GitOps-style CD reconciles reviewed desired state into the runtime and keeps correcting drift.

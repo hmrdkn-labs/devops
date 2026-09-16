@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
-revision: 2
+revision: 3
 questions:
   - id: fpp:cncf-ecosystem-community/q-landscape
     kind: explain
@@ -20,9 +20,9 @@ questions:
     objective_ids: [fpp:cncf-ecosystem-community/projects]
   - id: fpp:cncf-ecosystem-community/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Choose five unfamiliar CNCF projects and classify each by responsibility before reading implementation details. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: For each project, write one sentence describing the problem it solves. Mark whether it is mainly control plane, data plane, runtime, delivery, or observability tooling. Identify one interface or upstream/downstream component it interacts with. Record whether the project is needed by Kubernetes itself or is an optional ecosystem choice. Treat the conclusion as justified only when No project is classified only by logo or landscape category. Optional ecosystem tools are not described as mandatory Kubernetes components."
+    prompt: "An architecture proposal says installing every CNCF Landscape logo will make the platform interoperable. It also assigns packet forwarding to CNI and container execution to the CRI specification. Rewrite those ownership claims and identify where a networking contract question should go for upstream collaboration."
+    model_answer: "The Landscape is a catalog, not an installation prescription. Select implementations for actual requirements: a network implementation uses CNI conventions to configure networking and its dataplane handles packets; kubelet uses CRI to ask a runtime such as containerd to execute containers. Specifications are contracts, not running executors. Consult the relevant specification/project maintainers and Kubernetes SIG Network for the integration question, using a minimal reproduction and version/interface evidence rather than logos."
     critical_points:
-      - "No project is classified only by logo or landscape category."
-      - "Optional ecosystem tools are not described as mandatory Kubernetes components."
+      - "Catalog entries and interface specifications do not execute a platform."
+      - "Concrete implementations own execution; upstream collaboration follows project/interface and SIG responsibility."
     objective_ids: [fpp:cncf-ecosystem-community/projects, fpp:cncf-ecosystem-community/community]

@@ -49,10 +49,33 @@ Each step has different evidence:
 
 ## Readiness protects traffic; liveness restarts processes
 
-A readiness failure can remove a Pod from Service endpoints without restarting the container. A liveness failure tells the kubelet to restart the container. Using liveness for a dependency outage can turn an external failure into a restart storm.
+A readiness failure can mark a Pod's EndpointSlice entry unready without restarting the container; ordinary Service routing then excludes it from ready backends. A liveness failure tells the kubelet to restart the container. Using liveness for a dependency outage can turn an external failure into a restart storm.
 
 ## Roll back only after naming the failure boundary
 
 Rollback can be the safest mitigation, but it is not a substitute for diagnosis. Record the failing revision and the smallest evidence first. If the failure is a shared database outage or invalid Secret, rolling back application Pods may not fix the incident.
 
 The durable skill is to localize the first broken boundary before choosing the mitigation.
+
+## Worked case: eligibility comes before exposure measurement
+
+~~~text
+Service selector: app=checkout; publishNotReadyAddresses=false
+v1: nine Ready Pods
+v2: one Running Pod, Ready=false
+EndpointSlice: v2 address present, ready=false
+GET /version results in sample: v1 only
+~~~
+
+This authored snapshot permits an unready endpoint address to exist in an
+EndpointSlice; it is not an ordinary ready backend. Probe events and application
+startup/listener evidence identify the earliest observed failure. The slice
+controller records endpoint conditions; the concrete network implementation
+executes forwarding.
+
+Once ready, replica proportion still does not guarantee request proportion:
+connections, client behavior and routing rules can skew exposure. A canary needs
+an explicit exposure mechanism, version-specific measurements and an expand/abort
+criterion. With `publishNotReadyAddresses=true`, the slice controller sets endpoint
+ready=true even for an unready Pod. That is a counterexample to treating Pod
+Ready=false as a universal prohibition in every Service configuration.

@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:container-lifecycle
-revision: 2
+revision: 3
 visuals:
   - id: fpp:container-lifecycle/visual-runtime-lifecycle
     kind: lifecycle
     eyebrow: Runtime lifecycle
-    title: A container is a runtime-created process lifecycle
+    title: "Restarting a process differs from replacing its container"
     lines:
-      - "image → create container state → start PID 1 → signal or exit → stopped container → removal"
-    teaching_point: The image is durable input; the container is runtime state around a process whose PID 1, exit status, logs, and restart policy determine lifecycle behavior.
+      - "C1 running → process exits 2 → C1 stopped"
+      - "start C1 → existing writable layer + new process memory"
+      - "remove C1 → its writable layer removed"
+      - "create C2 from image → fresh layer; external volumes are separate"
+    teaching_point: "Same-container start retains writable-layer state but not process memory. Removal and recreation replace the writable layer unless data is externalized. An exit code must be interpreted with application and runtime evidence."

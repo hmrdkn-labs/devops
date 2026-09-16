@@ -15,3 +15,10 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: Upstream ephemeral-container and runtime observation workflow.
+  - id: source:kubernetes-debug-service
+    title: "Debug Services"
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Selector, endpoint membership and direct backend testing as separate Service troubleshooting checks."

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 3
+revision: 4
 cards:
   - id: fpp:kubernetes-pod-model/c-schedule
     type: short

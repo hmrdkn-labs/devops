@@ -1,6 +1,20 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
 sources:
+  - id: fpp:cncf-ecosystem-community/source-cri-contract
+    title: Container Runtime Interface
+    url: https://kubernetes.io/docs/concepts/containers/cri/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: Verified kubelet-to-runtime protocol ownership; CRI is a contract rather than an executor.
+  - id: fpp:cncf-ecosystem-community/source-network-plugin
+    title: Network Plugins
+    url: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: Verified CNI integration and the requirement for a concrete network implementation.
   - id: source:cncf-projects
     title: CNCF Projects
     url: https://www.cncf.io/projects/
@@ -29,3 +43,10 @@ sources:
     type: specification
     verified_at: 2026-09-09
     note: Open container image, runtime, and distribution specification ecosystem.
+  - id: fpp:cncf-ecosystem-community/source-worked-boundary
+    title: "Kubernetes SIG and Working Group List"
+    url: https://github.com/kubernetes/community/blob/main/sig-list.md
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified SIG Network responsibility for networking collaboration; executor map is independently authored."

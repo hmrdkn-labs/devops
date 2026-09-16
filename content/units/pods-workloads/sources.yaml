@@ -15,3 +15,10 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: Upstream controller selection overview.
+  - id: fpp:pods-workloads/source-worked-boundary
+    title: "Jobs"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/job/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified finite completion and retry behavior; the import and local validator scenario is independently authored."

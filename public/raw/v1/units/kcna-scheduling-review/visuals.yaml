@@ -1,0 +1,100 @@
+schema_version: 1
+unit_id: fpp:kcna-scheduling-review
+revision: 1
+visuals:
+  - id: fpp:kcna-scheduling-review/visual-decision-path
+    kind: flow
+    eyebrow: Scheduler request path
+    title: Placement is a control-plane decision followed by node-side execution
+    lines:
+      - "unscheduled Pod → queue → filter hard constraints → score feasible nodes → bind"
+      - "bind → kubelet on selected node → container runtime → running containers"
+    teaching_point: kube-scheduler determines where an ordinary Pod may run; kubelet and the runtime execute the chosen placement afterward.
+    components:
+      - name: kube-apiserver
+        location: control-plane
+        responsibility: Stores Pod and Node API state and exposes the assignment that scheduling records.
+        acts_on: Pod and Node API objects
+        proof: kubectl get pod <name> -o yaml
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Finds feasible nodes, scores candidates, and records the selected node for an unscheduled Pod.
+        acts_on: Pods without a node assignment
+        proof: kubectl describe pod <name>
+      - name: kubelet
+        location: worker-node
+        responsibility: Observes Pods assigned to its node and drives their node-side lifecycle.
+        acts_on: Bound Pods
+        proof: Inspect status.containerStatuses and node-side CRI output; nodeName alone proves assignment, not container execution.
+      - name: container-runtime
+        location: worker-node
+        responsibility: Creates and runs containers when requested by kubelet through the runtime interface.
+        acts_on: Container sandboxes and containers
+  - id: fpp:kcna-scheduling-review/visual-policy-directions
+    kind: comparison
+    eyebrow: Placement policy
+    title: Attraction, repulsion, preference, and direct assignment are not interchangeable
+    lines:
+      - "nodeSelector / required node affinity → hard attraction/filter by node labels"
+      - "preferred node affinity → scoring preference"
+      - "taint → repel; toleration → permit"
+      - "nodeName → direct assignment; scheduler selection bypassed"
+    teaching_point: Correct scheduling reasoning starts by classifying whether a mechanism filters, scores, repels, permits, or bypasses the scheduler entirely.
+    components:
+      - name: PodSpec
+        location: control-plane
+        responsibility: Carries nodeName, selectors, affinity, tolerations, requests, and schedulerName as declared placement intent.
+        acts_on: Pod scheduling requirements
+        proof: kubectl get pod <name> -o yaml
+      - name: Node
+        location: control-plane
+        responsibility: Exposes labels, taints, schedulability, and capacity used during placement decisions.
+        acts_on: Candidate-node metadata and capacity
+        proof: kubectl describe node <name>
+  - id: fpp:kcna-scheduling-review/visual-node-ownership
+    kind: ownership
+    eyebrow: Node-local workloads
+    title: DaemonSet and static Pod reach the kubelet through different owners
+    lines:
+      - "DaemonSet → controller → Pod object → scheduler → kubelet"
+      - "static manifest/config → kubelet directly → static Pod"
+      - "static Pod → mirror Pod in API for visibility, not ownership"
+    teaching_point: A similar-looking node-local Pod can be controller-owned through the API or directly kubelet-owned; diagnosis changes depending on that boundary.
+    components:
+      - name: DaemonSet-controller
+        location: control-plane
+        responsibility: Creates Pods for nodes that are eligible for the DaemonSet's desired node-level workload.
+        acts_on: DaemonSet and generated Pods
+        proof: Inspect Pod metadata.ownerReferences controller UID and match it to the DaemonSet UID.
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Normally binds DaemonSet Pods after the controller creates them for eligible nodes.
+        acts_on: DaemonSet-created Pods
+      - name: kubelet
+        location: worker-node
+        responsibility: Executes bound Pods and directly owns static Pods sourced from its static configuration.
+        acts_on: Bound Pods and static Pod definitions
+        proof: Inspect the mirror Pod kubernetes.io/config.mirror annotation; crictl ps separately shows runtime containers.
+  - id: fpp:kcna-scheduling-review/visual-resource-policy
+    kind: comparison
+    eyebrow: Resource policy layers
+    title: Request, limit, LimitRange, and ResourceQuota answer four different questions
+    lines:
+      - "request → scheduler feasibility / reserved capacity"
+      - "limit → runtime enforcement boundary"
+      - "LimitRange → per-object defaults and constraints in one namespace"
+      - "ResourceQuota → aggregate namespace budget and counts"
+    teaching_point: Resource scheduling, runtime enforcement, individual-object admission policy, and namespace-wide governance should be reasoned about as separate layers.
+    components:
+      - name: kube-scheduler
+        location: control-plane
+        responsibility: Uses declared requests with node allocatable capacity when evaluating resource fit.
+        acts_on: Pod placement feasibility
+      - name: admission-control
+        location: control-plane
+        responsibility: Applies and validates namespace policy such as LimitRange and ResourceQuota during API admission.
+        acts_on: New or updated API objects
+      - name: kubelet-runtime
+        location: worker-node
+        responsibility: Enforces runtime resource controls on containers after placement.
+        acts_on: Running containers

@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:images-layers-registries
-revision: 2
+revision: 3
 visuals:
   - id: fpp:images-layers-registries/visual-image-supply-chain
     kind: lifecycle
     eyebrow: Image supply chain
-    title: Content-addressed image data moves from build to runtime
+    title: "Hidden in the final view, present in the image history"
     lines:
-      - "build → image manifest + config + filesystem layers → registry digest → pull → runtime root filesystem"
-    teaching_point: Tags are mutable names, while digests identify immutable content; the runtime reconstructs a container filesystem from the referenced image content.
+      - "layer 2 contains dummy private-config bytes"
+      - "layer 3 removal → absent from final merged view"
+      - "manifest still references layer 2 → bytes remain distributable"
+      - "tag moves A → B; existing container stays based on A"
+    teaching_point: "Merged-view deletion does not remove earlier-layer bytes. A mutable tag lookup and a running container are different states. Digest identity does not certify trusted content."

@@ -49,3 +49,23 @@ If users report slowness:
 5. Use logs and Kubernetes events to explain the local cause.
 
 Evidence becomes stronger when independent signals agree. A dashboard is a view of measurements, not the system itself.
+
+## Worked case: telemetry transport is another system
+
+~~~text
+14:00–14:05 checkout p95: 120ms → 2s
+trace t42: checkout 2s; inventory call span 1.8s
+log trace_id=t42: inventory request timed out
+Prometheus target up=1; Collector exports succeeded
+~~~
+
+This authored fixture localizes t42's delay without proving inventory's underlying
+cause. Examine inventory-side traces/logs and compare other sampled requests;
+network delay, saturation and a downstream dependency remain possible explanations.
+The Collector receives/processes/exports telemetry, while the application handles
+checkout. An export acknowledgment is evidence about that transport boundary.
+
+Recovery evidence should include the same checkout transaction and a useful time
+window of latency/error measurements. One successful transaction cannot by itself
+establish restored p95 for the population. Avoid printing private transaction
+payloads or putting high-cardinality request IDs into every metric label.

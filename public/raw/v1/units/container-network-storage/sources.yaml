@@ -15,3 +15,17 @@ sources:
     type: documentation
     verified_at: 2026-08-27
     note: Writable layer, volume, and bind-mount distinctions.
+  - id: source:docker-publication
+    title: "Docker port publishing and mapping"
+    url: https://docs.docker.com/engine/network/port-publishing/
+    publisher: "Docker"
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Published endpoint scope and documented localhost-publication caveats on older Engine versions."
+  - id: source:docker-volume-lifetime
+    title: Docker volumes
+    url: https://docs.docker.com/engine/storage/volumes/
+    publisher: Docker
+    type: documentation
+    verified_at: 2026-09-16
+    note: Named volume data persists beyond individual container removal when the volume is retained.

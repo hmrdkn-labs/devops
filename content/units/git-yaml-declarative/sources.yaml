@@ -15,3 +15,10 @@ sources:
     type: specification
     verified_at: 2026-08-27
     note: YAML syntax and data model reference.
+  - id: source:kubernetes-api-dryrun
+    title: "Kubernetes API Concepts — dry-run"
+    url: https://kubernetes.io/docs/reference/using-api/api-concepts/#dry-run
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Server dry-run exercises request processing without persistence; it does not deploy running workloads."

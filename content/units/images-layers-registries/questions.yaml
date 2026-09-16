@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:images-layers-registries
-revision: 2
+revision: 3
 questions:
   - id: fpp:images-layers-registries/q-delete
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:images-layers-registries/tag-digest]
   - id: fpp:images-layers-registries/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Inspect a small public image without running untrusted code. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Pull a trusted minimal image from its official repository. Inspect its resolved digest, configuration, and layer history. Compare the tag reference with the content digest. Treat the conclusion as justified only when You can identify the immutable digest. You can distinguish metadata, layers, and the writable runtime layer."
+    prompt: "An image adds a private build-config file in layer A and deletes it in layer B. Its tag api:demo later moves from digest A to digest B. A running container created from digest A keeps serving. Has deletion removed the private bytes from distributable image layers, and has retagging changed that running process?"
+    model_answer: "No on both counts. A later removal hides the file from the merged filesystem but does not erase its content from the earlier layer. The registry tag is a mutable lookup to manifest content; changing it does not mutate an existing container's filesystem or process. Inspect the exact manifest and layer contents in a controlled fixture to assess included bytes, and compare the running container's image identity with the current tag resolution. Keep private input out of distributable layers; a digest identifies content, not trust or safety."
     critical_points:
-      - "You can identify the immutable digest."
-      - "You can distinguish metadata, layers, and the writable runtime layer."
+      - "Merged-view deletion does not remove earlier-layer bytes."
+      - "A mutable tag lookup and a running container are different states."
+      - "Digest identity does not certify trusted content."
     objective_ids: [fpp:images-layers-registries/image-content, fpp:images-layers-registries/tag-digest]

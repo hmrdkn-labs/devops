@@ -32,3 +32,23 @@ Pod scheduling must respect the PV topology
 
 Choose storage from durability, access mode, latency, backup, and failure-domain
 requirements rather than from the fact that it can be mounted.
+
+## Worked case: change configuration without confusing it with data
+
+These are authored fixture observations, not a live-cluster transcript:
+
+~~~text
+ConfigMap/report-settings: MODE changed fast → safe
+old Pod UID=a1: process mode=fast
+PVC/report-exports: Bound to PV/export-disk
+new Pod UID=b2: process mode=safe; /exports/2026-09.csv readable
+~~~
+
+The mode diagnostic proves what each process actually loaded. The claim and PV
+records identify storage intent; reading the existing export proves reuse at the
+application filesystem boundary. The kubelet and storage integration realize
+the mount, while the application loads configuration and reads data.
+
+A normal ConfigMap volume projection can update eventually, but the application
+must reread its files. A mount using `subPath` does not receive ConfigMap updates.
+None of these delivery choices makes the same zonal disk available in every zone.

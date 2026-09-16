@@ -5,13 +5,18 @@ const lessonRoute = '/lesson/kcna-kubernetes-resources';
 const checkpointLessons = [
   { checkpoint: 'fundamentals', title: 'Kubernetes Fundamentals', route: '/lesson/kcna-kubernetes-fundamentals', exercises: 11 },
   { checkpoint: 'resources', title: 'Kubernetes Resources', route: lessonRoute, exercises: 12 },
-  { checkpoint: 'cluster-behavior', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 11 },
+  { checkpoint: 'cluster-behavior', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 18 },
   { checkpoint: 'cloud-native', title: 'Cloud-Native Context', route: '/lesson/kcna-cloud-native-context', exercises: 11 },
 ] as const;
 
-async function check(page: Page) {
+async function check(page: Page, explore = true) {
   await page.getByTestId('lesson-check').click();
   await expect(page.getByTestId('lesson-feedback')).toBeVisible();
+  if (explore) {
+    await page.getByTestId('lesson-feedback-depth').locator(':scope > summary').click();
+    const rationales = page.getByTestId('lesson-rationales');
+    if (await rationales.count()) await rationales.locator(':scope > summary').click();
+  }
 }
 
 async function continueLesson(page: Page, nextStep: number) {
@@ -214,7 +219,8 @@ test('Learn first and hints remain assisted and use a different prompt variant',
   const learnFirst = page.getByTestId('learn-first-panel');
   await expect(learnFirst).toContainText('encounter only');
   await expect(learnFirst).toContainText('desired 3 → observed 2 → reconcile');
-  const componentMap = learnFirst.getByRole('region', { name: 'Component responsibility map' });
+  const componentMap = learnFirst.getByTestId('component-map-details');
+  await componentMap.locator(':scope > summary').click();
   await expect(componentMap).toContainText('ReplicaSet controller');
   await expect(componentMap).toContainText('control plane');
   await expect(componentMap).toContainText('kubelet');
@@ -334,7 +340,7 @@ test('mobile lesson controls and dense content stay reachable and overflow-free'
   await expect(page.getByTestId('lesson-check')).toBeInViewport();
 
   await page.locator('.lesson-option').nth(1).click();
-  await check(page);
+  await check(page, false);
   await expect(page.getByTestId('lesson-continue')).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });

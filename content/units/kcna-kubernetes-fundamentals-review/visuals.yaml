@@ -1,14 +1,18 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-fundamentals-review
-revision: 3
+revision: 4
 visuals:
   - id: fpp:kcna-kubernetes-fundamentals-review/visual-component-ownership
     kind: ownership
     eyebrow: Component ownership
-    title: Follow desired state from client to container runtime
+    title: "A recorded node assignment is not a running container"
     lines:
-      - "kubectl → API server → durable cluster state → controllers and scheduler → kubelet → CRI runtime → containers"
-    teaching_point: Control-plane components decide and record intent; node-side kubelet and the container runtime turn assigned Pod state into running processes.
+      - "ReplicaSet → replacement Pod exists (creation evidence)"
+      - "Pod nodeName=worker-b → placement recorded"
+      - "worker-b kubelet → CRI containerd → image pull retries"
+      - "Waiting/ImagePullBackOff → no proof of process start"
+      - "API/etcd store state; node components execute"
+    teaching_point: "nodeName records placement, but does not identify the placement actor by itself. Kubelet and CRI runtime own node execution and image realization. Existing Pod ownership and events separate controller creation from runtime failure."
   - id: fpp:kcna-kubernetes-fundamentals-review/visual-runtime-tools
     kind: ownership
     eyebrow: Runtime tooling

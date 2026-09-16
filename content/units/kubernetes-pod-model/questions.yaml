@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-pod-model/q-delete
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-pod-model/lifecycle]
   - id: fpp:kubernetes-pod-model/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Use any disposable test cluster with a three-replica Deployment and trace one manual Pod deletion. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record the Deployment, ReplicaSet, and three Pod names and UIDs. Delete one Pod and watch Pods and ReplicaSets change. Compare the deleted and replacement Pod UID, node, and IP, then inspect owner references. Treat the conclusion as justified only when The replacement is identified as a new Pod object. The ReplicaSet is named as the direct replica-count owner."
+    prompt: "Pod UID=p7 has restartCount rising from 0 to 4. Later p7 is deleted; ReplicaSet/api-55's desired count remains three, its matching count falls to two, and a SuccessfulCreate event names api-55-y with new UID=p8. That Pod is owned by api-55 and assigned node-b. Which transition is node-side restart and which is count-repair replacement? What evidence rules out migration?"
+    model_answer: "The increasing restart count with UID p7 identifies container restart within one Pod, performed by kubelet according to restart policy. The deletion, unchanged desired count, matching-count deficit and ReplicaSet SuccessfulCreate event support count repair by creating p8. Its new UID proves a different Pod, not migration of p7; node-b records its placement. Compare the event, UIDs, owner references, replica counts and container lastState. New UID plus ownership alone would not establish this history: scaling or adoption could also produce another owned Pod."
     critical_points:
-      - "The replacement is identified as a new Pod object."
-      - "The ReplicaSet is named as the direct replica-count owner."
+      - "Same Pod UID with increasing restart count distinguishes container restart."
+      - "Deletion, unchanged desired count, deficit and SuccessfulCreate support count-repair replacement; new UID proves distinct identity, not the cause by itself."
     objective_ids: [fpp:kubernetes-pod-model/lifecycle, fpp:kubernetes-pod-model/ownership]
+
   - id: fpp:kubernetes-pod-model/q-restart-vs-replace
     kind: explain
     prompt: What is the identity difference between a container restart inside one Pod and a controller replacing a failed Pod?

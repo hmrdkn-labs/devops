@@ -71,3 +71,30 @@ When learning Pods, inspect the same event at several layers:
 4. `kubectl get rs` and `kubectl get deployment` — upstream desired counts and rollout ownership.
 
 The goal is not to memorize output columns. It is to answer: **who owns this state, what should happen next, and what evidence would show that it happened?**
+
+## Worked case: do not use a display name as durable identity
+
+~~~text
+10:00 api-55-x  UID=p7  node=node-a  restarts=0
+10:05 api-55-x  UID=p7  node=node-a  restarts=4  last reason=Error
+10:18 p7 deleted; api-55 desired=3 unchanged; matching Pods=2
+10:19 ReplicaSet/api-55 SuccessfulCreate: created Pod api-55-y
+10:20 api-55-y  UID=p8  node=node-b  owner=ReplicaSet/api-55
+~~~
+
+The first transition stays within one Pod record. Read that container's previous
+logs and termination state to explain the crash. The deletion, stable desired
+count, deficit and creation event support ReplicaSet count repair. The later
+UID identifies a different Pod. New UID and ownership alone would not prove
+that history: scale-up or adoption could also yield another owned Pod. This
+authored fixture supplies the missing history; it does not diagnose why p7 was deleted.
+
+The scheduler chooses placement for a new unscheduled Pod; kubelet/runtime own
+execution on that node. A bare Pod without a controller owner has no ReplicaSet
+promise to replace it after deletion. Running phase also cannot substitute for
+container state and Ready conditions.
+
+An `emptyDir` volume survives a container restart within that Pod, but its data
+is removed when the Pod is removed. A replacement Pod's identical volume name
+does not restore the old data. A PVC-backed volume has a separate lifecycle and
+must be evaluated using its claim, reclaim policy and storage topology.

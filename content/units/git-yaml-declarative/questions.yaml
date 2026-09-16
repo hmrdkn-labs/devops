@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:git-yaml-declarative
-revision: 3
+revision: 4
 questions:
   - id: fpp:git-yaml-declarative/q-valid
     kind: predict
@@ -20,12 +20,15 @@ questions:
     objective_ids: [fpp:git-yaml-declarative/versioned-intent]
   - id: fpp:git-yaml-declarative/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Demonstrate that parseable YAML and schema-valid configuration are different claims. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Create a harmless sample manifest with valid syntax and one wrong field type. Parse it with a YAML-aware tool. Validate it against the target API schema using a client dry run. Treat the conclusion as justified only when Parsing succeeds. Schema validation identifies the wrong type without creating a resource."
+    prompt: "Commit c7 records a Deployment with replicas: 3. The live API object's spec.replicas is 5 after a manual scale, and five Pods run. No GitOps agent is installed. A proposed corrective file parses as YAML but sets spec.replicas to the quoted string '3'. Will the Deployment controller restore three from Git, and should server-side dry-run accept that candidate? What evidence distinguishes the boundaries?"
+    model_answer: "The built-in Deployment controller watches API objects, not arbitrary Git commits, so it reconciles the live desired count of five. Compare the commit's file, live Deployment spec/status and owned Pods. The candidate passes YAML parsing because a quoted string is valid serialization, but Kubernetes schema validation should reject spec.replicas because it requires an integer. Server-side dry-run processes validation/admission without persisting the candidate; rejection creates no corrected runtime state. A reviewed valid apply or chosen GitOps agent must transfer repository intent into the API before controllers reconcile it."
     critical_points:
-      - "Parsing succeeds."
-      - "Schema validation identifies the wrong type without creating a resource."
+      - "Git intent is not automatically input to the built-in controller."
+      - "Live spec is desired API state; status/Pods report observed execution."
+      - "A quoted replicas string can parse as YAML while failing the Deployment integer schema."
+      - "Server-side dry-run does not persist the candidate or deploy corrected runtime state."
     objective_ids: [fpp:git-yaml-declarative/versioned-intent, fpp:git-yaml-declarative/yaml-schema]
+
   - id: fpp:git-yaml-declarative/q-schema-boundary
     kind: scenario
     prompt: A file is valid YAML, but spec.replicas is written as a string instead of the integer required by the Kubernetes API. Which check has passed, which check should fail, and what does that tell you?

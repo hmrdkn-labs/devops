@@ -3,7 +3,7 @@ id: fpp:cncf-ecosystem-community
 slug: cncf-ecosystem-community
 title: CNCF ecosystem, projects, standards, and community
 summary: Place Kubernetes within the CNCF ecosystem, recognize common project responsibilities, and distinguish open interfaces, project maturity, community governance, and the landscape catalog.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: architecture
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-09
+verified_at: 2026-09-16

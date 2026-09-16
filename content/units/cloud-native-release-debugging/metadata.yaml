@@ -3,7 +3,7 @@ id: fpp:cloud-native-release-debugging
 slug: cloud-native-release-debugging
 title: Release strategies and application debugging
 summary: Distinguish rolling, blue-green, and canary release ideas and debug a failed Kubernetes release from artifact through rollout, readiness, endpoints, and user traffic.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: delivery
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-09
+verified_at: 2026-09-16

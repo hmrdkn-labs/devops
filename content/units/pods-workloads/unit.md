@@ -23,6 +23,26 @@ anonymous replica count. Scaling a StatefulSet changes a named ordinal set.
 A DaemonSet count follows eligible nodes rather than a requested replica
 number.
 
-Pod templates are snapshots for new Pods. Updating a controller template causes
-a rollout; it does not mutate the process memory or image filesystem of already
-running containers. This replacement model is central to predictable delivery.
+Pod templates are snapshots for new Pods. Updating a controller template changes the template for future Pods; rollout
+behavior depends on the controller and its update strategy. It does not mutate
+the process memory or image filesystem of already running containers. This replacement model is central to predictable delivery.
+
+## Worked case: completion is part of the requirement
+
+The authored import specification is: start at 02:00, validate one batch,
+write one result, and exit. The validator listens on `localhost:9000`; both
+containers mount the Pod volume at `/batch`.
+
+~~~text
+CronJob/import-nightly → Job/import-nightly-42 → one Pod
+  importer → localhost:9000 → validator
+  importer /batch ↔ declared shared volume ↔ validator /batch
+Job status: succeeded=1; batch ledger: batch-42 imported once
+~~~
+
+The controllers create API objects; kubelet/runtime execute the containers.
+Job status establishes the controller's completion criterion, and the batch
+ledger establishes the business result. Containers need coordinated termination:
+a validator that never exits can keep a Job incomplete unless its lifecycle is
+configured appropriately. CronJob scheduling alone does not guarantee exactly-once
+business processing, so retries should be safe for an already imported batch.

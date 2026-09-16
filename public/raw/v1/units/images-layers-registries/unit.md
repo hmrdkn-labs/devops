@@ -28,3 +28,19 @@ risks.
 Kubernetes records an image reference in a Pod template. The node runtime pulls
 and unpacks it, then adds a writable container layer. Persistent application
 data should not rely on that ephemeral writable layer.
+
+## Worked case: Hidden in the final view, present in the image history
+
+This paper fixture uses a dummy configuration marker, never a real credential. Digest labels A and B below are symbolic, not valid command arguments.
+
+~~~text
+layer 1: add /app/server
+layer 2: add /build/private-config (dummy marker)
+layer 3: remove /build/private-config
+running container: manifest digest A
+registry api:demo: now resolves to manifest digest B
+~~~
+
+The runtime applies ordered changes to form the visible root filesystem, while the registry still distributes the referenced lower-layer objects. Inspecting only the final path misses the marker in layer 2. Retagging changes future lookup input, not the current process. Use an image inspector to compare manifest/layer references and runtime inspection to identify the container's original input. An independently rebuilt image that never included the marker changes the exposure question; hiding it later does not.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

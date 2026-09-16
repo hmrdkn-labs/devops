@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
-revision: 2
+revision: 3
 visuals:
   - id: fpp:cloud-native-observability-signals/visual-evidence-chain
     kind: evidence
     eyebrow: Evidence model
     title: Use signals to narrow a failure, then prove the outcome
     lines:
-      - "user symptom → metrics narrow scope → traces follow a request → logs explain local events → probe confirms outcome"
+      - "p95 120ms → 2s: population symptom during a defined window"
+      - "trace t42: inventory span 1.8s; correlated timeout log localizes t42"
+      - "Prometheus up=1 + Collector export success: telemetry transport proof"
+      - "representative checkout + latency/error window: recovery evidence"
     teaching_point: No single signal is complete observability; combine complementary evidence until the user-visible behavior is explained and verified.

@@ -1,0 +1,76 @@
+schema_version: 1
+unit_id: fpp:kcna-scheduling-review
+revision: 1
+questions:
+  - id: fpp:kcna-scheduling-review/q-decision-path
+    kind: explain
+    prompt: Trace an ordinary unscheduled Pod from API state to a running workload. Which component filters and scores nodes, which action records placement, and which node-side component executes afterward?
+    model_answer: kube-scheduler watches for an unassigned Pod, filters infeasible nodes, scores the feasible candidates, and binds the Pod to a chosen node through the API. The kubelet on that node then observes the assignment and drives container execution through the runtime.
+    critical_points:
+      - The scheduler decides placement but does not start containers.
+      - Binding records the chosen node before kubelet execution begins.
+      - Kubelet and the container runtime own node-side execution.
+    objective_ids: [fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/q-nodename
+    kind: scenario
+    prompt: A Pod sets spec.nodeName directly to a node that has a NoSchedule taint and the Pod has no matching toleration. Why is this different from a normal scheduler decision, and what risk remains?
+    model_answer: Setting nodeName bypasses normal scheduler selection, including the scheduler's NoSchedule filtering. The assignment still does not guarantee successful execution or safety; node capacity and runtime conditions still matter, and a NoExecute taint can evict the Pod if it is not tolerated.
+    critical_points:
+      - nodeName is direct assignment rather than a scheduler preference.
+      - Bypassing scheduler filtering does not create resources or health.
+      - NoExecute can still remove an intolerant Pod.
+    objective_ids: [fpp:kcna-scheduling-review/decision-path, fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/q-dedicated-node
+    kind: scenario
+    prompt: You want GPU workloads to use GPU nodes and ordinary workloads to stay off those nodes. Why is a toleration alone insufficient, and what combination expresses both directions of the policy?
+    model_answer: A toleration only allows the GPU workload to remain eligible for a matching taint; it does not require that workload to choose a GPU node. Taint the GPU nodes to repel ordinary Pods, add the matching toleration to GPU workloads, and add a required node selector or node affinity rule to require those workloads onto GPU-labeled nodes.
+    critical_points:
+      - Taints repel; tolerations permit.
+      - A toleration does not force placement.
+      - Required node selection or affinity expresses where the special workload must run.
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/q-affinity-runtime
+    kind: predict
+    prompt: A running Pod matched requiredDuringSchedulingIgnoredDuringExecution affinity, then its node label is removed. Separately, a matching NoExecute taint is added and the Pod tolerates it for 60 seconds. Predict label drift alone and the taint remaining for 90 seconds.
+    model_answer: Label drift alone does not evict this running Pod because affinity is IgnoredDuringExecution. The matching NoExecute toleration permits staying only for 60 seconds after the taint is added; if it remains for 90 seconds, the Pod is eligible for eviction after expiry. Removing the taint before expiry prevents eviction because of that taint. Affinity and taint effects are separate rules.
+    critical_points:
+      - Required affinity is a hard scheduling-time filter.
+      - IgnoredDuringExecution means later label drift does not automatically evict the Pod because of that rule alone.
+      - A finite NoExecute toleration delays rather than permanently prevents eviction.
+    objective_ids: [fpp:kcna-scheduling-review/placement-policy]
+  - id: fpp:kcna-scheduling-review/q-resource-policy
+    kind: explain
+    prompt: A namespace has no LimitRange or admission-defaulted request. Its requests.cpu quota is 2000m with 1500m used. A new Pod specifies only a 700m CPU limit. Predict its effective request and whether creation reaches scheduler placement. How does an explicit 400m request change the result, and which policy would govern per-object defaults?
+    model_answer: The missing request becomes 700m from the limit. Quota usage would be 2200m, so admission rejects creation before a new Pod reaches scheduling. An explicit 400m request yields 1900m and passes this quota check, assuming other admission checks pass; scheduler fit uses 400m. The 700m limit constrains runtime CPU. LimitRange governs per-object defaults and bounds, while ResourceQuota governs aggregate namespace budgets. Inspect the create error, quota used/hard fields and the stored Pod if accepted.
+    critical_points:
+      - Requests and limits answer different scheduling versus runtime questions.
+      - LimitRange governs individual object or resource bounds and defaults in a namespace.
+      - ResourceQuota governs aggregate namespace budget.
+      - A missing request can default from the limit; quota rejection precedes scheduling.
+    objective_ids: [fpp:kcna-scheduling-review/resource-policy]
+  - id: fpp:kcna-scheduling-review/q-daemonset-static
+    kind: explain
+    prompt: Why are a DaemonSet Pod and a static Pod not two implementations of the same ownership model even though both may run node-local software?
+    model_answer: A DaemonSet is a normal API and controller workload. The DaemonSet controller creates Pods for eligible nodes and the default scheduler normally binds them before kubelets execute them. A static Pod is watched and restarted directly by one kubelet from node-local or static configuration; the API mirror is for visibility and is not the owner of the workload.
+    critical_points:
+      - DaemonSet ownership starts in the control plane with a controller.
+      - Static Pod ownership starts directly at one kubelet.
+      - Deleting a static Pod's mirror object does not remove the underlying kubelet-owned Pod.
+    objective_ids: [fpp:kcna-scheduling-review/node-ownership]
+  - id: fpp:kcna-scheduling-review/q-custom-scheduler
+    kind: scenario
+    prompt: A Pod specifies spec.schedulerName as latency-scheduler, but no scheduler or scheduler profile in the cluster handles that name. What is the expected placement outcome and why?
+    model_answer: The Pod can remain unscheduled because the default scheduler should not claim Pods assigned to a different scheduler name, and no matching scheduler exists to perform the placement decision.
+    critical_points:
+      - schedulerName selects the scheduling implementation or profile responsible for the Pod.
+      - A nonexistent scheduler name can leave the Pod waiting for placement.
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/q-profile-plugins
+    kind: explain
+    prompt: What problem do kube-scheduler profiles and scheduling plugins solve, and why should you not think of the scheduler as one hard-coded best-node formula?
+    model_answer: Scheduler profiles allow one kube-scheduler configuration to expose different scheduling behavior under different scheduler names. Plugins participate at framework extension points such as filtering and scoring, so placement is composed from multiple policy checks rather than one fixed ranking formula.
+    critical_points:
+      - Profiles provide named scheduling behavior.
+      - Plugins participate in distinct scheduling phases or extension points.
+      - Filtering feasibility is conceptually separate from scoring preference.
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]

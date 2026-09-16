@@ -3,7 +3,7 @@ id: fpp:kubernetes-apply-live-state
 slug: kubernetes-apply-live-state
 title: kubectl apply and live state
 summary: Treat kubectl apply as declarative API reconciliation, compare local intent with live state, and understand why successful configuration is only one proof layer.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-09
+verified_at: 2026-09-16

@@ -1,13 +1,14 @@
 schema_version: 1
 unit_id: fpp:scheduling-resources-health
-revision: 3
+revision: 4
 visuals:
   - id: fpp:scheduling-resources-health/visual-resource-health
     kind: ownership
     eyebrow: Runtime decisions
     title: Requests, limits, and probes control different parts of the lifecycle
     lines:
-      - "resource requests → scheduler placement decision"
-      - "resource limits → runtime and kernel enforcement"
-      - "startup, readiness, liveness probes → start gating, traffic eligibility, restart decision"
+      - "allocatable 2000m − existing requests 1700m = 300m remaining"
+      - "new request 400m > 300m → node-a infeasible; usage 200m is not reservation"
+      - "scheduler chooses feasible placement; kubelet executes assigned Pod"
+      - "database-dependent liveness → restarts may amplify shared outage"
     teaching_point: Resource requests influence placement, limits constrain runtime consumption, and each probe type answers a different health question that drives a different action.

@@ -131,8 +131,18 @@ export default function LessonVisualGuide(props: Props) {
         </div>
       </div>
 
+      <div class="lesson-visual-controls" aria-label="Visual walkthrough controls">
+        <button type="button" onClick={() => select(frame() - 1)} disabled={frame() === 0}>← Back</button>
+        <button type="button" onClick={togglePlay} disabled={frames().length <= 1} aria-pressed={playing()}>
+          {playing() ? 'Pause' : 'Play'}
+        </button>
+        <button type="button" onClick={() => select(frame() + 1)} disabled={frame() >= frames().length - 1}>Next →</button>
+        <button type="button" onClick={replay} disabled={frame() === 0 && !playing()}>Replay</button>
+      </div>
+
       <Show when={(props.components?.length ?? 0) > 0}>
-        <section class="lesson-component-map" aria-label="Component responsibility map">
+        <details class="lesson-component-map feedback-depth" data-testid="component-map-details">
+          <summary>Component responsibilities ({props.components?.length ?? 0})</summary>
           <div class="lesson-component-map-head">
             <span>Where the work happens</span>
             <small>Location · owner · responsibility · target</small>
@@ -160,9 +170,11 @@ export default function LessonVisualGuide(props: Props) {
               </article>
             )}</For>
           </div>
-        </section>
+        </details>
       </Show>
 
+      <details class="feedback-depth" data-testid="visual-steps-details">
+        <summary>All model steps ({frames().length})</summary>
       <ol class="lesson-visual-rail" aria-label="Visual model steps">
         <For each={frames()}>{(line, index) => (
           <li data-state={index() < frame() ? 'past' : index() === frame() ? 'current' : 'future'}>
@@ -177,15 +189,8 @@ export default function LessonVisualGuide(props: Props) {
           </li>
         )}</For>
       </ol>
+      </details>
 
-      <div class="lesson-visual-controls" aria-label="Visual walkthrough controls">
-        <button type="button" onClick={() => select(frame() - 1)} disabled={frame() === 0}>← Back</button>
-        <button type="button" onClick={togglePlay} disabled={frames().length <= 1} aria-pressed={playing()}>
-          {playing() ? 'Pause' : 'Play'}
-        </button>
-        <button type="button" onClick={() => select(frame() + 1)} disabled={frame() >= frames().length - 1}>Next →</button>
-        <button type="button" onClick={replay} disabled={frame() === 0 && !playing()}>Replay</button>
-      </div>
     </section>
   );
 }

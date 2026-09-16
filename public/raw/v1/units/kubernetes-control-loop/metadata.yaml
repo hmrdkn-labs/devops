@@ -3,7 +3,7 @@ id: fpp:kubernetes-control-loop
 slug: kubernetes-control-loop
 title: Kubernetes API and control loops
 summary: Understand Kubernetes as an API-driven system where controllers continuously reconcile declared intent with observed state.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

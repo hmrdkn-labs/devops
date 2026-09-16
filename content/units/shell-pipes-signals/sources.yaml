@@ -15,3 +15,10 @@ sources:
     type: standard
     verified_at: 2026-08-27
     note: Portable reference for shell parsing, pipelines, and exit behavior.
+  - id: source:bash-pipelines
+    title: "Bash Reference Manual — Pipelines"
+    url: https://www.gnu.org/software/bash/manual/html_node/Pipelines.html
+    publisher: "GNU Bash"
+    type: manual
+    verified_at: 2026-09-16
+    note: "Bash pipeline status selection with pipefail; unrelated to signal forwarding."

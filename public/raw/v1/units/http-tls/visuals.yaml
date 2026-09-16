@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:http-tls
-revision: 2
+revision: 3
 visuals:
   - id: fpp:http-tls/visual-request-stack
     kind: flow
     eyebrow: Request stack
-    title: Identity is established before the HTTP exchange
+    title: "Pin the address without bypassing server identity"
     lines:
-      - "hostname → DNS address → TCP connection → TLS certificate and hostname validation → HTTP request → HTTP response"
-    teaching_point: TLS protects transport confidentiality and server identity, while HTTP separately carries methods, paths, headers, status codes, and application data.
+      - "orders.test URL → chosen IP 192.0.2.60"
+      - "TLS listener offers billing.test certificate → name mismatch"
+      - "client verification fails before trusted HTTP result"
+      - "--resolve pins IP; orders.test identity remains required"
+    teaching_point: "TLS verifies the URL's server identity before the HTTP request succeeds. -k removes the identity check and weakens what HTTP 200 proves. --resolve changes address lookup while preserving the requested hostname."

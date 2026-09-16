@@ -3,7 +3,7 @@ id: fpp:kubernetes-deployments-rollouts
 slug: kubernetes-deployments-rollouts
 title: Deployments, rollouts, and rollbacks
 summary: Trace how a Deployment manages ReplicaSets, why template changes create rollout revisions, and how rollout evidence differs from application health.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

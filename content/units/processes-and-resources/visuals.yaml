@@ -1,11 +1,14 @@
 schema_version: 1
 unit_id: fpp:processes-and-resources
-revision: 2
+revision: 3
 visuals:
   - id: fpp:processes-and-resources/visual-resource-pressure
     kind: state
     eyebrow: Process model
-    title: Every service is a process competing for finite machine resources
+    title: "Two executions, two different bottlenecks"
     lines:
-      - "program → running process → CPU + memory + files + I/O → resource pressure → latency, throttling, OOM, or errors"
-    teaching_point: Troubleshooting starts by treating services as processes with measurable resource demands and failure modes rather than as abstract application boxes.
+      - "/usr/local/bin/report → PID 410: R, CPU time increases"
+      - "same program → PID 411: D, waiting; CPU time flat"
+      - "kernel schedules runnable work; I/O completion wakes waiting work"
+      - "process state + same-window device latency → bounded bottleneck hypothesis"
+    teaching_point: "Execution state belongs to a PID, not to the executable file. An I/O wait and a runnable CPU queue are different resource boundaries. Repeated process and storage evidence is needed; one state sample is not a root cause."

@@ -17,7 +17,7 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Stay inside the KCNA lane.' })).toBeVisible();
   await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText('KCNA');
   await expect(page.locator('.kcna-checkpoint')).toHaveCount(4);
-  await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(31);
+  await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(32);
   await expect(page.getByRole('heading', { name: /Continue:/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /Start focused session/ })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Review KCNA only' })).toBeVisible();
@@ -27,6 +27,7 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
   const quickReview = page.locator('.kcna-quick-review');
   await expect(quickReview.getByText('Kubernetes Fundamentals quiz companion', { exact: true })).toBeVisible();
   await expect(quickReview.getByText('Kubernetes Resources quiz companion', { exact: true })).toBeVisible();
+  await expect(quickReview.getByText('Scheduling quiz companion', { exact: true })).toBeVisible();
 });
 
 test('KCNA MCQ refresher explains every option after checking', async ({ page }) => {
@@ -43,7 +44,8 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await expect(page.getByText(/Your answer: kube-scheduler\. Correct answer: kube-apiserver\./)).toBeVisible();
   await expect(page.locator('.mcq-option[data-state="wrong-selected"]')).toContainText('Your answer · Incorrect');
   await expect(page.locator('.mcq-option[data-state="correct-missed"]')).toContainText('Correct answer');
-  const optionExplanations = page.locator('.mcq-options small');
+  const optionExplanations = page.getByTestId('mcq-rationales').locator('p');
+  await page.getByTestId('mcq-rationales').locator(':scope > summary').click();
   await expect(optionExplanations.filter({ hasText: /The API server is the front door/ })).toBeVisible();
   await expect(optionExplanations.filter({ hasText: /The scheduler chooses a feasible node/ })).toBeVisible();
   await expect(optionExplanations.filter({ hasText: /Controllers reconcile desired and observed state/ })).toBeVisible();

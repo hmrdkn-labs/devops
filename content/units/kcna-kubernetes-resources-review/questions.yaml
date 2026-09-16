@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-kubernetes-resources-review
-revision: 2
+revision: 3
 questions:
   - id: fpp:kcna-kubernetes-resources-review/q-delete-pod
     kind: scenario
@@ -21,10 +21,9 @@ questions:
     objective_ids: [fpp:kcna-kubernetes-resources-review/api-objects]
   - id: fpp:kcna-kubernetes-resources-review/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Start with a three-replica Deployment manifest, then describe what happens after one Pod is manually deleted and after the image is changed. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Identify the desired replica count, selector, and Pod template. Explain which controller replaces the manually deleted Pod and why. Explain why changing the image creates a new ReplicaSet instead of editing existing Pods in place. Name one API-level observation and one end-to-end observation for each change. Treat the conclusion as justified only when ReplicaSet is identified as the direct Pod-count reconciler. Deployment is identified as the rollout/ReplicaSet owner. API success is not treated as proof that a real request succeeds."
+    prompt: "web has desired replicas=3 and ReplicaSet/web-old. Deleting one old Pod creates a replacement under web-old. Changing the Deployment image later creates ReplicaSet/web-new, but its Pods fail image pulls. Identify the direct owner of each change and explain why replacement success did not prove release success."
+    model_answer: "The ReplicaSet controller restores web-old's missing matching Pod count after deletion. The Deployment controller creates and manages the new ReplicaSet for the changed Pod template; that ReplicaSet creates its Pods, then node-side image setup can fail. Inspect owner references, the new template and Pod image-pull events before networking. Successful restoration of old capacity proves a different reconciliation event from execution of the new artifact; neither alone proves a request reached the intended new version."
     critical_points:
-      - "ReplicaSet is identified as the direct Pod-count reconciler."
-      - "Deployment is identified as the rollout/ReplicaSet owner."
-      - "API success is not treated as proof that a real request succeeds."
+      - "ReplicaSet directly maintains Pod count; Deployment manages rollout ReplicaSets."
+      - "New-artifact execution failure is distinct from old-Pod replacement and needs Pod events plus version/request proof."
     objective_ids: [fpp:kcna-kubernetes-resources-review/ownership, fpp:kcna-kubernetes-resources-review/api-objects]

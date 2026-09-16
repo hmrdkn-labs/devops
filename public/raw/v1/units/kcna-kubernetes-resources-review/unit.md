@@ -191,3 +191,23 @@ Creating a namespace alone does not automatically provide network isolation, RBA
 ## Before you answer a resources MCQ
 
 Trace the object ownership first. Then ask whether the question changed **desired state** or only **observed state**. Finally, distinguish an API-level success from runtime proof. Those three checks eliminate a large fraction of plausible wrong answers.
+
+## Worked case: the same desired count can hide different changes
+
+~~~text
+initial: Deployment/web replicas=3 → ReplicaSet/web-old → 3 Ready Pods
+delete old Pod: web-old creates new UID; desired replicas still 3
+template image changes: Deployment creates web-new
+web-new Pod event: Failed to pull image; waiting reason=ImagePullBackOff
+~~~
+
+This authored fixture separates count repair from rollout. An owner reference
+identifies the direct Pod owner; comparing ReplicaSet templates explains why the
+new rollout differs from the replacement. Kubelet/runtime and registry access
+own image realization after placement, so EndpointSlices are downstream of the
+first observed failure here.
+
+Check whether the intended image exists and is accessible before choosing a
+mitigation. A successful request served by an old Pod can prove availability
+while still failing to prove the new release. Use a version-identifying response
+and runtime artifact evidence for the release claim.

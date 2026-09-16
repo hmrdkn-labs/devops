@@ -1,13 +1,16 @@
 schema_version: 1
 unit_id: fpp:kubernetes-apply-live-state
-revision: 3
+revision: 4
 visuals:
   - id: fpp:kubernetes-apply-live-state/visual-declarative-apply
     kind: state
     eyebrow: State model
     title: Apply changes API state; controllers change runtime state
     lines:
-      - "local manifest → kubectl apply → API server live object → controller reconciliation → runtime objects → observed status"
+      - "file web:v2 → apply configured → live spec web:v2, generation=8"
+      - "Deployment status observedGeneration=7: snapshot has not caught up"
+      - "Deployment controller → ReplicaSets → Pods → kubelet/runtime"
+      - "GET /version proves exercised behavior after rollout evidence"
     teaching_point: kubectl apply does not directly start containers; it updates declared API state, after which controllers and node agents converge the runtime toward that intent.
     components:
       - name: kubectl

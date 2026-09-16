@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-release-debugging
-revision: 3
+revision: 4
 questions:
   - id: fpp:cloud-native-release-debugging/q-canary
     kind: explain
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:cloud-native-release-debugging/evidence]
   - id: fpp:cloud-native-release-debugging/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Use a disposable Deployment or a recorded incident and build a proof ledger from artifact identity to user request. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Verify the desired image digest or tag for the target revision. Inspect rollout status, ReplicaSets, and Pod events. Inspect container state and current/previous logs if a restart occurred. Verify readiness and EndpointSlice membership. Make the same request a user or upstream service would make. Treat the conclusion as justified only when The first broken boundary is named before a fix is proposed. Running, Ready, endpoint membership, and successful request are treated as different evidence."
+    prompt: "A proposed canary has one v2 Pod and nine v1 Pods behind a Service, with no explicit traffic weighting. The v2 Pod is Running but Ready=false, and its EndpointSlice entry has ready=false. Users still receive v1. Is v2 receiving a controlled 10% canary, and where should debugging start?"
+    model_answer: "No. Pod proportions do not establish a measured traffic allocation, and an unready v2 backend is normally not eligible for ordinary Service traffic unless a relevant configuration changes that behavior. Start at v2 readiness conditions, probe events and the application listener rather than blaming packet forwarding. Inspect the actual routing executor and exposure policy before claiming a canary; after v2 becomes eligible, verify observed version-specific requests and decision metrics."
     critical_points:
-      - "The first broken boundary is named before a fix is proposed."
-      - "Running, Ready, endpoint membership, and successful request are treated as different evidence."
+      - "One of ten Pods does not guarantee controlled 10% request exposure."
+      - "Running, endpoint readiness and exercised version-specific traffic differ; readiness is the first observed broken boundary."
     objective_ids: [fpp:cloud-native-release-debugging/strategy, fpp:cloud-native-release-debugging/evidence]
+
   - id: fpp:cloud-native-release-debugging/q-blue-green
     kind: scenario
     prompt: What makes a release blue-green rather than merely two Deployments with different versions running at the same time?
