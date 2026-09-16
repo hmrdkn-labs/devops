@@ -5,6 +5,40 @@
 
 ## Read this first
 
+**Practice evidence → remediation loop v19 is live:** the private
+`hamardikan/devops-knowledge-base` now treats owner practice screenshots as a
+provenance-backed learning journal rather than loose files. The 2026-09-16 KCNA
+Kubernetes Fundamentals attempt was processed as assessed recognition evidence:
+**48 questions, 46 correct, 2 incorrect, 96%**. Forty-seven screenshots from
+that completed attempt were tagged and reviewed, the aggregate result was
+distilled into a private evidence report, and the two missed concepts were
+promoted as independently authored remediation rather than copied quiz text.
+The misses were `crictl` runtime-endpoint selection and the `nerdctl` versus
+`ctr` tool boundary. The private evidence/provenance commit is
+`cb4f345bdea193011d8015eda9007194a2a8632b`; raw third-party screenshots remain
+Git-ignored and private. A new Kubernetes Resources batch is already being
+captured separately and remains `new` until enough context/result evidence
+exists to review it honestly.
+
+The public Fundamentals companion advanced to revision 3 and now includes a
+runtime-tooling reference section, a dedicated tooling visual, **two new
+retrieval questions**, **two new review cards**, and **two original MCQs**. The
+material teaches three supported `crictl` runtime endpoint configuration
+surfaces (flag, environment variable, config file) and separates `crictl`
+(CRI-focused troubleshooting), `ctr` (low-level containerd debugging), and
+`nerdctl` (Docker-compatible containerd workflow). Upstream cri-tools and
+containerd/nerdctl references were added and verified 2026-09-16. The public
+practice bank now contains **28 MCQs** and the full corpus contains **193 review
+cards**. Local validation passed content/revision contracts, Astro typecheck,
+**37 unit tests**, D1 checks, production build, and **63 Playwright passes / 18
+intentional skips**. Exact public source
+`e65e6875d1e0deca04dc15ebe6ee6c75d37a9cc2` passed CI run `35069291558` and
+protected owner deployment `35069507301`. Independent production verification
+confirmed health `ok`, D1 `ready`, manifest SHA
+`af8d2ac89c3ed2f9bea7f73eb8930ef38a7a302e3838cdc895bdaac3700729f9`, the live
+Runtime Tooling section, and the new `crictl` practice material. **No
+implementation or deployment blocker.**
+
 **FSRS next-card advancement fix v18 is live:** the review queue no longer gets
 stuck after rating a card that was originally scheduled under an older content
 revision. The failure was a stale-revision boundary: `GET /api/review` returned
