@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:git-yaml-declarative
-revision: 3
+revision: 4
 cards:
   - id: fpp:git-yaml-declarative/c-commit
     type: short

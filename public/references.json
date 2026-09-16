@@ -99,6 +99,17 @@
     "unit_slug": "cloud-native-observability-signals"
   },
   {
+    "id": "fpp:cloud-native-observability-signals/source-worked-boundary",
+    "title": "OpenTelemetry Signals",
+    "url": "https://opentelemetry.io/docs/concepts/signals/",
+    "publisher": "OpenTelemetry",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified signal responsibilities and telemetry pipeline scope; latency and trace observations are authored fixtures.",
+    "unit_id": "fpp:cloud-native-observability-signals",
+    "unit_slug": "cloud-native-observability-signals"
+  },
+  {
     "id": "source:kubernetes-deployment-rollout",
     "title": "Deployments",
     "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
@@ -130,6 +141,39 @@
     "note": "Probe semantics and runtime behavior.",
     "unit_id": "fpp:cloud-native-release-debugging",
     "unit_slug": "cloud-native-release-debugging"
+  },
+  {
+    "id": "fpp:cloud-native-release-debugging/source-worked-boundary",
+    "title": "EndpointSlices",
+    "url": "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified endpoint readiness conditions and publishNotReadyAddresses exception.",
+    "unit_id": "fpp:cloud-native-release-debugging",
+    "unit_slug": "cloud-native-release-debugging"
+  },
+  {
+    "id": "fpp:cncf-ecosystem-community/source-cri-contract",
+    "title": "Container Runtime Interface",
+    "url": "https://kubernetes.io/docs/concepts/containers/cri/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified kubelet-to-runtime protocol ownership; CRI is a contract rather than an executor.",
+    "unit_id": "fpp:cncf-ecosystem-community",
+    "unit_slug": "cncf-ecosystem-community"
+  },
+  {
+    "id": "fpp:cncf-ecosystem-community/source-network-plugin",
+    "title": "Network Plugins",
+    "url": "https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified CNI integration and the requirement for a concrete network implementation.",
+    "unit_id": "fpp:cncf-ecosystem-community",
+    "unit_slug": "cncf-ecosystem-community"
   },
   {
     "id": "source:cncf-projects",
@@ -176,6 +220,28 @@
     "unit_slug": "cncf-ecosystem-community"
   },
   {
+    "id": "fpp:cncf-ecosystem-community/source-worked-boundary",
+    "title": "Kubernetes SIG and Working Group List",
+    "url": "https://github.com/kubernetes/community/blob/main/sig-list.md",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified SIG Network responsibility for networking collaboration; executor map is independently authored.",
+    "unit_id": "fpp:cncf-ecosystem-community",
+    "unit_slug": "cncf-ecosystem-community"
+  },
+  {
+    "id": "fpp:config-secrets-storage/source-secret-delivery",
+    "title": "Secrets",
+    "url": "https://kubernetes.io/docs/concepts/configuration/secret/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified confidential-data distinction and the need for encryption at rest and least-privilege access; no credential values are included.",
+    "unit_id": "fpp:config-secrets-storage",
+    "unit_slug": "config-secrets-storage"
+  },
+  {
     "id": "source:kubernetes-persistent-volumes",
     "title": "Persistent Volumes",
     "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
@@ -194,6 +260,17 @@
     "type": "documentation",
     "verified_at": "2026-08-27",
     "note": "EKS EBS CSI driver prerequisites and behavior.",
+    "unit_id": "fpp:config-secrets-storage",
+    "unit_slug": "config-secrets-storage"
+  },
+  {
+    "id": "fpp:config-secrets-storage/source-worked-boundary",
+    "title": "ConfigMaps",
+    "url": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified environment capture, eventual projected-file updates, and the subPath update exception.",
     "unit_id": "fpp:config-secrets-storage",
     "unit_slug": "config-secrets-storage"
   },
@@ -220,6 +297,17 @@
     "unit_slug": "container-lifecycle"
   },
   {
+    "id": "source:docker-run-state",
+    "title": "Running containers — filesystem and exit state",
+    "url": "https://docs.docker.com/engine/containers/run/",
+    "publisher": "Docker",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Writable container layers, process execution and interpretation of runtime exit evidence.",
+    "unit_id": "fpp:container-lifecycle",
+    "unit_slug": "container-lifecycle"
+  },
+  {
     "id": "source:docker-network",
     "title": "Docker networking overview",
     "url": "https://docs.docker.com/engine/network/",
@@ -242,6 +330,28 @@
     "unit_slug": "container-network-storage"
   },
   {
+    "id": "source:docker-publication",
+    "title": "Docker port publishing and mapping",
+    "url": "https://docs.docker.com/engine/network/port-publishing/",
+    "publisher": "Docker",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Published endpoint scope and documented localhost-publication caveats on older Engine versions.",
+    "unit_id": "fpp:container-network-storage",
+    "unit_slug": "container-network-storage"
+  },
+  {
+    "id": "source:docker-volume-lifetime",
+    "title": "Docker volumes",
+    "url": "https://docs.docker.com/engine/storage/volumes/",
+    "publisher": "Docker",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Named volume data persists beyond individual container removal when the volume is retained.",
+    "unit_id": "fpp:container-network-storage",
+    "unit_slug": "container-network-storage"
+  },
+  {
     "id": "source:path-resolution",
     "title": "path_resolution — how a pathname is resolved",
     "url": "https://man7.org/linux/man-pages/man7/path_resolution.7.html",
@@ -249,6 +359,17 @@
     "type": "manual",
     "verified_at": "2026-08-27",
     "note": "Primary reference for traversal and pathname permission checks.",
+    "unit_id": "fpp:files-users-permissions",
+    "unit_slug": "files-users-permissions"
+  },
+  {
+    "id": "source:linux-path-checks",
+    "title": "path_resolution — pathname permission checks",
+    "url": "https://man7.org/linux/man-pages/man7/path_resolution.7.html",
+    "publisher": "Linux man-pages",
+    "type": "manual",
+    "verified_at": "2026-09-16",
+    "note": "Search permission at path components, identity classes, and capability exceptions.",
     "unit_id": "fpp:files-users-permissions",
     "unit_slug": "files-users-permissions"
   },
@@ -275,6 +396,17 @@
     "unit_slug": "git-yaml-declarative"
   },
   {
+    "id": "source:kubernetes-api-dryrun",
+    "title": "Kubernetes API Concepts — dry-run",
+    "url": "https://kubernetes.io/docs/reference/using-api/api-concepts/#dry-run",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Server dry-run exercises request processing without persistence; it does not deploy running workloads.",
+    "unit_id": "fpp:git-yaml-declarative",
+    "unit_slug": "git-yaml-declarative"
+  },
+  {
     "id": "source:http-semantics",
     "title": "HTTP Semantics",
     "url": "https://www.rfc-editor.org/rfc/rfc9110",
@@ -293,6 +425,28 @@
     "type": "standard",
     "verified_at": "2026-08-27",
     "note": "TLS 1.3 protocol reference.",
+    "unit_id": "fpp:http-tls",
+    "unit_slug": "http-tls"
+  },
+  {
+    "id": "source:curl-cert-verification",
+    "title": "curl TLS Certificate Verification",
+    "url": "https://curl.se/docs/sslcerts.html",
+    "publisher": "curl project",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Default server-name verification and the proof lost through insecure mode.",
+    "unit_id": "fpp:http-tls",
+    "unit_slug": "http-tls"
+  },
+  {
+    "id": "source:curl-address-override",
+    "title": "curl manual — resolve option",
+    "url": "https://curl.se/docs/manpage.html",
+    "publisher": "curl project",
+    "type": "manual",
+    "verified_at": "2026-09-16",
+    "note": "Custom host/port address resolution preserves the requested URL hostname.",
     "unit_id": "fpp:http-tls",
     "unit_slug": "http-tls"
   },
@@ -319,6 +473,17 @@
     "unit_slug": "images-layers-registries"
   },
   {
+    "id": "source:oci-layer-removal",
+    "title": "OCI image layers and changesets",
+    "url": "https://github.com/opencontainers/image-spec/blob/main/layer.md",
+    "publisher": "Open Container Initiative",
+    "type": "specification",
+    "verified_at": "2026-09-16",
+    "note": "Layer removal entries affect applied filesystem views; lower content remains in referenced layers.",
+    "unit_id": "fpp:images-layers-registries",
+    "unit_slug": "images-layers-registries"
+  },
+  {
     "id": "source:ip-address",
     "title": "ip-address — protocol address management",
     "url": "https://man7.org/linux/man-pages/man8/ip-address.8.html",
@@ -341,6 +506,17 @@
     "unit_slug": "ip-subnets"
   },
   {
+    "id": "source:linux-route-selection",
+    "title": "ip-route — route lookup",
+    "url": "https://man7.org/linux/man-pages/man8/ip-route.8.html",
+    "publisher": "iproute2 manual",
+    "type": "manual",
+    "verified_at": "2026-09-16",
+    "note": "Route lookup, gateway selection and ip route get evidence.",
+    "unit_id": "fpp:ip-subnets",
+    "unit_slug": "ip-subnets"
+  },
+  {
     "id": "source:kcna-current",
     "title": "Kubernetes and Cloud Native Associate (KCNA)",
     "url": "https://www.cncf.io/training/certification/kcna/",
@@ -359,6 +535,17 @@
     "type": "reference",
     "verified_at": "2026-09-09",
     "note": "Official record of the post-November-2025 KCNA blueprint update.",
+    "unit_id": "fpp:kcna-domain-map",
+    "unit_slug": "kcna-domain-map"
+  },
+  {
+    "id": "fpp:kcna-domain-map/source-worked-boundary",
+    "title": "EndpointSlices",
+    "url": "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified endpoint state and its separation from Service request execution.",
     "unit_id": "fpp:kcna-domain-map",
     "unit_slug": "kcna-domain-map"
   },
@@ -425,6 +612,17 @@
     "type": "reference",
     "verified_at": "2026-09-10",
     "note": "Study-context link for the owner's completed module; the learning content here is independently authored.",
+    "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
+    "unit_slug": "kcna-kubernetes-fundamentals-review"
+  },
+  {
+    "id": "source:kubernetes-component-ownership",
+    "title": "Kubernetes Components",
+    "url": "https://kubernetes.io/docs/concepts/overview/components/",
+    "publisher": "Kubernetes",
+    "type": "reference",
+    "verified_at": "2026-09-16",
+    "note": "Controller, scheduler, kubelet and runtime responsibilities across API intent and node execution.",
     "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
     "unit_slug": "kcna-kubernetes-fundamentals-review"
   },
@@ -667,6 +865,17 @@
     "type": "documentation",
     "verified_at": "2026-09-09",
     "note": "Upstream field-management and field-ownership reference for modern apply behavior.",
+    "unit_id": "fpp:kubernetes-apply-live-state",
+    "unit_slug": "kubernetes-apply-live-state"
+  },
+  {
+    "id": "fpp:kubernetes-apply-live-state/source-worked-boundary",
+    "title": "Deployments",
+    "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified observed generation, rollout status, and Pod-template replacement boundaries.",
     "unit_id": "fpp:kubernetes-apply-live-state",
     "unit_slug": "kubernetes-apply-live-state"
   },
@@ -1265,6 +1474,17 @@
     "unit_slug": "kubernetes-security-access"
   },
   {
+    "id": "fpp:kubernetes-security-access/source-worked-boundary",
+    "title": "Pod Security Admission",
+    "url": "https://kubernetes.io/docs/concepts/security/pod-security-admission/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified admission enforcement is distinct from authorization; authored denial comparison.",
+    "unit_id": "fpp:kubernetes-security-access",
+    "unit_slug": "kubernetes-security-access"
+  },
+  {
     "id": "source:kubernetes-storage-lifecycle-persistent-volumes",
     "title": "Persistent Volumes",
     "url": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
@@ -1331,6 +1551,17 @@
     "unit_slug": "namespaces-cgroups"
   },
   {
+    "id": "source:cgroup-quota",
+    "title": "Control Group v2 — CPU controller",
+    "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+    "publisher": "Linux kernel documentation",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "CPU quota is group bandwidth; cpu.stat records throttling and hierarchy can impose constraints.",
+    "unit_id": "fpp:namespaces-cgroups",
+    "unit_slug": "namespaces-cgroups"
+  },
+  {
     "id": "source:kubernetes-pods",
     "title": "Pods",
     "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
@@ -1349,6 +1580,17 @@
     "type": "documentation",
     "verified_at": "2026-08-27",
     "note": "Upstream controller selection overview.",
+    "unit_id": "fpp:pods-workloads",
+    "unit_slug": "pods-workloads"
+  },
+  {
+    "id": "fpp:pods-workloads/source-worked-boundary",
+    "title": "Jobs",
+    "url": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Verified finite completion and retry behavior; the import and local validator scenario is independently authored.",
     "unit_id": "fpp:pods-workloads",
     "unit_slug": "pods-workloads"
   },
@@ -1375,6 +1617,17 @@
     "unit_slug": "ports-sockets-dns"
   },
   {
+    "id": "source:linux-ip-binding",
+    "title": "ip — local socket addresses",
+    "url": "https://man7.org/linux/man-pages/man7/ip.7.html",
+    "publisher": "Linux man-pages",
+    "type": "manual",
+    "verified_at": "2026-09-16",
+    "note": "Local binding and wildcard addressing semantics.",
+    "unit_id": "fpp:ports-sockets-dns",
+    "unit_slug": "ports-sockets-dns"
+  },
+  {
     "id": "source:linux-proc",
     "title": "proc — process information pseudo-filesystem",
     "url": "https://man7.org/linux/man-pages/man5/proc.5.html",
@@ -1382,6 +1635,17 @@
     "type": "manual",
     "verified_at": "2026-08-27",
     "note": "Primary reference for observable Linux process state.",
+    "unit_id": "fpp:processes-and-resources",
+    "unit_slug": "processes-and-resources"
+  },
+  {
+    "id": "source:linux-process-stat",
+    "title": "proc_pid_stat — process status",
+    "url": "https://man7.org/linux/man-pages/man5/proc_pid_stat.5.html",
+    "publisher": "Linux man-pages",
+    "type": "manual",
+    "verified_at": "2026-09-16",
+    "note": "Process state letters and cumulative CPU-time evidence; snapshots do not identify an I/O device.",
     "unit_id": "fpp:processes-and-resources",
     "unit_slug": "processes-and-resources"
   },
@@ -1404,6 +1668,17 @@
     "type": "documentation",
     "verified_at": "2026-08-27",
     "note": "Reference for Linux filtering, NAT, and connection tracking concepts.",
+    "unit_id": "fpp:routing-nat-firewalls",
+    "unit_slug": "routing-nat-firewalls"
+  },
+  {
+    "id": "source:netfilter-hooks",
+    "title": "Netfilter hooks",
+    "url": "https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks",
+    "publisher": "Netfilter project",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Packet paths, hook locations and priorities; there is no universal route/filter/NAT order.",
     "unit_id": "fpp:routing-nat-firewalls",
     "unit_slug": "routing-nat-firewalls"
   },
@@ -1474,6 +1749,17 @@
     "unit_slug": "shell-pipes-signals"
   },
   {
+    "id": "source:bash-pipelines",
+    "title": "Bash Reference Manual — Pipelines",
+    "url": "https://www.gnu.org/software/bash/manual/html_node/Pipelines.html",
+    "publisher": "GNU Bash",
+    "type": "manual",
+    "verified_at": "2026-09-16",
+    "note": "Bash pipeline status selection with pipefail; unrelated to signal forwarding.",
+    "unit_id": "fpp:shell-pipes-signals",
+    "unit_slug": "shell-pipes-signals"
+  },
+  {
     "id": "source:kubernetes-debug",
     "title": "Troubleshooting Applications",
     "url": "https://kubernetes.io/docs/tasks/debug/debug-application/",
@@ -1492,6 +1778,17 @@
     "type": "documentation",
     "verified_at": "2026-08-27",
     "note": "Upstream ephemeral-container and runtime observation workflow.",
+    "unit_id": "fpp:troubleshoot-process-to-pod",
+    "unit_slug": "troubleshoot-process-to-pod"
+  },
+  {
+    "id": "source:kubernetes-debug-service",
+    "title": "Debug Services",
+    "url": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-16",
+    "note": "Selector, endpoint membership and direct backend testing as separate Service troubleshooting checks.",
     "unit_id": "fpp:troubleshoot-process-to-pod",
     "unit_slug": "troubleshoot-process-to-pod"
   }

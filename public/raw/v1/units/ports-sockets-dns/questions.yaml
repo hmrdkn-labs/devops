@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:ports-sockets-dns
-revision: 2
+revision: 3
 questions:
   - id: fpp:ports-sockets-dns/q-loopback
     kind: predict
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:ports-sockets-dns/dns-resolution, fpp:ports-sockets-dns/socket-endpoint]
   - id: fpp:ports-sockets-dns/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Connect a listening socket to its process and DNS-independent reachability. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Start a local development server on loopback. Inspect the listener with ss and identify its PID. Resolve localhost and compare the address with the listener binding. Treat the conclusion as justified only when You can name address, port, protocol, namespace, and process. You can explain why remote reachability differs."
+    prompt: "In a normal Pod network namespace, DNS resolves reports.test to that Pod's 10.42.1.8 address. ss shows a TCP listener at 127.0.0.1:8080 owned by PID 33. A sidecar reaches localhost:8080 but a different Pod cannot reach 10.42.1.8:8080. Explain both observations and the next evidence before blaming DNS."
+    model_answer: "The listener is bound only to loopback in the Pod's network namespace. Containers in the same Pod normally share that namespace, so the sidecar reaches it; a different Pod targets the Pod-interface address, which does not match the loopback-only listener. DNS returned an address but did not create a listener or forwarding path. Inspect ss in the target namespace and compare local probes to 127.0.0.1 and 10.42.1.8. Binding to an appropriate reachable address may repair the listener boundary, but policy and routing still need independent verification."
     critical_points:
-      - "You can name address, port, protocol, namespace, and process."
-      - "You can explain why remote reachability differs."
+      - "Loopback belongs to a network namespace; normal Pod containers share it."
+      - "The requested destination address must match the listener binding."
+      - "DNS success proves record resolution, not listener or packet-path correctness."
     objective_ids: [fpp:ports-sockets-dns/socket-endpoint, fpp:ports-sockets-dns/dns-resolution]

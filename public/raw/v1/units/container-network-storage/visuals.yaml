@@ -1,12 +1,14 @@
 schema_version: 1
 unit_id: fpp:container-network-storage
-revision: 2
+revision: 3
 visuals:
   - id: fpp:container-network-storage/visual-boundaries
     kind: ownership
     eyebrow: Isolation boundary
-    title: Cross the container boundary explicitly
+    title: "One host endpoint, two different storage lifetimes"
     lines:
-      - "client → host published port → container interface → listening process"
-      - "container path → writable layer or bind mount or managed volume → persistent bytes"
-    teaching_point: Network reachability and durable data do not appear automatically across container isolation; explicit port and storage mappings create those crossings.
+      - "host localhost:18080 → Docker forwarding → container :8080"
+      - "container /data → retained volume notes → survives recreation"
+      - "container /tmp → instance writable layer → lost on removal"
+      - "same-container restart ≠ remove/create replacement"
+    teaching_point: "Host publication and container listener are separate endpoints. A retained named volume survives removal/recreation; the writable layer does not. Loopback publication describes a scoped path, not all possible access routes."

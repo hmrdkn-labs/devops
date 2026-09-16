@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
-revision: 2
+revision: 3
 questions:
   - id: fpp:cloud-native-observability-signals/q-latency
     kind: scenario
@@ -20,9 +20,9 @@ questions:
     objective_ids: [fpp:cloud-native-observability-signals/tools]
   - id: fpp:cloud-native-observability-signals/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Choose one application failure and write the smallest useful metric, log, trace, Kubernetes event, and end-to-end probe for it. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Define the user-visible symptom and time window. Name one metric that would quantify the symptom. Name one trace span or path that would localize the slow/failing boundary. Name one component log or Kubernetes event that could explain the local cause. Define one end-to-end request that proves recovery. Treat the conclusion as justified only when Each signal answers a different investigation question. Recovery is verified at the user or service boundary rather than only from telemetry ingestion."
+    prompt: "Between 14:00 and 14:05 checkout p95 rises from 120ms to 2s. Prometheus up=1 for checkout, and one trace shows an inventory span taking 1.8s with a timeout log under the same trace ID. The Collector reports successful exports. What can you localize, what is still only a hypothesis, and what evidence proves recovery?"
+    model_answer: "The metric quantifies a population symptom; the trace localizes most delay in that sampled request to the inventory call; the correlated log supports a timeout at that boundary. It does not prove every slow request has the same cause or why inventory timed out. Prometheus up and Collector export success prove telemetry-path health, not checkout health. Compare more requests and inventory-side evidence, then repeat a representative checkout transaction and watch latency/error metrics over the recovery window."
     critical_points:
-      - "Each signal answers a different investigation question."
-      - "Recovery is verified at the user or service boundary rather than only from telemetry ingestion."
+      - "Metrics, a sampled trace and correlated logs have different scopes; timeout location is not root cause."
+      - "Successful scraping/export is not recovery; transaction outcomes and population signals are needed."
     objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools]

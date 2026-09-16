@@ -41,3 +41,18 @@ average, memory use, or latency as isolated numbers.
 
 The container and the pod do not replace this model. They add isolation,
 metadata, and orchestration around processes that still consume host resources.
+
+## Worked case: Two executions, two different bottlenecks
+
+A report service starts two workers from the same binary. The following is an authored Linux snapshot, not a measurement of your machine.
+
+~~~text
+PID  COMMAND  STATE  CPU-time change over 5s
+410  report   R      +4.7s
+411  report   D      +0.0s
+storage write latency: elevated in the same interval
+~~~
+
+Worker 410 is receiving CPU time. Worker 411 is waiting in an uninterruptible state; the matching storage evidence supports an I/O hypothesis. The kernel owns scheduling and I/O completion, while the application owns the writes it issues. Read-only `ps -o pid,stat,time,comm -p 410,411` samples and the relevant device metrics distinguish the two demands. A later R sample would weaken the claim that 411 is continuously blocked; D is not proof of one particular disk failure.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

@@ -3,7 +3,7 @@ id: fpp:images-layers-registries
 slug: images-layers-registries
 title: Container images, layers, and registries
 summary: Treat an image as immutable content plus configuration, then reason about layers, tags, digests, and supply-chain movement.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: containers
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: true
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-08-27
+verified_at: 2026-09-16

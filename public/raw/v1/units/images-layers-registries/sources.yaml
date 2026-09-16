@@ -15,3 +15,10 @@ sources:
     type: specification
     verified_at: 2026-08-27
     note: Registry API and content distribution model.
+  - id: source:oci-layer-removal
+    title: "OCI image layers and changesets"
+    url: https://github.com/opencontainers/image-spec/blob/main/layer.md
+    publisher: "Open Container Initiative"
+    type: specification
+    verified_at: 2026-09-16
+    note: "Layer removal entries affect applied filesystem views; lower content remains in referenced layers."

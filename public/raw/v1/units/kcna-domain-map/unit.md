@@ -47,3 +47,23 @@ Derive operational answers from the layers. If a Pod is `Pending`, ask whether i
 ## Remember this
 
 KCNA readiness means you can explain the path from **declared intent → controller decision → executor → running state → proof**. Commands are useful observations, but the exam is testing the model behind them.
+
+## Worked case: study allocation follows a demonstrated gap
+
+The current advisory weights are Fundamentals 44%, Orchestration 28%,
+Application Delivery 16%, and Architecture 12%. For ten equal sessions this
+suggests roughly 4.4, 2.8, 1.6, and 1.2 sessions, not a mandatory timetable.
+
+~~~text
+retrieval: Service object role explained correctly
+application: Ready Pod exists; api:8080 fails
+next practice: selector → ready EndpointSlice → listener/port → request
+~~~
+
+The authored result identifies a cross-layer gap rather than ignorance of every
+Fundamentals topic. Spend a session tracing that request, then retest the weak
+boundary and adjust the remaining allocation. The controller updates API state;
+the network implementation forwards; the application produces the response.
+A successful `GET /health` proves that one request at that time, not every user
+transaction. Exam weights are advisory and should be checked against current
+upstream curriculum before exam booking.

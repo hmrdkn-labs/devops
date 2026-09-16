@@ -1,12 +1,14 @@
 schema_version: 1
 unit_id: fpp:shell-pipes-signals
-revision: 2
+revision: 3
 visuals:
   - id: fpp:shell-pipes-signals/visual-process-composition
     kind: flow
     eyebrow: Shell process model
-    title: The shell composes processes through streams and signals
+    title: "A successful compressor can conceal a failed export"
     lines:
-      - "shell → process stdout → pipe → next process stdin → exit status"
-      - "signal → target process or process group → handler or default action → graceful or forced exit"
-    teaching_point: Pipes connect standard streams between processes, exit status reports completion, and signals request or force state changes without being ordinary input data.
+      - "producer exits 7 → byte pipe → cat exits 0"
+      - "Bash default pipeline status → 0 from last command"
+      - "Bash pipefail → 7 from rightmost nonzero command"
+      - "TERM → PID 1 → child only if forwarding/handling provides that path"
+    teaching_point: "Pipeline bytes and pipeline exit-status selection are distinct. Without pipefail, the final command determines Bash pipeline status. Signal forwarding is a wrapper/process-tree responsibility, independent of pipefail."

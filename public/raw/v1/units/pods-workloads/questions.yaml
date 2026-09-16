@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:pods-workloads
-revision: 3
+revision: 4
 questions:
   - id: fpp:pods-workloads/q-daemonset
     kind: scenario
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:pods-workloads/pod-boundary]
   - id: fpp:pods-workloads/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Classify four workloads before writing any manifest. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Describe identity, duration, placement, scaling, and replacement needs. Choose a controller for an API, database, node agent, and backup task. State one failure caused by choosing a different controller. Treat the conclusion as justified only when Every choice cites controller semantics rather than familiarity. Pod-level sharing is explicit for multi-container cases."
+    prompt: "A nightly import must terminate after processing its input. Its importer and local validator communicate on localhost:9000 and exchange files in a shared volume. A teammate proposes a two-replica Deployment with one container per replica. What lifecycle and sharing mistakes would that introduce, and what design fits?"
+    model_answer: "Use a CronJob to schedule a Job for finite work, with the coupled importer and validator in the same Pod and an explicitly shared volume. Separate replicas have separate Pod network namespaces and do not share localhost or container filesystems. A Deployment maintains long-running replicas rather than treating successful exit as job completion. Inspect CronJob-owned Jobs, their completion status, Pod container definitions and volume mounts; successful job status still needs an import-result check."
     critical_points:
-      - "Every choice cites controller semantics rather than familiarity."
-      - "Pod-level sharing is explicit for multi-container cases."
+      - "CronJob creates scheduled Jobs and Job tracks finite completion."
+      - "Same-Pod localhost and explicit shared volumes do not extend across replicas."
     objective_ids: [fpp:pods-workloads/pod-boundary, fpp:pods-workloads/controller-choice]
+
   - id: fpp:pods-workloads/q-controller-classification
     kind: scenario
     prompt: "Match these needs to workload controllers: a stateless HTTP API, a database needing stable identity, one node-local agent per worker, and a backup that runs every night."

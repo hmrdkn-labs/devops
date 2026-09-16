@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:scheduling-resources-health
-revision: 3
+revision: 4
 questions:
   - id: fpp:scheduling-resources-health/q-bigger
     kind: predict
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:scheduling-resources-health/probe-semantics]
   - id: fpp:scheduling-resources-health/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Calculate whether a hypothetical Pod can be scheduled before looking at live usage. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record allocatable node CPU and memory. Sum existing Pod requests and the new Pod requests. Check non-resource constraints and identify the first binding limit. Treat the conclusion as justified only when Your answer uses allocatable capacity and requests. You list at least one non-CPU capacity dimension."
+    prompt: "node-a has allocatable CPU=2000m and memory=4Gi; existing ordinary Pod requests total 1700m and 2Gi. A new single-container Pod requests 400m and 1Gi, while actual CPU usage is only 200m. It also has a liveness probe that fails whenever the shared database is down. Predict placement and explain the separate risk after the Pod eventually runs."
+    model_answer: "It does not fit node-a's remaining CPU request budget: 2000m minus 1700m leaves 300m, below 400m. Low measured usage does not erase the reservation. Scheduler events and requests provide placement evidence; other nodes and constraints must still be checked. Once running, dependency-coupled liveness can cause kubelet restarts during a database outage even when restarting this process cannot repair the database. Probe events and restart counts distinguish that runtime failure from Pending placement."
     critical_points:
-      - "Your answer uses allocatable capacity and requests."
-      - "You list at least one non-CPU capacity dimension."
+      - "Remaining CPU is 300m by requests; 400m cannot fit despite low current usage."
+      - "Scheduler feasibility and kubelet liveness restarts are different boundaries."
     objective_ids: [fpp:scheduling-resources-health/requests-limits, fpp:scheduling-resources-health/probe-semantics]
+
   - id: fpp:scheduling-resources-health/q-request-vs-limit
     kind: explain
     prompt: Why can a Pod with a CPU request of 250m and a CPU limit of 1 CPU be scheduled onto a node that does not have a full free CPU available by current usage?

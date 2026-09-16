@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:routing-nat-firewalls
-revision: 2
+revision: 3
 questions:
   - id: fpp:routing-nat-firewalls/q-nat
     kind: explain
@@ -20,9 +20,10 @@ questions:
     objective_ids: [fpp:routing-nat-firewalls/packet-path]
   - id: fpp:routing-nat-firewalls/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Document one outbound connection from process to destination without changing policy. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Record the local socket and selected route. Mark every host or network boundary the packet crosses. Annotate where filtering or translation could occur. Treat the conclusion as justified only when Every ingress or egress label names its boundary. Routing, policy, and NAT are separate annotations."
+    prompt: "A gateway is configured to DNAT 203.0.113.10:443 to 10.0.2.9:8443. Its forwarding policy drops new TCP traffic to that translated backend port, and the backend otherwise has a valid return route. A client times out. Does the DNAT mapping prove the connection is authorized, and what evidence distinguishes translation from forwarding?"
+    model_answer: "No. DNAT rewrites the destination under the configured NAT rule; forwarding policy separately decides whether the packet may pass. For this fixture, the drop rule prevents new traffic from reaching the backend despite a valid translation and return route. Compare the NAT rule's match counters, the forwarding drop counters and a backend-side capture or connection log in the same time window. Configuration alone proves a possible mapping, not that a live request used it. Linux hook order depends on packet origin and configured hook priorities."
     critical_points:
-      - "Every ingress or egress label names its boundary."
-      - "Routing, policy, and NAT are separate annotations."
+      - "DNAT changes address/port; it does not grant permission."
+      - "Forwarding policy and reverse routing are separate boundaries."
+      - "Same-window counters or captures establish observed execution; hook order is contextual."
     objective_ids: [fpp:routing-nat-firewalls/packet-path, fpp:routing-nat-firewalls/nat-policy]

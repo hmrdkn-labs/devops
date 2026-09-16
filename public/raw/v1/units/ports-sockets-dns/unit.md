@@ -29,3 +29,18 @@ steer traffic to a ready endpoint.
 Debug in layers: resolve the name, inspect the returned address, test the
 transport endpoint, then validate the application protocol. Skipping straight
 to “DNS is broken” hides which layer actually failed.
+
+## Worked case: The sidecar and remote Pod reach different addresses
+
+This fixture assumes ordinary shared Pod networking rather than hostNetwork.
+
+~~~text
+DNS: reports.test → 10.42.1.8
+ss -lntp in target Pod: 127.0.0.1:8080 users:(("reports",pid=33))
+sidecar → 127.0.0.1:8080 → HTTP 200
+other Pod → 10.42.1.8:8080 → connection fails
+~~~
+
+The shared Pod kernel networking view makes localhost usable by the sidecar. The remote packet targets a different local address, so the loopback-only socket is insufficient. Compare the two address-specific probes within the target namespace to establish the bind mismatch, then test the original remote path after repair. A wildcard listener would falsify this specific hypothesis; it would move the investigation to routing, policy or the observed application behavior.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

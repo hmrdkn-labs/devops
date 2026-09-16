@@ -159,3 +159,19 @@ Ask three things in order:
 1. Is the question asking about **stored intent/state**, **a control decision**, or **runtime execution**?
 2. Which component owns that layer?
 3. Does the option describe the component's real responsibility, or does it make that component perform somebody else's job?
+
+## Worked case: A recorded node assignment is not a running container
+
+This companion case follows one ReplicaSet replacement across the control-to-execution boundary. The image digest is abbreviated display text, not a valid image reference to execute.
+
+~~~text
+Pod owner: ReplicaSet checkout-7b
+spec.nodeName: worker-b
+container state: Waiting
+waiting reason: ImagePullBackOff
+worker-b runtime: containerd
+~~~
+
+A controller has created a Pod object and placement is recorded. Node-side kubelet/runtime must still acquire the image and start the process; image-pull backoff describes retries after a pull failure, not the root cause. Pod events distinguish authentication, missing reference and other pull clues; CRI inspection can support node-side state. Do not print credentials while checking registry access. Direct node assignment is a counterexample to the shortcut 'nodeName proves the scheduler acted'; it still establishes which kubelet should realize the Pod.
+
+These are authored inputs and predicted interpretations, not observations of a live environment. Use the read-only evidence named above to test the claim at the relevant boundary.

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-namespaces-scope
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-namespaces-scope/q-same-name
     kind: explain
@@ -20,12 +20,13 @@ questions:
     objective_ids: [fpp:kubernetes-namespaces-scope/boundary]
   - id: fpp:kubernetes-namespaces-scope/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Create or inspect two disposable namespaces and compare namespaced and cluster-scoped lookups. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: List the same resource kind in each namespace and identify namespace-qualified object identity. Query a cluster-scoped resource and explain why a namespace flag does not define its identity. Write which additional mechanism you would inspect for API authorization and for network isolation. Treat the conclusion as justified only when Namespaced and cluster-scoped identity are distinguished correctly. RBAC and network policy are not conflated with namespace creation."
+    prompt: "team-a and team-b each have Service/api. A Pod in team-a calls api:8080 and reaches team-a, but calling api.team-b:8080 reaches team-b. A team-a user also lists team-b Pods successfully. Does namespace separation malfunction? Explain the identities and which controls you would inspect."
+    model_answer: "No. The short Service name resolves using the caller's namespace search context; api.team-b explicitly names the other namespace under normal cluster DNS configuration. Namespaces distinguish API objects but do not automatically deny cross-namespace traffic or API reads. Inspect effective authorization for team-b and applicable NetworkPolicies plus enforcement support. Node identity remains cluster-scoped even when a lookup carries -n team-a."
     critical_points:
-      - "Namespaced and cluster-scoped identity are distinguished correctly."
-      - "RBAC and network policy are not conflated with namespace creation."
+      - "Service identities and namespace-qualified discovery distinguish the two api objects."
+      - "Authorization and network isolation require separate controls; namespace creation alone denies neither."
     objective_ids: [fpp:kubernetes-namespaces-scope/scope, fpp:kubernetes-namespaces-scope/boundary]
+
   - id: fpp:kubernetes-namespaces-scope/q-node-scope
     kind: predict
     prompt: If you run kubectl get nodes -n team-a, does the namespace flag make Node objects belong to team-a?

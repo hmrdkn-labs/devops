@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-domain-map
-revision: 2
+revision: 3
 questions:
   - id: fpp:kcna-domain-map/q-service
     kind: explain
@@ -20,9 +20,9 @@ questions:
     objective_ids: [fpp:kcna-domain-map/domains]
   - id: fpp:kcna-domain-map/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: Pick a familiar action such as applying a Deployment or reaching a Service and write one sentence for each of the five reasoning layers. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Name the desired-state object or request. Name the controller or decision-maker that reacts to it. Name the process or dataplane that executes the action. Name the resulting workload or runtime state. Name one observation that would prove the result and one that would only prove configuration. Treat the conclusion as justified only when The controller is not incorrectly described as the live packet or process executor. At least one runtime proof is distinguished from static configuration."
+    prompt: "Your practice results show that you can identify a Service manifest but cannot explain why a Ready Pod receives no request. You have ten study sessions left. Using current KCNA domain weights, propose an emphasis and trace a request to api:8080 that separates API intent, endpoint reconciliation and forwarding. What proof settles delivery?"
+    model_answer: "Use the current 44/28/16/12 weights as an approximate emphasis for Fundamentals, Orchestration, Delivery and Architecture, while giving the observed networking gap focused practice rather than rigidly rounding sessions. A Service specifies stable addressing and selection, controllers record endpoint state, and the concrete kube-proxy/eBPF or other network implementation forwards traffic to the application. Inspect selectors, ready EndpointSlices and listener/port, then probe api:8080. Configuration or Ready status alone does not prove that request succeeded."
     critical_points:
-      - "The controller is not incorrectly described as the live packet or process executor."
-      - "At least one runtime proof is distinguished from static configuration."
+      - "Current four-domain weights guide emphasis while evidence of a prerequisite gap changes practice."
+      - "Service intent, endpoint reconciliation and packet execution differ; an actual request proves the exercised path."
     objective_ids: [fpp:kcna-domain-map/domains, fpp:kcna-domain-map/layers]

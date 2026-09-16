@@ -44,3 +44,23 @@ PV reclaim policy affects the backing resource after the claim is released. `Del
 StatefulSets can use `volumeClaimTemplates` so each Pod identity receives its own PVC. Replacing `db-0` can preserve the claim associated with that ordinal while the Pod object itself is recreated.
 
 The durable mental model is: **Pod lifecycle and storage lifecycle intersect, but they are not the same lifecycle.**
+
+## Worked case: three deletions are three different boundaries
+
+~~~text
+StorageClass/zonal: volumeBindingMode=WaitForFirstConsumer
+before consumer: PVC/ledger Pending
+after consumer: PVC/ledger Bound → PV/ledger-a, zone=a, Retain
+delete consumer Pod only: PVC/ledger still Bound
+delete claim after use ends: PV/ledger-a Released; old data remains
+~~~
+
+This is an authored lifecycle comparison, not an instruction to delete storage.
+The provisioner creates backing storage; node-side operations make it usable.
+A replacement using the same claim must satisfy the zone and access constraints.
+`Retain` protects the reclamation boundary, but it is neither a backup nor an
+automatic clean volume for the next tenant.
+
+With delayed binding, assigning `spec.nodeName` directly bypasses the scheduler
+and can leave the claim Pending. Express an appropriate node selector instead
+when scheduler participation is needed; inspect events before changing placement.

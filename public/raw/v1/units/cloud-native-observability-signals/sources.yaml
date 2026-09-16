@@ -22,3 +22,10 @@ sources:
     type: documentation
     verified_at: 2026-09-09
     note: Vendor-neutral telemetry signals, APIs, SDKs, and Collector concepts.
+  - id: fpp:cloud-native-observability-signals/source-worked-boundary
+    title: "OpenTelemetry Signals"
+    url: https://opentelemetry.io/docs/concepts/signals/
+    publisher: OpenTelemetry
+    type: documentation
+    verified_at: 2026-09-16
+    note: "Verified signal responsibilities and telemetry pipeline scope; latency and trace observations are authored fixtures."

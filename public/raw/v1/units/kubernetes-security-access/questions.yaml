@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 3
+revision: 4
 questions:
   - id: fpp:kubernetes-security-access/q-kubeconfig
     kind: scenario
@@ -15,17 +15,18 @@ questions:
     prompt: Why can RBAC, Pod Security Admission, and NetworkPolicy all be required for the same application?
     model_answer: They protect different boundaries. RBAC limits Kubernetes API operations, Pod Security Admission constrains the privileges and host access a Pod may request, and NetworkPolicy constrains allowed network flows when supported by the dataplane.
     critical_points:
-      - API permissions, workload privilege, and network connectivity are distinct control planes.
+      - API permissions, workload privilege, and network connectivity protect distinct security boundaries.
       - One control does not replace the other two.
     objective_ids: [fpp:kubernetes-security-access/workload]
   - id: fpp:kubernetes-security-access/q-practice-transfer
     kind: scenario
-    prompt: "Plan this exercise before touching the system: In a disposable namespace, inspect one ServiceAccount or test identity and reason about two API actions with different required permissions. What sequence would you follow, and what evidence would prove success?"
-    model_answer: "A strong evidence-first plan is: Identify the subject and the Role or ClusterRole bindings that apply to it. Use an authorization check such as kubectl auth can-i for one intended action. Check a nearby action that should not be allowed. Record which result is authentication evidence and which is authorization evidence. Treat the conclusion as justified only when The allowed action and denied action are both verified. Identity establishment is not confused with RBAC permission."
+    prompt: "ServiceAccount deployer can create Pods in sandbox. Its request for a privileged Pod is rejected by Pod Security Admission. A separate request to list Secrets returns Forbidden. Which request boundaries denied each action, and why would relaxing NetworkPolicy fix neither?"
+    model_answer: "The privileged Pod create passed identity and API authorization but admission rejected the proposed workload privileges. Secret listing was denied at API authorization for that verb/resource/scope. NetworkPolicy governs supported Pod network flows, not API RBAC permission or admission rules. Inspect the exact admission rejection and a scoped authorization check plus bindings; do not assume the same policy denied both requests."
     critical_points:
-      - "The allowed action and denied action are both verified."
-      - "Identity establishment is not confused with RBAC permission."
+      - "Authorization permits an API action; admission can still reject the object."
+      - "Network flow policy cannot grant API rights or bypass workload admission."
     objective_ids: [fpp:kubernetes-security-access/request, fpp:kubernetes-security-access/workload]
+
   - id: fpp:kubernetes-security-access/q-request-chain
     kind: scenario
     prompt: An API request has a valid client identity, RBAC allows the requested verb, but an admission policy rejects the object. Which stages succeeded and which stage denied the request?
