@@ -59,8 +59,8 @@ manifest, exact-search index, reference catalog, Atom feed, `llms.txt`,
 `llms-full.txt`, and a downloadable ZIP archive.
 
 For focused certification study, `/kcna` is the dedicated KCNA workspace. It
-renders only the 29-unit KCNA path, grouped into four checkpoints, with the
-Kubernetes Fundamentals and Kubernetes Resources quiz companions surfaced as
+renders only the 32-unit KCNA path, grouped into four checkpoints, with the
+Fundamentals, Resources, and Scheduling quiz companions surfaced as
 quick-review material. The underlying units remain the same portable Markdown
 source used by the wider knowledge base. The workspace also builds a focused
 daily session from due KCNA reviews plus the next unencountered unit, exposes
@@ -74,6 +74,9 @@ cataloged as references, but mirrored lessons, images, code, and course
 structure do not belong here.
 
 ## Run locally
+
+Current learner-workspace acceptance and future backlog are tracked in
+[the learning experience plan](docs/LEARNING-EXPERIENCE-PLAN.md).
 
 Requirements: Node.js 22+, npm 10+, and a Cloudflare account only when testing
 remote resources or deploying.

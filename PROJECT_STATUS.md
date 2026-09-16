@@ -5,6 +5,69 @@
 
 ## Read this first
 
+**Current step: audit → plan → implementation → tests → bounded local acceptance
+complete; protected release pending.** Eight targeted content rewrites
+and the learner-workspace reliability/layout repairs are implemented, preserving
+the Scheduling additions. Final gates are green: production build, content and
+revision checks, Astro diagnostics (0 errors/warnings), **37 unit tests**, D1
+checks, and **80 Playwright passes / 31 intentional skips**. No current test or
+implementation blocker. Parent manual acceptance confirms study, reference, MCQ,
+focus/draft preservation, wrapping mobile matches, and readable/keyboard-scrollable
+reference tables. Owner persistence journeys used mocked APIs; no production
+real-owner E2E was performed. No commit/deployment for this combined diff. The remaining
+29 generic-template units and learner efficacy work are future scope, not blockers.
+Plan: `docs/LEARNING-EXPERIENCE-PLAN.md`. Guest server: port 4321, session `90283`,
+manifest `8dcb7debe9da`, no D1/auth binding.
+
+## 2026-09-16 learning experience verification log
+
+Initial regressions reproduced aborted review saves sticking busy state and late
+notes loads overwriting edits. Intermediate matrices exposed stale expectations
+for newly collapsed teaching details and heading focus, plus real mobile matching
+and desktop reference-table clipping. Tests now explicitly open teaching details
+and retain their content assertions; product fixes preserve retry event identity,
+corrections, selected responses, and table containment. Final complete matrix:
+**80 passes / 31 skips**, 111 cases, 33.9s, including actual KCNA→MCQ clicks at
+desktop/768px/mobile. No stale test failures remain. Prior intermediate runs are
+superseded by this settled-build evidence.
+
+## Historical release records
+
+**KCNA Scheduling depth pass v22 was locally complete before the combined app
+pass:** its earlier release-readiness assessment is historical; the current
+combined diff requires the protected app-release workflow. The
+Scheduling checkpoint used indexed KodeKloud KCNA coverage and verified selected
+upstream behavior; this was not a full audit of every course lesson.
+The previous corpus already taught resource feasibility, nodeSelector,
+required/preferred affinity, taints/tolerations, topology spread, DaemonSet
+basics, and Pending-event diagnosis, but it did not give enough explicit
+coverage to manual/direct assignment, resource-policy scope, Static Pod
+ownership, multiple schedulers, or scheduler profiles/plugins. Those are now
+covered without mirroring proprietary lesson text or quiz questions.
+
+A new **KCNA Scheduling quiz companion** adds the full first-principles path
+`unassigned Pod → filter → score → bind → kubelet/runtime`, explicit
+`spec.nodeName` scheduler-bypass semantics, node-affinity execution semantics,
+the three common taint effects, dedicated-node policy, requests versus limits,
+LimitRange versus ResourceQuota, DaemonSet versus kubelet-owned Static Pods,
+mirror Pods, `schedulerName`, multiple schedulers, and scheduler profiles and
+plugins. It ships **8 retrieval/application questions, 15 review cards, 4
+reference visuals, 2 guided practices, and 11 upstream/reference links**. The
+Cluster Behavior interactive lesson grows from **11 to 18 interactions** with
+seven Scheduling-specific exercises, and the KCNA refresher grows from **37 to
+47 independently authored MCQs** with per-option rationale.
+
+The KCNA path now contains **32 units** and the full public corpus contains
+**40 units, 171 unit questions, 230 review cards, 47 KCNA MCQs, 4 interactive
+lessons, and 52 lesson exercises**. Revision classification and the complete
+local CI gate are green: content contracts, Astro typecheck, **37 unit tests**,
+D1 migration/idempotency/evidence checks, production build, and release-manifest
+generation all pass. The full Playwright desktop/tablet/mobile matrix is also
+green with **63 passes / 18 intentional skips**. The first browser run correctly
+exposed two stale acceptance counts (31→32 KCNA units and 11→18 Cluster Behavior
+interactions); those assertions were updated and the full matrix then passed.
+This v22 work is **not committed or deployed yet**. No implementation blocker.
+
 **Kubernetes Resources assessment repair v21 is live:** the completed Resources
 practice attempt is now treated as both learner evidence and a coverage audit of
 the platform. The verified result is **63 questions, 45 correct, 18 incorrect,
