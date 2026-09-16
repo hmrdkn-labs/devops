@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-pod-model
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-pod-model/q-delete
     kind: predict
@@ -26,3 +26,19 @@ questions:
       - "The replacement is identified as a new Pod object."
       - "The ReplicaSet is named as the direct replica-count owner."
     objective_ids: [fpp:kubernetes-pod-model/lifecycle, fpp:kubernetes-pod-model/ownership]
+  - id: fpp:kubernetes-pod-model/q-restart-vs-replace
+    kind: explain
+    prompt: What is the identity difference between a container restart inside one Pod and a controller replacing a failed Pod?
+    model_answer: A container restart is performed by the kubelet inside the same Pod object, so the Pod UID stays the same while restart count and container state change. A controller replacement creates a new Pod object with a new UID and potentially a new node and Pod IP.
+    critical_points:
+      - Container restart can preserve Pod identity.
+      - Pod replacement always creates a new Pod identity.
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle, fpp:kubernetes-pod-model/ownership]
+  - id: fpp:kubernetes-pod-model/q-init-container
+    kind: scenario
+    prompt: A Pod never reaches its application container because an init container repeatedly fails. Which status and logs matter first, and why would application-container logs be weak evidence?
+    model_answer: Inspect the init container states, termination reason, restart behavior, events, and the init container's current or previous logs. The application container may not have started at all, so its logs cannot explain a failure that occurs earlier in the Pod lifecycle.
+    critical_points:
+      - Init containers gate later application-container startup.
+      - Evidence should come from the lifecycle stage that actually failed.
+    objective_ids: [fpp:kubernetes-pod-model/lifecycle]

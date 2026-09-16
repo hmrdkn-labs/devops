@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-apply-live-state
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-apply-live-state/q-configured
     kind: scenario
@@ -25,4 +25,20 @@ questions:
     critical_points:
       - "The write result is not described as proof of application health."
       - "At least one difference between authored configuration and live/observed state is identified."
+    objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]
+  - id: fpp:kubernetes-apply-live-state/q-live-defaults
+    kind: explain
+    prompt: Why can kubectl get -o yaml show fields that were never written in your local manifest without proving someone manually changed the object?
+    model_answer: The API server, admission, defaults, controllers, and status writers can add or update fields in the live object. The local file is authored intent, while the live API representation also contains server-managed and observed state.
+    critical_points:
+      - Local configuration and live API representation are not byte-for-byte mirrors.
+      - Server defaulting and status updates are not automatically configuration drift.
+    objective_ids: [fpp:kubernetes-apply-live-state/live-state]
+  - id: fpp:kubernetes-apply-live-state/q-manual-edit
+    kind: scenario
+    prompt: A teammate uses kubectl edit to change a live Deployment, but the repository is unchanged. What evidence would reveal the drift, and what should happen before deciding which value to keep?
+    model_answer: Compare the reviewed manifest with the live API object using a diff or equivalent inspection. Identify the changed fields and decide which intent is authoritative before applying another change, because blindly applying either side can overwrite the other state without understanding why they diverged.
+    critical_points:
+      - Manual live edits can diverge from versioned declarative intent.
+      - Detect and explain drift before reconciling it.
     objective_ids: [fpp:kubernetes-apply-live-state/declarative, fpp:kubernetes-apply-live-state/live-state]

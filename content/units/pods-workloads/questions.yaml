@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:pods-workloads
-revision: 2
+revision: 3
 questions:
   - id: fpp:pods-workloads/q-daemonset
     kind: scenario
@@ -26,3 +26,19 @@ questions:
       - "Every choice cites controller semantics rather than familiarity."
       - "Pod-level sharing is explicit for multi-container cases."
     objective_ids: [fpp:pods-workloads/pod-boundary, fpp:pods-workloads/controller-choice]
+  - id: fpp:pods-workloads/q-controller-classification
+    kind: scenario
+    prompt: "Match these needs to workload controllers: a stateless HTTP API, a database needing stable identity, one node-local agent per worker, and a backup that runs every night."
+    model_answer: Use a Deployment for the stateless API, a StatefulSet for stable ordered identity and storage relationships, a DaemonSet for one eligible Pod per node, and a CronJob for scheduled finite work.
+    critical_points:
+      - Controller choice follows lifecycle, identity, and placement semantics.
+      - DaemonSet and CronJob desired counts are not ordinary replica counts.
+    objective_ids: [fpp:pods-workloads/controller-choice]
+  - id: fpp:pods-workloads/q-localhost
+    kind: predict
+    prompt: Two containers run in the same Pod. Can one normally reach the other's listening port through localhost, and does that mean they automatically share the same filesystem?
+    model_answer: They normally share the Pod network namespace and can communicate through localhost. Their container filesystems remain separate; data is shared only through explicitly mounted shared volumes or another deliberate mechanism.
+    critical_points:
+      - Containers in one Pod share network identity.
+      - Filesystem sharing requires an explicit shared volume.
+    objective_ids: [fpp:pods-workloads/pod-boundary]

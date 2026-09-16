@@ -3,7 +3,7 @@ id: fpp:kubernetes-architecture-components
 slug: kubernetes-architecture-components
 title: Kubernetes components and the API request path
 summary: Trace a Kubernetes change from kubectl through the API, control-plane reconciliation, scheduling, kubelet execution, runtime, and status feedback.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-release-debugging
-revision: 2
+revision: 3
 questions:
   - id: fpp:cloud-native-release-debugging/q-canary
     kind: explain
@@ -26,3 +26,19 @@ questions:
       - "The first broken boundary is named before a fix is proposed."
       - "Running, Ready, endpoint membership, and successful request are treated as different evidence."
     objective_ids: [fpp:cloud-native-release-debugging/strategy, fpp:cloud-native-release-debugging/evidence]
+  - id: fpp:cloud-native-release-debugging/q-blue-green
+    kind: scenario
+    prompt: What makes a release blue-green rather than merely two Deployments with different versions running at the same time?
+    model_answer: Blue-green requires two complete environments or workload sets plus an explicit traffic switch from the old version to the new one, with a rollback path by switching traffic back. Merely running both versions does not define which users reach which version.
+    critical_points:
+      - Blue-green is defined by an explicit traffic cutover boundary.
+      - Parallel versions alone do not specify rollout semantics.
+    objective_ids: [fpp:cloud-native-release-debugging/strategy]
+  - id: fpp:cloud-native-release-debugging/q-image-proof
+    kind: scenario
+    prompt: A rollout claims success, but you suspect some Pods are running the wrong application build. What evidence would distinguish desired image configuration from the artifact actually running?
+    model_answer: Inspect the Deployment and Pod specs for the desired image reference, then verify the resolved image ID or digest on the running containers. A mutable tag can point to different artifacts over time, so artifact identity should be proved with the runtime-resolved image information rather than the tag string alone.
+    critical_points:
+      - Desired image reference and resolved runtime artifact are different evidence.
+      - Immutable digest or image ID is stronger proof than a mutable tag.
+    objective_ids: [fpp:cloud-native-release-debugging/evidence]

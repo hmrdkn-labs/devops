@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-namespaces-scope
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-namespaces-scope/q-same-name
     kind: explain
@@ -26,3 +26,19 @@ questions:
       - "Namespaced and cluster-scoped identity are distinguished correctly."
       - "RBAC and network policy are not conflated with namespace creation."
     objective_ids: [fpp:kubernetes-namespaces-scope/scope, fpp:kubernetes-namespaces-scope/boundary]
+  - id: fpp:kubernetes-namespaces-scope/q-node-scope
+    kind: predict
+    prompt: If you run kubectl get nodes -n team-a, does the namespace flag make Node objects belong to team-a?
+    model_answer: No. Nodes are cluster-scoped resources, so their identity does not include a namespace. A namespace flag may be irrelevant for that resource type; it does not transform cluster-scoped objects into namespaced ones.
+    critical_points:
+      - Resource scope is defined by the Kubernetes API type.
+      - Namespace flags do not change a cluster-scoped resource's identity.
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]
+  - id: fpp:kubernetes-namespaces-scope/q-service-name
+    kind: scenario
+    prompt: team-a and team-b each have a Service named api. Why can both exist, and what name should a client use when it must unambiguously reach the Service in team-b?
+    model_answer: Namespaced resource identity includes the namespace, so both Services can be named api. A client can use a namespace-qualified DNS name such as api.team-b or the full Service DNS name to explicitly address the team-b Service.
+    critical_points:
+      - The namespace is part of a namespaced object's identity.
+      - Cross-namespace discovery should use a namespace-qualified Service name.
+    objective_ids: [fpp:kubernetes-namespaces-scope/scope]

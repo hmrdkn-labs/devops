@@ -3,7 +3,7 @@ id: fpp:kubernetes-scheduling-placement
 slug: kubernetes-scheduling-placement
 title: Kubernetes scheduling and placement constraints
 summary: Predict where a Pod can run by separating resource requests, node selection, affinity, taints and tolerations, topology spreading, and controller intent.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

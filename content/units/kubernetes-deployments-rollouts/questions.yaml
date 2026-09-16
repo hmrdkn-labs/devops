@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-deployments-rollouts
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-deployments-rollouts/q-new-rs
     kind: predict
@@ -26,3 +26,19 @@ questions:
       - "A new ReplicaSet is connected to the changed Pod template."
       - "The explanation separates Deployment rollout ownership from ReplicaSet replica ownership."
     objective_ids: [fpp:kubernetes-deployments-rollouts/ownership-chain, fpp:kubernetes-deployments-rollouts/revision]
+  - id: fpp:kubernetes-deployments-rollouts/q-rollback
+    kind: predict
+    prompt: What does a Deployment rollback conceptually change, and why is it wrong to think Kubernetes revives the old Pods themselves?
+    model_answer: A rollback changes the Deployment's desired Pod template back to a previous revision. The Deployment then reconciles ReplicaSet replica counts toward that template; old Pod objects are not resurrected, and replacement Pods are still new runtime instances.
+    critical_points:
+      - Rollback changes desired template revision, not historical Pod identity.
+      - Deployment reconciles ReplicaSets, which in turn manage Pods.
+    objective_ids: [fpp:kubernetes-deployments-rollouts/ownership-chain, fpp:kubernetes-deployments-rollouts/revision]
+  - id: fpp:kubernetes-deployments-rollouts/q-unready-rollout
+    kind: scenario
+    prompt: A rollout creates new Pods that are Running but remain NotReady. Why can the Deployment still stall instead of declaring success?
+    model_answer: Deployment availability depends on Ready or available replicas, not merely Pod phase. If the new Pods fail readiness, the controller may be unable to satisfy its progress and availability requirements while respecting maxUnavailable and maxSurge, so inspect readiness conditions and rollout status.
+    critical_points:
+      - Running does not imply available for a Deployment rollout.
+      - Readiness influences whether the rollout can safely advance.
+    objective_ids: [fpp:kubernetes-deployments-rollouts/revision]

@@ -91,7 +91,7 @@
       "slug": "cloud-native-release-debugging",
       "title": "Release strategies and application debugging",
       "summary": "Distinguish rolling, blue-green, and canary release ideas and debug a failed Kubernetes release from artifact through rollout, readiness, endpoints, and user traffic.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "delivery",
@@ -102,13 +102,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:cloud-native-release-debugging/strategy": "4510e402b0eece72ee469d8f9ec8dac878779387e9d130b27886f4fd79c0d1bc",
-        "fpp:cloud-native-release-debugging/evidence": "56c875df69f7a0146007a378f779945561a2e64e7e2cd9024ffc6e300669aa1f"
+        "fpp:cloud-native-release-debugging/strategy": "e49d584a2ec820902a2e33281f2010e4810fe73852e18408c1ef664a94e204c1",
+        "fpp:cloud-native-release-debugging/evidence": "faa2c40475d605813c9e3f4a5847dba4f457fd03f1dbd746cd1bef852d8865a0"
       },
-      "mastery_hash": "75d33baa814717f1c9008db074ebf43015d71f95e736f56b84969d3d8223b484",
+      "mastery_hash": "67dcd7c4878a83fe5257aae407372434a0412909aa138754f6f4adb9137a377d",
       "enrichment_hash": "2c3d06fe6aafa743fa91a36ed8da87a9542de4ee69e51c58de9cf7efa051df99",
       "editorial_hash": "f7576d2bb9be7fc0fc8775875b4b8f3107d9ec6a8e454de51868eb9c948c7175",
-      "content_hash": "83521aca5e4f54a8e530bcb4a02a5dcdef7f63a5abc733a6e16b536966b2aeea",
+      "content_hash": "30d265346b75bb9c9de9aec1196d55f65ad6c43d474c968784d35a428a4602b6",
       "raw_markdown_url": "/raw/v1/units/cloud-native-release-debugging/unit.md",
       "raw_visuals_url": "/raw/v1/units/cloud-native-release-debugging/visuals.yaml",
       "visual_count": 1
@@ -249,7 +249,7 @@
       "slug": "git-yaml-declarative",
       "title": "Git, YAML, and declarative intent",
       "summary": "Use versioned text to express desired state while respecting YAML types, schema validation, review, and reconciliation.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "delivery",
@@ -258,13 +258,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:git-yaml-declarative/versioned-intent": "bab0ff5b5230bbd8a0c5863d6bc3d891e7567401c5e2986b6cd1f4d637b339ea",
-        "fpp:git-yaml-declarative/yaml-schema": "6b26e03e5311cfb4dc9ae84247e73ea9da072d3a6fcfacfe03cf3b0ff4fddc7e"
+        "fpp:git-yaml-declarative/versioned-intent": "792e924c0e5cace8e1dcaeab1ee1cdb98897fd8cf44e193f62d83d61265d4001",
+        "fpp:git-yaml-declarative/yaml-schema": "8b708ceb03c42ad797d1df24e890b84c8fd33c866928a1f911c60c7f8ce1e5db"
       },
-      "mastery_hash": "611b190abbd69c66238d50e4ef8d639f97616fdad960ec5b0be00d7c54e58164",
+      "mastery_hash": "335c0d028e0d7e57f6fef3ceccf0541b48d95cca3a9298f8df34fb9f46410a4f",
       "enrichment_hash": "5c8d2a94364e0378f90e450b52a3dc67653bb8e737c24e3c2ce66a19a859907f",
       "editorial_hash": "5cb3cefb5545b495648bc7d3f3b9d054a72b066fe3271120ef2b00366aa19811",
-      "content_hash": "ea7cb3394f20b99937d66c20a4830576d2dbf1058f3c1e2ed6fa59c3fb23f632",
+      "content_hash": "fbfe29039f5b056b6912b4ffbb060101a778e0eee182660f41ae73f85846dfac",
       "raw_markdown_url": "/raw/v1/units/git-yaml-declarative/unit.md",
       "raw_visuals_url": "/raw/v1/units/git-yaml-declarative/visuals.yaml",
       "visual_count": 1
@@ -431,7 +431,7 @@
       "slug": "kubernetes-apply-live-state",
       "title": "kubectl apply and live state",
       "summary": "Treat kubectl apply as declarative API reconciliation, compare local intent with live state, and understand why successful configuration is only one proof layer.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -441,13 +441,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-apply-live-state/declarative": "c81294dd13e5e3f166137f5ce5c95026197dab09586753b270bd057777911f6c",
-        "fpp:kubernetes-apply-live-state/live-state": "b3a191fa678df6c48ffc555d04bb6afc5ab61126227941e47d008c65e89bb334"
+        "fpp:kubernetes-apply-live-state/declarative": "377c4f4fea525b88d6e978cd386d3ce05caa9f483cbd8e1608d25b1e2152ad8c",
+        "fpp:kubernetes-apply-live-state/live-state": "011605209e825556d1ed1538c259f0d64488c36a8410832c838b164d7d0c76d9"
       },
-      "mastery_hash": "5d514a264a4ac9bf74c88e292fb3919d998e923451ff7fb1e7c51d57ef314223",
+      "mastery_hash": "b4e17b63059dc4b349fb30cd7bc04a7f3406f5cc1acb912f752ab346b6b50ae1",
       "enrichment_hash": "f48b0b89b60e34656415c1052308564a06e01b39e751bc22970539751f2ac3db",
       "editorial_hash": "bbb895d776896617bf578813d770b8286d125f790bcf67b94a5fbac6d04a22e1",
-      "content_hash": "c816efd5df9b47b1d170e830d29f5f3b8090cef75ebb6c50b4c5864682d37357",
+      "content_hash": "d7e619923674ed91629a11e9799be2cefd7e024fd48d3141a0ff4962090a3515",
       "raw_markdown_url": "/raw/v1/units/kubernetes-apply-live-state/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-apply-live-state/visuals.yaml",
       "visual_count": 1
@@ -457,7 +457,7 @@
       "slug": "kubernetes-architecture-components",
       "title": "Kubernetes components and the API request path",
       "summary": "Trace a Kubernetes change from kubectl through the API, control-plane reconciliation, scheduling, kubelet execution, runtime, and status feedback.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -467,13 +467,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-architecture-components/roles": "2bda9ef874e2a02940c239a7a68c09c8528668425b867aa5b12e502ed4e2b447",
-        "fpp:kubernetes-architecture-components/request-path": "3fe829afdc7b48e2965730365ad70c8fbe52727ee9658063f49bb8fb13c91971"
+        "fpp:kubernetes-architecture-components/roles": "570c64d3106db91e79b3afdc8aad291d6a110d6937b432590028f18bd446f52f",
+        "fpp:kubernetes-architecture-components/request-path": "220cb64c00aa297cd95870b0289130bbaa3641261edca5773a7d75782c1dd414"
       },
-      "mastery_hash": "a534609475b18f9601206c9e05b14264c6e772e35ab0d1d3c6ab32bc68be7aa3",
+      "mastery_hash": "b5b0569ce59f87269e50eb892e0a59caea4682232ca8402ff792358638739018",
       "enrichment_hash": "cf1526d859d24bd4d8f09f5f6374ff3e343b80c9b6f4138f87840a5aeae7b5c8",
       "editorial_hash": "ffe9f400e5def70953493d3c54963e0ee08f6cfc199831d0ecf2a1195247dd92",
-      "content_hash": "3ed3a89302d7c9745d64e334b9ebb9e4fa14ef88b5bd0ce7fc694ff07e1433c8",
+      "content_hash": "4b094de57d753f9b0b6b67f63eddb0f9cbd6effa6cf143e48a60dca57cb7a48a",
       "raw_markdown_url": "/raw/v1/units/kubernetes-architecture-components/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-architecture-components/visuals.yaml",
       "visual_count": 1
@@ -483,7 +483,7 @@
       "slug": "kubernetes-control-loop",
       "title": "Kubernetes API and control loops",
       "summary": "Understand Kubernetes as an API-driven system where controllers continuously reconcile declared intent with observed state.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -493,13 +493,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-control-loop/api-state": "60fa8dd08a717086a2971aac1fdc79a04f65fffb289eb9c2bcf18a8fd214b32b",
-        "fpp:kubernetes-control-loop/reconciliation": "0e9abe343b2ae93d525c0e6897fad926b1756a9ffac28a09a8bcef5ace34b1f0"
+        "fpp:kubernetes-control-loop/api-state": "b60e2e40cccb775fecb6cc8de101c4f6c979d5c45a6008e9cf13d222a6202c2f",
+        "fpp:kubernetes-control-loop/reconciliation": "44e63352f4305d2bcbb864436f546f6f9a8f150afa37bb2b064bc407dd5771f7"
       },
-      "mastery_hash": "a1c1c39f654cd9bdeb4bf0fa1ec8a41c188bf2310e7b491d2a7aa481a0f7a792",
+      "mastery_hash": "40ccdc1bfe4b1292308c6b03db0e5bb85998c71ae2e221a4eca29d2d38928869",
       "enrichment_hash": "c9d17837e03c2f2ae384d703f6d6c801c5bdaf7e73ad0bb6c96c477abb320201",
       "editorial_hash": "fb8d1c25fab6c49772667c0e3627cdae0f4dc241379056a5854b71bb0e5f3d7a",
-      "content_hash": "b999c90ec6f2075b487f5a6e59ec2bb6eb54a34ded280390c59ed525ac85e742",
+      "content_hash": "c01f58af747a10f17ee22c0e8074c9fccc879e9de39c4da5488674978b4310ab",
       "raw_markdown_url": "/raw/v1/units/kubernetes-control-loop/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-control-loop/visuals.yaml",
       "visual_count": 1
@@ -509,7 +509,7 @@
       "slug": "kubernetes-deployments-rollouts",
       "title": "Deployments, rollouts, and rollbacks",
       "summary": "Trace how a Deployment manages ReplicaSets, why template changes create rollout revisions, and how rollout evidence differs from application health.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -518,13 +518,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-deployments-rollouts/ownership-chain": "fe7aba283b01a6437fc95d96fd22fcdbfcd74c71cb21c49ebc0fbd7487d48838",
-        "fpp:kubernetes-deployments-rollouts/revision": "93b06046a3a0c463a65582824a4bfffdaaa8a4333bd10da793527849fd817857"
+        "fpp:kubernetes-deployments-rollouts/ownership-chain": "6a6409115e904a0b2a3b892d9dcf88708d8c844ba058335e1cab1ee3c84033bb",
+        "fpp:kubernetes-deployments-rollouts/revision": "74cbc45b835d4b65972be7a4c1163a935d21f0873f3f228edd5d1ebd021291ba"
       },
-      "mastery_hash": "a70051d820266e02db74869851b334e04daa8ca58c730b1dfd6e750c9685d363",
+      "mastery_hash": "a5885d159123f8b9ee5799a97025f223451e12bbecf5ad5e43aa3df77a86975a",
       "enrichment_hash": "a61cd0b9b854d963e642c5e64a49441d9296659e338d3f85725d07193dec5a61",
       "editorial_hash": "63cb55fb6afbf717d1568b54d34079ad5d143d58e8856d348a243d74526cdb37",
-      "content_hash": "622bbdf82d225514319e0e5b25e89dbb26847fc53c945a68c3103865129c4943",
+      "content_hash": "fe75b03a3fbc2f95e10a6211e8a7a7eba2f23d85b13a314b488d7ee2454f0ede",
       "raw_markdown_url": "/raw/v1/units/kubernetes-deployments-rollouts/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-deployments-rollouts/visuals.yaml",
       "visual_count": 1
@@ -534,7 +534,7 @@
       "slug": "kubernetes-labels-replicasets",
       "title": "Labels, selectors, and ReplicaSets",
       "summary": "Connect label-based selection to ReplicaSet ownership and explain how a controller continuously repairs replica-count drift.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -544,13 +544,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-labels-replicasets/selection": "b511db40dbaa5d783e483fa2a3146c798c3835f9b95dffabb7a444dd9a390ec1",
-        "fpp:kubernetes-labels-replicasets/reconciliation": "0431701636994b21d5a5790a1b47dc1c57758ce4f71567bc3d432e28c5d8bc15"
+        "fpp:kubernetes-labels-replicasets/selection": "10c06e9cc3b96b6c4011d9c111a78f06fe1331c56656d7434f1778914e930eff",
+        "fpp:kubernetes-labels-replicasets/reconciliation": "8ea62ede4c5d7f2223daf1c7a2d6048dd79b776df4a54886f6c5bd570bdc00fd"
       },
-      "mastery_hash": "43b6b46b03258fbbe1d244598d0c58027a01f86050caa3c8b449ce0087a118aa",
+      "mastery_hash": "101956b30388e8f7f2c82e4407ea1b02a4015043b9085005c5c7ca2b98c8dc11",
       "enrichment_hash": "c69dc436527cc806a3efcb1bdb6e5107e0f4abbc8c9e9b55caada288d7678115",
       "editorial_hash": "81941966196ad5ef89b16342ba4632e9a89a2996a3f3b21dff0bdfab14c32e20",
-      "content_hash": "c0078ca016c97da49f9d220d47a79ce401239f9e4400258baa3496b60951e52a",
+      "content_hash": "4c5eb89adec9302a019d4ad3fdbd3f324debb9cd6e5b66bc7350afe0448475c8",
       "raw_markdown_url": "/raw/v1/units/kubernetes-labels-replicasets/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-labels-replicasets/visuals.yaml",
       "visual_count": 1
@@ -560,7 +560,7 @@
       "slug": "kubernetes-manifests",
       "title": "Kubernetes manifests and API objects",
       "summary": "Read a Kubernetes manifest as a request to the API, separate desired spec from observed status, and prove what the cluster accepted.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -570,13 +570,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-manifests/object-shape": "dac09bad723bc0eae1709daa9221aab22feaa7c2e87fb175f79d086a50981c2c",
-        "fpp:kubernetes-manifests/proof-boundary": "b8e34177366e92759915d929e40e8e92398987837271509dd06aadf63c4ea5d9"
+        "fpp:kubernetes-manifests/object-shape": "02441b5bbf968d7884040877d8b8385e575c904bbcaf2e56fbd994081d61967a",
+        "fpp:kubernetes-manifests/proof-boundary": "c365a35afd48bb8b547351edb414a55aa1a71f7eea4c219bf7e1d3fd72c7a99d"
       },
-      "mastery_hash": "e46bc40cc0b308a280492d78e31314a56625357e1bcf433ab7977382017b5bc9",
+      "mastery_hash": "70982756ead45c3c4b550929e61a968365cc41eee661f0924097eba1a75720e1",
       "enrichment_hash": "99e251f8accb10d9b5545e01e74ff716252ce00b172afde3e069568d4f921c92",
       "editorial_hash": "0ee5ea210405a10ca3d4b914f00f4fa91649f302bc3129418c035b62df12ee76",
-      "content_hash": "5de17af85e64971b5bdf05eb4381bb5e193a72bfe50dd9f870b1b3293a52dc53",
+      "content_hash": "af6ecf9a442da4c1082ba5b9b3368ddf7ccc63bb8830f35da5234a162007012c",
       "raw_markdown_url": "/raw/v1/units/kubernetes-manifests/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-manifests/visuals.yaml",
       "visual_count": 1
@@ -586,7 +586,7 @@
       "slug": "kubernetes-namespaces-scope",
       "title": "Kubernetes namespaces and API scope",
       "summary": "Use namespaces as namespaced API scope and organizational boundaries while avoiding the common mistake of treating a namespace as automatic security isolation.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -596,13 +596,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-namespaces-scope/scope": "6121174c2884e5fbca535f128bb865b3197396cdda6536e3cd8e83b513bf2e38",
+        "fpp:kubernetes-namespaces-scope/scope": "2e1eaf21fd10019eb0313be5415c81b886c5a95cb3c7d733263ab493f52277c8",
         "fpp:kubernetes-namespaces-scope/boundary": "2386bb1de94f73321790d5e9741e0751f5c716866db60e1bb1cef532f139a755"
       },
-      "mastery_hash": "7ea529a807fe8cdfaa0b939be875168a3e2dc33219ab0e2f0c49c9bbce0a1e92",
+      "mastery_hash": "77740e57f7cfe03fa50b1a53cae7737461de0b7945499bc707015f3b9b399b17",
       "enrichment_hash": "f0da82846f8e7e98a6a152c1fd6099003d44225a7d83640a75c864fb8976b26d",
       "editorial_hash": "68e6744aab696b7f89b8ae31e0bb9545523725c5a02cb2b8d19ca82857391892",
-      "content_hash": "5cb622523b4c9a106fe1d28d3534545bc7fc3191d5a0d9a444678d56d4a459c8",
+      "content_hash": "0a18e06d76fef610cfa0343bf35721f6fb5bdbebcb7404590159f105787fff33",
       "raw_markdown_url": "/raw/v1/units/kubernetes-namespaces-scope/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-namespaces-scope/visuals.yaml",
       "visual_count": 1
@@ -612,7 +612,7 @@
       "slug": "kubernetes-networking-request-path",
       "title": "Kubernetes networking request path",
       "summary": "Trace a request from DNS through a Service and EndpointSlice to a Pod while separating CNI connectivity, Service forwarding, ingress routing, and policy.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "networking",
@@ -624,13 +624,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-networking-request-path/service-path": "5450a42671e286ca09ea4accc5ba835e7422c06b59479234a969e07fe161b5b1",
-        "fpp:kubernetes-networking-request-path/boundaries": "208b03500188b4fd1d6441cd180ed44e3aadea9dfdd12d5f1a39bd770dead5bb"
+        "fpp:kubernetes-networking-request-path/service-path": "057c4b21f7e14dbbb6e25cad147a1a9806183a59168c87cca041372864e133f5",
+        "fpp:kubernetes-networking-request-path/boundaries": "8c1d605bbaccf027d6124383b88e95db8e809084f792eaac9de981aa832d6258"
       },
-      "mastery_hash": "7aacd86afb6cf8380e9b5468d70405aee4f9aa8efe1c8cd0b6448ab2d91f6e02",
+      "mastery_hash": "183446bb2740e29c1347556c17c882bf3fa303155717187192257ad56ff8747e",
       "enrichment_hash": "66eb3e88ec060a99fa0d9b4fa4ec07adcb631ed4031c08def01b5cfa4d44e806",
       "editorial_hash": "2116bf34e7627d32bf386f797a69fcc98edeb00778bbb7defba4206a9c17eb21",
-      "content_hash": "6b8b0dff37857bf23fa681f4de16e929da778c8549a4e5a059c9b30ff473e1ec",
+      "content_hash": "38a974ad4c4a5829dbbe5d16035a6dd9cd4a3e869fa28c1eb3010f549a0a1d90",
       "raw_markdown_url": "/raw/v1/units/kubernetes-networking-request-path/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-networking-request-path/visuals.yaml",
       "visual_count": 1
@@ -640,7 +640,7 @@
       "slug": "kubernetes-pod-model",
       "title": "Pod model, lifecycle, and ownership",
       "summary": "Reason about Pods as disposable execution records with one scheduled node, shared network identity, lifecycle phases, and controller ownership.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -650,13 +650,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-pod-model/lifecycle": "750769b3602bb4f6960998b82ff73a71602d9a9dde5d601e8dc0e2cfc5d7b520",
-        "fpp:kubernetes-pod-model/ownership": "8a5588e3228843dd921092f772b297c5f58d1a526dd7981580beb6d5ee4e848d"
+        "fpp:kubernetes-pod-model/lifecycle": "a4be8e0b3ad2be4ff94c575be553cdbf43ecfba5056c7008f3a6d62373fb17f1",
+        "fpp:kubernetes-pod-model/ownership": "6ef48cb4c158b624697b4b895dfdb78eabd12dba9af4575006ce89df5a97e111"
       },
-      "mastery_hash": "35f548816dd9f5782a44f4164a49d0d011c3d516b23998a50e9d6d8aeed1c1cf",
+      "mastery_hash": "7340dcb210ac47142549a27fbc569868a1bd07cbe6fc6dcc1857f7dba23addf3",
       "enrichment_hash": "db14a56c2bc60a59da31fe94725f7cd97fe25776ef314f83a4e087a534124547",
       "editorial_hash": "53b9d743d11b85675c55931f396069939a05f4b03036871495a7827ba7294257",
-      "content_hash": "74a70c6b1f9daed339d8bf8717ad3ea1eb19403ec3694f30cca4bb260cf6ca94",
+      "content_hash": "eb312a97b6641832f31f834221a2c73115d1202724b48ac2749b3a10cef621f1",
       "raw_markdown_url": "/raw/v1/units/kubernetes-pod-model/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-pod-model/visuals.yaml",
       "visual_count": 1
@@ -666,7 +666,7 @@
       "slug": "kubernetes-scheduling-placement",
       "title": "Kubernetes scheduling and placement constraints",
       "summary": "Predict where a Pod can run by separating resource requests, node selection, affinity, taints and tolerations, topology spreading, and controller intent.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -676,13 +676,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-scheduling-placement/feasibility": "83e8e2d23efbbaf0941d0eab673a0b74cca719fa236c571ca87405a56f2649e4",
-        "fpp:kubernetes-scheduling-placement/policy": "dec473008fcf8bf8822d539b1a0c65967a40a2e53b5cdd7ed55c1602de2e7f5f"
+        "fpp:kubernetes-scheduling-placement/feasibility": "10b118a935a1359199d688dcb6795fdf8c5baddeb744ffef3fac9c722d09fe77",
+        "fpp:kubernetes-scheduling-placement/policy": "5ccd5649bdcc9955a022eeba805d3b6cd3be63692f5df3421fb2af87d7e06933"
       },
-      "mastery_hash": "2190b301c44f0abcbbbe9bcb6471f4f4cd76dd2187bdcf2f3ba7bb18653b9f31",
+      "mastery_hash": "cda56d72faf8cf8ce8a9239538cc34cba5a9891e7fa3585b410aacd17b3b9c08",
       "enrichment_hash": "78804a6fcfd98f839f086a5c17df6d369699e13ff5dfec0789782be7e7fcf575",
       "editorial_hash": "4afee044a670fe1b9e76a2641b53396ea9fb9ef730a3adb786315b7decc2191c",
-      "content_hash": "005dd9e3c9efab0003ab0f36555b82134425d697092491aa73d7be6c0a4b6465",
+      "content_hash": "f76df0d010b552e4f83402135615e1ce4db3e206f1f9cbd37c5894260f9ca6d2",
       "raw_markdown_url": "/raw/v1/units/kubernetes-scheduling-placement/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-scheduling-placement/visuals.yaml",
       "visual_count": 1
@@ -692,7 +692,7 @@
       "slug": "kubernetes-security-access",
       "title": "Kubernetes identity, authorization, admission, and workload boundaries",
       "summary": "Separate authentication, RBAC authorization, admission, workload identity, Secret handling, Pod security, and network segmentation into clear security boundaries.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -702,13 +702,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-security-access/request": "83e72b69310790b61bd7833daf70fd962b48ba345d85b2aeaac4540b6065c1b5",
-        "fpp:kubernetes-security-access/workload": "9c20f46e682c7c771931b1bc16572581d3a9c3c51e6ff8d3760b491b7d504b91"
+        "fpp:kubernetes-security-access/request": "9b8bc47e84210368d507a864e4967f6193cb4ad95003582deb2c7a4a5160764a",
+        "fpp:kubernetes-security-access/workload": "345c9f44e634d9e9c6269a8ae091f27cdd82ab071092e01960a427897d20d67c"
       },
-      "mastery_hash": "efd639381dcb2866828a95eb8039210bb91a0614345f3a88ba9888739443bc7c",
+      "mastery_hash": "37ec82f21ae327759a5799f133b4c386f50c4f73492ce3a64d5920248139ddb1",
       "enrichment_hash": "c17fb2b119d52c4431bfe908ab39fe085ccd27674a4e45405d2465440014c8ee",
       "editorial_hash": "6527bf51c6c1df5302f9bf2fbaaf2c0e87b8541db3e74c471d89732abde328ce",
-      "content_hash": "455a9f722c3d49543e058d9a8826c5ea350c975186af13ad211af2e387ba21b8",
+      "content_hash": "0afffe960b843a7a86376199f5af2819c75b78aabd3887e14197d492e785ee55",
       "raw_markdown_url": "/raw/v1/units/kubernetes-security-access/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-security-access/visuals.yaml",
       "visual_count": 1
@@ -718,7 +718,7 @@
       "slug": "kubernetes-storage-lifecycle",
       "title": "Kubernetes persistent storage lifecycle",
       "summary": "Trace durable storage from a workload claim through StorageClass and CSI provisioning to a bound volume, mounted Pod, topology constraints, and reclaim behavior.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -728,13 +728,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kubernetes-storage-lifecycle/claim": "712ebb8b13776739f86a85fba9478540c6edd961ed38ec8d4e496d4936cba807",
-        "fpp:kubernetes-storage-lifecycle/failure-domain": "a21ad49cdcd6896bf80479a69372af3e53341e678e62be4469b1d6fb72b1249b"
+        "fpp:kubernetes-storage-lifecycle/claim": "7d07022d2f8bc6d8839abf8e4851f38d9bc1a946082d9a8063bc57fc63d12bec",
+        "fpp:kubernetes-storage-lifecycle/failure-domain": "6d399d788c957dc94afa59beb0ea6092e7a73acaedc1c56593ee72fa7683b5c2"
       },
-      "mastery_hash": "7880e61893cfd7692a471bf6a603dd435b0918bab284a863dd60132854713af7",
+      "mastery_hash": "2b2f7c6af2b512e8829a7bbe64f693e5618acfc0cc3a309f05a68b16aa2711fe",
       "enrichment_hash": "66a4d9b7284a56f37a1526c6aaf4d3b06c3cdfd41cac9a80aa4077d454384cb5",
       "editorial_hash": "ff474a9bff7c1c21c0530ee8cd0a2d2884584a695b4319974556a74c37dbcc3a",
-      "content_hash": "bca72425c6d5d8f310a2fc6edc305b920d0671d6f8a8bd622389155d0193ca10",
+      "content_hash": "d8ba63820b4dd7f29c7edeba87a483a70f97e63994ffbc6bde8500b244aa32bc",
       "raw_markdown_url": "/raw/v1/units/kubernetes-storage-lifecycle/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-storage-lifecycle/visuals.yaml",
       "visual_count": 1
@@ -770,7 +770,7 @@
       "slug": "pods-workloads",
       "title": "Pods and workload controllers",
       "summary": "Choose the smallest Kubernetes execution unit and the controller whose identity and replacement semantics match the workload.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -780,13 +780,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:pods-workloads/pod-boundary": "0cee824065be8210b8770d70eef51256676aa3cc4b660775e7126584e05ce5b4",
-        "fpp:pods-workloads/controller-choice": "3fa5a2afe2e4c1cc08c95622e5981f05de93237d91ef08df34b8c99712d4bc97"
+        "fpp:pods-workloads/pod-boundary": "a671a310e954296615bd4243b6b514bde31ba8621220ba415204d138b83e42d4",
+        "fpp:pods-workloads/controller-choice": "5e21401aeef54663dfd685b4c8d880ff935ebedb3d013d807f52ecc32177a08d"
       },
-      "mastery_hash": "94b9f69a4cd79b9b8525af2431563b9328b1cdd2e75b473041c3c88a39fd3ad0",
+      "mastery_hash": "6dc275ac5747540aedc8679c9a15aa5b06f47149158d4a9787e3d3513de70d5b",
       "enrichment_hash": "65904639dc3610c69bf32e16ce71a0857ba82536b40a066eabda517a2579587f",
       "editorial_hash": "c45346d9a81d1896588b39f0e3cfbfcbe840a981708c55c7ff36a5912ece1d7b",
-      "content_hash": "5090c80e874c0268839c16b7e4538d73d4403667d43e0ad6cc85a4820ceabd83",
+      "content_hash": "758e8f651ac26c5cc8c2a45191ea15e5d4e1c128e627f5f9114d0a286814ce35",
       "raw_markdown_url": "/raw/v1/units/pods-workloads/unit.md",
       "raw_visuals_url": "/raw/v1/units/pods-workloads/visuals.yaml",
       "visual_count": 1
@@ -870,7 +870,7 @@
       "slug": "scheduling-resources-health",
       "title": "Scheduling, resources, and health probes",
       "summary": "Relate placement to requests, runtime enforcement to limits, and traffic or restart decisions to distinct health signals.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -880,13 +880,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:scheduling-resources-health/requests-limits": "cb17df227ad2d37ddf20445baf128ea510ab5b3903bd33ebc112d33f0de9552b",
-        "fpp:scheduling-resources-health/probe-semantics": "e420f6efb5277323b35cdc60c4125901640a96d6b3ab2ba5ddc467b7c5be59bf"
+        "fpp:scheduling-resources-health/requests-limits": "b14ad4dee5cfa7074d6bc6f5e9786a308b9f43742d367032bb4b061a32041c01",
+        "fpp:scheduling-resources-health/probe-semantics": "eea1443609badd6fd12949355c94f60a50ee50639b584e0bfc651cba1ea5ff18"
       },
-      "mastery_hash": "7b07c9ec7d86a493504c14e8c0e037044e8d978b04915060d8ed011325dc2a4c",
+      "mastery_hash": "dbf5c73771e390d3bc71590153a4fb263a709bbfc4c8fd3c459964218e05c252",
       "enrichment_hash": "190736d44108a08e3b0843a7988469b3e394b94bc52dbec7c8eb682419d01554",
       "editorial_hash": "7648f7d1a6656a4a39249a492cad16bfd8a280b45753d572734b502fff31d4f1",
-      "content_hash": "184acd4b8a3ac2ef66d1ff6f14202b50df8372a7c2f2e66693e2fdccf25f6d91",
+      "content_hash": "e6c99dadbc1ec684b89b01f082cd6b8bfda1df21acdfc44f02292a9108821c79",
       "raw_markdown_url": "/raw/v1/units/scheduling-resources-health/unit.md",
       "raw_visuals_url": "/raw/v1/units/scheduling-resources-health/visuals.yaml",
       "visual_count": 1
@@ -896,7 +896,7 @@
       "slug": "services-dns-ingress",
       "title": "Services, cluster DNS, and ingress",
       "summary": "Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -906,13 +906,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:services-dns-ingress/service-endpoints": "42b9da7c89dfa959d53ee502ede9ddbf04f87c03173a19ad0f3785fcf66e870c",
-        "fpp:services-dns-ingress/external-routing": "12ea9e68760c683937d4356fbe036fc5ffd6b6111c8523c13faa13f8f0cd1f58"
+        "fpp:services-dns-ingress/service-endpoints": "5a53978055da2eff3c6890bd5003f81aec1c848054d9098989263e3484a4c335",
+        "fpp:services-dns-ingress/external-routing": "51ee92907535be6e878187e5ce902dc076544cfc828c44779a22cfb5bced1ed6"
       },
-      "mastery_hash": "feac754fbd5418041d50b8496dd3042a6c429bad90264ba952ff08031e2bcc39",
+      "mastery_hash": "fb4f68f44d1c67d970eaf6396eb9da46e27c0447ae3f8745aa47f1caa503497c",
       "enrichment_hash": "d1da60bae30b7d18efd72a4c82ff7f0f791c3b425792ff0a6607ea2db5ed76f4",
       "editorial_hash": "199c4a8cb7ee5232c9087161c0a4181a147de6731d104df6aa0fe46b741202e4",
-      "content_hash": "ad648ed1dd345d01a465b38336f5229ada9366c1fcb653a3142c93e5ca34e24d",
+      "content_hash": "7ba4279596f978e98d3b208da3011fb212b8c7d4a38c44d428a4fdf1fbe70f39",
       "raw_markdown_url": "/raw/v1/units/services-dns-ingress/unit.md",
       "raw_visuals_url": "/raw/v1/units/services-dns-ingress/visuals.yaml",
       "visual_count": 1
@@ -948,7 +948,7 @@
       "slug": "troubleshoot-process-to-pod",
       "title": "Troubleshoot from process to pod",
       "summary": "Localize failures with an evidence ladder that moves from desired state to process, network, policy, and user-visible behavior.",
-      "revision": 2,
+      "revision": 3,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "operations",
@@ -960,13 +960,13 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:troubleshoot-process-to-pod/evidence-ladder": "49afc45e0d37760ce140e97e5cf0c00a92712063fdb46e43d08ce618e34b83c6",
-        "fpp:troubleshoot-process-to-pod/cross-layer": "412151c4084534661e35bf6cf694519ab1a52ff280e07f0be0631710f286544c"
+        "fpp:troubleshoot-process-to-pod/evidence-ladder": "62add85e8f2691250c67984110adda0749b0d24aa9af1f99e093b336477b00fe",
+        "fpp:troubleshoot-process-to-pod/cross-layer": "6e3b415077baf4ae50871efbae2f6523ec7aabeb49d245a3d2e5573950204ee5"
       },
-      "mastery_hash": "d6fcd4af9ff13e80d1dbd252de7be42c11479ce8673c60c3f96dc2a7415e2bcb",
+      "mastery_hash": "5f3c09e3e20e77eb83448bc0f900ae20f1072dcbcc28dbc6f9768302d9889a92",
       "enrichment_hash": "b274572a13dc621ead139109e3b3b0ab93f786491576867aa32e9cf42ce229dd",
       "editorial_hash": "582cc4759e495810458b5a831aef5776e55a715da55b3e80e78c9087ac557e27",
-      "content_hash": "91fdbf4ad1bcb7fac92e718d6c6b9b4e49841470f59a6f64516e3cf31aa2e43b",
+      "content_hash": "38b71c918a77f079e1a219d333e37e161b068a2a792d017abe9722d0c8031f66",
       "raw_markdown_url": "/raw/v1/units/troubleshoot-process-to-pod/unit.md",
       "raw_visuals_url": "/raw/v1/units/troubleshoot-process-to-pod/visuals.yaml",
       "visual_count": 1
@@ -4280,5 +4280,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "fb97821c5d272e44571e0ce716f29908571ad99c7d1f4625066207b4d4616838"
+  "manifest_sha256": "f155ce6116583331e4aa83fb614d4b67aedd0072cf038182864aa5fa7e822ac8"
 }

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-scheduling-placement
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-scheduling-placement/q-low-usage
     kind: scenario
@@ -26,3 +26,19 @@ questions:
       - "Resource requests and hard constraints are evaluated before preferences."
       - "A toleration is not described as a force-placement rule."
     objective_ids: [fpp:kubernetes-scheduling-placement/feasibility, fpp:kubernetes-scheduling-placement/policy]
+  - id: fpp:kubernetes-scheduling-placement/q-hard-vs-soft-affinity
+    kind: explain
+    prompt: What is the practical difference between requiredDuringSchedulingIgnoredDuringExecution and preferredDuringSchedulingIgnoredDuringExecution node affinity?
+    model_answer: "Required affinity is a hard feasibility rule: nodes that do not match are excluded. Preferred affinity is a scoring preference among otherwise feasible nodes, so the scheduler may choose a nonpreferred node when necessary."
+    critical_points:
+      - Required affinity filters feasible nodes.
+      - Preferred affinity influences scoring but does not guarantee placement.
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy]
+  - id: fpp:kubernetes-scheduling-placement/q-topology-spread
+    kind: scenario
+    prompt: You want replicas distributed across zones to reduce correlated failure. Why is a topology spread constraint a better expression of that goal than simply adding a toleration for nodes in each zone?
+    model_answer: A topology spread constraint expresses the desired distribution of matching Pods across topology domains such as zones. Tolerations only allow Pods onto nodes with matching taints; they do not balance replicas across zones or express skew.
+    critical_points:
+      - Topology spread expresses replica distribution across domains.
+      - Tolerations remove taint rejection but do not balance placement.
+    objective_ids: [fpp:kubernetes-scheduling-placement/policy, fpp:kubernetes-scheduling-placement/feasibility]

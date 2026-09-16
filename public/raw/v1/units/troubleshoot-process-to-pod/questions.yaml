@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:troubleshoot-process-to-pod
-revision: 2
+revision: 3
 questions:
   - id: fpp:troubleshoot-process-to-pod/q-crashloop
     kind: scenario
@@ -26,4 +26,20 @@ questions:
       - "The diagnosis names the exact broken relationship."
       - "The verification repeats the original user-visible check."
       - "The final note separates evidence, inference, change, and result."
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder, fpp:troubleshoot-process-to-pod/cross-layer]
+  - id: fpp:troubleshoot-process-to-pod/q-pending
+    kind: scenario
+    prompt: A Pod has never left Pending. Why should logs usually not be your first diagnostic step, and what evidence should you inspect instead?
+    model_answer: A container may not have started yet, so application logs can be absent or irrelevant. Inspect Pod conditions and events, node assignment, scheduler messages, resource requests, placement constraints, PVC state, and image or sandbox setup depending on how far the Pod progressed.
+    critical_points:
+      - Evidence should match the lifecycle stage reached by the Pod.
+      - Pending often points to scheduling or setup before application execution.
+    objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder, fpp:troubleshoot-process-to-pod/cross-layer]
+  - id: fpp:troubleshoot-process-to-pod/q-connection-refused
+    kind: scenario
+    prompt: Service DNS resolves, EndpointSlice contains a Ready Pod IP, but a request to the Service returns connection refused. Which earlier layers are already supported, and what should you inspect next?
+    model_answer: DNS resolution and backend selection are supported by evidence, and the Pod is considered ready for endpoint membership. Inspect the targetPort-to-container-port relationship, whether the process is actually listening on the expected address and port, container logs, and the same request directly at the Pod boundary before blaming DNS.
+    critical_points:
+      - Preserve evidence for layers already proven instead of restarting diagnosis from DNS.
+      - Move toward the listening process and port mapping as the next boundary.
     objective_ids: [fpp:troubleshoot-process-to-pod/evidence-ladder, fpp:troubleshoot-process-to-pod/cross-layer]

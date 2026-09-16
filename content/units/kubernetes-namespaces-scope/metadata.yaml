@@ -3,7 +3,7 @@ id: fpp:kubernetes-namespaces-scope
 slug: kubernetes-namespaces-scope
 title: Kubernetes namespaces and API scope
 summary: Use namespaces as namespaced API scope and organizational boundaries while avoiding the common mistake of treating a namespace as automatic security isolation.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

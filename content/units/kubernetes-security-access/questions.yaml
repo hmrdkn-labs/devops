@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-security-access/q-kubeconfig
     kind: scenario
@@ -26,3 +26,19 @@ questions:
       - "The allowed action and denied action are both verified."
       - "Identity establishment is not confused with RBAC permission."
     objective_ids: [fpp:kubernetes-security-access/request, fpp:kubernetes-security-access/workload]
+  - id: fpp:kubernetes-security-access/q-request-chain
+    kind: scenario
+    prompt: An API request has a valid client identity, RBAC allows the requested verb, but an admission policy rejects the object. Which stages succeeded and which stage denied the request?
+    model_answer: Authentication succeeded by establishing identity, and authorization succeeded by permitting the verb on the resource. Admission then rejected the proposed object or mutation, so the request fails even though the caller was both known and authorized.
+    critical_points:
+      - Authentication, authorization, and admission are separate request stages.
+      - Authorization success does not bypass admission policy.
+    objective_ids: [fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/q-serviceaccount-cloud-identity
+    kind: explain
+    prompt: Why can a Pod obtain cloud credentials through workload identity without storing a long-lived cloud access key in a Kubernetes Secret?
+    model_answer: The Pod can use its Kubernetes ServiceAccount identity and a configured federation or workload-identity integration to request short-lived cloud credentials. The trust mapping is external to a static Secret, so Kubernetes identity and cloud authorization remain separate but connected control boundaries.
+    critical_points:
+      - Workload identity can exchange Kubernetes identity for short-lived cloud credentials.
+      - A static Kubernetes Secret containing long-lived cloud keys is not required by that model.
+    objective_ids: [fpp:kubernetes-security-access/workload]

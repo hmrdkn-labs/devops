@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-storage-lifecycle
-revision: 2
+revision: 3
 cards:
   - id: fpp:kubernetes-storage-lifecycle/c-pvc
     type: short

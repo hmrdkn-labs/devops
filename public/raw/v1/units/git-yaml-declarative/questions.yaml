@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:git-yaml-declarative
-revision: 2
+revision: 3
 questions:
   - id: fpp:git-yaml-declarative/q-valid
     kind: predict
@@ -26,3 +26,19 @@ questions:
       - "Parsing succeeds."
       - "Schema validation identifies the wrong type without creating a resource."
     objective_ids: [fpp:git-yaml-declarative/versioned-intent, fpp:git-yaml-declarative/yaml-schema]
+  - id: fpp:git-yaml-declarative/q-schema-boundary
+    kind: scenario
+    prompt: A file is valid YAML, but spec.replicas is written as a string instead of the integer required by the Kubernetes API. Which check has passed, which check should fail, and what does that tell you?
+    model_answer: YAML parsing has passed because the document is syntactically valid. Kubernetes schema validation should reject the wrong field type before the object is accepted, proving that serialization syntax and application schema are separate contracts.
+    critical_points:
+      - Valid YAML does not imply a valid Kubernetes object.
+      - The API schema defines field names and types after YAML is parsed.
+    objective_ids: [fpp:git-yaml-declarative/yaml-schema]
+  - id: fpp:git-yaml-declarative/q-versioned-drift
+    kind: scenario
+    prompt: "Git records replicas: 3, but someone manually scales the live Deployment to five replicas. What are the two competing states, and what should a declarative workflow do with that drift?"
+    model_answer: Git contains the reviewed desired state while the API currently contains a different live desired value. A declarative workflow should make the mismatch visible, decide which intent is authoritative, and then reconcile the live object from a reviewed change rather than silently treating the manual edit as the new source of truth.
+    critical_points:
+      - Versioned intent and live API state are different evidence.
+      - Drift should be detected and reconciled through the chosen source of truth.
+    objective_ids: [fpp:git-yaml-declarative/versioned-intent]

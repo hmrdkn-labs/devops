@@ -3,7 +3,7 @@ id: fpp:kubernetes-manifests
 slug: kubernetes-manifests
 title: Kubernetes manifests and API objects
 summary: Read a Kubernetes manifest as a request to the API, separate desired spec from observed status, and prove what the cluster accepted.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes

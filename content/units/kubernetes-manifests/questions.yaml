@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-manifests
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-manifests/q-apply-proof
     kind: scenario
@@ -25,4 +25,20 @@ questions:
     critical_points:
       - "The explanation separates desired state from observed state."
       - "At least one downstream proof is named beyond kubectl apply."
+    objective_ids: [fpp:kubernetes-manifests/object-shape, fpp:kubernetes-manifests/proof-boundary]
+  - id: fpp:kubernetes-manifests/q-missing-api-version
+    kind: predict
+    prompt: A document is syntactically valid YAML and contains kind, metadata, and spec, but apiVersion is missing. Should Kubernetes treat it as a valid API object?
+    model_answer: No. YAML syntax can still be valid, but a Kubernetes object needs apiVersion and kind so the API server can identify the resource schema and endpoint. Serialization success alone does not establish a valid Kubernetes request.
+    critical_points:
+      - apiVersion and kind identify the Kubernetes API type.
+      - YAML validity and Kubernetes object validity are separate claims.
+    objective_ids: [fpp:kubernetes-manifests/object-shape]
+  - id: fpp:kubernetes-manifests/q-object-fields
+    kind: scenario
+    prompt: You inspect a Deployment where spec.replicas is 4 but status.availableReplicas is 2. What should you infer before changing anything?
+    model_answer: The desired state asks for four replicas while the observed available state has only two, so reconciliation has not fully converged. Inspect status conditions, ReplicaSets, Pods, events, scheduling, and readiness to locate the gap instead of editing the manifest immediately.
+    critical_points:
+      - spec expresses requested intent while status reports observation.
+      - A spec/status gap is evidence to investigate, not itself the root cause.
     objective_ids: [fpp:kubernetes-manifests/object-shape, fpp:kubernetes-manifests/proof-boundary]

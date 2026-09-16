@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:scheduling-resources-health
-revision: 2
+revision: 3
 questions:
   - id: fpp:scheduling-resources-health/q-bigger
     kind: predict
@@ -26,3 +26,19 @@ questions:
       - "Your answer uses allocatable capacity and requests."
       - "You list at least one non-CPU capacity dimension."
     objective_ids: [fpp:scheduling-resources-health/requests-limits, fpp:scheduling-resources-health/probe-semantics]
+  - id: fpp:scheduling-resources-health/q-request-vs-limit
+    kind: explain
+    prompt: Why can a Pod with a CPU request of 250m and a CPU limit of 1 CPU be scheduled onto a node that does not have a full free CPU available by current usage?
+    model_answer: The scheduler primarily reserves feasibility against declared requests, not instantaneous usage and not the CPU limit as if it were guaranteed capacity. The Pod requests 250m for placement, while the higher limit constrains how much CPU it may consume at runtime.
+    critical_points:
+      - Requests drive scheduler reservation and feasibility.
+      - Limits constrain runtime consumption rather than reserving that whole amount for scheduling.
+    objective_ids: [fpp:scheduling-resources-health/requests-limits]
+  - id: fpp:scheduling-resources-health/q-startup-readiness-liveness
+    kind: scenario
+    prompt: A slow-starting application needs 90 seconds to initialize, should receive no traffic until initialization finishes, and should be restarted only if it later becomes irrecoverably stuck. How should startup, readiness, and liveness probes divide those jobs?
+    model_answer: A startup probe protects the long initialization period from premature liveness failure. Readiness controls whether the Pod receives Service traffic. Liveness should detect a failure that restarting the container can plausibly repair after startup has succeeded.
+    critical_points:
+      - Startup protects initialization from liveness checks.
+      - Readiness gates traffic while liveness decides restart behavior.
+    objective_ids: [fpp:scheduling-resources-health/probe-semantics]

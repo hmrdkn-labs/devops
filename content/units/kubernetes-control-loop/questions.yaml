@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-control-loop
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-control-loop/q-delete
     kind: predict
@@ -25,4 +25,20 @@ questions:
     critical_points:
       - "You can name the controller responsible for replacement."
       - "You can separate API object creation from node realization."
+    objective_ids: [fpp:kubernetes-control-loop/api-state, fpp:kubernetes-control-loop/reconciliation]
+  - id: fpp:kubernetes-control-loop/q-controller-outage
+    kind: predict
+    prompt: The controller manager is unavailable for several minutes while existing Pods keep running. What continues to work, and what kind of behavior should stop converging?
+    model_answer: Existing containers can keep running because kubelets and runtimes execute them on nodes. Controller-owned drift such as a missing ReplicaSet Pod will not be repaired until the relevant controller is running again, even though the desired state remains stored through the API.
+    critical_points:
+      - Controllers reconcile state; they do not execute already-running containers.
+      - Desired state can persist while reconciliation is temporarily stalled.
+    objective_ids: [fpp:kubernetes-control-loop/api-state, fpp:kubernetes-control-loop/reconciliation]
+  - id: fpp:kubernetes-control-loop/q-unscheduled-pod
+    kind: scenario
+    prompt: A Pod object exists in the API, remains Pending, and has no nodeName. Which control-loop boundary has already succeeded, which component should act next, and what evidence would you inspect?
+    model_answer: API creation has succeeded, but placement has not. The scheduler should select a feasible node and record the binding through the API. Inspect Pod scheduling conditions and events before investigating kubelet or container-runtime execution.
+    critical_points:
+      - Object creation and node placement are separate stages.
+      - A Pod without nodeName has not yet reached the kubelet execution boundary.
     objective_ids: [fpp:kubernetes-control-loop/api-state, fpp:kubernetes-control-loop/reconciliation]

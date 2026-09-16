@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-networking-request-path
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-networking-request-path/q-node-ip
     kind: explain
@@ -26,3 +26,19 @@ questions:
       - "DNS, Service selection, endpoint readiness, Pod network identity, and application response are evidenced separately."
       - "A failed request is localized to the earliest unsupported hop rather than described as generic networking failure."
     objective_ids: [fpp:kubernetes-networking-request-path/service-path, fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/q-boundary-map
+    kind: scenario
+    prompt: "Map each symptom to the first Kubernetes networking boundary you would inspect: Pods cannot obtain usable Pod connectivity, a Service name does not resolve, DNS resolves but no backends are selected, and an otherwise valid connection is intentionally denied by policy."
+    model_answer: Inspect the CNI and Pod network for Pod connectivity, cluster DNS for name resolution, Service selectors and EndpointSlices for backend selection, and NetworkPolicy plus its enforcing dataplane for intentional traffic restrictions.
+    critical_points:
+      - CNI, DNS, Service selection, and NetworkPolicy are distinct boundaries.
+      - Start at the first unsupported hop instead of treating every symptom as one networking layer.
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries, fpp:kubernetes-networking-request-path/service-path]
+  - id: fpp:kubernetes-networking-request-path/q-policy-enforcement
+    kind: predict
+    prompt: A NetworkPolicy object is accepted by the API, but the cluster's networking implementation does not enforce NetworkPolicy. Does the object alone guarantee packet filtering?
+    model_answer: No. The API object expresses policy intent, but an implementation in the network dataplane must enforce it. Verify that the installed CNI or policy engine supports the policy semantics before treating the object as proof of isolation.
+    critical_points:
+      - Policy intent and dataplane enforcement are separate evidence.
+      - NetworkPolicy requires an enforcing implementation.
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]

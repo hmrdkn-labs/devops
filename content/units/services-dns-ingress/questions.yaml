@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
-revision: 2
+revision: 3
 questions:
   - id: fpp:services-dns-ingress/q-no-endpoints
     kind: scenario
@@ -26,3 +26,19 @@ questions:
       - "You can localize the failure without changing DNS."
       - "You can name the controller-produced relationship."
     objective_ids: [fpp:services-dns-ingress/service-endpoints, fpp:services-dns-ingress/external-routing]
+  - id: fpp:services-dns-ingress/q-stable-service
+    kind: predict
+    prompt: A Deployment replaces every Pod during a rollout. Why can clients keep using the same Service name and ClusterIP even though all backend Pod IPs change?
+    model_answer: The Service is a stable virtual identity above replaceable Pods. Its selector and EndpointSlice membership are updated as ready matching Pods change, while clients continue using the Service DNS name and virtual IP.
+    critical_points:
+      - Service identity is stable across Pod replacement.
+      - Endpoint membership tracks the current ready backends.
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/q-no-controller
+    kind: scenario
+    prompt: An Ingress object exists and validates successfully, but the cluster has no compatible Ingress controller. What has been proven and what should you expect for traffic?
+    model_answer: Only the desired API configuration has been accepted. Without a controller that watches the Ingress and configures a proxy or load balancer, no data-plane routing is created from that object, so external traffic should not be expected to work from the Ingress alone.
+    critical_points:
+      - Ingress is configuration consumed by an implementing controller.
+      - API acceptance does not prove an external data plane exists.
+    objective_ids: [fpp:services-dns-ingress/external-routing]

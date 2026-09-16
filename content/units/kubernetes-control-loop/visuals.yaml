@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-control-loop
-revision: 2
+revision: 3
 visuals:
   - id: fpp:kubernetes-control-loop/visual-reconciliation
     kind: state

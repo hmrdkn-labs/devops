@@ -3,7 +3,7 @@ id: fpp:git-yaml-declarative
 slug: git-yaml-declarative
 title: Git, YAML, and declarative intent
 summary: Use versioned text to express desired state while respecting YAML types, schema validation, review, and reconciliation.
-revision: 2
+revision: 3
 revision_impact: mastery_affecting
 status: published
 layer: delivery

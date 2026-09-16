@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-labels-replicasets
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-labels-replicasets/q-delete
     kind: predict
@@ -25,4 +25,20 @@ questions:
     critical_points:
       - "The selected set is derived from labels rather than Pod names."
       - "The prediction identifies the ReplicaSet control loop."
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection, fpp:kubernetes-labels-replicasets/reconciliation]
+  - id: fpp:kubernetes-labels-replicasets/q-template-selector
+    kind: predict
+    prompt: A ReplicaSet selector requires app=web, but its Pod template labels only contain app=api. Should that controller definition be accepted as a coherent ReplicaSet?
+    model_answer: No. The ReplicaSet template must produce Pods that satisfy its selector. Otherwise the controller would create Pods that do not belong to the set it is supposed to reconcile, so the API validates that relationship.
+    critical_points:
+      - The selector defines membership in the controlled set.
+      - Template labels must satisfy the selector used by the ReplicaSet.
+    objective_ids: [fpp:kubernetes-labels-replicasets/selection]
+  - id: fpp:kubernetes-labels-replicasets/q-adoption
+    kind: scenario
+    prompt: An otherwise unmanaged Pod is relabeled so that it matches an existing ReplicaSet selector. Why can that be dangerous to treat as a harmless metadata change?
+    model_answer: A matching unmanaged Pod can become part of the ReplicaSet's selected population and may be adopted when eligible. That changes replica accounting and can put the Pod under controller ownership, so selector labels carry control semantics rather than being decorative tags.
+    critical_points:
+      - Matching labels can change controller membership and replica accounting.
+      - Labels used by selectors are part of the control relationship.
     objective_ids: [fpp:kubernetes-labels-replicasets/selection, fpp:kubernetes-labels-replicasets/reconciliation]

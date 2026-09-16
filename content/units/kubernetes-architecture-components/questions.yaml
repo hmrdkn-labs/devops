@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-architecture-components
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-architecture-components/q-scheduler
     kind: predict
@@ -26,3 +26,19 @@ questions:
       - "Deployment, ReplicaSet, scheduler placement, kubelet/runtime execution, and request proof are described as separate boundaries."
       - "The final proof is stronger than merely showing that the manifest exists."
     objective_ids: [fpp:kubernetes-architecture-components/roles, fpp:kubernetes-architecture-components/request-path]
+  - id: fpp:kubernetes-architecture-components/q-node-boundary
+    kind: scenario
+    prompt: A Pod has a nodeName assigned, but its container is still Waiting and has never started. Which component has already completed its main decision, and which components now own the next execution boundary?
+    model_answer: The scheduler has already made the placement decision. The kubelet on the chosen node must now realize the Pod, using the container runtime and required node integrations such as image, network, and volume setup. Pod events and container state are the next evidence.
+    critical_points:
+      - nodeName is evidence that scheduling has occurred.
+      - kubelet and the runtime own node-side realization after placement.
+    objective_ids: [fpp:kubernetes-architecture-components/roles, fpp:kubernetes-architecture-components/request-path]
+  - id: fpp:kubernetes-architecture-components/q-etcd-outage
+    kind: predict
+    prompt: If etcd becomes unavailable while worker-node processes are still healthy, should all running application containers immediately stop? What part of the system is primarily impaired?
+    model_answer: Running containers do not automatically stop just because etcd is unavailable. The control plane loses reliable access to durable cluster state, so API reads or writes that depend on that state and subsequent reconciliation are impaired, while already-running node processes may continue temporarily.
+    critical_points:
+      - etcd stores durable control-plane state rather than executing containers.
+      - Control-plane state availability and existing node execution are separate failure boundaries.
+    objective_ids: [fpp:kubernetes-architecture-components/roles]

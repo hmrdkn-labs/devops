@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:scheduling-resources-health
-revision: 2
+revision: 3
 visuals:
   - id: fpp:scheduling-resources-health/visual-resource-health
     kind: ownership

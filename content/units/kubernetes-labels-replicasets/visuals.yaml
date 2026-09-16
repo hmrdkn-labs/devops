@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-labels-replicasets
-revision: 2
+revision: 3
 visuals:
   - id: fpp:kubernetes-labels-replicasets/visual-selector-loop
     kind: state

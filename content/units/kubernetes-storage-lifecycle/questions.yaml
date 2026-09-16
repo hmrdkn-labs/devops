@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-storage-lifecycle
-revision: 2
+revision: 3
 questions:
   - id: fpp:kubernetes-storage-lifecycle/q-pending
     kind: scenario
@@ -25,4 +25,20 @@ questions:
     critical_points:
       - "PVC, StorageClass, CSI/provisioner, PV, and Pod mount responsibilities are separated."
       - "Data persistence is verified across Pod replacement rather than inferred from object existence."
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim, fpp:kubernetes-storage-lifecycle/failure-domain]
+  - id: fpp:kubernetes-storage-lifecycle/q-wait-first-consumer
+    kind: explain
+    prompt: Why can WaitForFirstConsumer be useful for dynamically provisioned storage in a multi-zone cluster?
+    model_answer: It delays binding or provisioning until the scheduler has Pod placement context, allowing storage topology to be chosen consistently with a feasible node or zone instead of provisioning a volume first in a location that later blocks scheduling.
+    critical_points:
+      - Storage topology and Pod placement can depend on each other.
+      - Delayed binding avoids choosing an incompatible failure domain too early.
+    objective_ids: [fpp:kubernetes-storage-lifecycle/claim, fpp:kubernetes-storage-lifecycle/failure-domain]
+  - id: fpp:kubernetes-storage-lifecycle/q-reclaim-policy
+    kind: scenario
+    prompt: A PVC is deleted after an application is removed. Why can you not infer from the PVC deletion alone whether the underlying storage and data were also deleted?
+    model_answer: The outcome depends on the bound PV and StorageClass reclaim policy plus provider behavior. A Delete policy may remove the backing volume, while Retain preserves the PV or underlying asset for manual handling, so inspect the PV and reclaim policy before making a data-loss claim.
+    critical_points:
+      - PVC deletion and backing-storage deletion are separate lifecycle events.
+      - Reclaim policy determines what should happen to the PV or storage after release.
     objective_ids: [fpp:kubernetes-storage-lifecycle/claim, fpp:kubernetes-storage-lifecycle/failure-domain]
