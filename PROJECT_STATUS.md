@@ -38,9 +38,14 @@ verification confirmed health `ok`, D1 `ready`, manifest SHA
 `c5560e24a818f5ead389f09e307d34ac2acb06d24d6dc07ee6d994549fb77f19`, the live
 `/learn/kubernetes-resource-operations/` unit, KCNA path placement, the
 **37-question** refresher, and the Resources lesson route. The private evidence
-and coverage-diff commit is `8ea64149e8d84dcf9751c242bf14e9961f12240c`;
-unrelated private EKS work remains untouched. **No implementation or deployment
-blocker.**
+and coverage-diff commit is `8ea64149e8d84dcf9751c242bf14e9961f12240c`.
+The learner later supplied the assessment's exact 18-item failed-result list;
+it matched the screenshot-derived miss set and is recorded in private commit
+`1b06ec43886307b17fac1019ef0d295204741a11`. That confirmation also records
+three source-answer caveats rather than teaching them verbatim: Pod reachability,
+the incomplete initial-namespace framing, and physical capacity versus merely
+adding Pods. Unrelated private EKS work remains untouched. **No implementation
+or deployment blocker.**
 
 **Kubernetes object lexicon v20 is live:** the user-provided object reference is
 now represented as an independently written, portable learning unit rather than
