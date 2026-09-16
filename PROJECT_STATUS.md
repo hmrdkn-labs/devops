@@ -5,6 +5,43 @@
 
 ## Read this first
 
+**Kubernetes Resources assessment repair v21 is live:** the completed Resources
+practice attempt is now treated as both learner evidence and a coverage audit of
+the platform. The verified result is **63 questions, 45 correct, 18 incorrect,
+71%**. Reviewing the 18 graded misses showed that the score was not simply “18
+things already taught but forgotten”: **10 were clear/substantial coverage gaps,
+3 were present but insufficiently drilled, 4 were genuine retrieval failures on
+material already taught well, and 1 source item used a materially oversimplified
+Pod-reachability model**. The private evidence record preserves that distinction
+instead of treating every wrong answer as the same failure.
+
+The public remediation adds a dedicated **Kubernetes resource operations and
+defaults** unit covering ReplicaSet selector paths and adoption, legacy
+ReplicationController selector defaulting, `kubectl get -A`, the `get all`
+caveat, scaling, `set image`, rollout history/undo, the four initial namespaces,
+classic client-side three-way apply versus Server-Side Apply field ownership,
+workload replicas versus physical node capacity, and a corrected Kubernetes Pod
+network model. It ships **8 retrieval/application questions, 12 review cards, 3
+reference visuals, guided practice, and 9 new independently authored KCNA MCQs**.
+The existing Kubernetes Resources interactive lesson remains **12 interactions**;
+its selector, rollout, namespace, and command feedback was enriched rather than
+adding another transition screen.
+
+The public KCNA path now contains **31 units**; the full public corpus contains
+**39 units, 215 review cards, 37 KCNA MCQs, 4 interactive lessons, and 45 lesson
+exercises**. Local gates passed content/revision contracts, Astro typecheck,
+**37 unit tests**, D1 checks, production build, and the full Playwright matrix
+with **63 passes / 18 intentional skips**. Exact public source
+`0cd6f1050959bc111301377d299b75e51694ac39` passed CI run `35080949371` and
+protected owner deployment run `35081197406`. Independent production
+verification confirmed health `ok`, D1 `ready`, manifest SHA
+`c5560e24a818f5ead389f09e307d34ac2acb06d24d6dc07ee6d994549fb77f19`, the live
+`/learn/kubernetes-resource-operations/` unit, KCNA path placement, the
+**37-question** refresher, and the Resources lesson route. The private evidence
+and coverage-diff commit is `8ea64149e8d84dcf9751c242bf14e9961f12240c`;
+unrelated private EKS work remains untouched. **No implementation or deployment
+blocker.**
+
 **Kubernetes object lexicon v20 is live:** the user-provided object reference is
 now represented as an independently written, portable learning unit rather than
 being dumped into the existing Resources quiz companion. The new
