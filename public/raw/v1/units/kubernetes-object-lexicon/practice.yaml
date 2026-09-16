@@ -1,0 +1,23 @@
+schema_version: 1
+unit_id: fpp:kubernetes-object-lexicon
+practices:
+  - id: fpp:kubernetes-object-lexicon/p-object-choice
+    title: Build the object map from requirements
+    mode: guided_markdown
+    prompt: Without opening the reference table, map a set of operational requirements to the Kubernetes object that owns each responsibility, then verify scope and API group from the cluster.
+    steps:
+      - Map stateless rollout, stable member identity, one Pod per node, and run-to-completion work to their workload controllers.
+      - Map stable service identity, backend endpoint state, HTTP routing, and traffic policy to their networking objects.
+      - Map config, sensitive config, storage request, storage capacity, and storage provisioning policy to their data/storage objects.
+      - Map API identity, permission definition, namespaced permission grant, and cluster-wide permission grant to ServiceAccount/RBAC objects.
+      - Map aggregate namespace resource budget and per-object defaults or limits to ResourceQuota and LimitRange.
+      - Run kubectl api-resources and kubectl explain against a disposable learning cluster to verify at least five mappings.
+    success_checks:
+      - Deployment, ReplicaSet, StatefulSet, DaemonSet, Job, and CronJob responsibilities are not collapsed into one generic controller.
+      - Service, EndpointSlice, Ingress, and NetworkPolicy are described as different network layers.
+      - PV and StorageClass are identified as cluster-scoped while PVC is namespaced.
+      - Role/ClusterRole definitions are separated from bindings that grant them.
+      - ResourceQuota is not confused with LimitRange.
+      - At least one remembered field assumption is checked with kubectl explain rather than accepted from memory.
+    safety:
+      - Use read-only discovery commands or a disposable learning cluster; do not apply experimental RBAC, quota, or storage objects to a shared production namespace.

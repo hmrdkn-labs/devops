@@ -50,7 +50,7 @@ import { POST } from '../src/pages/api/lesson-event';
 
 const baseBody = {
   lessonId: 'lesson:kcna-kubernetes-resources',
-  lessonRevision: 2,
+  lessonRevision: 3,
   exerciseId: 'lesson:kcna-kubernetes-resources/predict-replacement',
   assisted: false,
   correct: true,

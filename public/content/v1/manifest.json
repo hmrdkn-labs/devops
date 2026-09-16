@@ -636,6 +636,32 @@
       "visual_count": 1
     },
     {
+      "id": "fpp:kubernetes-object-lexicon",
+      "slug": "kubernetes-object-lexicon",
+      "title": "Kubernetes object lexicon",
+      "summary": "Choose Kubernetes API objects by responsibility, scope, API group, and payload shape instead of memorizing isolated YAML snippets.",
+      "revision": 1,
+      "revision_impact": "mastery_affecting",
+      "status": "published",
+      "layer": "kubernetes",
+      "prerequisites": [
+        "fpp:kcna-kubernetes-resources-review"
+      ],
+      "aliases": [],
+      "objective_hashes": {
+        "fpp:kubernetes-object-lexicon/object-choice": "6245a3cae0e21a4d2bcc4ba64f121b11821585833fa89bd692ba9c4126718340",
+        "fpp:kubernetes-object-lexicon/scope-group": "dfd9e2abb32954f0934d6e76d3596db693f72787e2a59a2b4f76f28aeaa7a4ab",
+        "fpp:kubernetes-object-lexicon/schema-discovery": "231860864793c0e141da123df0a2160d74514465300c3b08d4edf5b03e23b48c"
+      },
+      "mastery_hash": "8aa7b262f6f0414b2a19916706785b900ada906e88ebc9da143ece8e687dd6ac",
+      "enrichment_hash": "8ed9059259267527f9cc817ee898710e59d17748f392c7af439acc9b5d3f0725",
+      "editorial_hash": "b14d62d649c91d6aa80e57c5734908b11849b16b97a40076ab53ac0607f15f14",
+      "content_hash": "a9c0590e347eafcb8194b27f16c3b2f6307dc7852fb330eef7d58e6344b2e481",
+      "raw_markdown_url": "/raw/v1/units/kubernetes-object-lexicon/unit.md",
+      "raw_visuals_url": "/raw/v1/units/kubernetes-object-lexicon/visuals.yaml",
+      "visual_count": 2
+    },
+    {
       "id": "fpp:kubernetes-pod-model",
       "slug": "kubernetes-pod-model",
       "title": "Pod model, lifecycle, and ownership",
@@ -1062,7 +1088,7 @@
       "slug": "kcna",
       "title": "KCNA Learning Path",
       "summary": "Build KCNA-ready Kubernetes and cloud-native understanding from networking and containers through Kubernetes resources, delivery, operations, and troubleshooting.",
-      "revision": 3,
+      "revision": 4,
       "status": "published",
       "units": [
         {
@@ -1127,6 +1153,10 @@
         },
         {
           "unit_id": "fpp:kcna-kubernetes-resources-review",
+          "weight": 1
+        },
+        {
+          "unit_id": "fpp:kubernetes-object-lexicon",
           "weight": 1
         },
         {
@@ -3362,11 +3392,11 @@
       "slug": "kcna-kubernetes-resources",
       "title": "KCNA Kubernetes Resources",
       "summary": "Build the Kubernetes resource model by predicting reconciliation, tracing ownership, reading manifests, and proving live state.",
-      "revision": 2,
+      "revision": 3,
       "certification": "cncf:kcna",
       "checkpoint": "resources",
       "estimated_minutes": 16,
-      "verified_at": "2026-09-12",
+      "verified_at": "2026-09-16",
       "source_unit_ids": [
         "fpp:kubernetes-pod-model",
         "fpp:pods-workloads",
@@ -3374,7 +3404,8 @@
         "fpp:kubernetes-deployments-rollouts",
         "fpp:kubernetes-apply-live-state",
         "fpp:kubernetes-namespaces-scope",
-        "fpp:kcna-kubernetes-resources-review"
+        "fpp:kcna-kubernetes-resources-review",
+        "fpp:kubernetes-object-lexicon"
       ],
       "exercises": [
         {
@@ -3758,35 +3789,45 @@
         },
         {
           "id": "lesson:kcna-kubernetes-resources/connect-responsibilities",
-          "unit_id": "fpp:kcna-kubernetes-resources-review",
+          "unit_id": "fpp:kubernetes-object-lexicon",
           "objective_ids": [
-            "fpp:kcna-kubernetes-resources-review/ownership"
+            "fpp:kubernetes-object-lexicon/object-choice"
           ],
           "evidence": "recall",
-          "prompt": "Match each Kubernetes object to the responsibility it primarily provides in this resource model.",
-          "hint": "Separate execution, replica maintenance, rollout management, and network discovery.",
+          "prompt": "Match each Kubernetes object to the responsibility it primarily owns. Use the problem being solved, not YAML shape, as the clue.",
+          "hint": "Separate execution, replica maintenance, rollout management, stable identity, node-local workloads, network discovery, namespace totals, and per-object constraints.",
           "learn_first": {
-            "title": "Objects solve different layers of the workload problem.",
-            "body": "Pod is the execution boundary, ReplicaSet maintains count, Deployment manages rollout revisions, and Service gives clients a stable way to reach changing Pods.",
+            "title": "Kubernetes objects are easier when each owns one problem.",
+            "body": "Pod is execution, ReplicaSet is matching count, Deployment is rollout, StatefulSet is stable member identity, DaemonSet follows nodes, Service is stable traffic selection, ResourceQuota is the namespace budget, and LimitRange sets per-object defaults or bounds.",
             "visual": [
               "Deployment → ReplicaSet → Pod",
-              "Service → selects Pods for traffic"
+              "Service → selects Pods for traffic",
+              "StatefulSet → stable member identity",
+              "DaemonSet → eligible nodes",
+              "ResourceQuota: namespace total",
+              "LimitRange: per-object defaults/bounds"
             ],
             "components": [],
-            "variant_prompt": "Match the same four objects to their responsibilities without using ownership as the only clue."
+            "variant_prompt": "Rebuild the map from eight requirements without using object names as hints."
           },
           "feedback": {
-            "title": "One object, one primary responsibility.",
-            "explanation": "Keeping these boundaries separate prevents common KCNA errors where scheduling, rollout, execution, and service discovery are treated as one mechanism.",
+            "title": "Choose the object by responsibility.",
+            "explanation": "Keeping object boundaries separate prevents common KCNA errors where execution, replica maintenance, rollout, stable identity, node-local agents, discovery, aggregate quota, and per-object limits are collapsed into one mechanism.",
             "points": [
               "A Service does not own Pods.",
-              "A Pod does not decide its own replica count."
+              "A Pod does not decide its own replica count.",
+              "A DaemonSet follows eligible nodes instead of a numeric replica target.",
+              "ResourceQuota and LimitRange solve different resource-policy problems."
             ],
             "visual": [
               "Deployment: rollout",
               "ReplicaSet: count",
               "Pod: execution",
-              "Service: discovery"
+              "Service: discovery",
+              "StatefulSet: stable identity",
+              "DaemonSet: node-local",
+              "ResourceQuota: namespace total",
+              "LimitRange: per-object rule"
             ],
             "components": []
           },
@@ -3807,6 +3848,22 @@
             {
               "id": "service",
               "text": "Service"
+            },
+            {
+              "id": "statefulset",
+              "text": "StatefulSet"
+            },
+            {
+              "id": "daemonset",
+              "text": "DaemonSet"
+            },
+            {
+              "id": "resourcequota",
+              "text": "ResourceQuota"
+            },
+            {
+              "id": "limitrange",
+              "text": "LimitRange"
             }
           ],
           "right": [
@@ -3825,6 +3882,22 @@
             {
               "id": "discovery",
               "text": "stable traffic selection and discovery"
+            },
+            {
+              "id": "stable-identity",
+              "text": "stable workload member identity"
+            },
+            {
+              "id": "node-local",
+              "text": "one Pod on every eligible node or node subset"
+            },
+            {
+              "id": "namespace-budget",
+              "text": "aggregate namespace resource or object budget"
+            },
+            {
+              "id": "per-object-defaults",
+              "text": "per-object resource defaults and bounds"
             }
           ],
           "matches": [
@@ -3843,6 +3916,22 @@
             {
               "left_id": "service",
               "right_id": "discovery"
+            },
+            {
+              "left_id": "statefulset",
+              "right_id": "stable-identity"
+            },
+            {
+              "left_id": "daemonset",
+              "right_id": "node-local"
+            },
+            {
+              "left_id": "resourcequota",
+              "right_id": "namespace-budget"
+            },
+            {
+              "left_id": "limitrange",
+              "right_id": "per-object-defaults"
             }
           ]
         },
@@ -4280,5 +4369,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "af8d2ac89c3ed2f9bea7f73eb8930ef38a7a302e3838cdc895bdaac3700729f9"
+  "manifest_sha256": "4a12fdeac5edddee439f9db7874aeb7e44e6bd0539505915f22fabcaa512225d"
 }

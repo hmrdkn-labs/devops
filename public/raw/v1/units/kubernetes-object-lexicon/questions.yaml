@@ -1,0 +1,60 @@
+schema_version: 1
+unit_id: fpp:kubernetes-object-lexicon
+revision: 1
+questions:
+  - id: fpp:kubernetes-object-lexicon/q-workload-choice
+    kind: scenario
+    prompt: "A platform team needs four different workload behaviors: stateless rollouts, stable database identities, one agent per eligible node, and a task that exits after success. Which Kubernetes controller fits each behavior?"
+    model_answer: Use a Deployment for stateless rollout-managed replicas, a StatefulSet for stable member identity, a DaemonSet for one Pod per eligible node, and a Job for run-to-completion work. Use a CronJob only when that Job should be created on a schedule.
+    critical_points:
+      - Deployment maps to interchangeable rollout-managed replicas.
+      - StatefulSet maps to stable workload identity.
+      - DaemonSet maps desired membership to eligible nodes.
+      - Job maps to successful completion rather than continuous availability.
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/q-network-objects
+    kind: explain
+    prompt: Explain the distinct jobs of Service, EndpointSlice, Ingress, and NetworkPolicy in one request path.
+    model_answer: A Service gives clients a stable service identity and selects a backend set; EndpointSlices represent current network endpoints associated with Services; Ingress declares HTTP or HTTPS routing to Services and needs an implementing controller; NetworkPolicy declares which Pod traffic is allowed when the networking implementation enforces it.
+    critical_points:
+      - Service provides stable discovery or traffic selection rather than workload ownership.
+      - EndpointSlice represents backend endpoints.
+      - Ingress declares HTTP or HTTPS routing and depends on an implementing controller.
+      - NetworkPolicy constrains allowed Pod traffic and depends on enforcement support.
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/q-storage-scope
+    kind: explain
+    prompt: Why are PersistentVolume and StorageClass cluster-scoped while PersistentVolumeClaim is namespaced, and what role does each object play?
+    model_answer: A PersistentVolume represents storage capacity available to the cluster, while a StorageClass represents a cluster-level storage provisioning policy. A PersistentVolumeClaim is a workload or tenant request for storage inside a namespace. The claim can bind to suitable capacity or trigger dynamic provisioning through a StorageClass.
+    critical_points:
+      - PV is cluster storage capacity.
+      - StorageClass is cluster provisioning policy.
+      - PVC is a namespaced request consumed by workloads.
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice, fpp:kubernetes-object-lexicon/scope-group]
+  - id: fpp:kubernetes-object-lexicon/q-access-scope
+    kind: scenario
+    prompt: A ServiceAccount in namespace team-a needs the reusable view ClusterRole, but only inside team-a. Which binding object should be used and why?
+    model_answer: Use a RoleBinding in team-a that references the view ClusterRole and names the ServiceAccount as its subject. A RoleBinding can reuse a ClusterRole while keeping the grant scoped to the RoleBinding's namespace; a ClusterRoleBinding would grant the ClusterRole at cluster scope.
+    critical_points:
+      - RoleBinding is namespaced.
+      - A RoleBinding can reference a ClusterRole.
+      - ClusterRoleBinding would make the grant cluster-wide.
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice, fpp:kubernetes-object-lexicon/scope-group]
+  - id: fpp:kubernetes-object-lexicon/q-quota-limitrange
+    kind: scenario
+    prompt: A namespace needs an aggregate CPU budget, and individual containers should receive a default CPU request if they omit one. Which two objects solve those separate problems?
+    model_answer: ResourceQuota caps aggregate namespace consumption such as total requested CPU. LimitRange can default or constrain requests and limits for individual containers, Pods, or PVCs. They are complementary rather than interchangeable.
+    critical_points:
+      - ResourceQuota controls namespace aggregate consumption.
+      - LimitRange controls or defaults per-object resource settings.
+      - The two policies can be used together.
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/q-discovery
+    kind: explain
+    prompt: You cannot remember whether a kind is namespaced, which API group it uses, or where one field belongs. Which kubectl discovery tools should you reach for before guessing YAML?
+    model_answer: Use kubectl api-resources to discover server-supported resource names, short names, API groups, and namespaced scope. Use kubectl explain for the schema of a resource or field path, optionally recursively. Server discovery is more reliable than memorizing a static object table.
+    critical_points:
+      - kubectl api-resources discovers resource names, groups, and scope.
+      - kubectl explain discovers resource and field schema.
+      - The server should be treated as authoritative for its supported API surface.
+    objective_ids: [fpp:kubernetes-object-lexicon/schema-discovery, fpp:kubernetes-object-lexicon/scope-group]

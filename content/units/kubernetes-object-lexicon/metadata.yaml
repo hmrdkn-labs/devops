@@ -1,0 +1,34 @@
+schema_version: 1
+id: fpp:kubernetes-object-lexicon
+slug: kubernetes-object-lexicon
+title: Kubernetes object lexicon
+summary: Choose Kubernetes API objects by responsibility, scope, API group, and payload shape instead of memorizing isolated YAML snippets.
+revision: 1
+revision_impact: mastery_affecting
+status: published
+layer: kubernetes
+estimated_minutes: 22
+aliases: []
+applicable_versions:
+  - product: kubernetes
+    range: v1.33-current
+  - product: kcna
+    range: 2025-11-current
+prerequisites: [fpp:kcna-kubernetes-resources-review]
+objectives:
+  - id: fpp:kubernetes-object-lexicon/object-choice
+    title: Choose the Kubernetes object that owns a stated workload, networking, configuration, storage, policy, or access responsibility
+    critical: true
+  - id: fpp:kubernetes-object-lexicon/scope-group
+    title: Distinguish namespaced from cluster-scoped objects and derive the API group used by common kinds
+    critical: true
+  - id: fpp:kubernetes-object-lexicon/schema-discovery
+    title: Use API discovery and schema help instead of treating memorized YAML as authoritative
+    critical: false
+certification_mappings:
+  - certification: cncf:kcna
+    domains: [kubernetes-fundamentals, container-orchestration]
+    advisory: false
+authors: [hmrdkn-labs]
+reviewers: [hmrdkn-labs-editorial]
+verified_at: 2026-09-16

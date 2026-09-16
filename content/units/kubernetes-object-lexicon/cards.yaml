@@ -1,0 +1,64 @@
+schema_version: 1
+unit_id: fpp:kubernetes-object-lexicon
+revision: 1
+cards:
+  - id: fpp:kubernetes-object-lexicon/c-deployment-rs
+    type: short
+    front: "Deployment versus ReplicaSet: what does each own?"
+    back: Deployment manages rollout revisions and ReplicaSets; ReplicaSet directly maintains the selected Pod count.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/c-statefulset
+    type: short
+    front: Which workload controller is designed for stable member identity?
+    back: StatefulSet.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/c-daemonset
+    type: short
+    front: Which workload controller maps desired Pods to eligible nodes instead of a replica count?
+    back: DaemonSet.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/c-job-cronjob
+    type: prompt
+    front: Distinguish Job from CronJob.
+    back: A Job runs work to successful completion; a CronJob creates Jobs on a schedule.
+    critical_points: [CronJob schedules Jobs rather than directly being the run-to-completion Pod controller]
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/c-service-endpointslice
+    type: prompt
+    front: "Service versus EndpointSlice: what does each represent?"
+    back: Service is the stable service identity/traffic selection abstraction; EndpointSlice represents the current backend network endpoints associated with the Service.
+    critical_points: [service identity and backend endpoint state are different objects]
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/c-pv-pvc-sc
+    type: prompt
+    front: Map PV, PVC, and StorageClass to capacity, request, and provisioning policy.
+    back: PV = cluster storage capacity; PVC = namespaced storage request; StorageClass = cluster provisioning policy/class.
+    critical_points: [PV and StorageClass are cluster-scoped while PVC is namespaced]
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice, fpp:kubernetes-object-lexicon/scope-group]
+  - id: fpp:kubernetes-object-lexicon/c-rbac-binding
+    type: prompt
+    front: "Role/ClusterRole versus RoleBinding/ClusterRoleBinding: what changes?"
+    back: Roles define permissions; bindings grant those permissions to subjects. RoleBinding scopes a grant to one namespace; ClusterRoleBinding grants a ClusterRole cluster-wide.
+    critical_points: [permission definition is separate from permission grant]
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice, fpp:kubernetes-object-lexicon/scope-group]
+  - id: fpp:kubernetes-object-lexicon/c-quota-limit
+    type: prompt
+    front: ResourceQuota versus LimitRange?
+    back: ResourceQuota caps aggregate namespace consumption/object counts; LimitRange defaults or constrains resources per applicable object.
+    critical_points: [aggregate namespace budget differs from per-object bounds/defaults]
+    objective_ids: [fpp:kubernetes-object-lexicon/object-choice]
+  - id: fpp:kubernetes-object-lexicon/c-spec-exception
+    type: prompt
+    front: Name two common Kubernetes objects whose main payload is not under spec.
+    back: Examples include ConfigMap data, Secret data/stringData, Role rules, RoleBinding subjects/roleRef, StorageClass provisioner/parameters, and EndpointSlice endpoints.
+    critical_points: [spec is common but not universal]
+    objective_ids: [fpp:kubernetes-object-lexicon/schema-discovery]
+  - id: fpp:kubernetes-object-lexicon/c-discovery
+    type: short
+    front: Which two kubectl commands help derive resource scope/API group and field schema from the server?
+    back: kubectl api-resources and kubectl explain.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-object-lexicon/schema-discovery]

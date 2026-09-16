@@ -272,6 +272,10 @@ test('all twelve Resources interactions complete end to end', async ({ page }, t
   await page.getByLabel('Responsibility for ReplicaSet').selectOption('replica-count');
   await page.getByLabel('Responsibility for Deployment').selectOption('rollout');
   await page.getByLabel('Responsibility for Service').selectOption('discovery');
+  await page.getByLabel('Responsibility for StatefulSet').selectOption('stable-identity');
+  await page.getByLabel('Responsibility for DaemonSet').selectOption('node-local');
+  await page.getByLabel('Responsibility for ResourceQuota').selectOption('namespace-budget');
+  await page.getByLabel('Responsibility for LimitRange').selectOption('per-object-defaults');
   await check(page);
   await continueLesson(page, 7);
 

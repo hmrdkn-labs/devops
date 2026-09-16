@@ -1,0 +1,26 @@
+schema_version: 1
+unit_id: fpp:kubernetes-object-lexicon
+revision: 1
+visuals:
+  - id: fpp:kubernetes-object-lexicon/visual-responsibility-map
+    kind: ownership
+    eyebrow: Object responsibility map
+    title: Choose the object by the problem it owns
+    lines:
+      - "rollout → Deployment → ReplicaSet → Pod → containers"
+      - "node-local workload → DaemonSet → Pod"
+      - "stable member identity → StatefulSet → Pod + PVC"
+      - "traffic identity → Service → EndpointSlice → Pod"
+      - "HTTP routing → Ingress/controller → Service"
+      - "API identity → ServiceAccount → binding → Role/ClusterRole"
+      - "namespace total → ResourceQuota"
+      - "per-object defaults/bounds → LimitRange"
+    teaching_point: Kubernetes objects become easier to remember when each is anchored to one responsibility and one ownership or data-flow boundary.
+  - id: fpp:kubernetes-object-lexicon/visual-scope-map
+    kind: comparison
+    eyebrow: API scope
+    title: Separate cluster facts from namespace-owned requests and policy
+    lines:
+      - "cluster: Node · Namespace · PersistentVolume · StorageClass · ClusterRole · ClusterRoleBinding"
+      - "namespace: Pod · workload controllers · Service · ConfigMap · Secret · PVC · Role · RoleBinding · ResourceQuota · LimitRange"
+    teaching_point: Scope predicts naming, authorization, and lifecycle behavior; it is not merely a kubectl formatting detail.
