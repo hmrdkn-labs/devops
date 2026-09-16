@@ -5,6 +5,37 @@
 
 ## Read this first
 
+**FSRS next-card advancement fix v18 is live:** the review queue no longer gets
+stuck after rating a card that was originally scheduled under an older content
+revision. The failure was a stale-revision boundary: `GET /api/review` returned
+the revision stored in `fsrs_card`, while `POST /api/review` correctly rejected
+that stale revision with `409 content_revision_changed`; the client then hid the
+error, so the same card appeared frozen. Review reads now normalize still-valid
+scheduled cards against current canonical content before returning them, derive
+the current revision/type/unit metadata from the published unit, and count only
+reviewable rows. After a successful rating the client immediately removes the
+current card from the local queue, resets reveal state, refetches, and shows the
+next due card. Revision conflicts and other failures now produce visible status
+messages instead of silently stalling.
+
+Regression coverage includes an API test for a stale scheduled row and a
+desktop/tablet/mobile Playwright flow that serves card 1, rates it **Good**, and
+asserts card 2 replaces it. The full local gate passed with **37 unit tests** and
+**63 Playwright tests passed / 18 intentional skips**. Public CI initially
+exposed an unrelated focus timing race: the lesson test tried to focus an option
+before its Solid island had hydrated. The test now waits for the option to be
+enabled and focused; product behavior and focus styling were not weakened.
+Exact source `a00d84292232ce39d30804bb4d61024f400fcacb` passed public CI run
+`35062915793` and protected owner deployment run `35063067488`. The deployment
+verified the immutable checkout, D1 migrations, Worker/route, owner secrets,
+public route, and manifest. Independent production health reports `ok`, D1
+`ready`, and unchanged manifest SHA
+`f155ce6116583331e4aa83fb614d4b67aedd0072cf038182864aa5fa7e822ac8`.
+The available production browser session was guest on `/review`, so an
+authenticated live rating was not replayed after deploy; the exact next-card
+interaction is covered by the green browser regression above. **No implementation
+or deployment blocker.**
+
 **Review reveal-state fix v17 is live and production-verified:** the FSRS review
 surface no longer looks like a rating has already been chosen. The generic
 first rating button styling that gave **Again** a warning-colored border before
