@@ -5,6 +5,29 @@
 
 ## Read this first
 
+**Review reveal-state fix v17 is live and production-verified:** the FSRS review
+surface no longer looks like a rating has already been chosen. The generic
+first rating button styling that gave **Again** a warning-colored border before
+any learner action was removed, so Again/Hard/Good/Easy now start visually
+neutral. The review card state label is also explicit: it says **Retrieve before
+revealing** while the answer is hidden, then changes to **Answer revealed** once
+the learner intentionally reveals it. A new Playwright regression mocks one due
+card and verifies the answer is hidden initially, ratings are unavailable until
+reveal, the state label changes correctly, and all four rating borders are
+neutral across desktop/tablet/mobile.
+
+Local validation is green: Astro typecheck, the targeted browser regression on
+all three viewport projects, full `npm run ci`, and `git diff --check`. Exact
+public source `670989546ad12961a5151c30222b11ad89614e27` passed public CI run
+`35057464217` and protected owner deployment run `35057636190`. Independent
+production browser verification on `/review?path=kcna` confirmed the answer is
+hidden before reveal, **Reveal answer** is visible, the post-reveal label changes
+to **Answer revealed**, all four rating buttons share the same neutral border,
+and there is no horizontal overflow. Production health remains `ok`, D1 is
+`ready`, and the content manifest is unchanged at
+`f155ce6116583331e4aa83fb614d4b67aedd0072cf038182864aa5fa7e822ac8`.
+**No implementation or deployment blocker.**
+
 **KCNA critical retrieval depth v16 is live and production-verified:** the
 three-question floor remains the corpus-wide minimum, but it is no longer the
 target for high-value KCNA material. All **18 high-weight KCNA units** now have
