@@ -1,0 +1,97 @@
+/* Focused task surfaces only; shared tokens and unrelated pages stay intact. */
+.unit-page .learning-status-slot { min-height: 76px; margin-bottom: .5rem; }
+.unit-page .learning-progress-disclosure { border-bottom: 1px solid var(--line); }
+.unit-page .learning-progress-disclosure > summary {
+  min-height: 44px;
+  align-content: center;
+  cursor: pointer;
+  font-size: .8rem;
+  font-weight: 700;
+}
+.unit-page .learning-progress-disclosure > summary span {
+  margin-left: .5rem;
+  color: var(--muted);
+  font-size: .75rem;
+  font-weight: 400;
+}
+.unit-page .learning-progress-disclosure > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.unit-page .study-workspace-bar { margin-top: .5rem; }
+.task-focused-lesson .lesson-task-card {
+  min-height: 0;
+}
+.task-focused-lesson .lesson-actionbar {
+  position: static;
+  margin: 1.25rem calc(-1 * var(--lesson-task-padding)) calc(-1 * var(--lesson-task-padding));
+  flex-wrap: wrap;
+  border-radius: 0 0 24px 24px;
+}
+.task-focused-lesson .lesson-save-status:empty { display: none; }
+.task-focused-lesson .task-concept-links { margin-top: 1rem; }
+.task-focused-lesson .lesson-verdict { scroll-margin-top: 6rem; }
+.task-focused-lesson .lesson-verdict:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.task-focused-lesson :is(button, select, textarea, summary, a, h1),
+:is(.task-focused-review, .task-focused-mcq) :is(button, input, summary, a, h2) {
+  scroll-margin-block: 7rem;
+}
+.task-focused-lesson :is(h1, .lesson-task-card):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+:is(.task-focused-review, .task-focused-mcq) .page-hero {
+  padding-block: 1.25rem .5rem;
+}
+:is(.task-focused-review, .task-focused-mcq) .page-hero h1 {
+  margin-block: .25rem .5rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+:is(.task-focused-review, .task-focused-mcq) .page-hero .lede {
+  margin: 0;
+  font-size: .9rem;
+}
+.task-focused-review .review-card { min-height: 0; padding: 1.4rem; }
+.task-focused-review .review-card h2 { max-width: 34ch; }
+.task-focused-review .review-rating p { color: var(--muted); font-size: .8rem; }
+.task-focused-mcq .mcq-hero { display: block; }
+.task-focused-mcq .mcq-shell { padding-block: .6rem 0; }
+.task-focused-mcq .mcq-question-card h2 { margin-block: .6rem .85rem; }
+.task-focused-mcq .mcq-session-options { margin-block: .25rem 0; }
+.task-focused-mcq .mcq-session-options p { color: var(--muted); font-size: .8rem; }
+.task-focused-mcq .mcq-mode-switch button { min-height: 44px; }
+.task-focused-mcq .task-session-note {
+  max-width: 860px;
+  padding-block: .75rem calc(5rem + env(safe-area-inset-bottom));
+  color: var(--muted);
+  font-size: .75rem;
+}
+@media (max-width: 640px) {
+  .task-focused-lesson .lesson-task-card { min-height: 0; }
+  .task-focused-lesson .lesson-actionbar {
+    margin: 1rem -1rem -1rem;
+    padding-bottom: calc(.7rem + env(safe-area-inset-bottom));
+  }
+  .task-focused-lesson .lesson-save-status { order: 0; }
+  /* Keep next/retry available while the learner reads longer feedback.
+     The bar retains its normal-flow space at the end of the card. */
+  .task-focused-lesson .lesson-task-card[data-revealed='true'] .lesson-actionbar {
+    position: sticky;
+    bottom: 0;
+  }
+  .task-focused-lesson .lesson-task-card[data-revealed='true'] .lesson-actionbar > :is(.lesson-primary, .lesson-secondary) {
+    width: auto;
+    flex: 1 1 0;
+  }
+  .task-focused-lesson .lesson-task-card[data-revealed='true'] :is(button, input, summary, a) {
+    scroll-margin-bottom: 11rem;
+  }
+  .task-focused-review .review-meta { grid-template-columns: auto minmax(0, 1fr); }
+  .task-focused-review .review-meta span:last-child { display: none; }
+  .task-focused-review .review-card { padding: 1rem; }
+  .task-focused-mcq .mcq-session-controls { flex-wrap: wrap; }
+  .task-focused-mcq .mcq-mode-switch { max-width: 100%; }
+}

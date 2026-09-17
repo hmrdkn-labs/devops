@@ -639,23 +639,17 @@ export default function StudyFlow(props: Props) {
         <h1>{props.unit.title}</h1>
         <p>{props.unit.summary}</p>
         <div class="study-workspace-bar">
-          <strong>Study workspace</strong>
+          <strong>Recall</strong>
           <div class="study-context-actions" role="group" aria-label="Learning context">
             <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
               <button type="button" aria-controls="learning-context-panel" aria-expanded={contextPanel() === panel} aria-pressed={contextPanel() === panel} onClick={(event) => openContext(panel, event.currentTarget)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
             )}</For>
           </div>
-          <span>Retrieval first. Context opens beside your work without leaving the question.</span>
         </div>
       </header>
 
       <div class="study-layout shell">
         <aside class="study-rail" aria-label="Unit context">
-          <div class="rail-card">
-            <span class="section-kicker">Current unit</span>
-            <strong>{props.unit.layer}</strong>
-            <p>{props.unit.estimatedMinutes} min · revision {props.unit.revision}</p>
-          </div>
           <ol class="rail-list" aria-label="Questions in this unit">
             <For each={props.unit.questions}>{(item, index) => (
               <li classList={{ 'is-active': index() === questionIndex() }}>
@@ -671,6 +665,8 @@ export default function StudyFlow(props: Props) {
             <p class="workspace-message" role="status">Could not verify sign-in. This attempt stays in memory. <button type="button" class="text-button" onClick={() => void refetchMe()}>Retry sign-in check</button></p>
           </Show>
           <div class="learning-status-slot" data-testid="learning-status-slot" aria-busy={me.loading || learningProgress.loading}>
+          <details class="learning-progress-disclosure">
+          <summary>Learning progress <span>{me.loading || learningProgress.loading ? 'Loading…' : progressError() ? 'Unavailable' : !me()?.authenticated ? 'Memory only' : unitLearningProgress() ? unitLearningProgress()!.completion.state : 'No saved progress yet'}</span></summary>
           <Show when={unitLearningProgress()}>
             {(unitProgress) => (
               <section class="unit-learning-status" aria-label="Learning progress">
@@ -697,6 +693,7 @@ export default function StudyFlow(props: Props) {
               <div><span>Learning record</span><strong>{me()?.authenticated ? 'No saved progress yet' : 'Memory only'}</strong><small>{me()?.authenticated ? 'Saved evidence appears here after your attempt.' : 'Guest activity stays on this page and does not change mastery.'}</small></div>
             </section>
           </Show>
+          </details>
           <Show when={me.loading || learningProgress.loading}><p class="workspace-message" role="status">Loading learning progress…</p></Show>
           <Show when={progressError()}><p class="workspace-message" role="status">Progress is unavailable. <button type="button" class="text-button" onClick={() => void refetchLearningProgress()}>Retry progress</button></p></Show>
           </div>
@@ -735,7 +732,6 @@ export default function StudyFlow(props: Props) {
                 <Show when={hydrated() && !me.loading && !answerHistoryMetadata.loading} fallback={
                   <div class="history-status-loading" aria-live="polite">
                     <strong>Checking your recall history…</strong>
-                    <span>The workspace reserves this space so loading does not move the answer controls.</span>
                   </div>
                 }>
                   <Show when={me()?.authenticated} fallback={

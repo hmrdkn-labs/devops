@@ -2,6 +2,7 @@
 import ReviewDeck from '@/components/ReviewDeck';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { paths, unitsBySlug } from '@/lib/content/catalog';
+import '@/styles/task-focus.css';
 
 const requestedPath = Astro.url.searchParams.get('path');
 const path = requestedPath ? paths.find((candidate) => candidate.slug === requestedPath) : null;
@@ -12,13 +13,14 @@ const focused = path?.slug === 'kcna';
 
 <BaseLayout
   title={focused ? 'KCNA Review' : 'Review'}
-  description="A mixed FSRS review queue for recall, explanation, and troubleshooting."
-  activeSection={focused ? 'kcna' : undefined}
+  description="Recall what you learned, reveal the answer, then rate your recall."
+  activeSection="review"
+  pageClass="task-focused-review"
 >
   <header class="page-hero shell compact-hero">
-    <p class="eyebrow">{focused ? 'KCNA review · FSRS' : 'Review · FSRS'}</p>
-    <h1>Retrieve before you reveal.</h1>
-    <p class="lede">{focused ? 'Only due cards from the KCNA path are included in this session.' : 'Short recall, explanation, and troubleshooting are mixed into one due queue.'}</p>
+    <p class="eyebrow">{focused ? 'KCNA · Review' : 'Review'}</p>
+    <h1>Review what you learned</h1>
+    <p class="lede">Recall your answer first. Reveal it, compare, then rate how well you remembered.{focused ? ' This session includes only due KCNA cards.' : ''}</p>
   </header>
   <section class="shell review-shell">
     <ReviewDeck

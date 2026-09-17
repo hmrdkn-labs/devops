@@ -4,6 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { paths, units } from '@/lib/content/catalog';
 import { renderMarkdown } from '@/lib/content/render';
 import { mentalModels } from '@/lib/content/mental-models';
+import '@/styles/task-focus.css';
 
 export const prerender = true;
 
@@ -43,7 +44,7 @@ const payload = {
   description={unit.metadata.summary}
   canonicalPath={'/learn/' + unit.metadata.slug}
   pageClass="unit-page"
-  activeSection={isKcnaUnit ? 'kcna' : undefined}
+  activeSection="learn"
 >
   <StudyFlow
     unit={payload}

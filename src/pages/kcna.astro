@@ -1,7 +1,7 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { lessons, paths, practiceSets, unitsById } from '@/lib/content/catalog';
+import { lessons, paths, unitsById } from '@/lib/content/catalog';
 
 export const prerender = true;
 
@@ -13,36 +13,32 @@ const pathUnits = path.units.flatMap((entry, index) => {
   return unit ? [{ unit, index, weight: entry.weight }] : [];
 });
 
-const totalCards = pathUnits.reduce((sum, { unit }) => sum + unit.cards.length, 0);
-const totalQuestions = pathUnits.reduce((sum, { unit }) => sum + unit.questions.length, 0);
-const mcqPractice = practiceSets.find((set) => set.slug === 'kcna-mcq');
-
 const checkpoints = [
   {
     id: 'fundamentals',
     title: 'Kubernetes Fundamentals',
-    note: 'Build the machine-to-control-plane model, then use the compact quiz companion as the checkpoint.',
+    note: 'Machines, containers, and the control plane.',
     start: 0,
     end: 9,
   },
   {
     id: 'resources',
     title: 'Kubernetes Resources',
-    note: 'Pods, ownership, workload controllers, declarative state, namespaces, object choice, and the resource-operation commands/defaults that make those concepts usable.',
+    note: 'Pods, controllers, namespaces, and declarative resources.',
     start: 9,
     end: 18,
   },
   {
     id: 'cluster-behavior',
     title: 'Cluster Behavior',
-    note: 'Networking, scheduling, storage, health, configuration, and access boundaries across a running cluster, including a dedicated scheduling checkpoint.',
+    note: 'Networking, scheduling, storage, configuration, and access.',
     start: 18,
     end: 26,
   },
   {
     id: 'cloud-native',
     title: 'Cloud-Native Context',
-    note: 'Delivery, troubleshooting, observability, architecture principles, and the CNCF ecosystem around Kubernetes.',
+    note: 'Delivery, observability, troubleshooting, and the CNCF ecosystem.',
     start: 26,
     end: pathUnits.length,
   },
@@ -68,7 +64,7 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
 ---
 
 <BaseLayout
-  title="KCNA Focus"
+  title="KCNA learning path"
   description="A focused KCNA study workspace containing only the KCNA learning path, checkpoints, and review companions."
   canonicalPath="/kcna"
   pageClass="kcna-page"
@@ -76,60 +72,24 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
 >
   <header class="kcna-hero shell">
     <div class="kcna-hero-copy">
-      <p class="eyebrow">KCNA focus · revision {path.revision}</p>
-      <h1>Stay inside the KCNA lane.</h1>
-      <p class="lede">Everything below belongs to the KCNA path. The wider DevOps library still exists, but you do not need to browse it while you are preparing.</p>
+      <p class="eyebrow">Learn · KCNA</p>
+      <h1>KCNA learning path</h1>
+      <p class="lede">Build your Kubernetes foundations one unit at a time. Start your next step or browse the four sections below.</p>
     </div>
-    <dl class="kcna-stats" aria-label="KCNA study corpus">
-      <div><dt>Units</dt><dd>{pathUnits.length}</dd></div>
-      <div><dt>Explain prompts</dt><dd>{totalQuestions}</dd></div>
-      <div><dt>MCQ bank</dt><dd>{mcqPractice?.questions.length ?? 0}</dd></div>
-      <div><dt>Review cards</dt><dd>{totalCards}</dd></div>
-    </dl>
   </header>
 
   <div class="shell kcna-today-shell">
     <KcnaFocusClient units={clientUnits} checkpoints={clientCheckpoints} client:load />
   </div>
 
-  <div class="shell kcna-focus-grid">
-    <aside class="kcna-focus-rail" aria-label="KCNA focus tools">
-      <section class="kcna-practice-launch">
-        <p class="section-kicker">See the system act</p>
-        <a href="/models/">
-          <strong>Interactive mental models</strong>
-          <span>Component ownership · predict · inspect evidence</span>
-          <b>Explore the models →</b>
-        </a>
-      </section>
-      <section class="kcna-practice-launch">
-        <p class="section-kicker">Refresher</p>
-        <a href="/practice/kcna">
-          <strong>MCQ practice</strong>
-          <span>{mcqPractice?.questions.length ?? 0} original questions · kubectl · select-all</span>
-          <b>Start a quick 12 →</b>
-        </a>
-      </section>
-      <section class="kcna-quick-review">
-        <p class="section-kicker">Quiz companions</p>
-        {reviewUnits.map(({ unit }) => (
-          <a href={'/learn/' + unit.metadata.slug}>
-            <strong>{unit.metadata.title.replace(/^KCNA\s+/, '')}</strong>
-            <span>{unit.cards.length} cards · {unit.questions.length} questions</span>
-          </a>
-        ))}
-      </section>
-
-      <a class="kcna-secondary-link" href="/paths/kcna">Open the plain {pathUnits.length}-unit path →</a>
-    </aside>
-
+  <div class="shell path-curriculum-shell">
     <section class="kcna-curriculum" aria-label="KCNA curriculum">
       {checkpoints.map((checkpoint, checkpointIndex) => (
         <details id={checkpoint.id} class="kcna-checkpoint" data-checkpoint={checkpoint.id} open={checkpointIndex === 0}>
           <summary>
             <span>{String(checkpointIndex + 1).padStart(2, '0')}</span>
             <div>
-              <p class="section-kicker">Checkpoint</p>
+              <p class="section-kicker">Section {checkpointIndex + 1}</p>
               <h2>{checkpoint.title}</h2>
               <p>{checkpoint.note}</p>
             </div>
@@ -150,16 +110,15 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
               <li data-unit-id={unit.metadata.id}>
                 <span class="kcna-unit-number">{String(index + 1).padStart(2, '0')}</span>
                 <a href={'/learn/' + unit.metadata.slug}>
-                  <span class="unit-layer">{unit.metadata.layer}</span>
                   <strong>{unit.metadata.title}</strong>
-                  <small>{unit.metadata.summary}</small>
                 </a>
                 <div class="kcna-unit-meta">
-                  <span class="kcna-completion-state" data-unit-completion={unit.metadata.id}>Not started</span>
-                  <span class="kcna-understanding-state" data-unit-understanding={unit.metadata.id}>No evidence</span>
+                  <span title="Learning completion" class="kcna-completion-state" data-unit-completion={unit.metadata.id}>Not started</span>
+                  <span title="Understanding evidence" class="kcna-understanding-state" data-unit-understanding={unit.metadata.id}>No evidence</span>
                   {weight === 2 && <span class="critical-badge">Critical</span>}
                   <span>{unit.metadata.estimated_minutes} min</span>
                 </div>
+                <details class="path-unit-details"><summary>Unit details</summary><p>{unit.metadata.summary}</p><small>{unit.metadata.layer}</small></details>
               </li>
             ))}
           </ol>
@@ -167,4 +126,12 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
       ))}
     </section>
   </div>
+  <section class="shell path-extras" aria-labelledby="path-extras-title">
+    <h2 id="path-extras-title">Optional practice and lookup</h2>
+    <p><a href="/practice">Choose a practice activity →</a> · <a href="/library">Browse the library</a> · <a href="/paths/kcna">Full path outline</a></p>
+    <details><summary>Quiz companions and practice tools</summary>
+      <p><a href="/practice/kcna">MCQ practice</a> · <a href="/models/">Interactive mental models</a> · <a href="/review?path=kcna">Scheduled KCNA review</a></p>
+      <ul>{reviewUnits.map(({ unit }) => <li><a href={'/learn/' + unit.metadata.slug}>{unit.metadata.title}</a></li>)}</ul>
+    </details>
+  </section>
 </BaseLayout>

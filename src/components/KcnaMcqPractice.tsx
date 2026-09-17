@@ -170,16 +170,6 @@ export default function KcnaMcqPractice(props: Props) {
 
   return (
     <section class="mcq-practice" aria-live="polite">
-      <div class="mcq-session-controls" aria-label="Practice session length">
-        <div class="mcq-mode-switch">
-          <button type="button" class={mode() === 'quick' ? 'is-active' : ''} aria-pressed={mode() === 'quick'} onClick={() => resetSession('quick', mixOffset())}>Quick 12</button>
-          <button type="button" class={mode() === 'all' ? 'is-active' : ''} aria-pressed={mode() === 'all'} onClick={() => resetSession('all', mixOffset())}>All {props.questions.length}</button>
-        </div>
-        <Show when={mode() === 'quick'}>
-          <button class="quiet-button mcq-new-mix" type="button" onClick={() => resetSession('quick', mixOffset() + 1)}>New mix</button>
-        </Show>
-      </div>
-
       <Show when={!finished()} fallback={
         <section class="mcq-result" aria-labelledby="mcq-result-title">
           <p class="section-kicker">Session complete</p>
@@ -279,6 +269,19 @@ export default function KcnaMcqPractice(props: Props) {
           </form>
         </article>
       </Show>
+      <details class="feedback-depth mcq-session-options">
+        <summary>Session options</summary>
+        <p>Changing the length or mix starts a new session and resets this score.</p>
+        <div class="mcq-session-controls" aria-label="Practice session length">
+          <div class="mcq-mode-switch">
+            <button type="button" class={mode() === 'quick' ? 'is-active' : ''} aria-pressed={mode() === 'quick'} onClick={() => resetSession('quick', mixOffset())}>Quick 12</button>
+            <button type="button" class={mode() === 'all' ? 'is-active' : ''} aria-pressed={mode() === 'all'} onClick={() => resetSession('all', mixOffset())}>All {props.questions.length}</button>
+          </div>
+          <Show when={mode() === 'quick'}>
+            <button class="quiet-button mcq-new-mix" type="button" onClick={() => resetSession('quick', mixOffset() + 1)}>New mix</button>
+          </Show>
+        </div>
+      </details>
     </section>
   );
 }

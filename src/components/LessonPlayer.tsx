@@ -1,8 +1,9 @@
 import { For, Show, batch, createMemo, createResource, createSignal, onMount } from 'solid-js';
 import type { Lesson, LessonExercise } from '@/lib/content/schema';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
-import MentalModelLinks, { type MentalModelLink } from '@/components/MentalModelLinks';
+import type { MentalModelLink } from '@/components/MentalModelLinks';
 import { focusTask } from '@/lib/task-focus';
+import '@/styles/task-focus.css';
 
 interface Props {
   lesson: Lesson;
@@ -73,6 +74,7 @@ export default function LessonPlayer(props: Props) {
   let pointerDragId: number | null = null;
   let taskHeading: HTMLHeadingElement | undefined;
   let completeHeading: HTMLHeadingElement | undefined;
+  let feedbackVerdict: HTMLDivElement | undefined;
 
   const checkpointLabel = createMemo(() => ({
     fundamentals: 'Kubernetes Fundamentals',
@@ -206,7 +208,14 @@ export default function LessonPlayer(props: Props) {
   }
 
   function revealFeedback() {
-    // Keep the selected answer in place; the compact verdict follows the interaction.
+    // On mobile the verdict can fit while its explanation sits behind the
+    // sticky actions. Align the feedback start before handing focus to it.
+    queueMicrotask(() => {
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        feedbackVerdict?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      }
+    });
+    focusTask(() => feedbackVerdict);
   }
 
   function animateLessonTask() {
@@ -421,7 +430,7 @@ export default function LessonPlayer(props: Props) {
   }
 
   return (
-    <div class="lesson-player" data-testid="lesson-player" aria-busy={!hydrated()}>
+    <div class="lesson-player task-focused-lesson" data-testid="lesson-player" aria-busy={!hydrated()}>
       <header class="lesson-player-topbar">
         <a class="lesson-exit" href={checkpointHref()}>← Exit</a>
         <div class="lesson-player-title">
@@ -442,7 +451,6 @@ export default function LessonPlayer(props: Props) {
       </header>
 
       <div class="lesson-player-main">
-        <MentalModelLinks models={props.mentalModels} />
         <Show when={authError()}><p class="workspace-message" role="status">Could not verify sign-in. This session stays in memory. <button class="text-button" type="button" onClick={() => void refetchMe()}>Retry sign-in check</button></p></Show>
         <Show when={!finished()} fallback={
           <section class="lesson-complete" data-testid="lesson-complete">
@@ -452,7 +460,7 @@ export default function LessonPlayer(props: Props) {
             <a class="lesson-primary" href={checkpointHref()}>Back to {checkpointLabel()}</a>
           </section>
         }>
-          <section class="lesson-task-card" data-lesson-task data-testid="lesson-active-task" tabindex="-1">
+          <section class="lesson-task-card" data-lesson-task data-revealed={revealed() ? 'true' : 'false'} data-testid="lesson-active-task" tabindex="-1">
             <p class="lesson-kicker">{kindLabel(exercise().kind)} · {assisted() ? 'assisted' : 'retrieval first'}</p>
             <h1 ref={taskHeading} tabindex="-1">{prompt()}</h1>
             <Show when={learnFirst() && exercise().learn_first}>
@@ -670,7 +678,7 @@ export default function LessonPlayer(props: Props) {
               </Show>
               <Show when={revealed()}>
                 <section class="lesson-feedback" aria-live="polite" data-testid="lesson-feedback">
-                  <div class="lesson-verdict" data-result={correct() === true ? 'correct' : correct() === false ? 'incorrect' : 'compare'}>
+                  <div ref={feedbackVerdict} tabindex="-1" class="lesson-verdict" data-result={correct() === true ? 'correct' : correct() === false ? 'incorrect' : 'compare'}>
                     <span class="lesson-verdict-icon" aria-hidden="true">{correct() === true ? '✓' : correct() === false ? '!' : '↔'}</span>
                     <div>
                       <strong>{correct() === true ? 'Correct' : correct() === false ? 'Not quite' : 'Compare your answer'}</strong>
@@ -799,6 +807,16 @@ export default function LessonPlayer(props: Props) {
               </div>
             </Show>
           </section>
+        </Show>
+        <Show when={props.mentalModels?.length}>
+          <details class="feedback-depth task-concept-links" data-testid="mental-model-links">
+            <summary>Explore this concept</summary>
+            <p>Open an interactive model in a new tab. Your current task stays here.</p>
+            <ul><For each={props.mentalModels}>{(model) => <li>
+              <a href={`/models/${model.slug}/`} target="_blank" rel="noopener">{model.title} ↗</a>
+              <p>{model.summary}</p>
+            </li>}</For></ul>
+          </details>
         </Show>
       </div>
     </div>

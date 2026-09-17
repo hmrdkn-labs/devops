@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 const primarySurfaces = [
   ['home', '/'],
   ['kcna-focus', '/kcna'],
+  ['practice', '/practice'],
   ['kcna-mcq', '/practice/kcna'],
   ['kcna-path', '/paths/kcna'],
   ['study', '/learn/kcna-kubernetes-resources-review'],
@@ -14,26 +15,27 @@ const primarySurfaces = [
 test('KCNA focus isolates the certification curriculum', async ({ page }) => {
   await page.goto('/kcna');
 
-  await expect(page.getByRole('heading', { name: 'Stay inside the KCNA lane.' })).toBeVisible();
-  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveText('KCNA');
+  await expect(page.getByRole('heading', { name: 'KCNA learning path', exact: true })).toBeVisible();
+  await expect(page.locator('.site-nav a[aria-current="page"], .mobile-dock a[aria-current="page"]').filter({ visible: true })).toHaveText('Learn');
   await expect(page.locator('.kcna-checkpoint')).toHaveCount(4);
   await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(32);
-  await expect(page.getByRole('heading', { name: /Continue:/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Start focused session/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Review KCNA only' })).toBeVisible();
+  await expect(page.locator('#kcna-today-title')).toBeVisible();
+  await expect(page.getByRole('link', { name: /Start learning/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /MCQ practice/ })).toBeVisible();
-  const quickReview = page.locator('.kcna-quick-review');
-  await expect(quickReview.getByText('Kubernetes Fundamentals quiz companion', { exact: true })).toBeVisible();
-  await expect(quickReview.getByText('Kubernetes Resources quiz companion', { exact: true })).toBeVisible();
-  await expect(quickReview.getByText('Scheduling quiz companion', { exact: true })).toBeVisible();
+  await page.getByText('Quiz companions and practice tools', { exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Scheduled KCNA review' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'MCQ practice', exact: true })).toBeVisible();
+  const quickReview = page.locator('.path-extras');
+  await expect(quickReview.getByRole('link', { name: 'KCNA Kubernetes Fundamentals quiz companion', exact: true })).toBeVisible();
+  await expect(quickReview.getByRole('link', { name: 'KCNA Kubernetes Resources quiz companion', exact: true })).toBeVisible();
+  await expect(quickReview.getByRole('link', { name: 'KCNA Scheduling quiz companion', exact: true })).toBeVisible();
 });
 
 test('KCNA MCQ refresher explains every option after checking', async ({ page }) => {
   await page.goto('/practice/kcna');
 
-  await expect(page.getByRole('heading', { name: 'Practice the decision, not the wording.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'KCNA question practice' })).toBeVisible();
   await expect(page.getByText('Question 1 / 12')).toBeVisible();
   await expect(page.getByText('Select one', { exact: true })).toBeVisible();
 
@@ -58,6 +60,9 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await page.getByText('kube-apiserver', { exact: true }).click();
   await page.getByRole('button', { name: 'Check answer' }).click();
   await expect(page.getByText('Corrected', { exact: true })).toBeVisible();
+  await page.getByText('Session options', { exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Quick 12', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'All 49', exact: true })).toBeVisible();
   await expect(page.getByText('0 correct', { exact: true })).toBeVisible();
 });
 
@@ -172,7 +177,7 @@ test('study question is visible in the initial viewport', async ({ page }) => {
 
 test('display headings stay within the workspace type scale', async ({ page }) => {
   await page.goto('/');
-  const homeSize = await page.locator('.home-heading h1').evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
+  const homeSize = await page.locator('.page-hero h1').evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
   expect(homeSize).toBeLessThanOrEqual(40);
 
   await page.goto('/references');
@@ -184,7 +189,7 @@ test('mobile header actions meet the 44px touch-target contract', async ({ page 
   test.skip(testInfo.project.name !== 'mobile', 'Mobile-only interaction contract');
   await page.goto('/');
 
-  for (const selector of ['.theme-toggle', '.auth-popover > summary', '.mobile-nav > summary']) {
+  for (const selector of ['.theme-toggle', '.auth-popover > summary', '.header-search']) {
     const control = page.locator(selector);
     await expect(control).toBeVisible();
     const box = await control.boundingBox();

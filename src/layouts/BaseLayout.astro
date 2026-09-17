@@ -2,13 +2,14 @@
 import AuthMenu from '@/components/AuthMenu';
 import ThemeToggle from '@/components/ThemeToggle';
 import '../styles/global.css';
+import '../styles/learner-navigation.css';
 
 interface Props {
   title?: string;
   description?: string;
   canonicalPath?: string;
   pageClass?: string;
-  activeSection?: 'kcna';
+  activeSection?: 'kcna' | 'learn' | 'review' | 'practice' | 'library';
   immersive?: boolean;
 }
 
@@ -23,21 +24,15 @@ const {
 const pageTitle = title === 'DevOps by hmrdkn-labs' ? title : `${title} · DevOps by hmrdkn-labs`;
 const canonical = new URL(canonicalPath, 'https://devops.hamardikan.com');
 const navigation = [
-  { id: 'kcna', href: '/kcna', label: 'KCNA', prefixes: ['/kcna', '/paths/kcna'] },
-  { href: '/review', label: 'Review', prefixes: ['/review'] },
-  { href: '/library', label: 'Library' },
-  { href: '/map', label: 'Map' },
-];
-const mobileNavigation = [
-  { href: '/', label: 'Home' },
-  { id: 'kcna', href: '/kcna', label: 'KCNA', prefixes: ['/kcna', '/paths/kcna'] },
-  { href: '/review', label: 'Review', prefixes: ['/review'] },
-  { href: '/library', label: 'Library' },
+  { id: 'learn', href: '/', label: 'Learn', prefixes: ['/kcna', '/learn', '/paths'] },
+  { id: 'review', href: '/review', label: 'Review', prefixes: ['/review'] },
+  { id: 'practice', href: '/practice', label: 'Practice', prefixes: ['/practice', '/lesson', '/models'] },
+  { id: 'library', href: '/library', label: 'Library', prefixes: ['/library', '/search', '/map', '/references'] },
 ];
 const isCurrent = (item: typeof navigation[number]) => {
-  if (activeSection) return 'id' in item && item.id === activeSection;
-  if ('prefixes' in item && item.prefixes?.some((prefix) => Astro.url.pathname.startsWith(prefix))) return true;
-  return Astro.url.pathname === item.href || Astro.url.pathname.startsWith(item.href + '/');
+  if (activeSection) return item.id === (activeSection === 'kcna' ? 'learn' : activeSection);
+  return Astro.url.pathname === item.href || item.prefixes.some((prefix) =>
+    Astro.url.pathname === prefix || Astro.url.pathname.startsWith(prefix + '/'));
 };
 ---
 
@@ -81,22 +76,13 @@ const isCurrent = (item: typeof navigation[number]) => {
           <a class="header-search" href="/search" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>Search</a>
           <ThemeToggle client:load />
           <AuthMenu client:load />
-          <details class="mobile-nav">
-            <summary class="quiet-button" aria-label="Open navigation">Menu</summary>
-            <nav class="mobile-nav-panel" aria-label="Mobile navigation">
-              {navigation.map((item) => (
-                <a href={item.href} aria-current={isCurrent(item) ? 'page' : undefined}>{item.label}</a>
-              ))}
-              <a href="/search" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>Search</a>
-            </nav>
-          </details>
         </div>
       </div>
     </header>}
     <main id="main"><slot /></main>
     {!immersive && <nav class="mobile-dock" aria-label="Primary mobile navigation">
-      {mobileNavigation.map((item) => (
-        <a href={item.href} aria-current={isCurrent(item as typeof navigation[number]) ? 'page' : undefined}>
+      {navigation.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item) ? 'page' : undefined}>
           <span class="mobile-dock-mark" aria-hidden="true"></span>
           <span>{item.label}</span>
         </a>
