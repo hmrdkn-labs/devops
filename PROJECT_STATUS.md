@@ -5,9 +5,15 @@
 
 ## Read this first
 
-**Current work: Interactive Mental Models v1 is committed; KCNA Scheduling
-enrichment is validated locally and awaiting commit/push/deploy.** Mental-model
-commit `7a23322` exists. The 2026-09-17 Scheduling audit compared the public
+**Current work: Interactive Mental Models v1 and the KCNA Scheduling enrichment
+are committed, pushed, deployed, and live.** Mental-model commit `7a23322` and
+Scheduling commit `3a34836` (`feat(kcna): deepen scheduling review`) are both on
+`origin/main`. CI run `35188612945` passed for exact production source
+`3a3483655e21b3032eb1377c62c76a36f75db13a`; protected owner deployment run
+`35188946033` then deployed that source successfully. Production `/api/health`
+reports `status=ok`, D1 `database=ready`, and manifest SHA
+`123f97da1eecfff2ff8eb6312465000e2057533617742dafad7b1d502bb9f0e8`.
+The 2026-09-17 Scheduling audit compared the public
 companion against the private KodeKloud index and current Kubernetes docs, then
 added the missing KCNA-level concepts: `PriorityClass` / `priorityClassName`,
 priority-aware queue ordering and preemption, `QueueSort`, the broader scheduler
@@ -22,10 +28,12 @@ rechecked for completeness. Current corpus: **40 units, 49 KCNA MCQs, 232 cards,
 3 mental models**. Settled verification is green: `npm run ci`, **82/82 Vitest**,
 D1 checks, production build and release-manifest generation, `revision:check`,
 and the full Playwright desktop/tablet/mobile matrix with **97 passed / 38
-intentional skips**. `release:classify` currently reports
-`application-or-schema` because unpushed mental-model commit `7a23322` is also
-ahead of the remote. This Scheduling pass is **not yet committed, pushed, or
-deployed**; there is no implementation blocker.
+intentional skips**. Independent production checks return HTTP 200 for `/models/`,
+`/models/pod-scheduling/`, `/models/kubernetes-reconciliation/`,
+`/models/service-request-path/`, `/learn/kcna-scheduling-review/`, and
+`/practice/kcna/`. The live Scheduling page contains `PriorityClass`,
+`priorityClassName`, `QueueSort`, preemption, and `DefaultBinder`. **No
+implementation or deployment blocker remains.**
 
 **Audit → Plan → Rewrite → Acceptance → Merged → Deployed.**
 
@@ -131,9 +139,16 @@ are **40 units, 49 KCNA MCQs, 232 cards, and 3 mental models**. Settled verifica
 is green: `npm run ci`, **82/82 Vitest**, D1 checks, production build and
 release-manifest generation, `revision:check`, and the full Playwright
 desktop/tablet/mobile matrix with **97 passed / 38 intentional skips**.
-`release:classify` currently reports `application-or-schema` because unpushed
-mental-model commit `7a23322` is also ahead of the remote. That commit already
-exists; this Scheduling follow-up is still pending commit, push, and deployment.
+Mental-model commit `7a23322` and Scheduling commit `3a34836` are both pushed to
+`origin/main` and live. CI run `35188612945` passed for exact source
+`3a3483655e21b3032eb1377c62c76a36f75db13a`; protected owner deployment run
+`35188946033` succeeded. Independent production verification returned HTTP 200
+for `/models/`, `/models/pod-scheduling/`, `/models/kubernetes-reconciliation/`,
+`/models/service-request-path/`, `/learn/kcna-scheduling-review/`, and
+`/practice/kcna/`; `/api/health` reports `ok`, D1 `ready`, manifest SHA
+`123f97da1eecfff2ff8eb6312465000e2057533617742dafad7b1d502bb9f0e8`. The live
+Scheduling page exposes `PriorityClass`, `priorityClassName`, `QueueSort`,
+preemption, and `DefaultBinder`.
 
 A new **KCNA Scheduling quiz companion** adds the full first-principles path
 `unassigned Pod → filter → score → bind → kubelet/runtime`, explicit
