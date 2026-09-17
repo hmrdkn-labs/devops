@@ -1,90 +1,49 @@
 ---
-import ProgressClient from '@/components/ProgressClient';
+import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { paths, units } from '@/lib/content/catalog';
+import { paths, unitsById } from '@/lib/content/catalog';
 
 export const prerender = true;
-const totalMinutes = units.reduce((sum, unit) => sum + unit.metadata.estimated_minutes, 0);
-const kcnaPath = paths.find((path) => path.slug === 'kcna');
-const kcnaUnits = kcnaPath?.units.length ?? 0;
+const path = paths.find((candidate) => candidate.slug === 'kcna');
+if (!path) throw new Error('KCNA path is missing');
+const sections = [
+  { id: 'fundamentals', title: 'Kubernetes Fundamentals', start: 0, end: 9 },
+  { id: 'resources', title: 'Kubernetes Resources', start: 9, end: 18 },
+  { id: 'cluster-behavior', title: 'Cluster Behavior', start: 18, end: 26 },
+  { id: 'cloud-native', title: 'Cloud-Native Context', start: 26, end: path.units.length },
+];
+const pathUnits = path.units.map((entry) => unitsById.get(entry.unit_id));
+const clientUnits = sections.flatMap((section) => pathUnits.slice(section.start, section.end).flatMap((unit) => unit ? [{
+  id: unit.metadata.id, slug: unit.metadata.slug, title: unit.metadata.title,
+  estimatedMinutes: unit.metadata.estimated_minutes, checkpointId: section.id,
+}] : []));
+const checkpoints = sections.map((section) => ({
+  id: section.id, title: section.title,
+  unitIds: clientUnits.filter((unit) => unit.checkpointId === section.id).map((unit) => unit.id),
+}));
 ---
 
-<BaseLayout>
-  <section class="home-dashboard shell">
-    <header class="home-heading">
-      <p class="eyebrow">Learning workspace</p>
-      <h1>Build durable DevOps understanding.</h1>
-      <p>Question first, explanation second, scheduled recall later.</p>
-    </header>
-
-    <section class="home-resume" aria-labelledby="continue-title">
-      <div class="home-resume-copy">
-        <p class="section-kicker">Continue learning</p>
-        <h2 id="continue-title">KCNA Learning Path</h2>
-        <p>{kcnaUnits} connected units from networking and containers through Kubernetes operations and cloud-native delivery.</p>
-        <div class="home-resume-meta">
-          <span>{kcnaUnits} units</span><span>question first</span><span>portable Markdown</span>
-        </div>
+<BaseLayout title="Learn" activeSection="learn" description="Start or resume a concrete DevOps learning task.">
+  <header class="page-hero shell compact-hero">
+    <p class="eyebrow">Learn</p>
+    <h1>Your next learning task</h1>
+    <p class="lede">Work through the KCNA path one unit at a time. Answer first, then compare your explanation and apply it.</p>
+  </header>
+  <div class="shell learn-entry">
+    <KcnaFocusClient units={clientUnits} checkpoints={checkpoints} compact showProgress={false} client:load />
+    <section class="entry-context" aria-labelledby="current-path-title">
+      <div>
+        <p class="section-kicker">Current path</p>
+        <h2 id="current-path-title">KCNA learning path</h2>
+        <p>{clientUnits.length} connected units, from the machine underneath Kubernetes to cloud-native operations.</p>
+        <a href="/kcna">Browse the full path outline →</a>
       </div>
-      <a class="button primary" href="/kcna">Open KCNA focus <span aria-hidden="true">→</span></a>
+      <div>
+        <p class="section-kicker">Build the foundations</p>
+        <h2>From Process to Pod</h2>
+        <p>Trace a workload through Linux, networking, containers, and Kubernetes when you want the underlying model.</p>
+        <a href="/paths/from-process-to-pod">Open the foundation path →</a>
+      </div>
     </section>
-
-    <dl class="home-metrics">
-      <div><dt>Learning units</dt><dd>{units.length}</dd></div>
-      <div><dt>Review cards</dt><dd>{units.reduce((sum, unit) => sum + unit.cards.length, 0)}</dd></div>
-      <div><dt>Guided material</dt><dd>≈{Math.round(totalMinutes / 60)} h</dd></div>
-      <div><dt>Source format</dt><dd>GFM + YAML</dd></div>
-    </dl>
-  </section>
-
-  <section class="learning-loop shell" aria-labelledby="loop-title">
-    <div class="loop-intro">
-      <p class="section-kicker">Learning loop</p>
-      <h2 id="loop-title">Make the model before reading the answer.</h2>
-      <p>You produce a model, compare it with critical points, then create evidence through recall and real scenarios.</p>
-    </div>
-    <ol>
-      <li><span>01</span><div><strong>Predict</strong><p>Answer before the lesson makes recognition impossible to confuse with recall.</p></div></li>
-      <li><span>02</span><div><strong>Compare</strong><p>Use a concise model and checklist. No opaque AI score decides whether you understand.</p></div></li>
-      <li><span>03</span><div><strong>Apply</strong><p>Troubleshooting and configuration scenarios test whether the model transfers.</p></div></li>
-      <li><span>04</span><div><strong>Retain</strong><p>FSRS schedules later retrieval; readiness fades when evidence becomes stale.</p></div></li>
-    </ol>
-  </section>
-
-  <section class="path-preview shell" aria-labelledby="path-title">
-    <div class="path-copy">
-      <p class="section-kicker">Foundation path</p>
-      <h2 id="path-title">From Process to Pod</h2>
-      <p>Trace one workload through Linux, networking, containers, and Kubernetes. Use it when a KCNA concept feels detached from the machine underneath it.</p>
-      <a href="/paths/from-process-to-pod">Open the foundation path →</a>
-    </div>
-    <ol class="layer-list">
-      <li><span>01</span><strong>Process</strong><small>CPU · memory · signals</small></li>
-      <li><span>02</span><strong>Linux</strong><small>users · files · namespaces</small></li>
-      <li><span>03</span><strong>Network</strong><small>IP · DNS · routes · TLS</small></li>
-      <li><span>04</span><strong>Container</strong><small>image · runtime · isolation</small></li>
-      <li><span>05</span><strong>Pod</strong><small>scheduling · health · service</small></li>
-    </ol>
-  </section>
-
-  <section class="home-progress shell">
-    <div>
-      <p class="section-kicker">Evidence, not streaks</p>
-      <h2>Your readiness can tell the truth.</h2>
-      <p>Encountered, Recalled, Applied, and Retained are different claims. Critical prerequisites count twice in the path score.</p>
-    </div>
-    <ProgressClient compact client:visible />
-  </section>
-
-  <section class="portable-callout shell">
-    <div>
-      <p class="section-kicker">Portable by construction</p>
-      <h2>Keep the curriculum portable.</h2>
-    </div>
-    <p>Download the canonical Markdown archive, consume stable raw URLs, or build another renderer from the versioned manifest. Framework code never enters the lesson source.</p>
-    <div class="hero-actions">
-      <a class="button primary" href="/devops-content-v1.zip">Download content</a>
-      <a class="button" href="/content/v1/manifest.json">Inspect manifest</a>
-    </div>
-  </section>
+  </div>
 </BaseLayout>

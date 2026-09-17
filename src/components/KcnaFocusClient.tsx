@@ -1,4 +1,5 @@
-import { For, Show, createEffect, createMemo, createResource, createSignal } from 'solid-js';
+import { For, Show, createEffect, createMemo, createResource, createSignal, onMount, onCleanup } from 'solid-js';
+import '@/styles/path-guidance.css';
 
 interface UnitSpec {
   id: string;
@@ -68,21 +69,41 @@ interface ReviewResponse {
 interface Props {
   units: UnitSpec[];
   checkpoints: CheckpointSpec[];
+  compact?: boolean;
+  showProgress?: boolean;
 }
 
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 
 export default function KcnaFocusClient(props: Props) {
   const [autoOpened, setAutoOpened] = createSignal(false);
-  const [progress] = createResource(() => typeof window !== 'undefined', async () => {
-    const response = await fetch('/api/progress', { credentials: 'include' });
-    if (!response.ok) return null;
-    return response.json() as Promise<ProgressResponse>;
+  const [progressResult, { refetch: retryProgress }] = createResource(() => typeof window !== 'undefined', async () => {
+    try {
+      const response = await fetch('/api/progress', { credentials: 'include' });
+      if (response.status === 401) return { state: 'guest' as const };
+      if (!response.ok) return { state: 'error' as const };
+      return { state: 'owner' as const, data: await response.json() as ProgressResponse };
+    } catch { return { state: 'error' as const }; }
   });
-  const [review] = createResource(() => typeof window !== 'undefined', async () => {
-    const response = await fetch('/api/review?path=kcna&limit=50', { credentials: 'include' });
-    if (!response.ok) return null;
-    return response.json() as Promise<ReviewResponse>;
+  const progress = () => { const result = progressResult(); return result?.state === 'owner' ? result.data : undefined; };
+  const [review, { refetch: retryReview }] = createResource(() => typeof window !== 'undefined', async () => {
+    try {
+      const response = await fetch('/api/review?path=kcna&limit=1', { credentials: 'include' });
+      if (response.status === 401) return { state: 'guest' as const, dueCount: 0 };
+      if (!response.ok) return { state: 'error' as const, dueCount: 0 };
+      const data = await response.json() as ReviewResponse;
+      return { state: 'owner' as const, dueCount: data.dueCount };
+    } catch { return { state: 'error' as const, dueCount: 0 }; }
+  });
+  const [checkpointTouched, setCheckpointTouched] = createSignal(false);
+  onMount(() => {
+    const hashTarget = window.location.hash ? document.getElementById(window.location.hash.slice(1)) : null;
+    if (hashTarget instanceof HTMLDetailsElement && hashTarget.matches('[data-checkpoint]')) hashTarget.open = true;
+    const preserveChoice = (event: Event) => {
+      if ((event.target as HTMLElement)?.closest('details[data-checkpoint] summary')) setCheckpointTouched(true);
+    };
+    document.addEventListener('click', preserveChoice, true);
+    onCleanup(() => document.removeEventListener('click', preserveChoice, true));
   });
 
   const progressByUnit = createMemo(() => new Map((progress()?.units ?? []).map((unit) => [unit.id, unit])));
@@ -180,7 +201,7 @@ export default function KcnaFocusClient(props: Props) {
       element.textContent = state;
       element.dataset.state = state.toLowerCase().replaceAll(' ', '-');
     });
-    if (!autoOpened()) {
+    if (!autoOpened() && !checkpointTouched() && !window.location.hash) {
       const activeCheckpoint = nextUnit()?.checkpointId;
       document.querySelectorAll<HTMLDetailsElement>('details[data-checkpoint]').forEach((element) => {
         element.open = element.dataset.checkpoint === activeCheckpoint;
@@ -190,45 +211,53 @@ export default function KcnaFocusClient(props: Props) {
   });
 
   const dueCount = () => review()?.dueCount ?? 0;
+  const hasStarted = () => (progress()?.units ?? []).some((unit) => props.units.some((spec) => spec.id === unit.id) && (unit.completion.state !== 'Not started' || unit.understanding.state !== 'No evidence'));
   const sessionHref = createMemo(() => {
     const unit = nextUnit();
     if (!unit) return '/kcna';
-    if (dueCount() > 0) return `/review?path=kcna&next=${encodeURIComponent(unit.slug)}`;
+    if (dueCount() > 0 && progressResult()?.state === 'owner') return `/review?path=kcna&next=${encodeURIComponent(unit.slug)}`;
     return `/learn/${unit.slug}`;
   });
 
   return (
-    <section class="kcna-today" aria-labelledby="kcna-today-title">
+    <section class="kcna-today path-session" classList={{ 'path-session-compact': props.compact === true }} aria-labelledby="kcna-today-title" data-path-session>
       <div class="kcna-today-main">
         <div class="kcna-session-label">
           <span class="kcna-session-orb" aria-hidden="true">→</span>
-          <p class="section-kicker">Today's session</p>
+          <p class="section-kicker">Your next step</p>
         </div>
         <Show when={nextUnit()} fallback={<h2 id="kcna-today-title">KCNA path complete.</h2>}>
           {(unit) => (
             <>
-              <h2 id="kcna-today-title">Continue: {unit().title}</h2>
+              <h2 id="kcna-today-title">{unit().title}</h2>
               <p>
-                {dueCount() > 0 ? `${dueCount()} KCNA reviews due first · ` : ''}
-                {unit().estimatedMinutes} min learning unit · guided practice after the explanation.
+                {unit().estimatedMinutes} min · explanation, recall, and guided practice.
               </p>
             </>
           )}
         </Show>
         <div class="kcna-session-actions">
-          <a class="button primary" href={sessionHref()}>Start focused session →</a>
-          <a class="button" href="/review?path=kcna">Review KCNA only</a>
+          <a class="button primary" data-session-action href={sessionHref()}>{dueCount() > 0 && progressResult()?.state === 'owner' ? `Review ${dueCount()} due cards` : hasStarted() ? 'Continue learning' : 'Start learning'} →</a>
+          <Show when={dueCount() > 0 && progressResult()?.state === 'owner'}>
+            <a class="button" href={`/learn/${nextUnit()?.slug}`}>Continue learning</a>
+          </Show>
+        </div>
+        <div class="path-session-status" aria-live="polite">
+          <Show when={progressResult.loading || !progressResult()}><p>Loading saved progress… You can start learning while it loads.</p></Show>
+          <Show when={!progressResult.loading && progressResult()?.state === 'guest'}><p>Guest learning · answers stay only on the current learning page and disappear when you leave it. Sign in as owner to save them.</p></Show>
+          <Show when={!progressResult.loading && progressResult()?.state === 'error'}><p>Saved progress could not load. <button type="button" onClick={() => void retryProgress()}>Retry progress</button></p></Show>
+          <Show when={!progressResult.loading && progressResult()?.state === 'owner' && !hasStarted()}><p>No KCNA learning progress yet. Start with the first unit.</p></Show>
+          <Show when={progressResult()?.state === 'owner' && review.loading}><p>Checking due reviews… You can continue learning while the recommendation updates.</p></Show>
+          <Show when={progressResult()?.state === 'owner' && review()?.state === 'error'}><p>Due reviews could not load. <button type="button" onClick={() => void retryReview()}>Retry reviews</button> · <a href="/review?path=kcna">Open Review</a></p></Show>
         </div>
       </div>
 
-      <Show when={pathProgress()} fallback={
-        <div class="kcna-session-guest">
-          <strong>Guest mode</strong>
-          <p>Start anywhere. Sign in as owner when you want resume, weak-spot, and readiness evidence.</p>
-        </div>
-      }>
+      <Show when={props.showProgress !== false && pathProgress()}>
         {(path) => (
-          <div class="kcna-evidence-panel">
+          <details class="path-progress-details">
+            <summary>Progress details · {completionSummary().completed + completionSummary().learned}/{completionSummary().total} learned · {understandingSummary().retained} retained</summary>
+            <p>Learning completion and retained understanding are separate. Reviews supply later recall evidence.</p>
+            <div class="kcna-evidence-panel">
             <div class="kcna-path-meter">
               <div>
                 <span>Learning path</span>
@@ -245,7 +274,7 @@ export default function KcnaFocusClient(props: Props) {
               <div><dt>Needs refresh</dt><dd>{understandingSummary().refresh}</dd></div>
             </dl>
             <div class="kcna-readiness-total">
-              <span>readiness-v1</span>
+              <span>Understanding evidence</span>
               <strong>{percent(path().readiness)}</strong>
             </div>
             <dl class="kcna-readiness-breakdown">
@@ -273,7 +302,8 @@ export default function KcnaFocusClient(props: Props) {
                 </ol>
               </Show>
             </div>
-          </div>
+            <a href="/dashboard">Open full progress →</a>
+          </div></details>
         )}
       </Show>
     </section>

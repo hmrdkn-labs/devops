@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { lessons, practiceSets } from '@/lib/content/catalog';
+import { mentalModels } from '@/lib/content/mental-models';
+export const prerender = true;
+const mcq = practiceSets.find((set) => set.slug === 'kcna-mcq');
+---
+
+<BaseLayout title="Practice" activeSection="practice" description="Practice with interactive lessons, KCNA questions, and explorable mental models.">
+  <header class="page-hero shell compact-hero">
+    <p class="eyebrow">Practice</p>
+    <h1>Try a focused activity</h1>
+    <p class="lede">Choose a question session, an interactive lesson, or a model to explore. For scheduled card retrieval, use <a href="/review">Review</a>.</p>
+  </header>
+  <div class="shell practice-hub">
+    <section aria-labelledby="mcq-title">
+      <h2 id="mcq-title">MCQ refresher</h2>
+      <a class="activity-card" href="/practice/kcna">
+        <span class="section-kicker">Optional question practice</span>
+        <h3>KCNA multiple-choice practice</h3>
+        <p>Start with 12 questions from the {mcq?.questions.length ?? 0}-question bank, or choose a longer session. Compare your answer with the rationale.</p>
+        <strong>Open MCQ practice →</strong>
+      </a>
+      <p class="activity-note">This question session stays in memory. Its score is separate from scheduled Review and saved learning evidence.</p>
+    </section>
+    <section aria-labelledby="lessons-title">
+      <h2 id="lessons-title">Interactive lessons</h2>
+      <p>Work through short exercises with feedback, then retry or continue.</p>
+      <div class="activity-grid">
+        {lessons.map((lesson) => <a class="activity-card" href={'/lesson/' + lesson.slug}>
+          <span class="section-kicker">{lesson.exercises.length} exercises · about {lesson.estimated_minutes} min</span>
+          <h3>{lesson.title}</h3>
+          <p>{lesson.summary}</p>
+          <strong>Open lesson →</strong>
+        </a>)}
+      </div>
+    </section>
+    <section aria-labelledby="models-title">
+      <h2 id="models-title">Explore mental models</h2>
+      <p>Predict what happens, inspect the responsible component, and change the conditions. Exploration does not establish retained mastery.</p>
+      <div class="activity-grid">
+        {mentalModels.map((model) => <a class="activity-card" href={'/models/' + model.slug}>
+          <span class="section-kicker">{model.steps.length} steps · about {model.estimated_minutes} min</span>
+          <h3>{model.title}</h3><p>{model.summary}</p><strong>Explore model →</strong>
+        </a>)}
+      </div>
+      <a class="entry-text-link" href="/models">Browse all models →</a>
+    </section>
+  </div>
+</BaseLayout>

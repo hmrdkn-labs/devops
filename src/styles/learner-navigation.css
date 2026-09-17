@@ -1,0 +1,47 @@
+/* Shared learner entry surfaces; loaded after the established design tokens. */
+html { scroll-padding-top: 76px; scroll-padding-bottom: 24px; }
+:where(a, button, summary, input, textarea, select) { scroll-margin-block: 80px 24px; }
+.header-tools :is(.quiet-button, .header-search) { min-height: 44px; }
+.popover-panel a { display: flex; align-items: center; min-height: 44px; }
+.account-name { overflow-wrap: anywhere; }
+.learn-entry { padding-block: 1.25rem 3rem; }
+.entry-context { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.entry-context h2 { margin-block: .4rem; font-size: 1.2rem; }
+.entry-context p, .entry-links p, .activity-card p, .library-portability p { color: var(--muted); }
+.entry-context a, .entry-inline-links a, .entry-text-link { display: inline-flex; align-items: center; min-height: 44px; }
+.entry-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; padding-block: 1.25rem; }
+.entry-links > a, .activity-card { display: block; min-width: 0; padding: 1.15rem; border: 1px solid var(--line); border-radius: var(--radius-surface); background: var(--surface); text-decoration: none; }
+.entry-links > a:hover, .activity-card:hover { border-color: var(--accent); background: var(--surface-subtle); }
+.entry-links h2 { margin-block: 0 .5rem; font-size: 1.1rem; }
+.entry-links p { margin-block: 0; }
+.library-portability { padding-block: .75rem 1.5rem; border-bottom: 1px solid var(--line); }
+.library-portability h2 { font-size: 1.15rem; }
+.entry-inline-links { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+.practice-hub { display: grid; gap: 2rem; padding-block: 1.5rem 3rem; }
+.practice-hub section > h2 { margin-block: 0 .65rem; font-size: 1.35rem; }
+.practice-hub section > p { color: var(--muted); }
+.activity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+.activity-card h3 { margin-block: .6rem; font-size: 1.1rem; }
+.activity-card p { margin-block: .65rem; }
+.activity-card strong { color: var(--accent-strong); font-size: .85rem; }
+.activity-note { margin-block: .7rem 0; font-size: .82rem; }
+@media (max-width: 760px) {
+  html { scroll-padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  :where(a, button, summary, input, textarea, select) { scroll-margin-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  body:not(.immersive-page) { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+  .header-search { display: inline-flex; min-width: 44px; padding-inline: .4rem; }
+  .site-header-inner { gap: .25rem; }
+  .header-tools { gap: .1rem; }
+  .header-tools .quiet-button { padding-inline: .35rem; }
+  .mobile-dock { bottom: .55rem; padding-bottom: calc(.35rem + env(safe-area-inset-bottom)); }
+  .entry-context, .entry-links, .activity-grid { grid-template-columns: 1fr; }
+  .entry-context { gap: 1.2rem; }
+  .entry-links { gap: .65rem; }
+  .practice-hub { gap: 1.5rem; }
+}
+@media (max-width: 360px) {
+  .brand { gap: .35rem; }
+  .brand-mark { width: 24px; height: 24px; }
+  .brand-name { font-size: .8rem; }
+  .status-dot { display: none; }
+}

@@ -1,0 +1,36 @@
+.path-session.kcna-today { display: block; min-height: 225px; padding: 24px; }
+.path-session .kcna-today-main { padding: 0; }
+.path-session h2 { font-size: clamp(22px, 3vw, 28px); line-height: 1.25; }
+.path-session .kcna-session-actions { flex-wrap: wrap; }
+.path-session-status { min-height: 28px; margin-top: 12px; color: var(--muted); font-size: 13px; }
+.path-session-status p { margin: 0; }
+.path-session-status button { min-height: 44px; }
+.path-progress-details { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 8px; }
+.path-progress-details > summary, .path-extras summary { min-height: 44px; cursor: pointer; padding-block: 12px; }
+.path-progress-details .kcna-evidence-panel { padding: 16px 0 0; border: 0; }
+.path-curriculum-shell { margin-block: 24px; }
+.kcna-page .kcna-hero { grid-template-columns: minmax(0, 1fr); padding-block: 32px 24px; }
+.kcna-page .kcna-hero h1 { font-size: clamp(28px, 4vw, 40px); }
+.kcna-page .kcna-hero .lede { max-width: 68ch; }
+.path-curriculum-shell .kcna-checkpoint > summary { padding: 18px 20px; }
+.path-curriculum-shell .kcna-checkpoint summary h2 { font-size: 22px; }
+.path-curriculum-shell .kcna-checkpoint summary p { margin-block: 4px 0; }
+.path-curriculum-shell .kcna-checkpoint li { padding-block: 12px; }
+.path-curriculum-shell .kcna-checkpoint li > a { min-height: 44px; align-content: center; }
+.path-curriculum-shell .kcna-lesson-launch { padding: 14px 18px; }
+.path-unit-details { grid-column: 2 / -1; font-size: 13px; }
+.path-unit-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--muted); }
+.path-unit-details summary::before { content: '+ '; margin-right: 6px; }
+.path-unit-details[open] summary::before { content: '− '; }
+.path-unit-details p { max-width: 68ch; margin-top: 0; }
+.path-extras { padding-block: 12px 40px; }
+.path-extras h2 { font-size: 22px; }
+.path-extras li a { display: inline-flex; align-items: center; min-height: 44px; }
+@media (max-width: 600px) {
+  .path-session.kcna-today { padding: 18px; min-height: 270px; }
+  .path-curriculum-shell .kcna-checkpoint > summary { padding: 14px 12px; gap: 10px; }
+  .path-curriculum-shell .kcna-checkpoint summary h2 { font-size: 19px; }
+  .path-curriculum-shell .kcna-checkpoint-meta { flex-wrap: wrap; }
+  .path-curriculum-shell .kcna-unit-meta { flex-wrap: wrap; }
+  .path-unit-details { grid-column: 1 / -1; }
+}

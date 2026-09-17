@@ -6,12 +6,27 @@ export const prerender = true;
 const layers = [...new Set(units.map((unit) => unit.metadata.layer))];
 ---
 
-<BaseLayout title="Library" description="Browse every published portable DevOps learning unit.">
+<BaseLayout title="Library" activeSection="library" description="Find learning units, prerequisite maps, references, and portable DevOps content.">
   <header class="page-hero shell">
     <p class="eyebrow">Library · {units.length} units</p>
-    <h1>Browse the knowledge base</h1>
-    <p class="lede">Portable units grouped by the technical layer they explain.</p>
+    <h1>Find what you need</h1>
+    <p class="lede">Look up a concept, trace its prerequisites, or inspect its sources. All published units remain available below.</p>
   </header>
+  <section class="shell entry-links" aria-label="Library tools">
+    <a href="/search"><h2>Search</h2><p>Find a unit by concept, title, or command.</p></a>
+    <a href="/map"><h2>Prerequisite map</h2><p>See how concepts connect across technical layers.</p></a>
+    <a href="/references"><h2>References</h2><p>Inspect the sources and provenance behind the curriculum.</p></a>
+  </section>
+  <section class="shell library-portability" aria-labelledby="portable-title">
+    <h2 id="portable-title">Take the content with you</h2>
+    <p>Canonical Markdown, source metadata, and stable raw URLs are available independently of this learning workspace.</p>
+    <div class="entry-inline-links">
+      <a href="/devops-content-v1.zip">Download Markdown archive</a>
+      <a href="/content/v1/manifest.json">Content manifest & raw URLs</a>
+      <a href="/feed.xml">Atom feed</a>
+      <a href="/llms.txt">llms.txt</a>
+    </div>
+  </section>
   <div class="shell library-groups">
     {layers.map((layer) => (
       <section>
