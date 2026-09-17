@@ -51,6 +51,7 @@ Predict each answer before reading its explanation; no cluster is required.
 | DaemonSet | controller wants one Pod on each eligible node |
 | Static Pod | kubelet directly owns a Pod from node-local/static configuration |
 | `schedulerName` | select which scheduler/profile should handle the Pod |
+| `priorityClassName` | resolve a Pod priority value that affects queue order and can affect preemption |
 | Scheduler profile | one kube-scheduler process can expose different scheduling behavior under different names |
 
 ## 1. The scheduling decision path
@@ -262,6 +263,14 @@ spec:
 
 If no running scheduler handles that name, the Pod can remain unscheduled.
 
+Running another scheduler is an operational responsibility, not just a Pod field.
+The scheduler process needs API access to watch Pods and Nodes and to write the
+placement it owns. In a highly available deployment, replicas of the same
+scheduler commonly use leader election so only one active leader makes a given
+scheduling decision at a time. At KCNA depth, remember the boundary: `schedulerName`
+selects responsibility, while RBAC and leader election make that responsibility
+safe to run as a control-plane service.
+
 A `KubeSchedulerConfiguration` can define profiles. Profiles let one scheduler binary expose different behavior under different `schedulerName` values by enabling, disabling, or configuring scheduling plugins.
 
 At KCNA depth, remember this hierarchy:
@@ -276,9 +285,69 @@ scheduler / scheduler profile
 plugins participate in queueing, filtering, scoring, binding, and related extension points
 ```
 
-You do not need to memorize every plugin. You should recognize examples such as `NodeAffinity`, `TaintToleration`, and `NodeResourcesFit` and know that the scheduler framework composes these decisions rather than using one monolithic "best node" rule.
+You do not need to memorize every plugin. You should recognize examples such as
+`PrioritySort` for queue ordering, `NodeAffinity`, `TaintToleration`,
+`NodeResourcesFit`, `NodeUnschedulable`, `ImageLocality`, and `DefaultBinder`.
+The point is that the scheduler framework composes a decision from plugins at
+different extension points instead of applying one monolithic "best node" rule.
 
-## 8. Failure patterns worth recognizing
+For orientation, the full framework is richer than the usual `filter → score → bind`
+teaching shorthand. Useful extension points include `QueueSort`, `PreFilter`,
+`Filter`, `PostFilter`, `PreScore`, `Score`, `Reserve`, `Permit`, `PreBind`,
+`Bind`, and `PostBind`. The shorthand is still useful for first-pass reasoning;
+the extension-point view explains where custom behavior can be inserted.
+
+## 8. PriorityClass changes which Pending Pod gets attention first
+
+`PriorityClass` is a cluster-scoped object that maps a name to an integer priority.
+A Pod selects it with `spec.priorityClassName`. Admission resolves that name to a
+numeric priority on the Pod, and kube-scheduler uses Pod priority when ordering
+pending work in its scheduling queue.
+
+```yaml
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: platform-critical
+value: 100000
+globalDefault: false
+description: "Higher scheduling priority for selected platform workloads"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api
+spec:
+  priorityClassName: platform-critical
+  containers:
+    - name: api
+      image: example.invalid/api:1
+```
+
+Higher priority does **not** make an impossible node feasible. A high-priority Pod
+still has to pass hard filters such as requests, required affinity, and taints.
+Priority mainly changes which pending Pod is considered first. When preemption is
+enabled and a higher-priority Pod cannot fit, the scheduler can also consider
+evicting lower-priority Pods to make a suitable node feasible. Treat queue ordering
+and preemption as separate ideas: priority influences both, but successful placement
+still depends on the rest of the scheduling constraints.
+
+```text
+pending Pods
+   │
+   ├─ high priority ─┐
+   ├─ normal         ├─ QueueSort / PrioritySort → next scheduling attempt
+   └─ low priority ──┘
+                           │
+                           ▼
+                     filter → score → bind
+```
+
+Evidence is simple: inspect the Pod's `priorityClassName` and resolved `.spec.priority`,
+inspect the `PriorityClass` object, then use Pod events to see whether the remaining
+problem is queue order, failed feasibility, or a preemption attempt.
+
+## 9. Failure patterns worth recognizing
 
 | Symptom | First model to test |
 | --- | --- |
@@ -286,6 +355,7 @@ You do not need to memorize every plugin. You should recognize examples such as 
 | `Pending` + node affinity mismatch | required placement rule removed candidates |
 | `Pending` + untolerated taint | matching toleration is missing |
 | `Pending` + custom `schedulerName` | is a scheduler/profile with that name actually running? |
+| high-priority Pod still `Pending` | priority changes queue/preemption behavior; inspect the hard filters that still make nodes infeasible |
 | Pod forced with `nodeName` but fails on node | direct assignment bypassed normal selection; inspect node/runtime constraints |
 | DaemonSet missing from one node | inspect eligibility, node affinity, taints, resources, and DaemonSet status |
 | Static control-plane Pod returns after API deletion | kubelet still owns the node-local static Pod manifest |
@@ -297,6 +367,7 @@ Ask in this order:
 1. Is this field a **hard filter**, a **preference**, or a **direct assignment**?
 2. Does it live on the **Pod**, the **Node**, a **controller**, or scheduler configuration?
 3. Who makes the decision: API server, controller, scheduler, or kubelet?
-4. What would prove the answer: live Pod assignment, scheduler event, node metadata, or kubelet-owned static configuration?
+4. Is the question about **queue order**, **node feasibility**, **node preference**, or **binding**?
+5. What would prove the answer: live Pod assignment, priority, scheduler event, node metadata, or kubelet-owned static configuration?
 
-If you can answer those four questions, most scheduling options stop looking interchangeable.
+If you can answer those five questions, most scheduling options stop looking interchangeable.

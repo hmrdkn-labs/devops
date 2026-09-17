@@ -1073,6 +1073,50 @@ questions:
     explanation: Think of the scheduler as a framework with named profiles and phase-specific plugins, not as one hard-coded best-node formula.
     unit_ids: [fpp:kcna-scheduling-review]
 
+  - id: practice:kcna/q-priority-class-queue
+    checkpoint: cluster-behavior
+    category: scenario
+    select: multiple
+    prompt: A high-priority Pod and a normal-priority Pod are both Pending. Which statements about the high-priority Pod are correct? Select all that apply.
+    options:
+      - id: a
+        text: Its priority can make it be considered before lower-priority pending work
+        rationale: Pod priority is used by scheduler queue ordering so higher-priority work can be attempted first.
+      - id: b
+        text: Its priority can participate in preemption when a suitable node might be made feasible by removing lower-priority Pods
+        rationale: Priority and preemption are related, although preemption still has constraints and does not guarantee success.
+      - id: c
+        text: Its priority lets it ignore an untolerated NoSchedule taint
+        rationale: Priority does not bypass taint filtering; a hard placement constraint still makes the node infeasible for that Pod.
+      - id: d
+        text: It can still remain Pending if no node satisfies its hard scheduling constraints
+        rationale: Queue order changes which Pod is attempted first, not whether impossible resource or placement requirements become feasible.
+    answer_ids: [a, b, d]
+    explanation: Priority influences scheduler queue order and can affect preemption. It does not override resource fit, required affinity, taints, or other hard feasibility rules.
+    unit_ids: [fpp:kcna-scheduling-review]
+
+  - id: practice:kcna/q-scheduler-framework-phases
+    checkpoint: cluster-behavior
+    category: concept
+    select: multiple
+    prompt: Which scheduler-framework pairings are conceptually correct? Select all that apply.
+    options:
+      - id: a
+        text: QueueSort → choose which pending Pod is considered next
+        rationale: QueueSort plugins order queued Pods before an individual scheduling attempt proceeds.
+      - id: b
+        text: Filter → remove nodes that cannot satisfy hard requirements
+        rationale: Filter plugins decide whether each candidate node is feasible for the Pod.
+      - id: c
+        text: Score → rank nodes that survived filtering
+        rationale: Score plugins express preference among feasible candidates.
+      - id: d
+        text: Bind → start the Pod's application containers on the selected worker
+        rationale: Binding records Pod-to-node assignment. Kubelet and the container runtime perform node-side execution afterward.
+    answer_ids: [a, b, c]
+    explanation: The framework separates queue ordering, node feasibility, node preference, and binding. Node-side container execution starts after scheduling has recorded placement.
+    unit_ids: [fpp:kcna-scheduling-review]
+
   - id: practice:kcna/q-dedicated-gpu-placement
     checkpoint: cluster-behavior
     category: scenario

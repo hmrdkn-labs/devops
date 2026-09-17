@@ -1,9 +1,31 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-16 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-17 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**Current work: Interactive Mental Models v1 is committed; KCNA Scheduling
+enrichment is validated locally and awaiting commit/push/deploy.** Mental-model
+commit `7a23322` exists. The 2026-09-17 Scheduling audit compared the public
+companion against the private KodeKloud index and current Kubernetes docs, then
+added the missing KCNA-level concepts: `PriorityClass` / `priorityClassName`,
+priority-aware queue ordering and preemption, `QueueSort`, the broader scheduler
+framework extension points (`PreFilter`, `Filter`, `PostFilter`, `PreScore`,
+`Score`, `Reserve`, `Permit`, `PreBind`, `Bind`, `PostBind`), representative
+plugins (`PrioritySort`, `NodeResourcesFit`, `NodeUnschedulable`, `NodeAffinity`,
+`TaintToleration`, `ImageLocality`, `DefaultBinder`), and the RBAC/leader-election
+boundary for custom schedulers. Manual assignment/Binding, labels/selectors,
+taints/tolerations, node selectors/affinity, Resource Requirements, DaemonSets,
+static Pods, multiple schedulers, and profiles were already covered and were
+rechecked for completeness. Current corpus: **40 units, 49 KCNA MCQs, 232 cards,
+3 mental models**. Settled verification is green: `npm run ci`, **82/82 Vitest**,
+D1 checks, production build and release-manifest generation, `revision:check`,
+and the full Playwright desktop/tablet/mobile matrix with **97 passed / 38
+intentional skips**. `release:classify` currently reports
+`application-or-schema` because unpushed mental-model commit `7a23322` is also
+ahead of the remote. This Scheduling pass is **not yet committed, pushed, or
+deployed**; there is no implementation blocker.
 
 **Audit → Plan → Rewrite → Acceptance → Merged → Deployed.**
 
@@ -91,6 +113,27 @@ basics, and Pending-event diagnosis, but it did not give enough explicit
 coverage to manual/direct assignment, resource-policy scope, Static Pod
 ownership, multiple schedulers, or scheduler profiles/plugins. Those are now
 covered without mirroring proprietary lesson text or quiz questions.
+
+**2026-09-17 follow-up audit/enrichment:** after rechecking the full Scheduling
+module and the live scheduler-profile/multiple-scheduler coverage, the remaining
+material gap was deeper scheduler execution rather than basic placement policy.
+The companion now explicitly teaches `PriorityClass` / `priorityClassName`,
+priority queue ordering and preemption, `QueueSort`, the scheduler framework
+extension-point pipeline (`PreFilter`, `Filter`, `PostFilter`, `PreScore`,
+`Score`, `Reserve`, `Permit`, `PreBind`, `Bind`, `PostBind`), representative
+plugins (`PrioritySort`, `NodeResourcesFit`, `NodeUnschedulable`, `NodeAffinity`,
+`TaintToleration`, `ImageLocality`, `DefaultBinder`), and the minimal RBAC plus
+leader-election operating boundary for custom schedulers. The pass adds matching
+questions, review cards, a framework visual, and KCNA MCQs rather than prose
+alone. Resource Requirements was included in the audit and remains covered by
+the existing resource-policy and scheduling-feasibility material. Current counts
+are **40 units, 49 KCNA MCQs, 232 cards, and 3 mental models**. Settled verification
+is green: `npm run ci`, **82/82 Vitest**, D1 checks, production build and
+release-manifest generation, `revision:check`, and the full Playwright
+desktop/tablet/mobile matrix with **97 passed / 38 intentional skips**.
+`release:classify` currently reports `application-or-schema` because unpushed
+mental-model commit `7a23322` is also ahead of the remote. That commit already
+exists; this Scheduling follow-up is still pending commit, push, and deployment.
 
 A new **KCNA Scheduling quiz companion** adds the full first-principles path
 `unassigned Pod → filter → score → bind → kubelet/runtime`, explicit

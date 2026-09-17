@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-scheduling-review
-revision: 1
+revision: 2
 cards:
   - id: fpp:kcna-scheduling-review/c-filter-score-bind
     type: short
@@ -92,3 +92,15 @@ cards:
     back: A named scheduling behavior in kube-scheduler configuration that can enable, disable, or configure scheduling plugins and is selected through schedulerName.
     critical_points: [Profiles name behavior; plugins implement phase-specific logic]
     objective_ids: [fpp:kcna-scheduling-review/scheduler-extension]
+  - id: fpp:kcna-scheduling-review/c-priority-class
+    type: prompt
+    front: What does PriorityClass change in scheduling, and what does it not guarantee?
+    back: It gives a Pod a scheduling priority used for pending-work ordering and possible preemption. It does not bypass hard feasibility constraints or guarantee that a node can run the Pod.
+    critical_points: [Priority orders work; feasibility still decides whether placement is possible]
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/c-framework-pipeline
+    type: short
+    front: Where does QueueSort fit relative to Filter, Score, and Bind?
+    back: QueueSort chooses which pending Pod should be considered next. Filter then removes infeasible nodes, Score ranks feasible nodes, and Bind records the selected node; additional framework extension points can act around those phases.
+    critical_points: []
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]

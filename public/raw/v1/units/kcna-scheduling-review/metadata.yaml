@@ -3,7 +3,7 @@ id: fpp:kcna-scheduling-review
 slug: kcna-scheduling-review
 title: KCNA Scheduling quiz companion
 summary: A first-principles review of Kubernetes scheduling, node-placement policy, resources, DaemonSets, static Pods, and scheduler customization for KCNA study.
-revision: 1
+revision: 2
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes
@@ -27,7 +27,7 @@ objectives:
     title: Distinguish DaemonSet controller ownership from kubelet-owned static Pods
     critical: true
   - id: fpp:kcna-scheduling-review/scheduler-extension
-    title: Explain schedulerName, multiple schedulers, profiles, and plugin extension points at the KCNA level
+    title: Explain schedulerName, Pod priority, multiple schedulers, profiles, and plugin extension points at the KCNA level
     critical: false
 certification_mappings:
   - certification: cncf:kcna
@@ -38,4 +38,4 @@ certification_mappings:
     advisory: true
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-16
+verified_at: 2026-09-17

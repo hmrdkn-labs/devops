@@ -431,7 +431,7 @@
       "slug": "kcna-scheduling-review",
       "title": "KCNA Scheduling quiz companion",
       "summary": "A first-principles review of Kubernetes scheduling, node-placement policy, resources, DaemonSets, static Pods, and scheduler customization for KCNA study.",
-      "revision": 1,
+      "revision": 2,
       "revision_impact": "mastery_affecting",
       "status": "published",
       "layer": "kubernetes",
@@ -443,19 +443,19 @@
       ],
       "aliases": [],
       "objective_hashes": {
-        "fpp:kcna-scheduling-review/decision-path": "c2fde7b6e6968ce16a81995e64743ce9441a2c2fb2646e709e4f8a9a6c1261e3",
+        "fpp:kcna-scheduling-review/decision-path": "a949499ebc9ce6479141c20f93444ad3983b80c3bf13ab03cb69df8c9acaecb9",
         "fpp:kcna-scheduling-review/placement-policy": "062d37ba2218393fd4fa2987be61944cfff642f553e012f9bfda596ae507bd2e",
         "fpp:kcna-scheduling-review/resource-policy": "f8046c0aedca751907a580089c0688a9f88e3ee6be4324b71acae4b46d126d43",
         "fpp:kcna-scheduling-review/node-ownership": "b8f3583dea52548c1e6c67c383d76a9906591f47c0b0d8cac329f48f7df3f879",
-        "fpp:kcna-scheduling-review/scheduler-extension": "3328e1efbb6ed15be649cd1513a58f695db8c651b7d2063894eea7e9d70af457"
+        "fpp:kcna-scheduling-review/scheduler-extension": "ea823abbc84bd4c250526e31db01cf3d42807779704f6e74d10052601c16df9e"
       },
-      "mastery_hash": "22f9ee5d807773c41f790a924dbc031c57937e93e91c97b914dbcc922d23ff89",
-      "enrichment_hash": "cf032ab08cd4ff58d43f542a8f3a7b914f813f61120b71a1250a573d5238b06b",
-      "editorial_hash": "c7acb835a219fed3289497da0c8001193c5e74ca5b5dc293f6d24bcdac9763b9",
-      "content_hash": "6c386d2209bdc9f1403ee1c717097508c46a99edd77d977a4e01e7e993b5ec0b",
+      "mastery_hash": "270f209c06629cdaaa16124970088d82bdd2edc84a034b7a312226ad18e69cdd",
+      "enrichment_hash": "a8e21ed3879dbe04a23cf8b31a91782b5b76be42beba84e9b85da334e21d1fce",
+      "editorial_hash": "9dd97b284d97eb083f4236a025233b9373481469a37deca6d186d3d4eed244e5",
+      "content_hash": "09804181a4f4059c4f292b472632eada002b7aa84edbab54c5c6e7ac4f73449a",
       "raw_markdown_url": "/raw/v1/units/kcna-scheduling-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-scheduling-review/visuals.yaml",
-      "visual_count": 4
+      "visual_count": 5
     },
     {
       "id": "fpp:kubernetes-apply-live-state",
@@ -4959,10 +4959,10 @@
       "revision": 4,
       "certification": "cncf:kcna",
       "verified_at": "2026-09-16",
-      "question_count": 47,
-      "content_hash": "7e0df3715a6d98a4053d97374d0d9d36a4a73f270537adef18b70ce027422eff",
+      "question_count": 49,
+      "content_hash": "566599383c8025333edb964b6cbedbfb12d3f702444a9f08546ff8c7e43ccba1",
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "931016269364ff44f0dd4a7cb0be9634ce5bc426557b51b6d481c2ad476d92ee"
+  "manifest_sha256": "123f97da1eecfff2ff8eb6312465000e2057533617742dafad7b1d502bb9f0e8"
 }

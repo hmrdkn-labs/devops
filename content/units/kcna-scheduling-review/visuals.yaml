@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-scheduling-review
-revision: 1
+revision: 2
 visuals:
   - id: fpp:kcna-scheduling-review/visual-decision-path
     kind: flow
@@ -98,3 +98,32 @@ visuals:
         location: worker-node
         responsibility: Enforces runtime resource controls on containers after placement.
         acts_on: Running containers
+  - id: fpp:kcna-scheduling-review/visual-scheduler-framework
+    kind: flow
+    eyebrow: Scheduler framework
+    title: Queue order, feasibility, preference, and binding are separate decisions
+    lines:
+      - "pending Pods → QueueSort / PrioritySort → chosen scheduling attempt"
+      - "PreFilter → Filter → PostFilter → PreScore → Score"
+      - "Reserve → Permit → PreBind → Bind → PostBind"
+    teaching_point: Priority can change which Pod is attempted first, while framework plugins participate at distinct extension points; hard node feasibility still must succeed before a placement can be bound.
+    components:
+      - name: PriorityClass
+        location: control-plane
+        responsibility: Maps a priority class name to an integer value that becomes Pod scheduling priority.
+        acts_on: Pod priority and scheduling queue order
+        proof: kubectl get priorityclass; kubectl get pod <name> -o yaml
+      - name: kube-scheduler-queue
+        location: control-plane
+        responsibility: Orders pending Pods before scheduling attempts, commonly using priority-aware queue sorting.
+        acts_on: Unscheduled Pods waiting for placement
+        proof: Inspect Pod priority and scheduler events; queue internals are scheduler implementation state.
+      - name: scheduling-framework
+        location: control-plane
+        responsibility: Runs plugins at extension points for filtering, scoring, reservation, permission, and binding behavior.
+        acts_on: Scheduling cycle and binding cycle
+      - name: DefaultBinder
+        location: control-plane
+        responsibility: Provides the default binding behavior that records the selected node for a Pod.
+        acts_on: Final Pod-to-node assignment
+        proof: kubectl get pod <name> -o jsonpath='{.spec.nodeName}'

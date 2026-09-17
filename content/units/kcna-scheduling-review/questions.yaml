@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kcna-scheduling-review
-revision: 1
+revision: 2
 questions:
   - id: fpp:kcna-scheduling-review/q-decision-path
     kind: explain
@@ -73,4 +73,22 @@ questions:
       - Profiles provide named scheduling behavior.
       - Plugins participate in distinct scheduling phases or extension points.
       - Filtering feasibility is conceptually separate from scoring preference.
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/q-priority-queue
+    kind: scenario
+    prompt: Two unscheduled Pods are waiting. api-critical uses a PriorityClass with value 100000; batch uses the default priority. What does the higher priority change, and what does it not change if api-critical requests more CPU than any node can provide?
+    model_answer: The higher priority makes api-critical rank ahead of lower-priority pending work in the scheduler queue and can make it eligible to trigger preemption logic. It does not make an infeasible node feasible by itself. If no node can satisfy the Pod's CPU request and other hard constraints, the Pod can remain Pending even though it is considered first.
+    critical_points:
+      - Priority influences pending-Pod queue order.
+      - Priority does not bypass resource, affinity, taint, or other hard feasibility checks.
+      - Higher priority can participate in preemption behavior, but placement still requires a feasible result.
+    objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]
+  - id: fpp:kcna-scheduling-review/q-framework-phases
+    kind: explain
+    prompt: Why is filter → score → bind a useful scheduler model even though Kubernetes exposes extension points such as QueueSort, PreFilter, PostFilter, Reserve, Permit, PreBind, and PostBind?
+    model_answer: Filter → score → bind is a compact mental model for node feasibility, preference, and final assignment. The scheduling framework exposes finer extension points around that path so plugins can influence queue ordering, prepare or recover from filtering, reserve or permit a candidate, and act around binding. The detailed pipeline extends the simple model rather than contradicting it.
+    critical_points:
+      - QueueSort concerns which pending Pod is considered next.
+      - Filter determines node feasibility and Score ranks feasible nodes.
+      - Bind records placement; surrounding extension points allow modular policy before and after those core decisions.
     objective_ids: [fpp:kcna-scheduling-review/scheduler-extension, fpp:kcna-scheduling-review/decision-path]
