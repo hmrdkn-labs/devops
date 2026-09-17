@@ -1,8 +1,10 @@
-import { For, Show, batch, createMemo, createSignal } from 'solid-js';
+import { For, Show, batch, createMemo, createSignal, onMount } from 'solid-js';
 import type { MentalModel } from '@/lib/content/mental-model-schema';
 import './mental-model.css';
 
 export default function MentalModelPlayer(props: { model: MentalModel }) {
+  const [hydrated, setHydrated] = createSignal(false);
+  onMount(() => setHydrated(true));
   const [stepIndex, setStepIndex] = createSignal(0);
   const [failure, setFailure] = createSignal(false);
   const [choice, setChoice] = createSignal('');
@@ -30,9 +32,10 @@ export default function MentalModelPlayer(props: { model: MentalModel }) {
     queueMicrotask(() => feedback?.focus({ preventScroll: true }));
   }
 
-  return <section class="mental-model-workspace" aria-label={props.model.title}>
+  return <section class="mental-model-workspace" aria-label={props.model.title} aria-busy={!hydrated()}>
+    <Show when={!hydrated()}><p class="muted" role="status">Loading interactive model… You can read the scenario while it loads.</p></Show>
     <div class="mental-model-toolbar">
-      <button class="quiet-button" onClick={() => reset()}>Replay scenario</button>
+      <button class="quiet-button" disabled={!hydrated()} onClick={() => reset()}>Replay scenario</button>
       <span class="muted">{stepIndex() + 1} of {props.model.steps.length} steps · {step().layer}</span>
     </div>
     <p class="mental-model-situation">{props.model.scenario}</p>
@@ -45,7 +48,7 @@ export default function MentalModelPlayer(props: { model: MentalModel }) {
           <div class="mental-model-nodes">
             <For each={props.model.components.filter((item) => item.location === location)}>{(item) =>
               <button class="mental-model-node" classList={{ active: revealed() && !failure() && step().active_component_ids.includes(item.id), selected: inspecting() === item.id }}
-                aria-pressed={inspecting() === item.id} onClick={() => setInspecting(item.id)}>
+                disabled={!hydrated()} aria-pressed={inspecting() === item.id} onClick={() => setInspecting(item.id)}>
                 {item.name}
                 <Show when={revealed() && step().active_component_ids.includes(item.id)}><span>{item.id === step().actor_id ? 'Decision / action owner' : 'Participates in this step'}</span></Show>
               </button>
@@ -61,14 +64,14 @@ export default function MentalModelPlayer(props: { model: MentalModel }) {
         <p class="eyebrow">Predict the next event</p>
         <h2 ref={prompt} tabIndex={-1}>{step().prediction.prompt}</h2>
         <p class="muted">Before this event</p><ul><For each={step().before}>{(item) => <li>{item}</li>}</For></ul>
-        <fieldset disabled={revealed()} class="mental-model-choices">
+        <fieldset disabled={!hydrated() || revealed()} class="mental-model-choices">
           <legend class="sr-only">Choose your prediction</legend>
           <For each={step().prediction.options}>{(item) => <label class="mental-model-choice" classList={{ chosen: choice() === item.id }}>
             <input type="radio" name={'prediction-' + props.model.slug} value={item.id} checked={choice() === item.id} onChange={() => setChoice(item.id)} />
             <span>{item.text}</span>
           </label>}</For>
         </fieldset>
-        <Show when={!revealed()}><button class="button primary" disabled={!choice()} onClick={reveal}>Check prediction & reveal</button></Show>
+        <Show when={!revealed()}><button class="button primary" disabled={!hydrated() || !choice()} onClick={reveal}>Check prediction & reveal</button></Show>
         <Show when={revealed()}>
           <div ref={feedback} tabIndex={-1} class="mental-model-feedback" role="status">
             <h3>{choice() === step().prediction.answer_id ? 'Correct prediction' : 'Let’s correct the model'}</h3>
@@ -77,15 +80,15 @@ export default function MentalModelPlayer(props: { model: MentalModel }) {
             <p><strong>What happens:</strong> {step().action}</p>
           </div>
           <p><strong>State after the event</strong></p><ul><For each={failure() ? [step().failure.consequence] : step().after}>{(item) => <li>{item}</li>}</For></ul>
-          <label class="mental-model-choice"><input type="checkbox" checked={failure()} onChange={(event) => setFailure(event.currentTarget.checked)} /><span>Change condition: {step().failure.condition}</span></label>
+          <label class="mental-model-choice"><input type="checkbox" disabled={!hydrated()} checked={failure()} onChange={(event) => setFailure(event.currentTarget.checked)} /><span>Change condition: {step().failure.condition}</span></label>
           <Show when={failure()}><div class="mental-model-feedback"><p>{step().failure.consequence}</p><p><strong>Next check:</strong> {step().failure.next_check}</p></div></Show>
           <details class="mental-model-evidence"><summary>Inspect the evidence</summary>
             <p class="muted">Expected evidence for the healthy sequence. These are authored examples, not output from a running cluster.</p>
             <Show when={failure()}><p><strong>Changed condition:</strong> {step().failure.next_check}</p></Show>
             <section><h3><code>{step().proof.command}</code></h3><pre tabIndex={0} aria-label={'Expected evidence for ' + step().proof.command}><code>{step().proof.expected}</code></pre><p><strong>Proves:</strong> {step().proof.proves}</p><p><strong>Limit:</strong> {step().proof.limitation}</p></section>
           </details>
-          <div class="mental-model-next"><Show when={stepIndex() + 1 < props.model.steps.length} fallback={<><p>Scenario complete. Change a condition to test your model again.</p><For each={props.model.transfer_questions}>{(item) => <details><summary>{item.prompt}</summary><p>{item.answer}</p></details>}</For><button class="button" onClick={() => reset()}>Try again</button></>}>
-            <Show when={!failure()} fallback={<p>Return to the healthy condition before continuing the original sequence.</p>}><button class="button primary" onClick={() => reset(stepIndex() + 1)}>Predict next step</button></Show>
+          <div class="mental-model-next"><Show when={stepIndex() + 1 < props.model.steps.length} fallback={<><p>Scenario complete. Change a condition to test your model again.</p><For each={props.model.transfer_questions}>{(item) => <details><summary>{item.prompt}</summary><p>{item.answer}</p></details>}</For><button class="button" disabled={!hydrated()} onClick={() => reset()}>Try again</button></>}>
+            <Show when={!failure()} fallback={<p>Return to the healthy condition before continuing the original sequence.</p>}><button class="button primary" disabled={!hydrated()} onClick={() => reset(stepIndex() + 1)}>Predict next step</button></Show>
           </Show></div>
         </Show>
       </div>

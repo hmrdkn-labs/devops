@@ -4,9 +4,50 @@ import { parse } from 'yaml';
 
 const models = readdirSync('content/mental-models').filter((file) => file.endsWith('.yaml')).map((file) => parse(readFileSync(`content/mental-models/${file}`, 'utf8')));
 
+test('model controls wait for delayed island handlers before accepting a prediction', async ({ page }) => {
+  const model = models[0];
+  const step = model.steps[0];
+  const wrong = step.prediction.options.find((option: { id: string }) => option.id !== step.prediction.answer_id);
+  let release!: () => void;
+  const pending = new Promise<void>((resolve) => { release = resolve; });
+  let held = false;
+  await page.route(/\/_astro\/MentalModelPlayer\.[^/]+\.js$/, async (route) => {
+    held = true;
+    await pending;
+    await route.continue();
+  });
+  await page.goto(`/models/${model.slug}/`, { waitUntil: 'commit' });
+  const workspace = page.locator('.mental-model-workspace');
+  const radio = page.getByRole('radio', { name: wrong.text, exact: true });
+  const reveal = page.getByRole('button', { name: 'Check prediction & reveal', exact: true });
+  try {
+    await expect.poll(() => held).toBe(true);
+    await expect(workspace).toHaveAttribute('aria-busy', 'true');
+    await expect(workspace).toContainText(model.scenario);
+    await expect(workspace.getByRole('status')).toContainText('Loading interactive model');
+    await expect(radio).toBeDisabled();
+    await expect(reveal).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Replay scenario', exact: true })).toBeDisabled();
+    for (const node of await page.locator('.mental-model-node').all()) await expect(node).toBeDisabled();
+    // Native read-only disclosures remain usable while the interactive script is held.
+    await page.getByText('Scenario assumptions', { exact: true }).click();
+    await expect(workspace.getByText(model.assumptions[0], { exact: true })).toBeVisible();
+    await radio.evaluate((element) => (element as HTMLInputElement).click());
+    await expect(radio).not.toBeChecked();
+  } finally { release(); }
+  await expect(workspace).toHaveAttribute('aria-busy', 'false');
+  await expect(radio).toBeEnabled();
+  await radio.check();
+  await expect(reveal).toBeEnabled();
+  await reveal.click();
+  await expect(page.getByRole('heading', { name: 'Let’s correct the model', exact: true })).toBeVisible();
+  await expect(workspace.getByRole('status')).toContainText(step.action);
+});
+
 test('KCNA exposes the model catalog and every model has a reachable page', async ({ page }) => {
   await page.goto('/kcna/');
-  await page.getByRole('link', { name: /Explore the models/ }).click();
+  await page.getByText('Quiz companions and practice tools', { exact: true }).click();
+  await page.getByRole('link', { name: 'Interactive mental models', exact: true }).click();
   await expect(page).toHaveURL(/\/models\/?$/);
   for (const model of models) {
     const link = page.locator(`a[href="/models/${model.slug}"], a[href="/models/${model.slug}/"]`).first();
