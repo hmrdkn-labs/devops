@@ -5,6 +5,14 @@
 
 ## Read this first
 
+**Current work: learner journey simplification.** Research and the feature/access
+map are recorded in [the redesign plan](docs/LEARNER-JOURNEY-REDESIGN.md).
+The target is a clear Start/Continue action with consistent Learn / Review /
+Practice / Library navigation, contextual study tools, and less competing UI.
+Independent audits and delegated implementation are underway. New acceptance
+checks, commits, and protected release are pending. The successful releases
+below are historical baselines, not verification of this new work.
+
 **Latest interaction release: ordered lesson tasks now support direct drag and
 drop.** Commit `ed036f9` adds a visible grab handle to `arrange`, `trace`, and
 `command_builder` exercises, native desktop drag-and-drop, touch/pen pointer
