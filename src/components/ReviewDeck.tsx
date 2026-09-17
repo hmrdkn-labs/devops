@@ -110,6 +110,7 @@ export default function ReviewDeck(props: Props) {
         <div class="empty-state" data-testid="review-error">
           <p role="status">{queueError()}</p>
           <button class="button" type="button" disabled={queue.loading || busy() || retryRating() !== null} onClick={() => void refetch()}>Retry loading reviews</button>
+          <p><a href="/">Learn a unit</a> or <a href="/practice">choose a practice activity</a> while reviews are unavailable.</p>
         </div>
       </Show>
       <Show when={queue()} fallback={
@@ -117,6 +118,7 @@ export default function ReviewDeck(props: Props) {
         <div class="empty-state">
           <strong>Owner sign-in required</strong>
           <p>Guest study never persists or creates a review queue.</p>
+          <p>You can <a href="/">start learning</a> or <a href="/practice">practice without signing in</a>.</p>
         </div>
         </Show>
       }>
@@ -125,17 +127,18 @@ export default function ReviewDeck(props: Props) {
             <Show when={!queueError() && !queue.loading}>
             <div class="empty-state">
               <strong>{completed() ? 'Review complete.' : 'Nothing is due.'}</strong>
-              <p>{props.pathSlug ? 'This focused queue is clear. Continue with the next learning unit.' : 'Study a learning unit or return when FSRS schedules the next review.'}</p>
-              <a class="button primary" href={props.nextHref ?? '/paths/from-process-to-pod'}>{props.nextLabel ?? 'Continue focus path'}</a>
+              <p>{props.pathSlug ? 'This focused queue is clear. Continue with the next learning unit.' : 'Learn a unit or return when your next review is due.'}</p>
+              <a class="button primary" href={props.nextHref ?? '/'}>{props.nextLabel ?? 'Continue learning'}</a>
+              <p><a href="/practice">Choose a practice activity</a></p>
             </div>
             </Show>
           }>
             {(card) => (
               <>
                 <div class="review-meta" aria-label="Review context">
-                  <span>{props.pathSlug ? `${props.pathSlug.toUpperCase()} · ${card().type}` : card().type}</span>
-                  <span>{card().unitTitle}</span>
                   <span><strong>{cards().length}</strong> due · {completed()} done</span>
+                  <span>{card().unitTitle}</span>
+                  <span>{props.pathSlug ? props.pathSlug.toUpperCase() : 'Recall'}</span>
                 </div>
                 <section class="review-card" aria-live="polite">
                   <p class="section-kicker">{revealed() ? 'Answer revealed' : 'Retrieve before revealing'}</p>
@@ -151,8 +154,8 @@ export default function ReviewDeck(props: Props) {
                 </section>
                 <Show when={!revealed()} fallback={
                   <div class="rating-block review-rating">
-                    <p>Rate the retrieval, not the card.</p>
-                    <div class="rating-buttons">
+                    <p id="review-rating-help">Again: missed it. Hard: remembered with difficulty. Good: remembered correctly. Easy: remembered immediately.</p>
+                    <div class="rating-buttons" role="group" aria-label="Rate your recall" aria-describedby="review-rating-help">
                       <button disabled={busy() || retryRating() !== null} onClick={() => rate('again')}>Again</button>
                       <button disabled={busy() || retryRating() !== null} onClick={() => rate('hard')}>Hard</button>
                       <button disabled={busy() || retryRating() !== null} onClick={() => rate('good')}>Good</button>

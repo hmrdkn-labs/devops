@@ -71,11 +71,12 @@ test('overflowing reference code supports keyboard scrolling', async ({ page }, 
 test('KCNA MCQ link opens working practice through public navigation', async ({ page }, info) => {
   if (info.project.name === 'tablet') await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto('/kcna');
+  await page.getByText('Quiz companions and practice tools', { exact: true }).click();
   const response = page.waitForResponse((result) => new URL(result.url()).pathname === '/practice/kcna/' && result.request().isNavigationRequest());
   await page.getByRole('link', { name: /MCQ practice/ }).click();
   expect((await response).status()).toBe(200);
   await expect(page).toHaveURL(/\/practice\/kcna\/$/);
-  await expect(page.getByRole('heading', { name: 'Practice the decision, not the wording.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'KCNA question practice' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Check answer' })).toBeVisible();
 });
 

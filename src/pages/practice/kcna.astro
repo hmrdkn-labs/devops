@@ -2,6 +2,7 @@
 import KcnaMcqPractice from '@/components/KcnaMcqPractice';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { practiceSets, unitsById } from '@/lib/content/catalog';
+import '@/styles/task-focus.css';
 
 export const prerender = true;
 
@@ -15,37 +16,25 @@ const questions = practice.questions.map((question) => ({
     return unit ? [{ href: `/learn/${unit.metadata.slug}`, title: unit.metadata.title }] : [];
   }),
 }));
-const kubectlCount = practice.questions.filter((question) => question.category === 'kubectl').length;
-const multiCount = practice.questions.filter((question) => question.select === 'multiple').length;
 ---
 
 <BaseLayout
   title="KCNA MCQ Refresher"
   description="Original KCNA multiple-choice practice covering concepts, kubectl commands, scenarios, and select-all reasoning."
   canonicalPath="/practice/kcna"
-  pageClass="mcq-page"
-  activeSection="kcna"
+  pageClass="mcq-page task-focused-mcq"
+  activeSection="practice"
 >
   <header class="page-hero shell mcq-hero">
     <div>
-      <p class="eyebrow">KCNA practice · revision {practice.revision}</p>
-      <h1>Practice the decision, not the wording.</h1>
-      <p class="lede">Short MCQ sessions for refreshing Kubernetes concepts and command recognition. After every answer, every option is explained so distractors become useful review material.</p>
+      <p class="eyebrow">Practice · KCNA</p>
+      <h1>KCNA question practice</h1>
+      <p class="lede">Choose an answer, then check the reasoning.</p>
     </div>
-    <dl class="mcq-stats" aria-label="KCNA MCQ bank">
-      <div><dt>Question bank</dt><dd>{practice.questions.length}</dd></div>
-      <div><dt>kubectl</dt><dd>{kubectlCount}</dd></div>
-      <div><dt>Select-all</dt><dd>{multiCount}</dd></div>
-      <div><dt>Quick session</dt><dd>12</dd></div>
-    </dl>
   </header>
-
-  <div class="shell mcq-boundary-note">
-    <strong>Refresher only.</strong>
-    <span>This session is memory-only and does not change readiness or mastery evidence. Questions are independently authored from the public learning material, not copied from provider quizzes.</span>
-  </div>
 
   <div class="shell mcq-shell">
     <KcnaMcqPractice questions={questions} client:load />
   </div>
+  <p class="shell task-session-note">Session score stays in memory and does not change readiness or mastery evidence. These {practice.questions.length} questions are independently authored from public learning material.</p>
 </BaseLayout>
