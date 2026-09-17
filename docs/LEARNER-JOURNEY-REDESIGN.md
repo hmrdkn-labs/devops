@@ -151,7 +151,12 @@ is planned. Existing useful behavior is not deleted to simplify screenshots.
   `wrangler.e2e.jsonc` without database/auth bindings. See the
   [manual preview checklist](PREVIEW-CHECKLIST.md). No real owner persistence is
   available in this preview; production is unchanged.
-- Release review targets branch `feat/learning-journey-ux`. The local CI command
-  does not establish a GitHub CI result. Public CI, merge, and protected production
-  release follow the user preview and their respective release gates. Earlier
-  release counts are historical baselines, not evidence for this work.
+- Release review: [PR #14](https://github.com/hmrdkn-labs/devops/pull/14), open,
+  mergeable, and clean at candidate `5a9af11fce867037f90b7b218c3f534ce7e95fe7`
+  on `feat/learning-journey-ux`.
+  [GitHub CI run 35202009687](https://github.com/hmrdkn-labs/devops/actions/runs/35202009687)
+  passed validation, browser, and no-production-secrets checks for that exact
+  candidate (browser finished `2026-09-17T08:56:06Z`). This is an exact-candidate
+  receipt, not CI evidence for subsequent documentation commits; accepted code
+  remains `65ebdeb`. Merge and protected deployment follow user preview and
+  final-head release gates. Earlier release counts remain historical baselines.

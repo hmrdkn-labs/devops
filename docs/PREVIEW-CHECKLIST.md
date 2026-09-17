@@ -50,6 +50,11 @@ visible above actions and contextual draft retention; desktop light Learn and
 dark Study screenshots were also inspected. Other viewport checks, including
 320px, are automated. No real-owner persistence or learner efficacy claim is made.
 
-Review branch `feat/learning-journey-ux` for release. The local CI command does
-not establish a GitHub CI result. Protected production rollout follows the user
-preview and the public CI, merge, and protected deployment gates.
+Review [PR #14](https://github.com/hmrdkn-labs/devops/pull/14) on
+`feat/learning-journey-ux`: open, mergeable, and clean at candidate
+`5a9af11fce867037f90b7b218c3f534ce7e95fe7`.
+[GitHub CI run 35202009687](https://github.com/hmrdkn-labs/devops/actions/runs/35202009687)
+passed validation, browser, and no-production-secrets checks for that exact
+candidate; browser finished `2026-09-17T08:56:06Z`. This receipt does not cover
+later documentation commits. Accepted code remains `65ebdeb`; merge and
+protected deployment follow user preview and final-head release gates.

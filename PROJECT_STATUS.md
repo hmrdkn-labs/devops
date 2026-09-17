@@ -29,15 +29,20 @@ learning/privacy regressions. Manual browser inspection confirmed visible
 draft retention; generated desktop light Learn and dark Study screenshots were
 also inspected. Other viewport checks, including 320px, are automated.
 Real-owner persistence has not been tested end to end; no learner efficacy
-claim is made. Review the release on branch `feat/learning-journey-ux`;
-the local `npm run ci` result does not establish a GitHub CI result.
+claim is made. Release review is [PR #14](https://github.com/hmrdkn-labs/devops/pull/14)
+on `feat/learning-journey-ux`, open and mergeable with a clean merge state at
+candidate `5a9af11fce867037f90b7b218c3f534ce7e95fe7`.
+[GitHub CI run 35202009687](https://github.com/hmrdkn-labs/devops/actions/runs/35202009687)
+passed validation, browser, and no-production-secrets checks for that exact
+candidate; browser checks finished `2026-09-17T08:56:06Z`. This receipt does not
+establish CI for later documentation commits; accepted code remains `65ebdeb`.
 
 A guest preview is running at [localhost:4321](http://localhost:4321/) on this
 Mac using `wrangler.e2e.jsonc`, with no database or auth binding. Answers stay in
 memory; this preview cannot verify real owner persistence. Follow the
 [preview checklist](docs/PREVIEW-CHECKLIST.md). **Production is unchanged.**
-Protected production release remains after the user's preview and the public
-CI/merge/release gates. The successful releases below are historical baselines.
+Merge and protected production deployment remain after the user's preview and
+the final-head release gates. The successful releases below are historical baselines.
 
 **Latest interaction release: ordered lesson tasks now support direct drag and
 drop.** Commit `ed036f9` adds a visible grab handle to `arrange`, `trace`, and
