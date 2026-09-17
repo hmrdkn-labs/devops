@@ -5,6 +5,19 @@
 
 ## Read this first
 
+**Latest interaction release: ordered lesson tasks now support direct drag and
+drop.** Commit `ed036f9` adds a visible grab handle to `arrange`, `trace`, and
+`command_builder` exercises, native desktop drag-and-drop, touch/pen pointer
+reordering, live position announcements for assistive technology, and retains
+the existing up/down buttons as the keyboard-accessible fallback. CI run
+`35189729726` passed the full gate with **82/82 Vitest** and **98 Playwright
+passes / 40 intentional skips** across desktop/tablet/mobile. Protected owner
+deployment run `35190023766` deployed exact source
+`ed036f9eb3cbca23527f822e1b40304fbd4a51b3`. Independent production verification
+returned HTTP 200 for `/lesson/kcna-cluster-behavior/`, confirmed the drag handle
+and Service-DNS ordering drag label are present, and `/api/health` reports `ok`
+with D1 `ready`. **No blocker remains for this interaction release.**
+
 **Current work: Interactive Mental Models v1 and the KCNA Scheduling enrichment
 are committed, pushed, deployed, and live.** Mental-model commit `7a23322` and
 Scheduling commit `3a34836` (`feat(kcna): deepen scheduling review`) are both on
