@@ -12,6 +12,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { zipSync, strToU8, type Zippable } from 'fflate';
 import { parse } from 'yaml';
+import { mentalModelSchema, type MentalModel } from '../../src/lib/content/mental-model-schema';
 import {
   cardFileSchema,
   certificationRegistrySchema,
@@ -329,6 +330,26 @@ async function collectArchiveFiles(directory: string, prefix = ''): Promise<Zipp
   return files;
 }
 
+export function validateMentalModels(models: MentalModel[], units: LearningUnit[]) {
+  const ids = new Set<string>();
+  const slugs = new Set<string>();
+  const unitsById = new Map(units.map((unit) => [unit.metadata.id, unit]));
+  for (const model of models) {
+    if (ids.has(model.id) || slugs.has(model.slug)) throw new Error(`Duplicate mental model: ${model.id}`);
+    ids.add(model.id);
+    slugs.add(model.slug);
+    const objectives = new Set<string>();
+    for (const unitId of model.unit_ids) {
+      const unit = unitsById.get(unitId);
+      if (!unit) throw new Error(`${model.id}: unknown unit ${unitId}`);
+      for (const objective of unit.metadata.objectives) objectives.add(objective.id);
+    }
+    for (const objectiveId of model.objective_ids) {
+      if (!objectives.has(objectiveId)) throw new Error(`${model.id}: unknown linked objective ${objectiveId}`);
+    }
+  }
+}
+
 async function main() {
   const units = await loadUnits();
   const pathFiles = (await readdir(path.join(contentRoot, 'paths')))
@@ -352,11 +373,18 @@ async function main() {
     .sort();
   const lessons = await Promise.all(lessonFiles.map((file) =>
     readYaml(path.join(lessonDir, file), lessonSchema)));
+  const modelDir = path.join(contentRoot, 'mental-models');
+  const modelFiles = (await readdir(modelDir)).filter((file) => file.endsWith('.yaml')).sort();
+  const mentalModels = await Promise.all(modelFiles.map((file) => readYaml(path.join(modelDir, file), mentalModelSchema)));
+  mentalModels.forEach((model, index) => {
+    if (modelFiles[index] !== `${model.slug}.yaml`) throw new Error(`${model.id}: file must match model slug`);
+  });
 
   const certificationIds = new Set(certifications.certifications.map((item) => item.id));
   validateGraph(units, paths, certificationIds);
   validatePracticeSets(practiceSets, units, certificationIds);
   validateLessons(lessons, units, certificationIds);
+  validateMentalModels(mentalModels, units);
   const entries = units.map(manifestEntry);
   const verifiedAt = units
     .map((unit) => unit.metadata.verified_at)
@@ -364,6 +392,7 @@ async function main() {
       certifications.verified_at,
       ...practiceSets.map((set) => set.verified_at),
       ...lessons.map((lesson) => lesson.verified_at),
+      ...mentalModels.map((model) => model.verified_at),
     )
     .sort()
     .at(-1) as string;
@@ -380,6 +409,19 @@ async function main() {
     paths,
     certifications,
     lessons,
+    mental_models: mentalModels.map((model) => ({
+      id: model.id,
+      slug: model.slug,
+      title: model.title,
+      summary: model.summary,
+      revision: model.revision,
+      unit_ids: model.unit_ids,
+      objective_ids: model.objective_ids,
+      verified_at: model.verified_at,
+      step_count: model.steps.length,
+      content_hash: sha256(model),
+      raw_url: `/raw/v1/mental-models/${model.slug}.yaml`,
+    })),
     practice_sets: practiceSets.map((set) => ({
       id: set.id,
       slug: set.slug,
@@ -399,7 +441,7 @@ async function main() {
   };
 
   if (checkOnly) {
-    console.log(`Validated ${units.length} units, ${paths.length} path, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, ${lessons.length} interactive lesson, ${lessons.reduce((total, lesson) => total + lesson.exercises.length, 0)} lesson exercises, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
+    console.log(`Validated ${units.length} units, ${paths.length} path, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, ${lessons.length} interactive lesson, ${lessons.reduce((total, lesson) => total + lesson.exercises.length, 0)} lesson exercises, ${mentalModels.length} mental models, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
     return;
   }
 

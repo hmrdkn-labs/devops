@@ -1,0 +1,133 @@
+schema_version: 1
+id: mental:service-request-path
+slug: service-request-path
+title: Who carries a request to a Pod?
+summary: Resolve a Service name, inspect endpoint membership, then follow node forwarding and Pod networking to an application without sending traffic through the API server.
+revision: 1
+unit_ids: [fpp:kubernetes-networking-request-path, fpp:services-dns-ingress, fpp:kubernetes-architecture-components]
+objective_ids: [fpp:kubernetes-networking-request-path/service-path, fpp:kubernetes-networking-request-path/boundaries]
+estimated_minutes: 8
+verified_at: 2026-09-17
+evidence_mode: authored-fixture
+scenario: A client Pod requests http://web.demo.svc.cluster.local:80/health. The ClusterIP Service web has IP 10.96.20.8 and targetPort 8080. A ready selected Pod has IP 10.244.2.7 on another worker. Trace the request and the configuration that makes forwarding possible.
+assumptions:
+  - This is a standard non-headless ClusterIP Service using kube-proxy in iptables mode; other implementations can use different forwarding machinery.
+  - EndpointSlices contain the ready web Pod, cluster DNS works, and the installed CNI provides cross-node Pod connectivity.
+  - Applicable network policies allow this traffic; no Ingress, Gateway, or cloud load balancer is part of this internal request.
+  - The destination application listens on 8080 and returns a successful health response in this authored fixture.
+components:
+  - {id: client, name: Client Pod, location: worker-node, responsibility: Resolves the Service name and originates the TCP and HTTP request.}
+  - {id: dns, name: CoreDNS, location: cluster-addon, responsibility: Answers the Service DNS query with the standard ClusterIP Service address.}
+  - {id: api, name: API server, location: control-plane, responsibility: Exposes Service and EndpointSlice configuration for controllers and node watchers.}
+  - {id: endpoints, name: EndpointSlice controller, location: control-plane, responsibility: Maintains endpoint objects for this selector-based Service from selected Pods and their conditions.}
+  - {id: proxy, name: kube-proxy, location: worker-node, responsibility: Watches Services and EndpointSlices and programs the selected node Service forwarding implementation.}
+  - {id: forwarding, name: Node iptables rules, location: data-plane, responsibility: Translate and forward Service connection traffic to a selected backend Pod address in this fixture.}
+  - {id: cni, name: Pod network data plane, location: data-plane, responsibility: Carries the resulting packets between the source worker and destination Pod using the installed networking implementation.}
+  - {id: app, name: web application Pod, location: worker-node, responsibility: Runs the workload reachable at Pod IP 10.244.2.7 on target port 8080 and handles the HTTP health request.}
+steps:
+  - id: endpoint-state
+    title: Establish eligible destinations
+    actor_id: endpoints
+    layer: control
+    before: [Service web selects app=web, Pod 10.244.2.7 is selected and Ready]
+    prediction:
+      prompt: Which component updates backend membership for this selector-based Service?
+      options:
+        - {id: endpoints, text: EndpointSlice controller, rationale: It reconciles endpoint objects using the Service selector and selected Pod state.}
+        - {id: dns, text: CoreDNS forwards each application request to a Pod, rationale: CoreDNS handles DNS queries; it is not the HTTP forwarding mechanism for a normal ClusterIP Service.}
+      answer_id: endpoints
+    action: The EndpointSlice controller records the selected Pod address and endpoint conditions through the API. kube-proxy watches that configuration and programs node forwarding rules; controller configuration and live packet execution are separate actions.
+    after: [EndpointSlice includes 10.244.2.7 port 8080, Node forwarding configuration can select the backend]
+    active_component_ids: [endpoints, api, proxy, forwarding]
+    edges: [{from: endpoints, to: api, label: update EndpointSlice}, {from: api, to: proxy, label: watch Service and endpoint state}, {from: proxy, to: forwarding, label: program forwarding rules}]
+    proof:
+      command: kubectl get endpointslices -n demo -l kubernetes.io/service-name=web -o yaml
+      expected: The selected backend address, port 8080, and ready condition appear in endpoint objects.
+      proves: The control-plane configuration advertises an eligible destination for this fixture.
+      limitation: Endpoint membership does not prove every node has programmed forwarding correctly or that a packet reached the backend.
+    failure:
+      condition: The Service selector matches no Pods.
+      consequence: The Service can still have a DNS record and ClusterIP while lacking usable application backends.
+      next_check: Compare Service selectors with Pod labels and inspect EndpointSlices before blaming DNS.
+  - id: dns-resolution
+    title: Resolve the Service name
+    actor_id: dns
+    layer: execution
+    before: [Client needs web.demo.svc.cluster.local, Service ClusterIP is 10.96.20.8]
+    prediction:
+      prompt: What address does DNS return for this standard ClusterIP Service?
+      options:
+        - {id: clusterip, text: 10.96.20.8; the Service ClusterIP, rationale: A normal ClusterIP Service DNS record resolves to the virtual Service address.}
+        - {id: podip, text: Always 10.244.2.7; the chosen Pod IP, rationale: Returning backend Pod addresses describes headless Service discovery rather than this standard ClusterIP assumption.}
+      answer_id: clusterip
+    action: The client sends a DNS query through its configured resolver. CoreDNS answers with 10.96.20.8. Resolving the name does not exercise the application's HTTP path.
+    after: [Client knows Service IP 10.96.20.8, No application response has been proven]
+    active_component_ids: [client, dns]
+    edges: [{from: client, to: dns, label: DNS query}, {from: dns, to: client, label: answer 10.96.20.8}]
+    proof:
+      command: nslookup web.demo.svc.cluster.local
+      expected: Run from a DNS-capable client Pod; the answer contains 10.96.20.8.
+      proves: The client can resolve this Service name to the expected virtual address.
+      limitation: DNS success does not prove endpoint readiness, network forwarding, or application availability.
+    failure:
+      condition: The client cannot reach cluster DNS.
+      consequence: Name-based requests fail before the TCP connection to the Service address is attempted.
+      next_check: Inspect client DNS settings and DNS reachability; compare a direct ClusterIP probe to isolate resolution from forwarding.
+  - id: forward-service
+    title: Translate the Service connection
+    actor_id: forwarding
+    layer: execution
+    before: [Client opens TCP to 10.96.20.8 port 80, Node has backend forwarding rules]
+    prediction:
+      prompt: Which component handles the application connection in this iptables-mode fixture?
+      options:
+        - {id: rules, text: Node kernel forwarding rules programmed by kube-proxy, rationale: kube-proxy configures the rules; the kernel executes this Service connection's translation and forwarding.}
+        - {id: api, text: API server relays the HTTP bytes, rationale: The API server distributes cluster object state and is not the normal data path for Service application requests.}
+      answer_id: rules
+    action: The source node's configured rules select the eligible backend and translate the destination to 10.244.2.7:8080. The packet is then carried by the Pod network toward that destination.
+    after: [Connection destination becomes 10.244.2.7 port 8080, Application traffic does not traverse the API server]
+    active_component_ids: [client, forwarding, cni]
+    edges: [{from: client, to: forwarding, label: TCP to Service port 80}, {from: forwarding, to: cni, label: backend 10.244.2.7 port 8080}]
+    proof:
+      command: curl -v http://web.demo.svc.cluster.local:80/health
+      expected: Run from a client with curl; a successful request exercises resolution, connection, forwarding, and the health endpoint.
+      proves: That specific probe reached a responding application through the Service name at that time.
+      limitation: curl alone does not identify the exact backend or kernel rule; correlate node diagnostics and backend request logs for that claim.
+    failure:
+      condition: The node's Service forwarding configuration is stale or missing.
+      consequence: DNS can succeed and EndpointSlices can look correct while Service connections fail on that node.
+      next_check: Compare Service-IP and allowed direct-Pod probes from the same client, then inspect the configured Service implementation on its node.
+  - id: deliver-application
+    title: Reach the workload and verify the response
+    actor_id: app
+    layer: workload
+    before: [Destination is 10.244.2.7 port 8080, Traffic crosses the installed Pod network]
+    prediction:
+      prompt: Who handles GET /health after packets arrive at the destination Pod?
+      options:
+        - {id: app, text: The application process listening on 8080, rationale: The workload accepts the connection and produces the HTTP response.}
+        - {id: controller, text: EndpointSlice controller, rationale: That controller maintains destination configuration; it does not execute HTTP requests.}
+      answer_id: app
+    action: The Pod network delivers traffic to the workload, subject to the implementation and applicable policy. The application handles GET /health and responds; connection tracking and the configured network carry the response back to the client.
+    after: [Application returns a health response, Client receives the response for this connection]
+    active_component_ids: [cni, app, client]
+    edges: [{from: cni, to: app, label: deliver to application port 8080}, {from: app, to: client, label: response over established connection}]
+    proof:
+      command: kubectl logs -n demo web-pod --since=5m
+      expected: If access logging is configured, correlate the health request timestamp or request ID with the client probe.
+      proves: Correlated application logs can identify the workload that processed this request.
+      limitation: An absent access log does not prove no traffic arrived; logging may be disabled or the request may fail before application processing.
+    failure:
+      condition: Applicable policy denies traffic or the application is not listening on 8080.
+      consequence: Correct DNS and backend membership still do not produce a successful HTTP response.
+      next_check: Inspect policy and application listener evidence; compare connection failures with response-level errors before changing the Service selector.
+transfer_questions:
+  - prompt: If the API server becomes unavailable after node rules are programmed, must every existing Service request stop immediately?
+    answer: Existing data-plane rules and reachable healthy workloads may continue serving requests. Updating endpoint and forwarding configuration becomes impaired; control availability and existing packet execution are different boundaries.
+  - prompt: Does setting containerPort=8080 expose this application publicly?
+    answer: No. containerPort documents the intended container port; an actual listener, network reachability, Service or ingress configuration, and applicable policy determine how it can be reached.
+sources:
+  - {title: Kubernetes Service, url: 'https://kubernetes.io/docs/concepts/services-networking/service/'}
+  - {title: Virtual IPs and Service Proxies, url: 'https://kubernetes.io/docs/reference/networking/virtual-ips/'}
+  - {title: DNS for Services and Pods, url: 'https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/'}
+  - {title: EndpointSlices, url: 'https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/'}

@@ -1,0 +1,129 @@
+schema_version: 1
+id: mental:pod-scheduling
+slug: pod-scheduling
+title: Which node can run this Pod?
+summary: Apply hard placement constraints and resource requests before considering preference, then distinguish node binding from worker execution.
+revision: 1
+unit_ids: [fpp:kubernetes-scheduling-placement, fpp:scheduling-resources-health, fpp:kubernetes-architecture-components]
+objective_ids: [fpp:kubernetes-scheduling-placement/feasibility, fpp:kubernetes-scheduling-placement/policy]
+estimated_minutes: 7
+verified_at: 2026-09-17
+evidence_mode: authored-fixture
+scenario: report-p1 requests 600m CPU and 512Mi memory, requires disk=ssd, and has no tolerations. node-a has disk=ssd with 400m CPU available for new requests. node-b has disk=ssd and 1000m available but dedicated=batch:NoSchedule. node-c has disk=ssd and 1000m available with no blocking taint.
+assumptions:
+  - All three nodes are Ready, memory is sufficient, and no other constraints exclude node-c.
+  - Available CPU here means allocatable CPU minus existing admitted Pod requests; it is not current CPU utilization.
+  - The fixture simplifies scheduler plugins and scoring; observed scheduling can involve additional constraints and concurrent workload changes.
+components:
+  - {id: api, name: API server, location: control-plane, responsibility: Exposes the accepted Pod specification and node objects and records the final node binding.}
+  - {id: scheduler, name: kube-scheduler, location: control-plane, responsibility: Filters infeasible nodes using requests and hard constraints, scores candidates, and binds a selected node.}
+  - {id: node-a, name: node-a, location: worker-node, responsibility: Offers 400m CPU for new requests and cannot fit this 600m request in the fixture.}
+  - {id: node-b, name: node-b, location: worker-node, responsibility: Has enough requested capacity but rejects this untolerating Pod through its NoSchedule taint.}
+  - {id: node-c, name: node-c, location: worker-node, responsibility: Meets the stated hard constraints and has enough requested capacity for this Pod.}
+  - {id: kubelet, name: node-c kubelet, location: worker-node, responsibility: Realizes the Pod assigned to node-c through the node container runtime.}
+steps:
+  - id: capacity-filter
+    title: Check requested capacity
+    actor_id: scheduler
+    layer: control
+    before: [report-p1 requests 600m CPU, node-a has 400m CPU available for requests, node-b and node-c each have 1000m available]
+    prediction:
+      prompt: Can node-a pass the CPU resource filter because its current CPU utilization is low?
+      options:
+        - {id: no, text: No; the request exceeds its available requested capacity, rationale: Scheduling compares Pod requests with allocatable resources and existing requests rather than treating low utilization as free requested capacity.}
+        - {id: yes, text: Yes; idle CPU overrides the request calculation, rationale: Low current usage does not cancel resource requests already reserved for scheduling.}
+      answer_id: no
+    action: The scheduler eliminates node-a because its 400m available requested CPU cannot accommodate the Pod's 600m request. node-b and node-c remain candidates on this criterion.
+    after: [node-a excluded for insufficient requested CPU, node-b and node-c pass the stated capacity check]
+    active_component_ids: [scheduler, node-a, node-b, node-c]
+    edges: [{from: scheduler, to: node-a, label: exclude on CPU request}, {from: scheduler, to: node-c, label: sufficient requested capacity}]
+    proof:
+      command: kubectl describe node node-a
+      expected: Compare Allocatable CPU and Allocated resources requests; the fixture leaves 400m for new requests.
+      proves: Node capacity and existing resource requests support the scheduling fit calculation.
+      limitation: kubectl top shows utilization rather than requested capacity; neither single query captures every scheduler constraint.
+    failure:
+      condition: Every node has less than 600m available for new requests.
+      consequence: The Pod remains Pending with insufficient CPU scheduling evidence rather than starting and then being throttled.
+      next_check: Inspect FailedScheduling events and requests before adjusting replicas or adding feasible capacity.
+  - id: taint-filter
+    title: Apply placement boundaries
+    actor_id: scheduler
+    layer: control
+    before: [All nodes have disk=ssd, node-b has dedicated=batch:NoSchedule, report-p1 has no matching toleration]
+    prediction:
+      prompt: Does matching disk=ssd make node-b eligible despite its taint?
+      options:
+        - {id: no, text: No; the untolerated NoSchedule taint still blocks placement, rationale: A matching node selector does not neutralize a separate taint constraint.}
+        - {id: yes, text: Yes; matching a node selector overrides taints, rationale: Hard selection and taint rules are evaluated together; matching one does not override the other.}
+      answer_id: no
+    action: The scheduler keeps the disk=ssd requirement and separately checks taints. node-b is excluded because the Pod lacks a matching toleration. Only node-c survives the stated hard filters.
+    after: [node-b excluded for an untolerated taint, node-c is the only stated feasible node]
+    active_component_ids: [scheduler, node-b, node-c]
+    edges: [{from: scheduler, to: node-b, label: exclude untolerated taint}, {from: scheduler, to: node-c, label: hard constraints pass}]
+    proof:
+      command: kubectl get nodes --show-labels
+      expected: Labels show disk=ssd; kubectl describe node node-b additionally shows dedicated=batch:NoSchedule under Taints.
+      proves: Labels and taints describe separate placement inputs.
+      limitation: A toleration would allow consideration of node-b; it would not force the scheduler to choose it.
+    failure:
+      condition: node-c loses disk=ssd before the scheduling decision.
+      consequence: No stated node passes all filters; a preferred affinity rule cannot rescue a failed required selector.
+      next_check: Inspect the live Pod selector, node labels, taints, and FailedScheduling message together.
+  - id: binding
+    title: Record the selected node
+    actor_id: scheduler
+    layer: control
+    before: [node-c is feasible in this fixture, report-p1 has no nodeName]
+    prediction:
+      prompt: What evidence shows scheduling succeeded before any container starts?
+      options:
+        - {id: binding, text: spec.nodeName becomes node-c and PodScheduled is True, rationale: The binding records placement independently of runtime startup.}
+        - {id: running, text: A Running phase is the only possible placement evidence, rationale: A Pod can already be bound while image pull or container startup is still incomplete.}
+      answer_id: binding
+    action: With node-c selected, the scheduler records a binding through the API server. The kubelet now has an assigned Pod to realize.
+    after: [report-p1 spec.nodeName is node-c, Execution is still a separate stage]
+    active_component_ids: [scheduler, api, node-c]
+    edges: [{from: scheduler, to: api, label: bind report-p1 to node-c}]
+    proof:
+      command: kubectl get pod report-p1 -o wide
+      expected: NODE shows node-c; inspect the PodScheduled condition to confirm placement.
+      proves: The cluster has recorded the chosen node for this Pod.
+      limitation: A binding does not guarantee the selected worker is healthy or that the application will become ready.
+    failure:
+      condition: The API binding write cannot succeed.
+      consequence: A scheduler's internal choice is not yet an accepted assignment and may need retry.
+      next_check: Inspect scheduler errors and the actual Pod nodeName instead of assuming selection was persisted.
+  - id: execution
+    title: Execute on the selected worker
+    actor_id: kubelet
+    layer: execution
+    before: [report-p1 is assigned to node-c, Runtime startup is not yet proven]
+    prediction:
+      prompt: If the image name is invalid, should the scheduler move the Pod to a different node automatically?
+      options:
+        - {id: no, text: No; diagnose node execution and image pull evidence, rationale: An image pull failure on a bound Pod is not a reason for normal scheduler rebinding of that existing Pod.}
+        - {id: yes, text: Yes; the scheduler automatically retries a different node, rationale: Scheduling assigns an unbound Pod; it does not routinely move a bound Pod because its image cannot be pulled.}
+      answer_id: no
+    action: node-c kubelet asks the runtime to create the sandbox and containers. The successful fixture reaches Running; readiness and application correctness still need their own checks.
+    after: [report-p1 containers run on node-c, Runtime outcome is distinct from scheduler placement]
+    active_component_ids: [api, node-c, kubelet]
+    edges: [{from: api, to: kubelet, label: assigned Pod watch}, {from: kubelet, to: node-c, label: runtime startup on worker}]
+    proof:
+      command: kubectl describe pod report-p1
+      expected: Container state and lifecycle events show successful start or ImagePullBackOff if the image branch fails.
+      proves: Execution evidence identifies a later lifecycle stage than the node binding.
+      limitation: Running containers can still fail readiness or return incorrect application responses.
+    failure:
+      condition: The requested image cannot be pulled.
+      consequence: The Pod stays bound to node-c while startup fails; adding a toleration does not fix the image reference.
+      next_check: Inspect image pull events, image name, registry access, and pull credentials.
+transfer_questions:
+  - prompt: What changes if report-p1 receives a matching node-b toleration?
+    answer: node-b can pass the taint check if every other constraint also passes. Both node-b and node-c may then be feasible; toleration does not select node-b.
+  - prompt: What changes if you add preferred affinity for node-a?
+    answer: node-a still fails the resource request filter. Preferences rank feasible candidates and cannot override an insufficient-resource hard filter.
+sources:
+  - {title: Assigning Pods to Nodes, url: 'https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/'}
+  - {title: Resource Management for Pods and Containers, url: 'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'}
+  - {title: Taints and Tolerations, url: 'https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/'}

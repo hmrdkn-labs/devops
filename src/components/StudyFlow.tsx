@@ -1,5 +1,6 @@
 import { For, Show, createMemo, createResource, createSignal, onMount, onCleanup } from 'solid-js';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
+import MentalModelLinks, { type MentalModelLink } from '@/components/MentalModelLinks';
 import { focusTask } from '@/lib/task-focus';
 
 interface Question {
@@ -75,6 +76,7 @@ interface Props {
     sources: Source[];
     visuals: ReferenceVisual[];
     lessonHtml: string;
+    mentalModels?: MentalModelLink[];
   };
 }
 
@@ -891,6 +893,7 @@ export default function StudyFlow(props: Props) {
               <article class="lesson">
               <div ref={lessonHeading} tabindex="-1" class="lesson-divider"><span>Lesson revealed</span></div>
               <ReferenceVisuals visuals={props.unit.visuals} />
+              <MentalModelLinks models={props.unit.mentalModels} />
               <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
               <div class="completion-action">
                 <button
@@ -1078,6 +1081,7 @@ export default function StudyFlow(props: Props) {
                     <summary>Visual models ({props.unit.visuals.length})</summary>
                     <ReferenceVisuals visuals={props.unit.visuals} />
                   </details>
+                  <MentalModelLinks models={props.unit.mentalModels} />
                   <ReferenceMarkdown html={props.unit.lessonHtml} />
                 </section>
               </Show>

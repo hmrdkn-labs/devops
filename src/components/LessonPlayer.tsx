@@ -1,10 +1,12 @@
 import { For, Show, batch, createMemo, createResource, createSignal, onMount } from 'solid-js';
 import type { Lesson, LessonExercise } from '@/lib/content/schema';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
+import MentalModelLinks, { type MentalModelLink } from '@/components/MentalModelLinks';
 import { focusTask } from '@/lib/task-focus';
 
 interface Props {
   lesson: Lesson;
+  mentalModels?: MentalModelLink[];
 }
 
 interface Me {
@@ -369,6 +371,7 @@ export default function LessonPlayer(props: Props) {
       </header>
 
       <div class="lesson-player-main">
+        <MentalModelLinks models={props.mentalModels} />
         <Show when={authError()}><p class="workspace-message" role="status">Could not verify sign-in. This session stays in memory. <button class="text-button" type="button" onClick={() => void refetchMe()}>Retry sign-in check</button></p></Show>
         <Show when={!finished()} fallback={
           <section class="lesson-complete" data-testid="lesson-complete">

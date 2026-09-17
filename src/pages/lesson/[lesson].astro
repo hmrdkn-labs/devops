@@ -2,6 +2,7 @@
 import LessonPlayer from '@/components/LessonPlayer';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { lessons } from '@/lib/content/catalog';
+import { mentalModels } from '@/lib/content/mental-models';
 import type { Lesson } from '@/lib/content/schema';
 
 export const prerender = true;
@@ -14,6 +15,7 @@ export function getStaticPaths() {
 }
 
 const { lesson } = Astro.props as { lesson: Lesson };
+const relatedModels = mentalModels.filter((model) => model.unit_ids.some((id) => lesson.source_unit_ids.includes(id))).map(({ slug, title, summary }) => ({ slug, title, summary }));
 ---
 
 <BaseLayout
@@ -24,5 +26,5 @@ const { lesson } = Astro.props as { lesson: Lesson };
   activeSection="kcna"
   immersive
 >
-  <LessonPlayer lesson={lesson} client:load />
+  <LessonPlayer lesson={lesson} mentalModels={relatedModels} client:load />
 </BaseLayout>

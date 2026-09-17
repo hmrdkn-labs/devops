@@ -3,6 +3,7 @@ import StudyFlow from '@/components/StudyFlow';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { paths, units } from '@/lib/content/catalog';
 import { renderMarkdown } from '@/lib/content/render';
+import { mentalModels } from '@/lib/content/mental-models';
 
 export const prerender = true;
 
@@ -33,6 +34,7 @@ const payload = {
   sources: unit.sources,
   visuals: unit.visuals,
   lessonHtml: renderMarkdown(unit.markdown),
+  mentalModels: mentalModels.filter((model) => model.unit_ids.includes(unit.metadata.id)).map(({ slug, title, summary }) => ({ slug, title, summary })),
 };
 ---
 

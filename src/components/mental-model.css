@@ -1,0 +1,34 @@
+.mental-model-workspace { margin-block: 2rem 4rem; }
+.mental-model-toolbar { display:flex; align-items:end; gap:1rem; flex-wrap:wrap; }
+.mental-model-toolbar label { display:grid; gap:.4rem; font-weight:600; flex:1; }
+.mental-model-toolbar select { width:100%; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:.6rem; padding:.7rem; min-height:44px; }
+.mental-model-situation { max-width:70ch; margin-block:1.5rem .5rem; }
+.mental-model-grid { display:grid; grid-template-columns:minmax(0, .85fr) minmax(0, 1.15fr); gap:1.5rem; margin-top:1.5rem; align-items:start; }
+.mental-model-diagram, .mental-model-task { min-width:0; border:1px solid var(--line); background:var(--surface); border-radius:1rem; padding:1.25rem; }
+.mental-model-location { border:1px solid var(--line); padding:1rem; border-radius:.7rem; margin-bottom:.8rem; }
+.mental-model-location h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0 0 .8rem; }
+.mental-model-nodes { display:flex; gap:.6rem; flex-wrap:wrap; }
+.mental-model-node { flex:1 1 130px; min-height:56px; background:var(--surface-subtle); color:var(--ink); border:1px solid var(--line); border-radius:.6rem; padding:.8rem; font-weight:650; transition:background-color 160ms ease, border-color 160ms ease; }
+.mental-model-node span { display:block; font-size:.75rem; margin-top:.35rem; font-weight:400; }
+.mental-model-node.active { border-color:var(--accent); background:var(--accent-soft); }
+.mental-model-node.selected { outline:2px solid var(--accent); outline-offset:2px; }
+.mental-model-component { border-top:1px solid var(--line); margin-top:1rem; padding-top:1rem; }
+.mental-model-component h3 { margin-top:0; }
+.mental-model-task h2 { font-size:clamp(1.3rem, 2vw, 1.8rem); line-height:1.3; margin-top:.5rem; }
+.mental-model-choices { padding:0; border:0; margin:1.5rem 0; display:grid; gap:.6rem; }
+.mental-model-choice { display:flex; align-items:start; gap:.7rem; border:1px solid var(--line); border-radius:.6rem; padding:.85rem; cursor:pointer; min-height:48px; }
+.mental-model-choice input { flex:none; width:1.15rem; height:1.15rem; min-height:0; padding:0; margin-top:.3rem; accent-color:var(--accent); }
+.mental-model-choice.chosen { border-color:var(--accent); background:var(--accent-soft); }
+.mental-model-feedback { margin-top:1rem; padding:1rem; border-left:3px solid var(--accent); background:var(--surface-subtle); border-radius:.4rem; }
+.mental-model-feedback h3 { margin-top:0; }
+.mental-model-state { display:grid; gap:.5rem; margin-block:1.2rem; }
+.mental-model-state div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:.75rem; }
+.mental-model-state dt { color:var(--muted); }.mental-model-state dd { margin:0; overflow-wrap:anywhere; }
+.mental-model-evidence { border-top:1px solid var(--line); padding-block:1rem; }.mental-model-evidence summary { cursor:pointer; font-weight:650; }
+.mental-model-evidence h3 { font-size:.9rem; overflow-wrap:anywhere; }.mental-model-evidence pre { max-width:100%; overflow:auto; font-size:.8rem; padding:1rem; background:var(--surface-subtle); border-radius:.5rem; }
+.mental-model-next { margin-top:1rem; }
+.mental-model-flow { border-left:2px solid var(--accent); padding-left:.8rem; animation:model-reveal 180ms ease-out; }
+.mental-model-flow p { font-size:.85rem; }.mental-model-flow small { display:block; color:var(--muted); }
+@keyframes model-reveal { from { opacity:.4; } to { opacity:1; } }
+@media(max-width:760px) { .mental-model-grid { grid-template-columns:minmax(0,1fr); }.mental-model-task { grid-row:1; }.mental-model-diagram,.mental-model-task { padding:1rem; }.mental-model-state div { grid-template-columns:minmax(0,1fr); gap:.1rem; } }
+@media(prefers-reduced-motion:reduce) { .mental-model-node { transition:none; }.mental-model-flow { animation:none; } }

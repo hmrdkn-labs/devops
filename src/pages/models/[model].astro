@@ -1,0 +1,15 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import MentalModelPlayer from '@/components/MentalModelPlayer';
+import { mentalModels } from '@/lib/content/mental-models';
+import type { MentalModel } from '@/lib/content/mental-model-schema';
+import { unitsById } from '@/lib/content/catalog';
+export const prerender = true;
+export function getStaticPaths() { return mentalModels.map((model) => ({ params: { model: model.slug }, props: { model } })); }
+const { model } = Astro.props as { model: MentalModel };
+---
+<BaseLayout title={model.title} description={model.summary}>
+  <div class="shell"><header class="page-hero"><a href="/models">← All mental models</a><p class="eyebrow">Interactive mental model</p><h1>{model.title}</h1><p class="lede">{model.summary}</p></header>
+  <MentalModelPlayer model={model} client:load />
+  <section><h2>Continue learning</h2><ul>{model.unit_ids.map((id) => unitsById.get(id)).filter(Boolean).map((unit) => <li><a href={'/learn/' + unit!.metadata.slug}>{unit!.metadata.title}</a></li>)}</ul><h2>Sources</h2><ul>{model.sources.map((source) => <li><a href={source.url}>{source.title}</a></li>)}</ul></section></div>
+</BaseLayout>

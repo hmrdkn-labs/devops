@@ -1,0 +1,12 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { mentalModels } from '@/lib/content/mental-models';
+export const prerender = true;
+---
+<BaseLayout title="Interactive mental models" description="Predict, trace component responsibilities, and inspect evidence.">
+  <header class="page-hero shell"><p class="eyebrow">Interactive mental models</p><h1>See the system act</h1><p class="lede">Predict an event, see which component acts, then inspect the evidence. Change the conditions to test whether your explanation still holds.</p></header>
+  <div class="shell library-grid">
+    {mentalModels.map((model) => <a class="library-card" href={'/models/' + model.slug}><span>{model.steps.length} steps · {model.estimated_minutes} min</span><h2>{model.title}</h2><p>{model.summary}</p></a>)}
+    {mentalModels.length === 0 && <p>New models are being prepared.</p>}
+  </div>
+</BaseLayout>

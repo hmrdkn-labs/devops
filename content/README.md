@@ -45,3 +45,29 @@ than that intent:
 `npm run content:check` validates lesson IDs, source-unit and objective edges,
 certification mappings, and each exercise's answer structure. A mastery-affecting
 objective change still follows the normal revision and revalidation contract.
+
+## Interactive mental models
+
+Portable system simulations live in `content/mental-models/*.yaml`. They are
+small authored fixtures for learning causal boundaries rather than recordings of
+a live cluster. A model links immutable canonical unit and objective IDs, names
+its assumptions, places each component, and advances through ordered steps.
+
+Every step asks the learner to predict the next event before revealing:
+
+- the component that owns the decision or action;
+- the state transition and the participating component edges;
+- a read-only observation that could support the claim and the limit of that
+  observation;
+- one changed failure condition, its consequence, and the next useful check.
+
+The application may animate, replay, or branch these steps, but the canonical
+YAML stays renderer-independent. Models finish with transfer questions so the
+learner has to apply the same causal model under a changed condition. Commands
+and expected outputs are authored examples unless a future schema explicitly
+declares live runtime evidence.
+
+`npm run content:check` rejects malformed models, duplicate IDs, broken component
+edges, invalid prediction answers, and unknown canonical unit/objective links.
+The raw YAML is exported under `/raw/v1/mental-models/` and included in the
+downloadable content archive.

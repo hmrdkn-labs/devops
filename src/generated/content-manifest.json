@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "content_version": "2026.08.1",
-  "generated_at": "2026-09-16T00:00:00.000Z",
+  "generated_at": "2026-09-17T00:00:00.000Z",
   "canonical_base_url": "https://devops.hamardikan.com",
   "licenses": {
     "prose_and_diagrams": "CC-BY-SA-4.0",
@@ -4889,6 +4889,67 @@
       ]
     }
   ],
+  "mental_models": [
+    {
+      "id": "mental:kubernetes-reconciliation",
+      "slug": "kubernetes-reconciliation",
+      "title": "Who replaces a missing Pod?",
+      "summary": "Follow a ReplicaSet from a missing Pod through reconciliation, scheduling, and worker execution, separating each component's responsibility.",
+      "revision": 1,
+      "unit_ids": [
+        "fpp:kubernetes-control-loop",
+        "fpp:kubernetes-labels-replicasets",
+        "fpp:kubernetes-architecture-components"
+      ],
+      "objective_ids": [
+        "fpp:kubernetes-control-loop/reconciliation"
+      ],
+      "verified_at": "2026-09-17",
+      "step_count": 4,
+      "content_hash": "64e84069ba5b508eebe08f8decf4d9954090874cb3c489eed84cdf33153d42ee",
+      "raw_url": "/raw/v1/mental-models/kubernetes-reconciliation.yaml"
+    },
+    {
+      "id": "mental:pod-scheduling",
+      "slug": "pod-scheduling",
+      "title": "Which node can run this Pod?",
+      "summary": "Apply hard placement constraints and resource requests before considering preference, then distinguish node binding from worker execution.",
+      "revision": 1,
+      "unit_ids": [
+        "fpp:kubernetes-scheduling-placement",
+        "fpp:scheduling-resources-health",
+        "fpp:kubernetes-architecture-components"
+      ],
+      "objective_ids": [
+        "fpp:kubernetes-scheduling-placement/feasibility",
+        "fpp:kubernetes-scheduling-placement/policy"
+      ],
+      "verified_at": "2026-09-17",
+      "step_count": 4,
+      "content_hash": "f292f19a86984e7746806979f052f534e13de006bf15d668775f34d0955e1d76",
+      "raw_url": "/raw/v1/mental-models/pod-scheduling.yaml"
+    },
+    {
+      "id": "mental:service-request-path",
+      "slug": "service-request-path",
+      "title": "Who carries a request to a Pod?",
+      "summary": "Resolve a Service name, inspect endpoint membership, then follow node forwarding and Pod networking to an application without sending traffic through the API server.",
+      "revision": 1,
+      "unit_ids": [
+        "fpp:kubernetes-networking-request-path",
+        "fpp:services-dns-ingress",
+        "fpp:kubernetes-architecture-components"
+      ],
+      "objective_ids": [
+        "fpp:kubernetes-networking-request-path/service-path",
+        "fpp:kubernetes-networking-request-path/boundaries"
+      ],
+      "verified_at": "2026-09-17",
+      "step_count": 4,
+      "content_hash": "6f6d5568ff29d07fb4ef40f8e458a420999651714f6b93a9e69bcccef9222a02",
+      "raw_url": "/raw/v1/mental-models/service-request-path.yaml"
+    }
+  ],
   "practice_sets": [
     {
       "id": "practice:kcna",
@@ -4903,5 +4964,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "435617b2795f2f12c2259ece57d736d25d94f81841cdea240228b20f56604e6a"
+  "manifest_sha256": "931016269364ff44f0dd4a7cb0be9634ce5bc426557b51b6d481c2ad476d92ee"
 }

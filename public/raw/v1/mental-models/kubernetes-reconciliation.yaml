@@ -1,0 +1,131 @@
+schema_version: 1
+id: mental:kubernetes-reconciliation
+slug: kubernetes-reconciliation
+title: Who replaces a missing Pod?
+summary: Follow a ReplicaSet from a missing Pod through reconciliation, scheduling, and worker execution, separating each component's responsibility.
+revision: 1
+unit_ids: [fpp:kubernetes-control-loop, fpp:kubernetes-labels-replicasets, fpp:kubernetes-architecture-components]
+objective_ids: [fpp:kubernetes-control-loop/reconciliation]
+estimated_minutes: 8
+verified_at: 2026-09-17
+evidence_mode: authored-fixture
+scenario: The web ReplicaSet desires three Pods. Pod web-p7 has been deleted from the API. Two matching Pods remain. Trace how the cluster returns to three running Pods.
+assumptions:
+  - This fixture uses a ReplicaSet with replicas=3, a valid template, and two healthy matching Pods.
+  - The API server, controller manager, scheduler, and chosen worker are healthy unless a failure branch says otherwise.
+  - Events and commands describe expected evidence; this animation is not connected to a live cluster.
+components:
+  - {id: api, name: API server, location: control-plane, responsibility: Validates API requests and exposes the authoritative object state to watchers.}
+  - {id: etcd, name: etcd, location: control-plane, responsibility: Durably stores cluster state through the API server; it does not create or execute Pods.}
+  - {id: replicaset, name: ReplicaSet controller, location: control-plane, responsibility: Compares matching Pods with the ReplicaSet desired count and requests missing Pod objects.}
+  - {id: scheduler, name: kube-scheduler, location: control-plane, responsibility: Selects a feasible node for an unbound Pod and records its binding through the API.}
+  - {id: kubelet, name: kubelet, location: worker-node, responsibility: Watches Pods assigned to its node and asks the container runtime to realize them.}
+  - {id: runtime, name: Container runtime, location: worker-node, responsibility: Creates the Pod sandbox and container processes in cooperation with node networking.}
+  - {id: pod, name: web-p8, location: worker-node, responsibility: Runs the application containers after its sandbox and containers are created.}
+steps:
+  - id: notice-gap
+    title: Observe the count mismatch
+    actor_id: replicaset
+    layer: control
+    before: [ReplicaSet desired count is 3, Only 2 matching Pod objects remain]
+    prediction:
+      prompt: Which component decides that another Pod object is needed?
+      options:
+        - {id: controller, text: ReplicaSet controller, rationale: It reconciles the matching Pod count against the ReplicaSet replicas field.}
+        - {id: scheduler, text: Scheduler, rationale: The scheduler assigns existing unbound Pods; it does not maintain a ReplicaSet replica count.}
+        - {id: etcd, text: etcd, rationale: etcd stores the objects but does not run workload reconciliation logic.}
+      answer_id: controller
+    action: The ReplicaSet controller observes two matching Pods and compares them with replicas=3. The desired count does not change when a Pod is deleted.
+    after: [A one-Pod deficit is detected, Desired count remains 3]
+    active_component_ids: [replicaset, api]
+    edges: [{from: api, to: replicaset, label: watch Pod state}]
+    proof:
+      command: kubectl get rs web -o yaml
+      expected: spec.replicas is 3; status.replicas may briefly be 2 while the controller catches up.
+      proves: The desired replica count and the controller's reported count are separate fields.
+      limitation: Status is asynchronous; a fast repair can make the intermediate count invisible to a later query.
+    failure:
+      condition: The ReplicaSet controller is unavailable.
+      consequence: Existing Pods can keep running, but this controller does not request a replacement.
+      next_check: Inspect controller-manager health and compare matching Pods with the unchanged ReplicaSet spec.
+  - id: create-object
+    title: Request a replacement object
+    actor_id: replicaset
+    layer: control
+    before: [A one-Pod deficit is detected, No replacement Pod exists yet]
+    prediction:
+      prompt: What does the controller create first?
+      options:
+        - {id: object, text: A Pod object through the API server, rationale: The controller submits a Pod based on the template; execution follows later.}
+        - {id: process, text: A container process directly on a node, rationale: The controller is not the node runtime and does not directly start containers.}
+      answer_id: object
+    action: The controller submits a Pod create request. After validation and admission, the API server persists web-p8 with a new UID and a ReplicaSet owner reference. It has no node assignment yet.
+    after: [web-p8 exists with a new UID, web-p8 has no spec.nodeName, 3 matching Pod objects exist]
+    active_component_ids: [replicaset, api, etcd]
+    edges: [{from: replicaset, to: api, label: create Pod request}, {from: api, to: etcd, label: persist accepted state}]
+    proof:
+      command: kubectl get pod web-p8 -o yaml
+      expected: A new metadata.uid and the web ReplicaSet ownerReference appear; spec.nodeName is initially absent.
+      proves: A replacement object exists and is owned by this ReplicaSet.
+      limitation: Ownership and a new UID alone do not prove why it was created; correlate them with the deletion, deficit, and ReplicaSet events.
+    failure:
+      condition: Admission rejects the Pod creation request.
+      consequence: No accepted replacement object is created; the ReplicaSet can report FailedCreate events.
+      next_check: Run kubectl describe rs web and inspect quota, policy, and admission errors.
+  - id: bind-node
+    title: Choose a worker
+    actor_id: scheduler
+    layer: control
+    before: [web-p8 exists, web-p8 has no spec.nodeName]
+    prediction:
+      prompt: Who chooses where the new Pod should run?
+      options:
+        - {id: scheduler, text: Scheduler, rationale: It filters and scores candidate nodes before recording a node binding.}
+        - {id: kubelet, text: Any kubelet that notices spare CPU, rationale: Kubelets realize assigned Pods; they do not compete to choose a node for an unbound Pod.}
+      answer_id: scheduler
+    action: The scheduler evaluates the Pod requests and placement constraints, selects node-a, and records the binding through the API server.
+    after: [web-p8 spec.nodeName is node-a, Containers are not necessarily running yet]
+    active_component_ids: [scheduler, api]
+    edges: [{from: api, to: scheduler, label: watch unbound Pod}, {from: scheduler, to: api, label: record binding to node-a}]
+    proof:
+      command: kubectl get pod web-p8 -o wide
+      expected: The NODE column shows node-a; PodScheduled is True after a successful binding.
+      proves: Placement was recorded for this Pod.
+      limitation: Assignment does not prove image pull, container startup, application health, or readiness.
+    failure:
+      condition: No node satisfies the hard constraints or resource requests.
+      consequence: The Pod remains unbound and Pending with FailedScheduling evidence.
+      next_check: Run kubectl describe pod web-p8 and compare requests, node allocatable resources, labels, and taints.
+  - id: realize-pod
+    title: Start the application on the worker
+    actor_id: kubelet
+    layer: execution
+    before: [web-p8 is bound to node-a, Application containers have not started]
+    prediction:
+      prompt: Which component asks the runtime to start the assigned Pod?
+      options:
+        - {id: kubelet, text: node-a kubelet, rationale: It reconciles assigned Pod specifications with sandbox and container state through the runtime interface.}
+        - {id: api, text: API server, rationale: The API server accepts and exposes state; it does not execute node containers.}
+      answer_id: kubelet
+    action: The kubelet on node-a sees the assignment, asks the runtime to prepare the sandbox and containers, and reports status. Readiness becomes true only when the configured readiness criteria are satisfied.
+    after: [web-p8 containers are running, 3 matching Pods are present, Readiness is evaluated separately]
+    active_component_ids: [api, kubelet, runtime, pod]
+    edges: [{from: api, to: kubelet, label: assigned Pod specification}, {from: kubelet, to: runtime, label: CRI sandbox and container requests}, {from: runtime, to: pod, label: start container processes}]
+    proof:
+      command: kubectl describe pod web-p8
+      expected: Assigned node, container states, Started events, and Ready conditions show the observed lifecycle.
+      proves: The reported node execution and readiness state can be checked independently of object creation.
+      limitation: Running alone does not prove the application serves correct responses; use an application probe for that claim.
+    failure:
+      condition: The image cannot be pulled or the assigned kubelet is unavailable.
+      consequence: A bound Pod can remain non-running even though scheduling succeeded.
+      next_check: Inspect Pod events and node status before changing the ReplicaSet count.
+transfer_questions:
+  - prompt: If the scheduler stops after the ReplicaSet creates web-p8, what can still happen?
+    answer: The replacement object can exist and existing assigned Pods can continue running. The unbound replacement needs a scheduler to receive a node assignment.
+  - prompt: Does restoring the number of Pod objects to three prove that all three are serving requests?
+    answer: No. Pod existence, node assignment, container startup, readiness, Service membership, and successful requests are distinct observations.
+sources:
+  - {title: Kubernetes ReplicaSet, url: 'https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/'}
+  - {title: Kubernetes components, url: 'https://kubernetes.io/docs/concepts/overview/components/'}
+  - {title: Pod lifecycle, url: 'https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/'}
