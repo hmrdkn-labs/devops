@@ -1708,6 +1708,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   background: var(--surface-subtle);
   transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
 }
+.lesson-order-item[data-dragging='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--ink) 10%, transparent);
+  opacity: .9;
+  transform: scale(.995);
+}
+.lesson-order-item[data-drag-target='true']:not([data-dragging='true']) {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+}
 .lesson-order-item[data-state='correct'],
 .lesson-connect-row[data-state='correct'],
 .lesson-blank-grid label[data-state='correct'] { border-color: color-mix(in srgb, var(--success) 62%, var(--line)); }
@@ -1718,6 +1728,24 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .lesson-order-item code { min-width: 0; overflow-wrap: anywhere; font: 650 .86rem/1.4 var(--mono); }
 .lesson-order-item code.plain-label { font-family: var(--sans); font-size: .9rem; }
 .lesson-order-controls { display: flex; gap: .35rem; }
+.lesson-drag-handle {
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: grab;
+  font-size: 1.1rem;
+  line-height: 1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lesson-drag-handle:hover { border-color: var(--accent); color: var(--ink); }
+.lesson-drag-handle:active { cursor: grabbing; }
 .lesson-order-controls button,
 .lesson-assist-actions button,
 .lesson-rating button {

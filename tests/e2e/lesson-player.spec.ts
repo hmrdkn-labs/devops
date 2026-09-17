@@ -196,6 +196,23 @@ test('ordered feedback marks each position and supports an honest correction', a
   await expect(page.locator('.lesson-order-item[data-state="correct"]')).toHaveCount(5);
 });
 
+test('ordered exercises support drag and drop while keeping arrow controls', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Native drag behavior only needs one desktop browser project');
+  await page.goto(lessonRoute);
+
+  await page.locator('.lesson-option').nth(1).click();
+  await check(page, false);
+  await continueLesson(page, 2);
+
+  const deployment = page.locator('[data-order-id="deployment"]');
+  const firstRow = page.locator('.lesson-order-item').first();
+  await deployment.locator('.lesson-drag-handle').dragTo(firstRow);
+
+  await expect(page.locator('.lesson-order-item').first()).toHaveAttribute('data-order-id', 'deployment');
+  await expect(page.getByRole('button', { name: 'Move Deployment up' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Move Deployment down' })).toBeEnabled();
+});
+
 test('Learn first and hints remain assisted and use a different prompt variant', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Evidence payload inspection only needs one browser project');
   const events: Array<Record<string, unknown>> = [];

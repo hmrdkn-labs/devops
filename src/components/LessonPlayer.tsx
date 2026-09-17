@@ -64,8 +64,13 @@ export default function LessonPlayer(props: Props) {
   const [learnFirst, setLearnFirst] = createSignal(false);
   const [variant, setVariant] = createSignal(false);
   const [status, setStatus] = createSignal('');
+  const [draggedItem, setDraggedItem] = createSignal<string | null>(null);
+  const [dragTarget, setDragTarget] = createSignal<string | null>(null);
+  const [reorderStatus, setReorderStatus] = createSignal('');
   const [authError, setAuthError] = createSignal(false);
   let persistSequence = 0;
+  let pointerDragItem: string | null = null;
+  let pointerDragId: number | null = null;
   let taskHeading: HTMLHeadingElement | undefined;
   let completeHeading: HTMLHeadingElement | undefined;
 
@@ -156,6 +161,7 @@ export default function LessonPlayer(props: Props) {
     setLearnFirst(false);
     setVariant(false);
     setStatus('');
+    clearDragState();
   }
 
   async function persistEvent(isCorrect: boolean, responseMarkdown?: string, completed = false) {
@@ -222,6 +228,71 @@ export default function LessonPlayer(props: Props) {
     if (target < 0 || target >= next.length) return;
     [next[index], next[target]] = [next[target]!, next[index]!];
     setOrder(next);
+    const movedId = next[target]!;
+    const moved = orderedExercise()?.items.find((item) => item.id === movedId);
+    setReorderStatus(`${moved?.text ?? 'Item'} moved to position ${target + 1}.`);
+  }
+
+  function clearDragState() {
+    pointerDragItem = null;
+    pointerDragId = null;
+    setDraggedItem(null);
+    setDragTarget(null);
+  }
+
+  function moveItemToIndex(itemId: string, targetIndex: number) {
+    const next = [...order()];
+    const sourceIndex = next.indexOf(itemId);
+    if (sourceIndex < 0 || targetIndex < 0 || targetIndex >= next.length || sourceIndex === targetIndex) return;
+    next.splice(sourceIndex, 1);
+    next.splice(targetIndex, 0, itemId);
+    setOrder(next);
+    const moved = orderedExercise()?.items.find((item) => item.id === itemId);
+    setReorderStatus(`${moved?.text ?? 'Item'} moved to position ${targetIndex + 1}.`);
+  }
+
+  function startNativeDrag(event: DragEvent, itemId: string) {
+    if (revealed()) return;
+    event.dataTransfer?.setData('text/plain', itemId);
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+    setDraggedItem(itemId);
+  }
+
+  function nativeDragOver(event: DragEvent, targetIndex: number, targetId: string) {
+    if (revealed() || !draggedItem()) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+    setDragTarget(targetId);
+    moveItemToIndex(draggedItem()!, targetIndex);
+  }
+
+  function startPointerDrag(event: PointerEvent, itemId: string) {
+    if (revealed() || event.pointerType === 'mouse') return;
+    event.preventDefault();
+    pointerDragItem = itemId;
+    pointerDragId = event.pointerId;
+    setDraggedItem(itemId);
+    event.currentTarget instanceof HTMLElement && event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function pointerDragMove(event: PointerEvent) {
+    if (pointerDragId !== event.pointerId || !pointerDragItem) return;
+    event.preventDefault();
+    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-order-id]');
+    const targetId = target?.dataset.orderId;
+    if (!targetId) return;
+    const targetIndex = order().indexOf(targetId);
+    if (targetIndex < 0) return;
+    setDragTarget(targetId);
+    moveItemToIndex(pointerDragItem, targetIndex);
+  }
+
+  function endPointerDrag(event: PointerEvent) {
+    if (pointerDragId !== event.pointerId) return;
+    if (event.currentTarget instanceof HTMLElement && event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    clearDragState();
   }
 
   function computeCorrect(current: LessonExercise) {
@@ -460,12 +531,24 @@ export default function LessonPlayer(props: Props) {
                 <Show when={orderedExercise()}>
                   {(current) => (
                     <div class="lesson-order" classList={{ command: current().kind === 'command_builder' }}>
+                      <p class="sr-only" role="status" aria-live="polite">{reorderStatus()}</p>
                       <For each={order()}>{(itemId, index) => {
                         const item = () => current().items.find((candidate) => candidate.id === itemId)!;
                         const expectedPosition = () => current().correct_order.indexOf(itemId) + 1;
                         const positionIsCorrect = () => expectedPosition() === index() + 1;
                         return (
-                          <div class="lesson-order-item" data-state={revealed() ? positionIsCorrect() ? 'correct' : 'incorrect' : 'idle'}>
+                          <div
+                            class="lesson-order-item"
+                            data-order-id={itemId}
+                            data-dragging={draggedItem() === itemId ? 'true' : 'false'}
+                            data-drag-target={dragTarget() === itemId ? 'true' : 'false'}
+                            data-state={revealed() ? positionIsCorrect() ? 'correct' : 'incorrect' : 'idle'}
+                            onDragOver={(event) => nativeDragOver(event, index(), itemId)}
+                            onDrop={(event) => {
+                              event.preventDefault();
+                              clearDragState();
+                            }}
+                          >
                             <span class="lesson-order-index">{index() + 1}</span>
                             <code classList={{ 'plain-label': current().kind !== 'command_builder' }}>{item().text}</code>
                             <Show when={!revealed()} fallback={
@@ -474,6 +557,21 @@ export default function LessonPlayer(props: Props) {
                               </small>
                             }>
                               <div class="lesson-order-controls" aria-label={`Move ${item().text}`}>
+                                <span
+                                  class="lesson-drag-handle"
+                                  draggable="true"
+                                  aria-label={`Drag ${item().text} to reorder`}
+                                  role="img"
+                                  title="Drag to reorder"
+                                  onDragStart={(event) => startNativeDrag(event, itemId)}
+                                  onDragEnd={clearDragState}
+                                  onPointerDown={(event) => startPointerDrag(event, itemId)}
+                                  onPointerMove={pointerDragMove}
+                                  onPointerUp={endPointerDrag}
+                                  onPointerCancel={endPointerDrag}
+                                >
+                                  ⠿
+                                </span>
                                 <button type="button" aria-label={`Move ${item().text} up`} disabled={!hydrated() || index() === 0} onClick={() => moveItem(index(), -1)}>↑</button>
                                 <button type="button" aria-label={`Move ${item().text} down`} disabled={!hydrated() || index() === order().length - 1} onClick={() => moveItem(index(), 1)}>↓</button>
                               </div>
