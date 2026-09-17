@@ -125,6 +125,33 @@ is planned. Existing useful behavior is not deleted to simplify screenshots.
 ## Progress
 
 - Research, initial live/source review, inventory, and execution contract written.
-- Independent feature and browser audits are in progress.
-- Implementation and release acceptance are pending; previous release test
-  counts must not be reported as evidence for this work.
+- Entry/navigation, shared path recommendation, and focused task presentation
+  are implemented on `feat/learning-journey-ux`; plan commit `533456a`, code
+  commits `c8c5136` (guided navigation/path), `d93e3ea` (focused tasks/mobile
+  feedback), and `65ebdeb` (model hydration race fix).
+- Latest user request: prepare a release-ready result and provide a preview
+  before continuing to production release.
+- Final local acceptance passed against settled code `65ebdeb`: `npm run ci`
+  with 82 Vitest tests, zero Astro errors/warnings, content/D1 checks, build,
+  and manifest generation; revision checking against `origin/main` and diff
+  checking passed. Release classification is `application-or-schema`.
+  Content manifest is unchanged:
+  `123f97da1eecfff2ff8eb6312465000e2057533617742dafad7b1d502bb9f0e8`.
+- A fresh full Playwright matrix passed 139 cases with 44 intentional skips
+  (183 cases, 53.3 seconds). It covers delayed model-island hydration, explicit
+  due-review loading, mobile correct/wrong verdict focus and action-bar
+  non-overlap, repaired account-loading and Continue states, and prior
+  learning/privacy regressions. Owner behavior in this matrix uses API mocks.
+- Manual browser inspection confirmed 390px dark Resources wrong-answer
+  feedback fully visible above the actions and contextual draft retention.
+  Generated desktop light Learn and dark Study screenshots were inspected.
+  Other viewport checks, including 320px, are automated. Real-owner persistence
+  is not verified end to end; learner efficacy remains unmeasured.
+- Guest preview: [localhost:4321](http://localhost:4321/) on the same Mac, using
+  `wrangler.e2e.jsonc` without database/auth bindings. See the
+  [manual preview checklist](PREVIEW-CHECKLIST.md). No real owner persistence is
+  available in this preview; production is unchanged.
+- Release review targets branch `feat/learning-journey-ux`. The local CI command
+  does not establish a GitHub CI result. Public CI, merge, and protected production
+  release follow the user preview and their respective release gates. Earlier
+  release counts are historical baselines, not evidence for this work.

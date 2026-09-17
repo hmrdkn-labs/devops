@@ -7,11 +7,37 @@
 
 **Current work: learner journey simplification.** Research and the feature/access
 map are recorded in [the redesign plan](docs/LEARNER-JOURNEY-REDESIGN.md).
-The target is a clear Start/Continue action with consistent Learn / Review /
-Practice / Library navigation, contextual study tools, and less competing UI.
-Independent audits and delegated implementation are underway. New acceptance
-checks, commits, and protected release are pending. The successful releases
-below are historical baselines, not verification of this new work.
+The implementation on `feat/learning-journey-ux` provides a concrete Start/Continue
+action, consistent Learn / Review / Practice / Library navigation, and disclosed
+study tools. Plan commit: `533456a`; code commits: `c8c5136` (guided navigation
+and path), `d93e3ea` (focused tasks and mobile feedback), and `65ebdeb`
+(model hydration race fix). The latest user request is to make this
+release-ready and provide a preview before continuing to release.
+
+Final local acceptance passed against settled code `65ebdeb`: `npm run ci`
+with **82 Vitest tests**, zero Astro errors/warnings, content/D1 checks,
+production build, and release manifest generation; revision checking against
+`origin/main` and diff checking also passed. Release classification:
+`application-or-schema`. The content manifest remains
+`123f97da1eecfff2ff8eb6312465000e2057533617742dafad7b1d502bb9f0e8`.
+A fresh full Playwright matrix passed **139 cases / 44 intentional skips**
+(183 cases, 53.3 seconds). Coverage includes delayed model-island hydration,
+due-review loading, mobile correct/wrong feedback focus and action-bar
+non-overlap, repaired account-loading and Continue cases, and the prior
+learning/privacy regressions. Manual browser inspection confirmed visible
+390px dark Resources wrong-answer feedback above the actions and contextual
+draft retention; generated desktop light Learn and dark Study screenshots were
+also inspected. Other viewport checks, including 320px, are automated.
+Real-owner persistence has not been tested end to end; no learner efficacy
+claim is made. Review the release on branch `feat/learning-journey-ux`;
+the local `npm run ci` result does not establish a GitHub CI result.
+
+A guest preview is running at [localhost:4321](http://localhost:4321/) on this
+Mac using `wrangler.e2e.jsonc`, with no database or auth binding. Answers stay in
+memory; this preview cannot verify real owner persistence. Follow the
+[preview checklist](docs/PREVIEW-CHECKLIST.md). **Production is unchanged.**
+Protected production release remains after the user's preview and the public
+CI/merge/release gates. The successful releases below are historical baselines.
 
 **Latest interaction release: ordered lesson tasks now support direct drag and
 drop.** Commit `ed036f9` adds a visible grab handle to `arrange`, `trace`, and
