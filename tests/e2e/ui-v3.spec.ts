@@ -18,7 +18,8 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'KCNA learning path', exact: true })).toBeVisible();
   await expect(page.locator('.site-nav a[aria-current="page"], .mobile-dock a[aria-current="page"]').filter({ visible: true })).toHaveText('Learn');
   await expect(page.locator('.kcna-checkpoint')).toHaveCount(13);
-  await expect(page.locator('.kcna-course-step')).toHaveCount(116);
+  await expect(page.locator('.kcna-course-step')).toHaveCount(105);
+  await expect(page.getByText('105 learning/practice steps', { exact: false })).toBeVisible();
   await expect(page.locator('#kcna-today-title')).toBeVisible();
   await expect(page.getByRole('link', { name: /Start learning/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
