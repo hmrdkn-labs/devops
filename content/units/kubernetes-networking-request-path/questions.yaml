@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-networking-request-path
-revision: 4
+revision: 5
 questions:
   - id: fpp:kubernetes-networking-request-path/q-node-ip
     kind: explain
@@ -42,4 +42,12 @@ questions:
     critical_points:
       - Policy intent and dataplane enforcement are separate evidence.
       - NetworkPolicy requires an enforcing implementation.
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/q-cni-sandbox
+    kind: scenario
+    prompt: The scheduler assigned a Pod to node-a, but events report a sandbox network setup failure and the Pod has no usable interface. Would changing the Service selector fix it? Name the next integration boundary and what later traffic proof still remains.
+    model_answer: No. The kubelet asks the CRI runtime to create a sandbox, and its networking integration uses the configured CNI implementation to create interfaces, addresses and connectivity. Inspect the node's network implementation and Pod events before Service selection. CNI is a contract, not the running packet executor; the installed routes/overlay/dataplane carry traffic. Once setup succeeds, separately test inter-Pod connectivity, policy and the application listener/request.
+    critical_points:
+      - Pod sandbox networking precedes Service backend selection.
+      - Setup success is not proof of later packet forwarding or user outcomes.
     objective_ids: [fpp:kubernetes-networking-request-path/boundaries]

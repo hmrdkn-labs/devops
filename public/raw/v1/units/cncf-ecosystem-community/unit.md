@@ -42,6 +42,25 @@ Cloud-native systems benefit from stable interfaces between responsibilities. Ex
 
 These boundaries allow implementations to evolve behind a known contract. Do not confuse an interface with one implementation: CNI is not itself a single network plugin, and CSI is not a storage backend.
 
+## SIGs own areas; KEPs explain proposed changes
+
+A Kubernetes **Special Interest Group (SIG)** brings contributors together
+around an area such as networking, storage, authentication, or autoscaling.
+A Working Group can coordinate a cross-cutting effort. These are collaboration
+and ownership structures, not processes that run on a worker node.
+
+A **Kubernetes Enhancement Proposal (KEP)** records the motivation, design,
+risks, testing, and graduation expectations for a significant change. A proposal
+can be discussed or approved before a feature is shipped or enabled. Track its
+release status and relevant feature gates in the version you operate; finding
+a KEP is not proof that your cluster implements it.
+
+Open standards and open-source projects also differ. OCI specifications define
+container image/runtime contracts; containerd is an implementation. CNI defines
+network integration conventions; a chosen plugin implements them. Shared
+interfaces reduce integration coupling, but replaceability still requires
+compatible versions, semantics, configuration, and operational support.
+
 ## Community collaboration is part of the architecture story
 
 Open governance matters because cloud-native infrastructure is built by many organizations that need shared specifications, interoperable implementations, documented ownership, and public technical decision processes.

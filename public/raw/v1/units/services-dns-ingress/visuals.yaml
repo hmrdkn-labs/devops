@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
-revision: 4
+revision: 5
 visuals:
   - id: fpp:services-dns-ingress/visual-north-south
     kind: flow
@@ -10,3 +10,13 @@ visuals:
       - "external hostname → Ingress or Gateway implementation → Service → EndpointSlice → ready Pod"
       - "cluster DNS name → Service → EndpointSlice → ready Pod"
     teaching_point: Service discovery and endpoint selection are separate from HTTP ingress routing; both ultimately forward traffic toward currently ready Pod endpoints.
+  - id: fpp:services-dns-ingress/visual-mesh-placement
+    kind: ownership
+    eyebrow: Sidecar mesh request path
+    title: Locate the proxy before naming its job
+    lines:
+      - "external browser → entry gateway proxy → catalog proxy → catalog app"
+      - "catalog app → local proxy → inventory proxy → inventory app"
+      - "mesh control plane → configuration and certificates for proxies"
+      - "proxies handle configured traffic; workload app handles business behavior"
+    teaching_point: An entry gateway, workload-side proxy and mesh control plane are separate responsibilities even when one product manages them.

@@ -3,17 +3,20 @@ id: fpp:services-dns-ingress
 slug: services-dns-ingress
 title: Services, cluster DNS, and ingress
 summary: Separate changing Pod endpoints from stable service discovery and north-south HTTP routing through implementing controllers.
-revision: 4
+revision: 5
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes
-estimated_minutes: 20
+estimated_minutes: 30
 aliases: []
 applicable_versions:
   - product: kubernetes
     range: 1.31-1.35
 prerequisites: [fpp:pods-workloads, fpp:http-tls]
 objectives:
+  - id: fpp:services-dns-ingress/mesh-path
+    title: Locate gateway and workload proxies on a service-mesh request path and distinguish them from control-plane configuration
+    critical: false
   - id: fpp:services-dns-ingress/service-endpoints
     title: Trace a Service to ready endpoints
     critical: true
@@ -29,4 +32,4 @@ certification_mappings:
     advisory: true
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-08-27
+verified_at: 2026-09-18

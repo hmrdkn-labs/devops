@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
-revision: 4
+revision: 5
 cards:
   - id: fpp:services-dns-ingress/c-stable
     type: short
@@ -32,3 +32,15 @@ cards:
     back: The cloud or load-balancer controller, permissions, supported annotations, quotas, and subnet configuration.
     critical_points: [The Service request needs an external implementation]
     objective_ids: [fpp:services-dns-ingress/external-routing]
+  - id: fpp:services-dns-ingress/c-headless
+    type: short
+    front: What does clusterIP None change for a headless Service?
+    back: It has no virtual ClusterIP; DNS can expose endpoint addresses rather than the ordinary Service virtual IP.
+    critical_points: []
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/c-gateway-mesh
+    type: prompt
+    front: Explain an entry gateway proxy versus a workload-side mesh proxy.
+    back: A gateway commonly receives traffic entering the system; workload-side proxies mediate participating service communication. The mesh control plane configures them and is not the normal business-request forwarding hop.
+    critical_points: [Proxy placement determines its request-path responsibility]
+    objective_ids: [fpp:services-dns-ingress/mesh-path]

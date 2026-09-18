@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-storage-lifecycle
-revision: 4
+revision: 5
 questions:
   - id: fpp:kubernetes-storage-lifecycle/q-pending
     kind: scenario
@@ -43,3 +43,11 @@ questions:
       - PVC deletion and backing-storage deletion are separate lifecycle events.
       - Reclaim policy determines what should happen to the PV or storage after release.
     objective_ids: [fpp:kubernetes-storage-lifecycle/claim, fpp:kubernetes-storage-lifecycle/failure-domain]
+  - id: fpp:kubernetes-storage-lifecycle/q-storage-boundaries
+    kind: predict
+    prompt: Compare data written only to a removed Docker container's writable layer, a Docker named volume, a Kubernetes emptyDir after a container restart, and that emptyDir after the Pod is removed. Which lifecycle owns each outcome?
+    model_answer: Removing the Docker container discards its writable layer; a named volume has an independent lifecycle and remains until the volume is removed. emptyDir survives an individual container restart within the same Pod, but is removed when the Pod is removed. A storage-driver plugin changes integration with the backend, not these durability guarantees by its mere presence; claim-backed storage requires its own policy and recovery design.
+    critical_points:
+      - Container and Pod replacement boundaries differ from volume/backing-storage lifecycle.
+      - A plugin is an integration mechanism, not a backup or universal durability guarantee.
+    objective_ids: [fpp:kubernetes-storage-lifecycle/persistence]

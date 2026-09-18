@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 4
+revision: 5
 visuals:
   - id: fpp:kubernetes-security-access/visual-api-security
     kind: flow
@@ -12,3 +12,13 @@ visuals:
       - "list Secrets → authorization=no; different denial boundary"
       - "NetworkPolicy handles Pod traffic, not either API permission"
     teaching_point: "Kubernetes security is layered: request identity, permission, admission, workload identity, Pod security, Secret handling, and network policy are separate controls."
+  - id: fpp:kubernetes-security-access/visual-trust-identity
+    kind: comparison
+    eyebrow: Client trust and access
+    title: Trusting a server is not granting a caller permission
+    lines:
+      - "cluster entry → endpoint + trusted server CA → TLS server verification"
+      - "user entry → certificate/token/plugin → caller authentication"
+      - "context → cluster + user + optional namespace → chosen access settings"
+      - "RBAC rule + binding → permitted verb/group/resource/scope"
+    teaching_point: A certificate or kubeconfig establishes connection and identity settings; API authorization still requires appropriate scoped permissions.

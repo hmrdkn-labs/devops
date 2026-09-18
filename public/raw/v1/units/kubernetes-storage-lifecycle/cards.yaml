@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-storage-lifecycle
-revision: 4
+revision: 5
 cards:
   - id: fpp:kubernetes-storage-lifecycle/c-pvc
     type: short
@@ -32,3 +32,15 @@ cards:
     back: No. Access mode describes mount access semantics, not replication, backup, latency, or failure-domain behavior.
     critical_points: [Access mode is not durability topology]
     objective_ids: [fpp:kubernetes-storage-lifecycle/failure-domain]
+  - id: fpp:kubernetes-storage-lifecycle/c-emptydir
+    type: short
+    front: Which survives an individual container restart but not removal of its Pod?
+    back: The Pod's emptyDir volume. A PVC-backed volume has a separate storage lifecycle.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-storage-lifecycle/persistence]
+  - id: fpp:kubernetes-storage-lifecycle/c-docker-volume
+    type: prompt
+    front: Explain Docker named volume versus container writable layer.
+    back: The writable layer belongs to that container and disappears when it is removed. A named volume is managed separately and can outlive a container; its own deletion/recovery policy still matters.
+    critical_points: [Persistence is a lifecycle contract, not simply a mount]
+    objective_ids: [fpp:kubernetes-storage-lifecycle/persistence]

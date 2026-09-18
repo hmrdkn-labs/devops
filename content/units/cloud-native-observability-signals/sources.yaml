@@ -1,6 +1,34 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
 sources:
+  - id: fpp:cloud-native-observability-signals/source-slo
+    title: "Service Level Objectives"
+    url: https://sre.google/sre-book/service-level-objectives/
+    publisher: "Google SRE"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "SLI, SLO and SLA distinctions; checkout figures are independently authored examples."
+  - id: fpp:cloud-native-observability-signals/source-scrape-config
+    title: "Prometheus Configuration"
+    url: https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+    publisher: "Prometheus"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "scrape_interval, jobs and target configuration; example configuration independently authored."
+  - id: fpp:cloud-native-observability-signals/source-node-exporter
+    title: "Monitoring Linux Host Metrics with the Node Exporter"
+    url: https://prometheus.io/docs/guides/node-exporter/
+    publisher: "Prometheus"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Host exporter and Prometheus pull/scrape responsibilities."
+  - id: fpp:cloud-native-observability-signals/source-object-metrics
+    title: "Metrics for Kubernetes Object States"
+    url: https://kubernetes.io/docs/concepts/cluster-administration/kube-state-metrics/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "API-derived measurements versus resource-consumption and business signals."
   - id: source:kubernetes-observability
     title: Observability
     url: https://kubernetes.io/docs/concepts/cluster-administration/observability/

@@ -2,13 +2,15 @@ import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
   lessonSchema,
+  curriculumSchema,
   practiceSetSchema,
   unitMetadataSchema,
   type LearningPath,
   type LearningUnit,
   type Lesson,
+  type Curriculum,
 } from '../src/lib/content/schema';
-import { validateGraph, validateLessons } from '../tools/content/build';
+import { validateCurricula, validateGraph, validateLessons } from '../tools/content/build';
 
 function unit(
   id = 'fpp:test',
@@ -155,6 +157,26 @@ function lessonFor(source: LearningUnit = unit()): Lesson {
   });
 }
 
+function curriculumFor(source: LearningUnit = unit()): Curriculum {
+  return curriculumSchema.parse({
+    schema_version: 1,
+    id: 'curriculum:test',
+    slug: 'test-course',
+    title: 'Fixture course',
+    summary: 'An independent course fixture with a reference and a mapped teaching step.',
+    revision: 1,
+    verified_at: '2026-09-18',
+    reference: { title: 'Reference course', publisher: 'Example', url: 'https://example.com/course' },
+    modules: [{
+      id: 'curriculum:test/first-module',
+      slug: 'first-module',
+      title: 'First module',
+      summary: 'Fixture concepts and practice.',
+      steps: [{ id: 'curriculum:test/lesson', title: 'Fixture lesson', kind: 'lesson', unit_ids: [source.metadata.id] }],
+    }],
+  });
+}
+
 describe('content contract', () => {
   it('validates the complete checked-in corpus', () => {
     expect(() => execFileSync(process.execPath, [
@@ -199,6 +221,66 @@ describe('content contract', () => {
     const noVisual = unit();
     noVisual.visuals = [];
     expect(() => validateGraph([noVisual], [pathFor([noVisual])], new Set(['cncf:kcna']))).toThrow('reference visual');
+  });
+
+  it('rejects broken course material mappings and duplicate curriculum identities', () => {
+    const source = unit();
+    const valid = curriculumFor(source);
+    expect(() => validateCurricula([valid], [source])).not.toThrow();
+    const broken = structuredClone(valid);
+    broken.modules[0]!.steps[0]!.unit_ids = ['fpp:missing'];
+    expect(() => validateCurricula([broken], [source])).toThrow('unknown mapped unit');
+    expect(() => validateCurricula([valid, valid], [source])).toThrow('Duplicate curriculum ID');
+    const sameSlug = { ...valid, id: 'curriculum:second' };
+    expect(() => validateCurricula([valid, sameSlug], [source])).toThrow('Duplicate curriculum slug');
+  });
+
+  it('requires usable references, unique step identities, and mapped teaching material', () => {
+    const valid = curriculumFor();
+    expect(() => curriculumSchema.parse({ ...valid, reference: { ...valid.reference, url: 'javascript:alert(1)' } })).toThrow();
+    const missingMaterial = structuredClone(valid);
+    missingMaterial.modules[0]!.steps[0]!.unit_ids = [];
+    expect(() => curriculumSchema.parse(missingMaterial)).toThrow('teaching steps require');
+    const duplicateMapping = structuredClone(valid);
+    duplicateMapping.modules[0]!.steps[0]!.unit_ids = ['fpp:test', 'fpp:test'];
+    expect(() => curriculumSchema.parse(duplicateMapping)).toThrow('mapped unit IDs must be unique');
+    const duplicateStep = structuredClone(valid);
+    duplicateStep.modules[0]!.steps.push(duplicateStep.modules[0]!.steps[0]!);
+    expect(() => curriculumSchema.parse(duplicateStep)).toThrow('duplicate curriculum step ID');
+    const duplicateModule = structuredClone(valid);
+    duplicateModule.modules.push(duplicateModule.modules[0]!);
+    expect(() => curriculumSchema.parse(duplicateModule)).toThrow('duplicate module');
+  });
+
+  it('requires practice coverage for course quizzes and valid explicit module assignments', () => {
+    const source = unit();
+    const curriculum = curriculumFor(source);
+    curriculum.modules[0]!.steps.push({ id: 'curriculum:test/quiz', title: 'Module quiz', kind: 'quiz', unit_ids: [source.metadata.id] });
+    expect(() => validateCurricula([curriculum], [source])).toThrow('quiz module requires');
+    const practice = practiceSetSchema.parse({
+      schema_version: 1,
+      id: 'practice:course-test',
+      slug: 'course-test',
+      title: 'Course quiz fixture',
+      summary: 'A deterministic independently authored question mapped to the course fixture.',
+      revision: 1,
+      certification: 'cncf:kcna',
+      verified_at: '2026-09-18',
+      questions: [{
+        id: 'practice:course-test/question', checkpoint: 'fundamentals', category: 'concept', select: 'single',
+        prompt: 'Which option satisfies this course fixture?',
+        options: ['one', 'two', 'three'].map((id) => ({ id, text: `Option ${id}`, rationale: 'A deterministic fixture option for testing the course contract.' })),
+        answer_ids: ['one'], explanation: 'The first option is correct in the deterministic fixture.', unit_ids: [source.metadata.id],
+      }],
+    });
+    expect(() => validateCurricula([curriculum], [source], [practice])).not.toThrow();
+    practice.questions[0]!.course_module = 'first-module';
+    expect(() => validateCurricula([curriculum], [source], [practice])).not.toThrow();
+    practice.questions[0]!.course_module = 'missing-module';
+    expect(() => validateCurricula([curriculum], [source], [practice])).toThrow('unknown course module');
+    practice.questions[0]!.course_module = 'first-module';
+    practice.questions[0]!.unit_ids = ['fpp:other'];
+    expect(() => validateCurricula([curriculum], [source], [practice])).toThrow('no mapped source unit');
   });
 
   it('validates MCQ answer contracts', () => {

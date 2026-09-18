@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 4
+revision: 5
 questions:
   - id: fpp:kubernetes-security-access/q-kubeconfig
     kind: scenario
@@ -43,3 +43,27 @@ questions:
       - Workload identity can exchange Kubernetes identity for short-lived cloud credentials.
       - A static Kubernetes Secret containing long-lived cloud keys is not required by that model.
     objective_ids: [fpp:kubernetes-security-access/workload]
+  - id: fpp:kubernetes-security-access/q-tls-context
+    kind: scenario
+    prompt: Your kubeconfig context points at the intended cluster, but kubectl reports a server certificate hostname mismatch before listing Pods. Would adding a RoleBinding fix it, and what should you inspect without exposing credentials?
+    model_answer: No. Server trust verification failed before the intended API action could be authorized. Check the selected context, configured API endpoint, trusted CA and certificate names/validity. A context joins cluster, user and optional namespace; it is not a permission grant. Fix the endpoint or trusted certificate configuration rather than bypassing TLS verification or dumping raw kubeconfig credentials.
+    critical_points:
+      - TLS server identity verification and API authorization are different boundaries.
+      - Context and certificate inspection should not expose private keys or tokens.
+    objective_ids: [fpp:kubernetes-security-access/client-trust]
+  - id: fpp:kubernetes-security-access/q-api-scope
+    kind: predict
+    prompt: A ClusterRole permits get and list on pods in the core API group, and a RoleBinding attaches it to learner in sandbox. Does learner automatically gain access to Deployments in sandbox or Pods in every namespace?
+    model_answer: Neither follows. Pods are in the core group, represented by an empty apiGroups string; Deployments are in apps and need an appropriate separate rule. A RoleBinding scopes the ClusterRole's namespaced permissions to the binding's namespace. Defining a ClusterRole does not itself grant cluster-wide access.
+    critical_points:
+      - RBAC matches verb, API group, resource and scope.
+      - A namespaced RoleBinding does not become cluster-wide because it references a ClusterRole.
+    objective_ids: [fpp:kubernetes-security-access/client-trust, fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/q-image-runtime
+    kind: scenario
+    prompt: An image was scanned and an imagePullSecret lets the node download it. The Pod then requests privileged execution. Which security claim is still unsupported, and where would you constrain it?
+    model_answer: Registry access and an image scan do not prove safe runtime privileges. Set compatible Pod/container securityContext restrictions such as non-root execution, disallowed privilege escalation and reduced capabilities, and enforce the allowed configuration through admission policy. The runtime/kernel enforces accepted execution settings; image trust, admission and process restrictions are separate controls.
+    critical_points:
+      - imagePullSecret grants registry authentication, not image trust or safe execution.
+      - Artifact checks do not replace admission and runtime privilege restrictions.
+    objective_ids: [fpp:kubernetes-security-access/artifact-execution, fpp:kubernetes-security-access/workload]

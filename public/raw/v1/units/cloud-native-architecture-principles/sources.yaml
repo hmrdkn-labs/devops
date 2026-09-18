@@ -1,6 +1,27 @@
 schema_version: 1
 unit_id: fpp:cloud-native-architecture-principles
 sources:
+  - id: fpp:cloud-native-architecture-principles/source-autoscaling
+    title: "Autoscaling Workloads"
+    url: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Horizontal versus vertical scaling and separate controller responsibilities."
+  - id: fpp:cloud-native-architecture-principles/source-node-autoscaling
+    title: "Node Autoscaling"
+    url: https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Placement constraints, node provisioning and capacity limitations."
+  - id: fpp:cloud-native-architecture-principles/source-service-mesh
+    title: "Istio Architecture"
+    url: https://istio.io/latest/docs/ops/deployment/architecture/
+    publisher: "Istio"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Envoy data plane and Istiod control plane in sidecar mode."
   - id: source:cncf-cloud-native-definition
     title: Cloud Native Definition
     url: https://github.com/cncf/toc/blob/main/DEFINITION.md

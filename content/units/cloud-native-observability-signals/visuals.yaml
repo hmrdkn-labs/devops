@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
-revision: 3
+revision: 4
 visuals:
   - id: fpp:cloud-native-observability-signals/visual-evidence-chain
     kind: evidence
@@ -12,3 +12,13 @@ visuals:
       - "Prometheus up=1 + Collector export success: telemetry transport proof"
       - "representative checkout + latency/error window: recovery evidence"
     teaching_point: No single signal is complete observability; combine complementary evidence until the user-visible behavior is explained and verified.
+  - id: fpp:cloud-native-observability-signals/visual-prometheus-owners
+    kind: flow
+    eyebrow: Metrics collection path
+    title: Export, scrape, store, evaluate, notify
+    lines:
+      - "host exporter / instrumented app → HTTP metrics endpoint"
+      - "Prometheus discovers target → pulls metrics → stores labeled time series"
+      - "PromQL and rules → firing alert → Alertmanager routes notification"
+      - "service SLI → target + window = SLO; scraping health is a different measurement"
+    teaching_point: Each component owns a different telemetry boundary; successful collection does not prove the user's transaction succeeds.

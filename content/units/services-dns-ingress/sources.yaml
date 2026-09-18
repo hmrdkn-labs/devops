@@ -1,6 +1,13 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
 sources:
+  - id: fpp:services-dns-ingress/source-mesh-architecture
+    title: "Istio Architecture"
+    url: https://istio.io/latest/docs/ops/deployment/architecture/
+    publisher: "Istio"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Proxy data-plane placement versus configuration and certificate control plane."
   - id: source:kubernetes-services
     title: Service
     url: https://kubernetes.io/docs/concepts/services-networking/service/

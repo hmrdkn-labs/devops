@@ -1,6 +1,20 @@
 schema_version: 1
 unit_id: fpp:kubernetes-storage-lifecycle
 sources:
+  - id: fpp:kubernetes-storage-lifecycle/source-docker-volumes
+    title: "Docker Volumes"
+    url: https://docs.docker.com/engine/storage/volumes/
+    publisher: "Docker"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Container writable layer, independent volume lifecycle and storage drivers."
+  - id: fpp:kubernetes-storage-lifecycle/source-pod-volumes
+    title: "Kubernetes Volumes"
+    url: https://kubernetes.io/docs/concepts/storage/volumes/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Pod-scoped emptyDir, hostPath and claim-backed volume distinctions."
   - id: source:kubernetes-storage-lifecycle-persistent-volumes
     title: Persistent Volumes
     url: https://kubernetes.io/docs/concepts/storage/persistent-volumes/

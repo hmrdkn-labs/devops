@@ -1,6 +1,13 @@
 schema_version: 1
 unit_id: fpp:kubernetes-networking-request-path
 sources:
+  - id: fpp:kubernetes-networking-request-path/source-network-plugins
+    title: "Network Plugins"
+    url: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "CRI runtime integration loads CNI plugins; modern kubelet does not manage CNI."
   - id: source:kubernetes-cluster-networking
     title: Cluster Networking
     url: https://kubernetes.io/docs/concepts/cluster-administration/networking/

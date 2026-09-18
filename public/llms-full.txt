@@ -44,6 +44,106 @@ Replicas, health checks, failure-domain spreading, retry budgets, graceful degra
 
 **Serverless** platforms abstract much of the server lifecycle from the application owner and often scale execution based on requests or events. "Serverless" does not mean no servers exist; it means the infrastructure lifecycle is more strongly delegated to the platform.
 
+## Choose the autoscaler by the resource it changes
+
+| Mechanism | Changes | Typical evidence and limit |
+| --- | --- | --- |
+| Horizontal Pod Autoscaler (HPA) | Desired replicas of a scalable workload | Workload metrics, HPA conditions, replica changes; needs usable signals and available placement capacity |
+| Vertical Pod Autoscaler (VPA) | Recommendations or updates to Pod/container resource requests | Recommendations and applied resources; an installed add-on, not a built-in way to add nodes |
+| Cluster Autoscaler | Capacity in supported node groups | Unschedulable Pods and node-group scaling events; constrained by provider integration, group limits, and placement rules |
+
+The HPA controller calculates a workload replica target from configured metrics
+and bounds such as `minReplicas` and `maxReplicas`. CPU utilization targets are
+relative to configured CPU requests; missing requests or a missing metrics API
+can prevent the expected decision. Kubernetes workload controllers create the
+additional Pods, the scheduler assigns them, and kubelets execute them.
+
+VPA addresses a different problem: an individual replica may need more memory
+or a better CPU request. Update modes and supported versions determine whether
+it only recommends changes or updates workloads, and whether disruption is
+involved. Coordinate HPA and VPA policies instead of letting both independently
+change the same CPU-utilization relationship.
+
+Cluster Autoscaler can add suitable nodes when Pods cannot be scheduled with
+existing capacity. It does not create extra application replicas, and more nodes
+do not fix an impossible label constraint, an unavailable zonal volume, or an
+incorrect resource request. Scale-down also requires checking whether workloads
+can safely move and whether disruption constraints allow it.
+
+### Worked scaling chain
+
+```text
+checkout CPU demand rises -> HPA requests 6 replicas instead of 3
+  -> workload controller creates 3 Pods -> scheduler finds insufficient capacity
+  -> node autoscaler requests suitable nodes -> nodes become usable
+  -> scheduler assigns Pods -> kubelets start them -> readiness permits traffic
+```
+
+This is a conceptual sequence, not a guarantee of instant scaling. Check HPA
+conditions, Pending Pod events, node readiness, rollout readiness, and request
+latency. Six requested replicas do not prove six ready replicas or twice the
+throughput; a saturated shared database may remain the bottleneck.
+
+## Serverless is delegated infrastructure, not absent infrastructure
+
+A request-driven function or container service can provision execution capacity
+when events arrive and release idle capacity afterward. That fits bursty webhook
+processing where each invocation can finish independently. The platform still
+owns servers, networking, scheduling, and isolation.
+
+Tradeoffs include cold-start latency, execution limits, external state management,
+provider integration, and pricing. A continuously busy, latency-sensitive service
+or specialized long-running process may fit managed containers better. Serverless
+does not require Kubernetes; Kubernetes-based platforms such as Knative are one
+possible implementation.
+
+## Service mesh adds a communication operating model
+
+Microservices can duplicate transport concerns: service identity, encrypted
+connections, traffic policy, retries, and telemetry. A service mesh moves some
+of that behavior into a managed communication layer. A **sidecar** is a companion
+container in a Pod; a proxy sidecar is one mesh deployment pattern, not the
+definition of every sidecar or every mesh.
+
+In Istio's sidecar model, **Envoy** proxies handle intercepted workload traffic.
+**Istiod** distributes configuration and workload-identity certificates. Istiod
+is not a proxy hop for every request. Istio also supports an ambient model with
+different proxy placement, so do not memorize “one sidecar per Pod” as universal.
+
+```text
+policy/route intent -> mesh control plane -> proxy configuration
+request: app A -> local proxy -> network -> destination proxy -> app B
+telemetry: proxies -> monitoring backend
+```
+
+Mesh mutual TLS authenticates and encrypts the configured proxy-to-proxy
+connection; it does not automatically prove application authorization, safe
+database access, or correct business behavior. A mesh adds resource overhead,
+configuration, and another failure surface. Adopt it for an explicit cross-service
+need, not merely because an application has several Pods.
+
+### Understand an Istio installation and first-app walkthrough
+
+The KCNA-level goal is to identify what was installed and what changed on the
+request path, not to memorize a version-specific installation command.
+
+1. Choose a version-compatible learning installation/profile and a dataplane
+   mode. A demo profile is not a production sizing or security recommendation.
+2. Locate the control-plane components and confirm they are ready. This proves
+   installation health, not that every workload is participating in the mesh.
+3. Enroll an isolated learning namespace/workload according to the chosen mode.
+   In sidecar mode, inspect the new Pod's containers for the companion proxy;
+   existing Pods may need replacement to receive injection.
+4. Send one catalog-to-inventory request, then inspect proxy traffic/telemetry.
+   Change one authorized routing or security policy and repeat the same request.
+   Compare the expected effect with the observed response and counters.
+
+Installing Istio without enrolling a workload or exercising a request does not
+prove a service-mesh path. Sidecar injection modifies Pod creation; it does not
+turn the API server into a traffic proxy. Consult the current installation guide
+for commands and cleanup in an isolated cluster; the learning platform does not
+provision a mesh on your behalf.
+
 ## Portability is a spectrum
 
 Containers and Kubernetes can reduce coupling to individual hosts, but applications can still depend on provider-specific databases, identity systems, storage semantics, or load balancers. Cloud native aims for explicit interfaces and automation, not a guarantee that every workload can move unchanged between providers.
@@ -113,6 +213,47 @@ That changes the operating model. Instead of a human laptop being the only sourc
 
 Git remains a record of intended state; the GitOps controller is the translator/reconciler. Kubernetes controllers still own Kubernetes workload reconciliation beneath it.
 
+## Push deployment and pull reconciliation
+
+In a push pipeline, an external job obtains target-cluster access and calls its
+API to deploy a release. In a pull model, an agent with target access retrieves
+desired state from a repository and reconciles it. Both can use Git; storing a
+YAML file in Git and running `kubectl apply` once does not by itself establish
+continuous GitOps reconciliation.
+
+The credential boundary changes, rather than disappearing. A pull agent needs
+appropriate cluster permissions and repository access; CI can build an artifact
+without holding production write credentials. Repository permissions, promotion
+reviews, secret handling, and controller scope still require design.
+
+## Argo CD: trace one application change
+
+Argo CD is a Kubernetes-focused GitOps delivery tool. An **Application** describes
+the desired source (repository, revision, and path) and destination (cluster and
+namespace). Argo CD renders supported manifest formats, compares desired and
+live resources, and synchronizes according to its configured policy.
+
+```text
+application source + Dockerfile -> CI builds reviewed image digest
+  -> reviewed manifest commit references digest
+  -> Argo CD obtains source and renders resources
+  -> application controller compares desired resources with live API objects
+  -> permitted sync updates Kubernetes objects
+  -> Kubernetes controllers/kubelets reconcile and run the workload
+```
+
+**Sync status** answers whether resources match the desired source;
+**health status** evaluates live resource health. A synced Application can still
+contain an unhealthy Deployment or an application that returns errors. Record
+the exact revision and verify a real transaction.
+
+Automated sync, pruning removed resources, and self-healing manual drift are
+explicit policies, not one inseparable default. For a walkthrough, first identify
+the source/destination, inspect the resource diff, then synchronize only an
+authorized learning environment. Removing a manifest with pruning enabled can
+delete the corresponding live resource. Avoid putting private keys, cluster
+credentials, or plaintext production Secrets in the repository.
+
 ## Drift and rollback
 
 If someone manually edits a live object, a GitOps reconciler may detect that drift and restore the declared state. That behavior is valuable only when Git truly is the intended source of truth and emergency procedures are designed around reconciliation.
@@ -167,6 +308,95 @@ Metrics are numeric measurements over time: request rate, error count, CPU usage
 Prometheus commonly discovers or is configured with targets, scrapes metrics, stores labeled time series, and evaluates queries and recording/alerting rules. Alertmanager handles notification routing for alerts produced by Prometheus rules.
 
 A healthy Prometheus target proves that a metrics endpoint was scraped successfully. It does not prove every user transaction is healthy.
+
+## SLI, SLO, and SLA start with the user outcome
+
+A **service-level indicator (SLI)** is a defined measurement of service behavior,
+such as successful checkout requests divided by eligible checkout requests.
+A **service-level objective (SLO)** is a target for an SLI over a stated window.
+An **SLA** is an agreement that may attach consequences to not meeting service
+commitments. A graph is not an SLO until the measurement, target, and window are
+explicit; an internal target is not automatically a customer contract.
+
+For an authored example, “99.9% successful eligible checkouts over 30 days” is
+an availability SLO. Its error budget permits 0.1% unsuccessful eligible requests
+over that window. A latency objective needs its own definition, such as a
+specified proportion finishing below a threshold. Decide how retries, malformed
+requests, maintenance, and low traffic affect the measurement before using it
+for release or incident decisions.
+
+## Prometheus: collection, storage, rules, and notification
+
+```text
+application / exporter exposes metrics over HTTP
+  -> Prometheus discovers target and periodically scrapes it
+  -> local time-series storage -> PromQL / recording and alert rules
+  -> firing alerts -> Alertmanager groups/routes notifications
+  -> dashboard queries display measurements
+```
+
+An **exporter** translates another system's measurements into a scrapeable
+format. Node Exporter exposes host operating-system metrics, not all application
+business metrics. Instrument an application's checkout outcomes separately.
+Prometheus normally pulls target metrics; the presence of exporters does not
+turn every target into a metrics-pushing agent. Specialized mechanisms such as
+Pushgateway exist for particular use cases, not as a replacement for all scrapes.
+
+The following is an independently authored configuration example. It describes
+collection intent only; no collector is started by reading it.
+
+```yaml
+global:
+  scrape_interval: 30s
+scrape_configs:
+  - job_name: example-api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['example-api:9100']
+```
+
+The target must resolve and expose the endpoint to Prometheus. A production
+deployment additionally needs authentication/TLS where appropriate, sensible
+retention, storage sizing, and version-compatible configuration. Inspect target
+status and a known series before trusting a dashboard. `up=1` means a successful
+scrape for that target, not a successful checkout.
+
+### Metrics types and labels
+
+| Type | Example | Interpretation |
+| --- | --- | --- |
+| Counter | Total HTTP requests | Accumulates and can reset on restart; use a rate over time for throughput |
+| Gauge | Current queue length | Can increase or decrease |
+| Histogram | Request durations in buckets | Supports aggregated distribution/quantile estimates with suitable queries |
+| Summary | Instrumented duration quantiles | Client-calculated quantiles have different aggregation behavior from histogram buckets |
+
+Labels distinguish series, for example `method="GET"` and `status="200"`.
+Unbounded labels such as every user ID or request ID create many time series,
+increasing cost and memory pressure. Put individual request correlation in traces
+or logs instead of making one metric series per request.
+
+## Monitoring Kubernetes requires several perspectives
+
+Node Exporter measures hosts. Kubelet/container metrics can describe workload
+resource consumption. kube-state-metrics exposes measurements derived from API
+object state, such as declared and available replicas; it does not replace a
+per-process CPU measurement. An application exporter or instrumentation provides
+business behavior. Kubernetes service discovery helps Prometheus find suitable
+targets as Pods change; relabeling selects targets and labels.
+
+Metrics Server supplies resource metrics commonly used by `kubectl top` and
+resource-based autoscaling. It is not a durable Prometheus replacement or a full
+historical monitoring system. A DaemonSet is often appropriate for a host exporter,
+while an application endpoint can travel with its Deployment.
+
+## Cost monitoring is also a feedback loop
+
+Compare requested resources, observed usage, idle node capacity, storage, and
+network charges; allocate costs to meaningful owners or workloads. Low average
+CPU does not by itself justify reducing memory, eliminating redundancy, or
+removing a peak-demand margin. Define the SLO first, then right-size and test
+whether the service still meets it. Telemetry itself has a cost: retention,
+scrape frequency, and label cardinality all matter.
 
 ## Logs explain discrete events from one component
 
@@ -365,6 +595,25 @@ Cloud-native systems benefit from stable interfaces between responsibilities. Ex
 - CSI for storage integration.
 
 These boundaries allow implementations to evolve behind a known contract. Do not confuse an interface with one implementation: CNI is not itself a single network plugin, and CSI is not a storage backend.
+
+## SIGs own areas; KEPs explain proposed changes
+
+A Kubernetes **Special Interest Group (SIG)** brings contributors together
+around an area such as networking, storage, authentication, or autoscaling.
+A Working Group can coordinate a cross-cutting effort. These are collaboration
+and ownership structures, not processes that run on a worker node.
+
+A **Kubernetes Enhancement Proposal (KEP)** records the motivation, design,
+risks, testing, and graduation expectations for a significant change. A proposal
+can be discussed or approved before a feature is shipped or enabled. Track its
+release status and relevant feature gates in the version you operate; finding
+a KEP is not proof that your cluster implements it.
+
+Open standards and open-source projects also differ. OCI specifications define
+container image/runtime contracts; containerd is an implementation. CNI defines
+network integration conventions; a chosen plugin implements them. Shared
+interfaces reduce integration coupling, but replaceability still requires
+compatible versions, semantics, configuration, and operational support.
 
 ## Community collaboration is part of the architecture story
 
@@ -2308,6 +2557,39 @@ Four responsibilities are commonly involved:
 3. **Service forwarding** — kube-proxy or another dataplane programs how traffic for a Service address reaches eligible endpoints.
 4. **North-south HTTP routing and policy** — an Ingress/Gateway implementation handles configured external routing; NetworkPolicy can restrict allowed Pod traffic when the network implementation enforces it.
 
+## CNI is an interface; the installed network is an implementation
+
+The **Container Network Interface (CNI)** defines how a runtime integration calls
+network plugins to configure a container network namespace. In a typical
+Kubernetes cluster, the CRI runtime invokes the configured CNI plugin while
+creating the Pod sandbox. The plugin and related node agents establish interfaces,
+addresses, and the connectivity needed by the implementation. The kubelet is not
+itself an overlay packet-forwarding service.
+
+```text
+scheduler assigns Pod -> kubelet asks runtime to create Pod sandbox
+  -> runtime's network integration invokes CNI plugin
+  -> interfaces/IPAM/routes are configured -> containers use Pod networking
+traffic then follows the installed network's routing/overlay/dataplane
+```
+
+**IPAM** is IP-address management: selecting and tracking addresses without
+collisions. Implementations can use routed Pod networks, overlays that encapsulate
+traffic between nodes, or cloud-network integration. Networking and policy may
+come from the same product or different compatible components.
+
+The course's Weave example is a concrete overlay-network implementation to
+recognize, not a Kubernetes requirement or a recommendation to install an old
+demo version. Product support and version compatibility change. The durable
+skill is distinguishing the interface, address management, routing/encapsulation,
+and enforcement responsibilities. Use the selected implementation's current
+documentation before choosing or operating it.
+
+A failed sandbox/network setup can prevent a Pod from starting. Inspect Pod
+events and the installed node network agents before changing Service selectors:
+Service selection cannot repair a missing Pod interface. Later, a usable Pod
+interface still does not prove inter-node connectivity or application success.
+
 ## Why Pod IPs matter
 
 Assigning only node IP addresses would force every application replica to share a node-level identity and require extra port mapping or proxy indirection for all Pod-to-Pod communication. The Kubernetes networking model instead gives each Pod its own network identity within the cluster network model.
@@ -3196,6 +3478,90 @@ client request
 
 **Admission** evaluates requests after authentication and authorization but before accepted objects are persisted. Admission can validate or mutate objects. Pod Security Admission is one example that can enforce Pod Security Standards at namespace scope.
 
+## TLS, certificates, and kubeconfig come before API permission
+
+TLS protects a connection and lets a client verify the API server's identity.
+The server presents a certificate; the client checks its trusted certificate
+authority (CA), validity period, and the server name. A trusted server certificate
+does not give the client permission to list Pods.
+
+Client-certificate authentication adds a separate identity check. In the common
+Kubernetes X.509 model, a certificate signed by a trusted client CA identifies
+the caller; the certificate's subject can supply the username and groups.
+RBAC then determines what that identity may do. Other authentication mechanisms,
+including bearer tokens and external credential plugins, do not require each
+human to have a client certificate.
+
+Certificate creation has distinct responsibilities:
+
+```text
+requester creates private key -> requester creates certificate signing request
+  -> authorized approver checks identity and intended use
+  -> trusted signer issues certificate
+  -> client uses certificate + private key
+  -> API server authenticates identity -> authorization checks permissions
+```
+
+The private key must stay private. Generating a key, submitting a CSR, approving
+it, and signing it are different actions; Kubernetes does not automatically
+approve every human certificate request. Do not disable TLS verification to
+hide an expired certificate or hostname mismatch.
+
+A **kubeconfig** organizes connection settings rather than granting access on its
+own. A `cluster` entry names the API endpoint and server trust information;
+a `user` entry describes credentials or how to obtain them; a `context` joins
+a cluster, user, and optional default namespace. Switching context changes which
+combination `kubectl` uses, not the command's Kubernetes meaning.
+
+Safe first inspections include `kubectl config current-context`,
+`kubectl config get-contexts`, and `kubectl auth can-i get pods -n sandbox`.
+Keep kubeconfigs private if they contain or can obtain credentials. Treat an
+untrusted kubeconfig as executable configuration: credential plugins can run
+programs. Avoid publishing `kubectl config view --raw` output.
+
+## API groups connect manifests to RBAC rules
+
+`apiVersion` identifies an API group and version. A Pod uses the core group
+(`apiVersion: v1`); a Deployment uses the `apps` group (`apps/v1`); a Role uses
+`rbac.authorization.k8s.io/v1`. The API server exposes discovery information so
+clients can learn which resources and versions a cluster supports.
+
+In an RBAC rule, the core group's name is the empty string `""`, not `"v1"`.
+A rule granting `get` on `pods` in `apiGroups: [""]` does not grant access to
+`deployments` in `apps`. Resource names are generally plural API resource names,
+not the manifest's capitalized `kind`. Use `kubectl api-resources` to inspect
+group names and namespace scope; use `kubectl api-versions` for served versions.
+
+| Permission object | Binding | Effective scope |
+| --- | --- | --- |
+| Role in `sandbox` | RoleBinding in `sandbox` | That namespace |
+| ClusterRole | RoleBinding in `sandbox` | The binding's namespace, for namespaced resources |
+| ClusterRole | ClusterRoleBinding | Cluster-wide permission, including suitable cluster-scoped resources |
+
+A ClusterRole definition alone grants nothing. For a namespace-only Pod reader,
+prefer a RoleBinding rather than giving cluster-wide permissions by convenience.
+
+## Image security and process security are separate
+
+An image reference names an artifact, not a trust guarantee. Use reviewed
+registries, immutable digest references where reproducibility matters, vulnerability
+scanning, and an appropriate provenance/signature verification policy. An
+`imagePullSecret` supplies registry credentials; it does not scan or certify an
+image. `imagePullPolicy: Always` is also not a vulnerability check.
+
+A Pod or container `securityContext` configures aspects of execution such as
+user IDs, capability sets, privilege escalation, seccomp, and filesystem access.
+For example, a compatible application can run as a non-root user, disallow
+privilege escalation, drop unnecessary capabilities, and use a read-only root
+filesystem with explicit writable mounts. These choices need testing: an image
+that writes logs under `/var/log` may fail with an entirely read-only root.
+
+Pod-level settings provide shared defaults where supported; container-level
+settings can override overlapping settings for that container. Admission can
+reject an unsafe proposed configuration. Node/runtime/kernel mechanisms enforce
+the accepted execution settings. A scanned image can still be run with unsafe
+privileges, and a restricted process can still contain vulnerable software.
+
 ## Workload identity is not a human kubeconfig
 
 Pods commonly receive a **ServiceAccount** identity. That identity can be bound to RBAC permissions for Kubernetes API access. Give workloads only the permissions they require; do not treat the default ServiceAccount as an all-purpose application identity.
@@ -3256,6 +3622,36 @@ Canonical ID: fpp:kubernetes-storage-lifecycle
 # Kubernetes persistent storage lifecycle
 
 Containers and Pods are replaceable, so durable data needs a lifecycle that is not tied to one container writable layer.
+
+## Start with Docker storage boundaries
+
+Image layers describe the reusable artifact. A container writable layer holds
+changes made by that container; deleting the container discards that layer.
+Restarting the same Docker container is different from removing it and creating
+a new one. Do not use its writable layer as the only durable database store.
+
+| Mechanism | Location/lifecycle | Typical use and caution |
+| --- | --- | --- |
+| Docker named volume | Managed by Docker and independent of a particular container | Persistent application data; deleting the volume still deletes its data |
+| Bind mount | A chosen host path exposed to the container | Local development or host files; host layout and permission coupling |
+| tmpfs mount | Memory-backed, non-persistent storage | Temporary working data; contents do not survive container stop/restart |
+
+Docker's local volume driver is one implementation. Volume-driver plugins can
+integrate other storage systems, subject to plugin and backend semantics. A
+driver chooses how storage is made available; it does not promise backups,
+cross-host access, or availability across zones. A Docker volume plugin and a
+Kubernetes CSI driver solve related integration problems but are not
+interchangeable configuration APIs.
+
+## A Pod volume is not always persistent storage
+
+A Kubernetes `volume` is declared by the Pod and mounted into containers with
+`volumeMounts`. An `emptyDir` can share scratch data between containers and
+survives an individual container restart, but its lifetime is the Pod's. A
+`hostPath` uses node-local storage and can expose sensitive host files; it is
+not portable durable storage merely because it survives a Pod deletion on that
+same node. A PVC-backed volume follows the separate claim/backing-storage
+lifecycle described below.
 
 ## Separate request, policy, resource, and executor
 
@@ -3711,6 +4107,53 @@ external HTTP → load balancer / ingress controller → Service → Pod
 Debug each relationship: DNS record, Service port and targetPort, selector,
 EndpointSlice membership, readiness, network policy, and actual application
 listener.
+
+## Read the port mapping rather than guessing from the image
+
+Suppose `catalog` exposes Service `port: 80`, forwards to `targetPort: 8080`,
+and selects `app: catalog`. A client uses the Service address on port 80;
+the selected Pod process must actually listen on 8080. An image's `EXPOSE`
+metadata or a Pod's `containerPort` declaration does not start a listener,
+publish a port, or create a Service.
+
+A normal ClusterIP Service has a stable virtual address; a headless Service
+(`clusterIP: None`) lets DNS expose endpoint addresses instead of that virtual IP.
+Clients and workload-specific discovery logic must account for the distinction.
+Cluster DNS, commonly CoreDNS, answers Service-name queries; it does not proxy
+each application HTTP request.
+
+Read-only checks include `kubectl get service catalog -n sandbox`,
+`kubectl get endpointslices -n sandbox -l kubernetes.io/service-name=catalog`,
+and the Pod's readiness/events. A healthy endpoint list is configuration/state
+evidence; a request from the intended client tests the exercised network path.
+
+## Ingress, a gateway, and a service mesh are different boundaries
+
+An Ingress/Gateway commonly handles entry traffic into the application system.
+A service mesh commonly manages communication among participating workloads.
+They may share proxy technology but have different scopes; Envoy can implement
+an entry gateway or a workload-side proxy depending on where it is deployed.
+
+For an Istio sidecar example:
+
+```text
+external browser -> gateway proxy -> catalog proxy -> catalog app
+catalog app -> catalog proxy -> inventory proxy -> inventory app
+mesh control plane -> configuration/certificates for participating proxies
+```
+
+The mesh control plane configures communication; proxies execute it. A route
+change that sends 10% of requests to a canary version needs matching workload
+labels, eligible endpoints, and proxy configuration. Creating the route object
+alone does not prove the ratio or the request outcome. Verify traffic counters
+and responses over a meaningful sample.
+
+To understand a mesh demo, identify the control plane, the workloads enrolled
+in its dataplane, the proxy placement, and the exact request being tested.
+Compare that request before and after one policy/route change. Mutual TLS,
+timeouts, or retries do not remove the need for application-level authorization
+and safe retry semantics. Installing a mesh is optional; ordinary Kubernetes
+Services and Pod networking work without it.
 
 ---
 

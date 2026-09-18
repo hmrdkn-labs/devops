@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
-revision: 3
+revision: 4
 questions:
   - id: fpp:cloud-native-observability-signals/q-latency
     kind: scenario
@@ -25,4 +25,28 @@ questions:
     critical_points:
       - "Metrics, a sampled trace and correlated logs have different scopes; timeout location is not root cause."
       - "Successful scraping/export is not recovery; transaction outcomes and population signals are needed."
+    objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools]
+  - id: fpp:cloud-native-observability-signals/q-service-objective
+    kind: explain
+    prompt: "Classify these statements as SLI, SLO or SLA conceptually: measured eligible checkout success ratio; a target of 99.9% over 30 days; a customer agreement with service credits. What must be defined before an error-budget decision is meaningful?"
+    model_answer: The measured ratio is an SLI, the target plus time window is an SLO, and the contractual commitment with consequences is an SLA. Define eligible requests, successful outcomes, exclusions and measurement window first. The example SLO allows 0.1% unsuccessful eligible requests over that window; it does not make every dashboard a contract or prove all service dimensions meet their targets.
+    critical_points:
+      - Measurement, target/window and agreement are distinct concepts.
+      - An error budget depends on a well-defined service indicator and window.
+    objective_ids: [fpp:cloud-native-observability-signals/reliability]
+  - id: fpp:cloud-native-observability-signals/q-prometheus-path
+    kind: predict
+    prompt: A scrape job targets example-api:9100/metrics every 30 seconds. Which component fetches and stores metrics, which routes firing-alert notifications, and why is a request ID a risky metric label?
+    model_answer: Prometheus pulls the metrics endpoint and stores labeled time series, then evaluates configured queries and alert rules. Alertmanager groups and routes firing-alert notifications; it is not the target scraper. A distinct request-ID label can create a series for every request, causing unbounded cardinality and resource cost. Use bounded metric dimensions and put individual request correlation in traces/logs.
+    critical_points:
+      - Scraping/storage/rule evaluation and alert notification routing have different owners.
+      - Unbounded label cardinality is a resource/cost risk.
+    objective_ids: [fpp:cloud-native-observability-signals/tools, fpp:cloud-native-observability-signals/reliability]
+  - id: fpp:cloud-native-observability-signals/q-monitoring-perspectives
+    kind: scenario
+    prompt: Node Exporter reports healthy host CPU and Metrics Server serves kubectl top, but users still get checkout errors. What data is missing, and how would kube-state-metrics and application telemetry contribute differently?
+    model_answer: Host/resource health does not measure checkout outcomes. kube-state-metrics can expose API object state such as declared and available replicas; kubelet/container metrics describe resource consumption; application metrics and traces/logs reveal transaction success and dependencies. Metrics Server supplies recent resource metrics for tooling/autoscaling, not full historical monitoring. Repeat the user transaction and compare the relevant service SLI over time before declaring recovery.
+    critical_points:
+      - Host, container, API-object and application measurements describe different scopes.
+      - A working resource-metrics pipeline is not user-outcome proof.
     objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools]
