@@ -31,10 +31,19 @@ passes **187 cases / 44 intentional skips** across desktop, tablet, and mobile
 (231 cases total). The generated content manifest starts `fb7d5aefbdf0`.
 `revision:check --base=origin/main` and `git diff --check` are green.
 
-**Release state:** implementation and local acceptance complete; commit, push,
-PR/CI, merge, protected deployment, and production verification are the
-remaining steps. No implementation blocker remains. Production still serves the
-previous release until those protected release steps complete.
+**Release state: merged and deployed.** The three release commits were preserved
+through [PR #15](https://github.com/hmrdkn-labs/devops/pull/15), which merged as
+source `64b3711db298e295dff77ac2a4fbbba99236ea31`. Exact-head PR CI run
+`35309874764` passed validation, browser, and no-production-secrets checks; the
+post-merge CI run `35310206615` also passed for the exact merged source.
+Protected owner-mode deployment run `35310521663` rebuilt that immutable source,
+applied D1 migrations, deployed the Worker and route, restored owner secrets,
+and passed its public route/manifest/auth verification. Independent production
+verification reports `/api/health` `status=ok`, D1 `database=ready`, and manifest
+SHA `fb7d5aefbdf068e47b2fa7aeee49de8ea906bb02d4f0cc55e7704db59b74a7d7`,
+matching the generated release artifact. The live `/kcna/` page exposes the new
+13-module / 116-step course spine. **No implementation or deployment blocker
+remains.**
 
 **Current work: learner journey simplification.** Research and the feature/access
 map are recorded in [the redesign plan](docs/LEARNER-JOURNEY-REDESIGN.md).
