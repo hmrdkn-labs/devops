@@ -10,6 +10,95 @@ Prometheus commonly discovers or is configured with targets, scrapes metrics, st
 
 A healthy Prometheus target proves that a metrics endpoint was scraped successfully. It does not prove every user transaction is healthy.
 
+## SLI, SLO, and SLA start with the user outcome
+
+A **service-level indicator (SLI)** is a defined measurement of service behavior,
+such as successful checkout requests divided by eligible checkout requests.
+A **service-level objective (SLO)** is a target for an SLI over a stated window.
+An **SLA** is an agreement that may attach consequences to not meeting service
+commitments. A graph is not an SLO until the measurement, target, and window are
+explicit; an internal target is not automatically a customer contract.
+
+For an authored example, “99.9% successful eligible checkouts over 30 days” is
+an availability SLO. Its error budget permits 0.1% unsuccessful eligible requests
+over that window. A latency objective needs its own definition, such as a
+specified proportion finishing below a threshold. Decide how retries, malformed
+requests, maintenance, and low traffic affect the measurement before using it
+for release or incident decisions.
+
+## Prometheus: collection, storage, rules, and notification
+
+```text
+application / exporter exposes metrics over HTTP
+  -> Prometheus discovers target and periodically scrapes it
+  -> local time-series storage -> PromQL / recording and alert rules
+  -> firing alerts -> Alertmanager groups/routes notifications
+  -> dashboard queries display measurements
+```
+
+An **exporter** translates another system's measurements into a scrapeable
+format. Node Exporter exposes host operating-system metrics, not all application
+business metrics. Instrument an application's checkout outcomes separately.
+Prometheus normally pulls target metrics; the presence of exporters does not
+turn every target into a metrics-pushing agent. Specialized mechanisms such as
+Pushgateway exist for particular use cases, not as a replacement for all scrapes.
+
+The following is an independently authored configuration example. It describes
+collection intent only; no collector is started by reading it.
+
+```yaml
+global:
+  scrape_interval: 30s
+scrape_configs:
+  - job_name: example-api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['example-api:9100']
+```
+
+The target must resolve and expose the endpoint to Prometheus. A production
+deployment additionally needs authentication/TLS where appropriate, sensible
+retention, storage sizing, and version-compatible configuration. Inspect target
+status and a known series before trusting a dashboard. `up=1` means a successful
+scrape for that target, not a successful checkout.
+
+### Metrics types and labels
+
+| Type | Example | Interpretation |
+| --- | --- | --- |
+| Counter | Total HTTP requests | Accumulates and can reset on restart; use a rate over time for throughput |
+| Gauge | Current queue length | Can increase or decrease |
+| Histogram | Request durations in buckets | Supports aggregated distribution/quantile estimates with suitable queries |
+| Summary | Instrumented duration quantiles | Client-calculated quantiles have different aggregation behavior from histogram buckets |
+
+Labels distinguish series, for example `method="GET"` and `status="200"`.
+Unbounded labels such as every user ID or request ID create many time series,
+increasing cost and memory pressure. Put individual request correlation in traces
+or logs instead of making one metric series per request.
+
+## Monitoring Kubernetes requires several perspectives
+
+Node Exporter measures hosts. Kubelet/container metrics can describe workload
+resource consumption. kube-state-metrics exposes measurements derived from API
+object state, such as declared and available replicas; it does not replace a
+per-process CPU measurement. An application exporter or instrumentation provides
+business behavior. Kubernetes service discovery helps Prometheus find suitable
+targets as Pods change; relabeling selects targets and labels.
+
+Metrics Server supplies resource metrics commonly used by `kubectl top` and
+resource-based autoscaling. It is not a durable Prometheus replacement or a full
+historical monitoring system. A DaemonSet is often appropriate for a host exporter,
+while an application endpoint can travel with its Deployment.
+
+## Cost monitoring is also a feedback loop
+
+Compare requested resources, observed usage, idle node capacity, storage, and
+network charges; allocate costs to meaningful owners or workloads. Low average
+CPU does not by itself justify reducing memory, eliminating redundancy, or
+removing a peak-demand margin. Define the SLO first, then right-size and test
+whether the service still meets it. Telemetry itself has a cost: retention,
+scrape frequency, and label cardinality all matter.
+
 ## Logs explain discrete events from one component
 
 Logs contain timestamped records emitted by applications and infrastructure. They are useful for exceptions, startup configuration, request context, and state transitions.

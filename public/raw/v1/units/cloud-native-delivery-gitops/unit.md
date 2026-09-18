@@ -33,6 +33,47 @@ That changes the operating model. Instead of a human laptop being the only sourc
 
 Git remains a record of intended state; the GitOps controller is the translator/reconciler. Kubernetes controllers still own Kubernetes workload reconciliation beneath it.
 
+## Push deployment and pull reconciliation
+
+In a push pipeline, an external job obtains target-cluster access and calls its
+API to deploy a release. In a pull model, an agent with target access retrieves
+desired state from a repository and reconciles it. Both can use Git; storing a
+YAML file in Git and running `kubectl apply` once does not by itself establish
+continuous GitOps reconciliation.
+
+The credential boundary changes, rather than disappearing. A pull agent needs
+appropriate cluster permissions and repository access; CI can build an artifact
+without holding production write credentials. Repository permissions, promotion
+reviews, secret handling, and controller scope still require design.
+
+## Argo CD: trace one application change
+
+Argo CD is a Kubernetes-focused GitOps delivery tool. An **Application** describes
+the desired source (repository, revision, and path) and destination (cluster and
+namespace). Argo CD renders supported manifest formats, compares desired and
+live resources, and synchronizes according to its configured policy.
+
+```text
+application source + Dockerfile -> CI builds reviewed image digest
+  -> reviewed manifest commit references digest
+  -> Argo CD obtains source and renders resources
+  -> application controller compares desired resources with live API objects
+  -> permitted sync updates Kubernetes objects
+  -> Kubernetes controllers/kubelets reconcile and run the workload
+```
+
+**Sync status** answers whether resources match the desired source;
+**health status** evaluates live resource health. A synced Application can still
+contain an unhealthy Deployment or an application that returns errors. Record
+the exact revision and verify a real transaction.
+
+Automated sync, pruning removed resources, and self-healing manual drift are
+explicit policies, not one inseparable default. For a walkthrough, first identify
+the source/destination, inspect the resource diff, then synchronize only an
+authorized learning environment. Removing a manifest with pruning enabled can
+delete the corresponding live resource. Avoid putting private keys, cluster
+credentials, or plaintext production Secrets in the repository.
+
 ## Drift and rollback
 
 If someone manually edits a live object, a GitOps reconciler may detect that drift and restore the declared state. That behavior is valuable only when Git truly is the intended source of truth and emergency procedures are designed around reconciliation.

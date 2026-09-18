@@ -1,6 +1,20 @@
 schema_version: 1
 unit_id: fpp:cloud-native-delivery-gitops
 sources:
+  - id: fpp:cloud-native-delivery-gitops/source-argocd-concepts
+    title: "Argo CD Core Concepts"
+    url: https://argo-cd.readthedocs.io/en/stable/core_concepts/
+    publisher: "Argo CD"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Application source/destination, synchronization and health."
+  - id: fpp:cloud-native-delivery-gitops/source-argocd-sync
+    title: "Argo CD Automated Sync Policy"
+    url: https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
+    publisher: "Argo CD"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Automated sync, pruning and self-healing are separately configured policies."
   - id: source:opengitops-principles
     title: OpenGitOps Principles
     url: https://opengitops.dev/

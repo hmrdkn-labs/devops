@@ -3,17 +3,23 @@ id: fpp:kubernetes-security-access
 slug: kubernetes-security-access
 title: Kubernetes identity, authorization, admission, and workload boundaries
 summary: Separate authentication, RBAC authorization, admission, workload identity, Secret handling, Pod security, and network segmentation into clear security boundaries.
-revision: 4
+revision: 5
 revision_impact: mastery_affecting
 status: published
 layer: kubernetes
-estimated_minutes: 30
+estimated_minutes: 42
 aliases: []
 applicable_versions:
   - product: kubernetes
     range: 1.31-1.37
 prerequisites: [fpp:kubernetes-architecture-components, fpp:kubernetes-namespaces-scope]
 objectives:
+  - id: fpp:kubernetes-security-access/client-trust
+    title: Distinguish TLS server trust, client credentials, kubeconfig contexts, and API group discovery
+    critical: true
+  - id: fpp:kubernetes-security-access/artifact-execution
+    title: Separate image trust and registry credentials from securityContext execution restrictions
+    critical: false
   - id: fpp:kubernetes-security-access/request
     title: Trace an API request through authentication, authorization, and admission
     critical: true
@@ -26,4 +32,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-16
+verified_at: 2026-09-18

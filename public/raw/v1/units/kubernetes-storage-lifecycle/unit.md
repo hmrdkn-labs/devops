@@ -2,6 +2,36 @@
 
 Containers and Pods are replaceable, so durable data needs a lifecycle that is not tied to one container writable layer.
 
+## Start with Docker storage boundaries
+
+Image layers describe the reusable artifact. A container writable layer holds
+changes made by that container; deleting the container discards that layer.
+Restarting the same Docker container is different from removing it and creating
+a new one. Do not use its writable layer as the only durable database store.
+
+| Mechanism | Location/lifecycle | Typical use and caution |
+| --- | --- | --- |
+| Docker named volume | Managed by Docker and independent of a particular container | Persistent application data; deleting the volume still deletes its data |
+| Bind mount | A chosen host path exposed to the container | Local development or host files; host layout and permission coupling |
+| tmpfs mount | Memory-backed, non-persistent storage | Temporary working data; contents do not survive container stop/restart |
+
+Docker's local volume driver is one implementation. Volume-driver plugins can
+integrate other storage systems, subject to plugin and backend semantics. A
+driver chooses how storage is made available; it does not promise backups,
+cross-host access, or availability across zones. A Docker volume plugin and a
+Kubernetes CSI driver solve related integration problems but are not
+interchangeable configuration APIs.
+
+## A Pod volume is not always persistent storage
+
+A Kubernetes `volume` is declared by the Pod and mounted into containers with
+`volumeMounts`. An `emptyDir` can share scratch data between containers and
+survives an individual container restart, but its lifetime is the Pod's. A
+`hostPath` uses node-local storage and can expose sensitive host files; it is
+not portable durable storage merely because it survives a Pod deletion on that
+same node. A PVC-backed volume follows the separate claim/backing-storage
+lifecycle described below.
+
 ## Separate request, policy, resource, and executor
 
 ```text

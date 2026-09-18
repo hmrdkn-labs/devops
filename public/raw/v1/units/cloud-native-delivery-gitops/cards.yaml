@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-delivery-gitops
-revision: 3
+revision: 4
 cards:
   - id: fpp:cloud-native-delivery-gitops/c-ci
     type: short
@@ -32,3 +32,15 @@ cards:
     back: No. Reverting desired application state does not automatically reverse external side effects or data migrations; rollback compatibility must be designed separately.
     critical_points: [Deployment rollback is not universal state rollback]
     objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
+  - id: fpp:cloud-native-delivery-gitops/c-argocd-application
+    type: short
+    front: What does an Argo CD Application identify?
+    back: A desired source, including repository/revision/path, and a destination cluster/namespace, with reconciliation settings.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
+  - id: fpp:cloud-native-delivery-gitops/c-synced-healthy
+    type: scenario
+    front: An Argo CD Application is Synced. Must users be receiving successful responses?
+    back: No. Sync describes agreement with desired resources. Live resource health and a successful user transaction need separate evidence.
+    critical_points: [Desired-state agreement is not transaction health]
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops, fpp:cloud-native-delivery-gitops/pipeline]

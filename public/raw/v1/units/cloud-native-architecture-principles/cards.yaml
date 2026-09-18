@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-architecture-principles
-revision: 3
+revision: 4
 cards:
   - id: fpp:cloud-native-architecture-principles/c-declarative
     type: short
@@ -32,3 +32,21 @@ cards:
     back: No. Containers and Kubernetes reduce some host/platform coupling, but provider-specific managed-service dependencies still create portability constraints.
     critical_points: [Portability is a spectrum and depends on external interfaces]
     objective_ids: [fpp:cloud-native-architecture-principles/properties]
+  - id: fpp:cloud-native-architecture-principles/c-hpa
+    type: short
+    front: What does HPA change, compared with VPA?
+    back: HPA changes a workload's replica target; VPA recommends or changes the resources requested by replicas, depending on its mode.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/c-node-scale
+    type: scenario
+    front: HPA creates more desired replicas but new Pods lack schedulable capacity. Which autoscaling boundary may help?
+    back: A supported node autoscaler can add suitable nodes within provider and group limits. It does not repair impossible placement constraints or increase application replicas itself.
+    critical_points: [Replica intent and usable node capacity are different]
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/c-istiod
+    type: short
+    front: In Istio sidecar mode, which handles requests and which distributes configuration/certificates?
+    back: Envoy workload proxies handle data-plane traffic; Istiod owns control-plane configuration and certificate functions.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-architecture-principles/mesh]

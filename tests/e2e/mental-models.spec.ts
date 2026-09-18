@@ -46,7 +46,7 @@ test('model controls wait for delayed island handlers before accepting a predict
 
 test('KCNA exposes the model catalog and every model has a reachable page', async ({ page }) => {
   await page.goto('/kcna/');
-  await page.getByText('Quiz companions and practice tools', { exact: true }).click();
+  await page.getByText('Guided lessons, mental models, and scheduled review', { exact: true }).click();
   await page.getByRole('link', { name: 'Interactive mental models', exact: true }).click();
   await expect(page).toHaveURL(/\/models\/?$/);
   for (const model of models) {
@@ -78,8 +78,10 @@ test('unit reference offers the same model while preserving the current explanat
   await expect(draft).toHaveValue('My prediction should remain here while I inspect the model.');
 });
 
-test('every model teaches prediction, evidence, failure reasoning, transfer, and replay', async ({ page }) => {
-  for (const model of models) {
+// Keep the traversal budget per scenario: one delayed island should not spend
+// the shared timeout of every remaining model in the catalog.
+test.describe('every model teaches prediction, evidence, failure reasoning, transfer, and replay', () => {
+  for (const model of models) test(model.title, async ({ page }) => {
     await page.goto(`/models/${model.slug}/`);
 
     for (let index = 0; index < model.steps.length; index += 1) {
@@ -117,5 +119,5 @@ test('every model teaches prediction, evidence, failure reasoning, transfer, and
     await page.getByRole('button', { name: 'Replay scenario' }).click();
     await expect(page.getByText(`1 of ${model.steps.length} steps`, { exact: false })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Check prediction & reveal' })).toBeDisabled();
-  }
+  });
 });

@@ -1,6 +1,13 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
 sources:
+  - id: fpp:cncf-ecosystem-community/source-enhancements
+    title: "Kubernetes Enhancements Tracking"
+    url: https://github.com/kubernetes/enhancements
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Enhancement lifecycle, release tracking and technical ownership; KEP approval is not runtime proof."
   - id: fpp:cncf-ecosystem-community/source-cri-contract
     title: Container Runtime Interface
     url: https://kubernetes.io/docs/concepts/containers/cri/

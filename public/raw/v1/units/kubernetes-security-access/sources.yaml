@@ -1,6 +1,34 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
 sources:
+  - id: fpp:kubernetes-security-access/source-kubeconfig
+    title: "Organizing Cluster Access Using kubeconfig Files"
+    url: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Contexts, connection settings, credentials and untrusted configuration cautions."
+  - id: fpp:kubernetes-security-access/source-tls
+    title: "Manage TLS Certificates in a Cluster"
+    url: https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "CSR, approval and signing responsibilities; original conceptual certificate flow."
+  - id: fpp:kubernetes-security-access/source-api-groups
+    title: "API Overview"
+    url: https://kubernetes.io/docs/reference/using-api/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "API groups/versions and server discovery."
+  - id: fpp:kubernetes-security-access/source-security-context
+    title: "Configure a Security Context for a Pod or Container"
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+    publisher: "Kubernetes"
+    type: documentation
+    verified_at: 2026-09-18
+    note: "Pod/container privilege and execution settings."
   - id: source:kubernetes-authentication
     title: Authenticating
     url: https://kubernetes.io/docs/reference/access-authn-authz/authentication/

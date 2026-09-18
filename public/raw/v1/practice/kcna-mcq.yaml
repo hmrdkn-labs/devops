@@ -3,9 +3,9 @@ id: practice:kcna
 slug: kcna-mcq
 title: KCNA MCQ refresher
 summary: Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.
-revision: 4
+revision: 5
 certification: cncf:kcna
-verified_at: 2026-09-16
+verified_at: 2026-09-18
 questions:
   - id: practice:kcna/q-api-entry
     checkpoint: fundamentals
@@ -1138,3 +1138,325 @@ questions:
     answer_ids: [a, b, c]
     explanation: "Dedicated-node design commonly combines repulsion and attraction: taint the special nodes, tolerate them for the intended workload, then require the intended node class with trusted labels and selection or affinity."
     unit_ids: [fpp:kcna-scheduling-review, fpp:kubernetes-scheduling-placement]
+
+  - id: practice:kcna/q-security-authn-authz
+    checkpoint: cluster-behavior
+    course_module: security
+    category: concept
+    select: single
+    prompt: A user presents a valid client certificate but still receives a forbidden response when listing Secrets. Which boundary rejected the request?
+    options:
+      - id: a
+        text: Authentication
+        rationale: Authentication already succeeded because the request was associated with a valid identity from the presented credential.
+      - id: b
+        text: Authorization
+        rationale: Authorization decides whether an authenticated identity may perform the requested verb on the requested resource.
+      - id: c
+        text: Scheduling
+        rationale: Scheduling places Pods onto nodes and does not decide whether a user may list API resources.
+      - id: d
+        text: Container runtime execution
+        rationale: Runtime execution happens on worker nodes after accepted workload state exists and is unrelated to this API permission check.
+    answer_ids: [b]
+    explanation: A valid credential establishes identity; RBAC or another authorizer can still deny what that identity is allowed to do.
+    unit_ids: [fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-security-rbac-binding
+    checkpoint: cluster-behavior
+    course_module: security
+    category: scenario
+    select: multiple
+    prompt: A ServiceAccount should read ConfigMaps only in the payments namespace. Which RBAC pieces express that least-privilege design? Select all that apply.
+    options:
+      - id: a
+        text: A Role in payments that permits get/list on ConfigMaps
+        rationale: A namespaced Role can define the exact resource verbs required inside the payments namespace.
+      - id: b
+        text: A RoleBinding in payments that binds the Role to the ServiceAccount
+        rationale: The RoleBinding attaches those namespaced permissions to the intended ServiceAccount identity.
+      - id: c
+        text: A ClusterRoleBinding granting cluster-admin
+        rationale: Cluster-admin is far broader than the stated read-only namespaced requirement and violates least privilege.
+      - id: d
+        text: A NetworkPolicy allowing API verbs
+        rationale: NetworkPolicy controls network flows between selected workloads; it does not authorize Kubernetes API verbs.
+    answer_ids: [a, b]
+    explanation: RBAC separates permission definitions from bindings. Namespace-scoped Role plus RoleBinding is enough for this namespaced read-only requirement.
+    unit_ids: [fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-mesh-data-control-plane
+    checkpoint: cloud-native
+    course_module: service-mesh
+    category: concept
+    select: multiple
+    prompt: Which statements correctly separate a service mesh data plane from its control plane? Select all that apply.
+    options:
+      - id: a
+        text: Data-plane proxies handle application traffic between services
+        rationale: Service-mesh proxies sit on the request path and can apply routing, telemetry, and transport policy to service traffic.
+      - id: b
+        text: The control plane distributes configuration and policy to proxies
+        rationale: A mesh control plane computes or distributes desired proxy configuration instead of carrying every application request itself.
+      - id: c
+        text: The control plane replaces the Kubernetes API server for all cluster objects
+        rationale: A mesh integrates with Kubernetes but does not become the general Kubernetes API entry point or state store.
+      - id: d
+        text: Every service mesh requires application code to implement all proxy features itself
+        rationale: One purpose of a mesh is to move common traffic behavior into infrastructure proxies rather than duplicating it in each application.
+    answer_ids: [a, b]
+    explanation: "Keep traffic execution and configuration intent separate: proxies form the data plane, while the mesh control plane configures their behavior."
+    unit_ids: [fpp:cloud-native-architecture-principles, fpp:services-dns-ingress]
+
+  - id: practice:kcna/q-mesh-envoy-sidecar
+    checkpoint: cloud-native
+    course_module: service-mesh
+    category: scenario
+    select: single
+    prompt: In a classic sidecar-based Istio deployment, why can an Envoy proxy observe traffic without the application becoming an Envoy client library?
+    options:
+      - id: a
+        text: Traffic is redirected through a proxy that runs beside the application workload
+        rationale: The sidecar proxy shares the workload network context and can intercept traffic through platform networking rules without application SDK coupling.
+      - id: b
+        text: Envoy replaces etcd and reads all packets from the Kubernetes database
+        rationale: etcd stores Kubernetes API state; it is not a packet stream and Envoy does not replace it.
+      - id: c
+        text: kube-scheduler forwards each application request through Envoy
+        rationale: The scheduler handles Pod placement and is not in the steady-state service request path.
+      - id: d
+        text: CoreDNS executes the proxy process for every request
+        rationale: CoreDNS resolves names but does not execute Envoy or proxy application traffic itself.
+    answer_ids: [a]
+    explanation: Sidecar injection places a proxy next to the workload and networking rules steer traffic through it, keeping the application protocol path separate from mesh configuration.
+    unit_ids: [fpp:cloud-native-architecture-principles, fpp:services-dns-ingress]
+
+  - id: practice:kcna/q-mesh-tradeoff
+    checkpoint: cloud-native
+    course_module: service-mesh
+    category: concept
+    select: multiple
+    prompt: What are realistic reasons to evaluate a service mesh carefully before adopting it? Select all that apply.
+    options:
+      - id: a
+        text: It adds operational components and another policy/configuration layer
+        rationale: A mesh introduces proxies, control-plane components, configuration, upgrades, and failure modes that operators must understand.
+      - id: b
+        text: Proxies can add resource use and request-path latency
+        rationale: Extra network hops and proxy processes have CPU, memory, and latency costs even when those costs are acceptable.
+      - id: c
+        text: It automatically makes every distributed system reliable without application design
+        rationale: Retries, timeouts, mTLS, and telemetry cannot remove application data consistency, dependency, or failure-domain problems by themselves.
+      - id: d
+        text: It can centralize traffic policy and telemetry across services
+        rationale: Centralized policy and consistent telemetry are genuine benefits that should be weighed against the operational cost.
+    answer_ids: [a, b, d]
+    explanation: "A mesh is an infrastructure tradeoff: it can standardize traffic behavior and visibility while adding proxies, configuration, resource cost, and new failure modes."
+    unit_ids: [fpp:cloud-native-architecture-principles]
+
+  - id: practice:kcna/q-storage-pvc-request
+    checkpoint: cluster-behavior
+    course_module: storage
+    category: concept
+    select: single
+    prompt: In Kubernetes persistent storage, which object represents the workload-side request for storage capacity and access characteristics?
+    options:
+      - id: a
+        text: PersistentVolumeClaim
+        rationale: A PVC is the workload request that can bind to a suitable PersistentVolume or trigger dynamic provisioning.
+      - id: b
+        text: StorageClass
+        rationale: A StorageClass describes a provisioning policy or class, not an individual workload claim.
+      - id: c
+        text: PersistentVolume
+        rationale: A PV represents storage made available to the cluster rather than the workload-side request itself.
+      - id: d
+        text: ConfigMap
+        rationale: A ConfigMap stores non-secret configuration data and does not request persistent storage capacity.
+    answer_ids: [a]
+    explanation: The PVC is the consumer request; PV is the storage resource, StorageClass is provisioning policy, and CSI performs storage-system integration.
+    unit_ids: [fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-storage-csi
+    checkpoint: cluster-behavior
+    course_module: storage
+    category: scenario
+    select: multiple
+    prompt: A PVC stays Pending in a cluster that uses dynamic provisioning. Which checks are directly relevant? Select all that apply.
+    options:
+      - id: a
+        text: Inspect the StorageClass and its provisioner
+        rationale: The StorageClass identifies the provisioning policy and the driver expected to satisfy the request.
+      - id: b
+        text: Inspect PVC events and requested access mode/capacity
+        rationale: Events and claim requirements often expose topology, quota, unsupported access mode, or provisioning failures.
+      - id: c
+        text: Assume kube-proxy must create the volume
+        rationale: kube-proxy implements Service traffic forwarding and is not the storage provisioner.
+      - id: d
+        text: Check CSI controller/node components when the selected class uses CSI
+        rationale: CSI components perform the storage integration operations needed to provision and make volumes usable.
+    answer_ids: [a, b, d]
+    explanation: Pending storage claims require evidence from the claim, provisioning policy, events, topology, quotas, and the responsible CSI or other provisioner.
+    unit_ids: [fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-architecture-scaling-layers
+    checkpoint: cloud-native
+    course_module: cloud-native-architecture
+    category: concept
+    select: multiple
+    prompt: Which scaling mechanism-to-target mappings are correct? Select all that apply.
+    options:
+      - id: a
+        text: HPA → changes workload replica count from observed metrics
+        rationale: Horizontal Pod Autoscaler adjusts a workload replica target based on configured metrics and policy.
+      - id: b
+        text: VPA → recommends or changes Pod resource requests depending on mode
+        rationale: Vertical Pod Autoscaler operates on workload resource sizing rather than the number of replicas.
+      - id: c
+        text: Cluster Autoscaler → changes available node capacity when Pods cannot fit or nodes are underused
+        rationale: Cluster Autoscaler works at the node-capacity layer instead of changing an application replica target directly.
+      - id: d
+        text: HPA → creates new physical worker machines directly
+        rationale: HPA changes a workload replica target; node provisioning belongs to a separate capacity mechanism.
+    answer_ids: [a, b, c]
+    explanation: "Autoscaling operates at different layers: replicas, per-Pod resource sizing, and cluster node capacity are separate control problems."
+    unit_ids: [fpp:cloud-native-architecture-principles]
+
+  - id: practice:kcna/q-architecture-serverless
+    checkpoint: cloud-native
+    course_module: cloud-native-architecture
+    category: concept
+    select: single
+    prompt: What does serverless primarily change in the infrastructure responsibility model?
+    options:
+      - id: a
+        text: The platform takes more responsibility for provisioning and scaling execution infrastructure
+        rationale: Serverless delegates more of the server lifecycle and scaling machinery to the provider or platform while code still executes on servers somewhere.
+      - id: b
+        text: Applications execute without any compute infrastructure existing
+        rationale: Serverless is an abstraction and operating model; physical or virtual compute still executes the workload.
+      - id: c
+        text: Kubernetes Services stop needing network addresses
+        rationale: Serverless does not eliminate networking or service-addressing concepts from distributed systems.
+      - id: d
+        text: Persistent data automatically becomes stateless
+        rationale: Execution abstraction does not remove application data-state requirements or external storage dependencies.
+    answer_ids: [a]
+    explanation: Serverless means the application owner delegates more server provisioning, lifecycle, and demand-driven scaling to the platform; it does not mean servers disappear.
+    unit_ids: [fpp:cloud-native-architecture-principles]
+
+  - id: practice:kcna/q-architecture-kep-sig
+    checkpoint: cloud-native
+    course_module: cloud-native-architecture
+    category: concept
+    select: multiple
+    prompt: Which statements correctly describe Kubernetes Enhancement Proposals and SIGs? Select all that apply.
+    options:
+      - id: a
+        text: A KEP documents a significant Kubernetes enhancement and its design/evolution
+        rationale: KEPs provide a structured record for substantial changes, including motivation, design, risks, and lifecycle information.
+      - id: b
+        text: SIGs are contributor groups organized around areas of the Kubernetes project
+        rationale: Special Interest Groups own and coordinate areas of Kubernetes development, maintenance, and community work.
+      - id: c
+        text: A KEP is the same object as a running Kubernetes Pod
+        rationale: A KEP is a project-governance and design artifact, not a Kubernetes runtime API object.
+      - id: d
+        text: SIGs replace the kube-controller-manager inside each cluster
+        rationale: SIGs are project/community structures and do not run as cluster control-plane components.
+    answer_ids: [a, b]
+    explanation: "KEPs and SIGs belong to Kubernetes project governance and evolution: one records substantial enhancement work, while the other organizes maintainers and contributors by area."
+    unit_ids: [fpp:cncf-ecosystem-community]
+
+  - id: practice:kcna/q-observability-sli-slo-sla
+    checkpoint: cloud-native
+    course_module: cloud-native-observability
+    category: concept
+    select: single
+    prompt: Which statement best separates an SLI from an SLO?
+    options:
+      - id: a
+        text: An SLI is a measured reliability indicator; an SLO is the target for that indicator
+        rationale: An SLI is evidence such as availability or latency, while an SLO states the desired level over a defined window.
+      - id: b
+        text: An SLO is a raw log line and an SLI is a legal contract
+        rationale: Logs may help calculate indicators, while legal or business consequences are more closely associated with an SLA, not an SLI.
+      - id: c
+        text: SLI and SLO are Kubernetes workload controller types
+        rationale: They are reliability and service-management concepts rather than Kubernetes API workload kinds.
+      - id: d
+        text: An SLI always describes CPU utilization only
+        rationale: Indicators can represent availability, latency, correctness, throughput, or other user-relevant service behavior.
+    answer_ids: [a]
+    explanation: Measure a service with an SLI, define the desired reliability level with an SLO, and treat an SLA as a separate business or contractual commitment when one exists.
+    unit_ids: [fpp:cloud-native-observability-signals]
+
+  - id: practice:kcna/q-observability-prometheus-scrape
+    checkpoint: cloud-native
+    course_module: cloud-native-observability
+    category: scenario
+    select: multiple
+    prompt: Prometheus reports a target as up. What has that observation established, and what has it not established? Select all that apply.
+    options:
+      - id: a
+        text: Prometheus successfully scraped that configured metrics target recently
+        rationale: The up metric reflects scrape success for the target and is evidence about telemetry collection reachability.
+      - id: b
+        text: Every user transaction handled by the target is healthy
+        rationale: A successful scrape proves metrics collection, not correctness or latency of every user-facing operation.
+      - id: c
+        text: The metrics endpoint and scrape path are reachable enough for the scrape to succeed
+        rationale: A successful scrape supplies evidence about that telemetry path at the observation time.
+      - id: d
+        text: No logs or traces can contain additional failure evidence
+        rationale: Different signals answer different questions; logs and traces may reveal failures even while a metrics endpoint remains scrapeable.
+    answer_ids: [a, c]
+    explanation: Prometheus target health is telemetry-path evidence. Combine it with user-visible checks, service metrics, traces, logs, and events before claiming application health.
+    unit_ids: [fpp:cloud-native-observability-signals]
+
+  - id: practice:kcna/q-delivery-gitops-pull
+    checkpoint: cloud-native
+    course_module: cloud-native-application-delivery
+    category: concept
+    select: multiple
+    prompt: Which properties are central to a GitOps operating model? Select all that apply.
+    options:
+      - id: a
+        text: Desired state is declarative and versioned
+        rationale: GitOps relies on a reviewable, versioned declaration of the system state that should exist.
+      - id: b
+        text: An automated agent continuously reconciles observed state toward declared state
+        rationale: Continuous reconciliation detects drift and works to converge the target environment on the declared state.
+      - id: c
+        text: A successful CI build automatically proves production serves the new version
+        rationale: CI artifact success is upstream evidence; deployment reconciliation and runtime checks are still required.
+      - id: d
+        text: Pull-based reconciliation can keep cluster credentials out of the external CI runner
+        rationale: A cluster-side reconciler can fetch desired state without requiring the CI system to push changes using broad cluster credentials.
+    answer_ids: [a, b, d]
+    explanation: GitOps combines versioned declarative desired state with automated pull/reconciliation. Runtime verification remains separate from build success.
+    unit_ids: [fpp:cloud-native-delivery-gitops]
+
+  - id: practice:kcna/q-delivery-artifact-runtime-proof
+    checkpoint: cloud-native
+    course_module: cloud-native-application-delivery
+    category: scenario
+    select: single
+    prompt: CI built image digest D2, but production Git still declares D1 and the GitOps controller reports D1 synchronized. What version should you expect running production Pods to use?
+    options:
+      - id: a
+        text: D1
+        rationale: The declared production state still points at D1, so successful reconciliation should keep the runtime aligned with D1 until desired state changes.
+      - id: b
+        text: D2
+        rationale: Building D2 does not promote it automatically when the production desired-state repository still references D1.
+      - id: c
+        text: Both D1 and D2 must run because CI retains every artifact
+        rationale: Artifact availability does not determine deployment state; the declared workload template and rollout do.
+      - id: d
+        text: No image because GitOps controllers cannot deploy container images
+        rationale: GitOps controllers can reconcile Kubernetes manifests that reference container images; they do not require the image to be absent.
+    answer_ids: [a]
+    explanation: Keep artifact creation, desired-state promotion, reconciliation, and runtime proof separate. D2 exists, but production has not declared or reconciled it yet.
+    unit_ids: [fpp:cloud-native-delivery-gitops, fpp:cloud-native-release-debugging]

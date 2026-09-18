@@ -3,11 +3,11 @@ id: fpp:kubernetes-networking-request-path
 slug: kubernetes-networking-request-path
 title: Kubernetes networking request path
 summary: Trace a request from DNS through a Service and EndpointSlice to a Pod while separating CNI connectivity, Service forwarding, ingress routing, and policy.
-revision: 4
+revision: 5
 revision_impact: mastery_affecting
 status: published
 layer: networking
-estimated_minutes: 30
+estimated_minutes: 35
 aliases: []
 applicable_versions:
   - product: kubernetes
@@ -26,4 +26,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-09
+verified_at: 2026-09-18

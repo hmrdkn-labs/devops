@@ -1,7 +1,7 @@
 ---
 import StudyFlow from '@/components/StudyFlow';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { paths, units } from '@/lib/content/catalog';
+import { curricula, paths, units } from '@/lib/content/catalog';
 import { renderMarkdown } from '@/lib/content/render';
 import { mentalModels } from '@/lib/content/mental-models';
 import '@/styles/task-focus.css';
@@ -17,10 +17,17 @@ export function getStaticPaths() {
 
 const { unit } = Astro.props;
 const kcnaPath = paths.find((path) => path.slug === 'kcna');
-const kcnaIndex = kcnaPath?.units.findIndex((entry) => entry.unit_id === unit.metadata.id) ?? -1;
+const kcnaCurriculum = curricula.find((curriculum) => curriculum.slug === 'kcna-kodekloud');
+const courseUnitIds = kcnaCurriculum
+  ? [...new Set(kcnaCurriculum.modules.flatMap((module) => module.steps.flatMap((step) => step.unit_ids)))]
+  : [];
+const kcnaUnitIds = kcnaPath
+  ? [...courseUnitIds.filter((id) => kcnaPath.units.some((entry) => entry.unit_id === id)), ...kcnaPath.units.map((entry) => entry.unit_id).filter((id) => !courseUnitIds.includes(id))]
+  : [];
+const kcnaIndex = kcnaUnitIds.indexOf(unit.metadata.id);
 const isKcnaUnit = kcnaIndex >= 0;
-const nextKcnaUnit = isKcnaUnit && kcnaPath && kcnaIndex + 1 < kcnaPath.units.length
-  ? units.find((candidate) => candidate.metadata.id === kcnaPath.units[kcnaIndex + 1]?.unit_id)
+const nextKcnaUnit = isKcnaUnit && kcnaIndex + 1 < kcnaUnitIds.length
+  ? units.find((candidate) => candidate.metadata.id === kcnaUnitIds[kcnaIndex + 1])
   : null;
 const payload = {
   id: unit.metadata.id,

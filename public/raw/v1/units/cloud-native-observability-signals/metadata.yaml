@@ -3,17 +3,20 @@ id: fpp:cloud-native-observability-signals
 slug: cloud-native-observability-signals
 title: Metrics, logs, traces, events, and observability
 summary: Use metrics, logs, traces, Kubernetes events, and end-to-end probes as complementary evidence rather than treating one monitoring tool as complete observability.
-revision: 3
+revision: 4
 revision_impact: mastery_affecting
 status: published
 layer: operations
-estimated_minutes: 26
+estimated_minutes: 40
 aliases: []
 applicable_versions:
   - product: kcna
     range: 2025-11-current
 prerequisites: [fpp:troubleshoot-process-to-pod]
 objectives:
+  - id: fpp:cloud-native-observability-signals/reliability
+    title: Distinguish SLI measurement, SLO target and window, SLA commitments, and resource-cost tradeoffs
+    critical: true
   - id: fpp:cloud-native-observability-signals/signals
     title: Distinguish metrics, logs, traces, events, and synthetic or user-visible probes by the questions they answer
     critical: true
@@ -26,4 +29,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-16
+verified_at: 2026-09-18

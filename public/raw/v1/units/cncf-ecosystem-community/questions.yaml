@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
-revision: 3
+revision: 4
 questions:
   - id: fpp:cncf-ecosystem-community/q-landscape
     kind: explain
@@ -26,3 +26,11 @@ questions:
       - "Catalog entries and interface specifications do not execute a platform."
       - "Concrete implementations own execution; upstream collaboration follows project/interface and SIG responsibility."
     objective_ids: [fpp:cncf-ecosystem-community/projects, fpp:cncf-ecosystem-community/community]
+  - id: fpp:cncf-ecosystem-community/q-kep-release
+    kind: predict
+    prompt: A Kubernetes enhancement has an approved KEP and discussion in SIG Network. Does that prove your current cluster implements it, and what is the role of the SIG compared with a CNI plugin?
+    model_answer: No. A KEP records a proposed change and its design/testing/graduation plan; inspect release status, served capabilities and feature-gate configuration for the cluster version. SIG Network coordinates contributors and ownership in the networking area, whereas an installed CNI implementation and its dataplane perform network setup/traffic work. Neither an approved document nor a contributor group is a worker-node executor.
+    critical_points:
+      - Proposal approval and released/enabled capability are separate evidence.
+      - Community ownership is not runtime execution.
+    objective_ids: [fpp:cncf-ecosystem-community/community, fpp:cncf-ecosystem-community/projects]

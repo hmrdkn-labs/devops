@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 4
+revision: 5
 cards:
   - id: fpp:kubernetes-security-access/c-authn
     type: short
@@ -32,3 +32,27 @@ cards:
     back: No. Namespace separation is API scope and organization; network isolation requires applicable policy enforced by the cluster network implementation.
     critical_points: [Namespace is not automatically a network firewall]
     objective_ids: [fpp:kubernetes-security-access/workload]
+  - id: fpp:kubernetes-security-access/c-context
+    type: short
+    front: What three access settings does a kubeconfig context join?
+    back: A cluster entry, a user/credential entry, and an optional default namespace.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-security-access/client-trust]
+  - id: fpp:kubernetes-security-access/c-core-group
+    type: short
+    front: What API group string does an RBAC rule use for core resources such as Pods?
+    back: The empty string, not v1. The version and group are different fields.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-security-access/client-trust]
+  - id: fpp:kubernetes-security-access/c-ca-permission
+    type: prompt
+    front: Explain why a trusted client certificate does not automatically grant cluster-admin rights.
+    back: Certificate validation can establish caller identity; authorization still checks that identity's permitted verbs, resources and scope. Server TLS trust and client authentication are also separate from authorization.
+    critical_points: [Trust and identity do not imply all permissions]
+    objective_ids: [fpp:kubernetes-security-access/client-trust, fpp:kubernetes-security-access/request]
+  - id: fpp:kubernetes-security-access/c-pull-secret
+    type: scenario
+    front: Does an imagePullSecret make a downloaded image trustworthy or prevent it from running privileged?
+    back: No. It authenticates to a registry. Artifact trust/scanning, admission policies and execution securityContext restrictions address different boundaries.
+    critical_points: [Registry authentication is not artifact or process safety]
+    objective_ids: [fpp:kubernetes-security-access/artifact-execution]

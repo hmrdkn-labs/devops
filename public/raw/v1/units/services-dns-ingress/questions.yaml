@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:services-dns-ingress
-revision: 4
+revision: 5
 questions:
   - id: fpp:services-dns-ingress/q-no-endpoints
     kind: scenario
@@ -43,3 +43,19 @@ questions:
       - Ingress is configuration consumed by an implementing controller.
       - API acceptance does not prove an external data plane exists.
     objective_ids: [fpp:services-dns-ingress/external-routing]
+  - id: fpp:services-dns-ingress/q-listener-port
+    kind: scenario
+    prompt: catalog's Service exposes port 80 and targetPort 8080. Its Pod declares containerPort 8080, but the application listens on 3000. Does the declaration create a working listener, and which relationship needs correction?
+    model_answer: No. containerPort describes port intent and image EXPOSE is metadata; neither starts or publishes an application listener. Clients use Service port 80, but forwarding must reach the process's actual port through targetPort. Align the application listener and Service mapping, then test a request from the intended client; valid declarations and selected endpoints alone are insufficient.
+    critical_points:
+      - Service port, targetPort and actual listener are different relationships.
+      - A port declaration does not execute a listening process.
+    objective_ids: [fpp:services-dns-ingress/service-endpoints]
+  - id: fpp:services-dns-ingress/q-mesh-path
+    kind: explain
+    prompt: Trace an external request through a mesh gateway to catalog and catalog's internal call to inventory in a sidecar mesh. Where do proxies execute traffic, and where does the mesh control plane belong?
+    model_answer: The external client reaches the gateway proxy, then catalog's workload proxy and application; catalog's internal call traverses its local proxy and inventory's proxy before reaching inventory. The mesh control plane distributes routes/policies/certificates to proxies instead of forwarding every request. Exact interception and gateway placement depend on configuration; verify enrolled workloads, proxy configuration and transaction evidence. A mesh is optional and does not replace Kubernetes Pod connectivity.
+    critical_points:
+      - Entry gateway and internal workload proxies occupy different request boundaries.
+      - Control-plane configuration does not add a business-request proxy hop.
+    objective_ids: [fpp:services-dns-ingress/mesh-path, fpp:services-dns-ingress/external-routing]

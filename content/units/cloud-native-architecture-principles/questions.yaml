@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-architecture-principles
-revision: 3
+revision: 4
 questions:
   - id: fpp:cloud-native-architecture-principles/q-cloud
     kind: explain
@@ -26,3 +26,27 @@ questions:
       - "Declarative automation and replaceability describe concrete operating improvements."
       - "Shared database dependence limits resilience; fixed replication does not prove elasticity."
     objective_ids: [fpp:cloud-native-architecture-principles/properties, fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/q-autoscaler-chain
+    kind: scenario
+    prompt: HPA increases checkout's desired replicas from three to six, but three new Pods stay Pending because suitable nodes lack free capacity. Which autoscaler changes which resource, and what would show usable capacity actually improved?
+    model_answer: HPA changes the workload replica target. A supported node autoscaler such as Cluster Autoscaler can add suitable node-group capacity for unschedulable Pods. VPA instead recommends or changes Pod resource requests. Inspect HPA conditions, Pending events, node-group limits and placement constraints, then verify ready nodes, scheduled/ready Pods and checkout latency. More requested replicas alone proves neither execution nor throughput.
+    critical_points:
+      - HPA replicas, VPA resource sizing and node autoscaling are different control targets.
+      - Node readiness, Pod readiness and transaction metrics are later proof boundaries.
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/q-serverless-fit
+    kind: explain
+    prompt: Compare a bursty, short webhook handler with a continuously busy, latency-sensitive process. Why might serverless fit the first better, and what responsibility remains with the application owner?
+    model_answer: Request/event-driven managed execution can expand for bursts and release idle capacity, while cold starts, execution limits and pricing may make it less attractive for a continuously busy process. The platform manages servers, not the absence of servers. The owner still designs application correctness, durable external state, permissions and observability, and must test latency and reliability requirements.
+    critical_points:
+      - Serverless delegates infrastructure lifecycle rather than eliminating infrastructure.
+      - Workload shape and latency/state requirements determine fit.
+    objective_ids: [fpp:cloud-native-architecture-principles/scale]
+  - id: fpp:cloud-native-architecture-principles/q-mesh-owner
+    kind: predict
+    prompt: In an Istio sidecar deployment, checkout calls inventory through Envoy proxies. Is Istiod another proxy hop for each business request, and does mutual TLS prove inventory authorized the checkout operation?
+    model_answer: No to both. Istiod supplies control-plane configuration and workload certificates; the workload-side Envoy proxies execute the configured traffic path. Mutual TLS authenticates/encrypts the participating connection, while authorization policy and application business authorization are additional decisions. A mesh does not replace application correctness or all other security controls.
+    critical_points:
+      - Mesh control-plane configuration is separate from proxy data-plane execution.
+      - Encrypted/authenticated transport is not complete business authorization.
+    objective_ids: [fpp:cloud-native-architecture-principles/mesh]

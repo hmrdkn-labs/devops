@@ -322,6 +322,7 @@ export const lessonSchema = z.object({
 const mcqQuestionSchema = z.object({
   id,
   checkpoint: z.enum(['fundamentals', 'resources', 'cluster-behavior', 'cloud-native']),
+  course_module: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
   category: z.enum(['concept', 'kubectl', 'scenario']),
   select: z.enum(['single', 'multiple']),
   prompt: z.string().min(10),
@@ -385,6 +386,62 @@ export const pathSchema = z.object({
   })).min(1),
 });
 
+const curriculumStepSchema = z.object({
+  id,
+  title: z.string().min(2),
+  kind: z.enum(['lesson', 'demo', 'quiz', 'feedback', 'community', 'mock-exam', 'conclusion']),
+  duration: z.string().regex(/^\d{2}:[0-5]\d$/).optional(),
+  unit_ids: z.array(id).default([]),
+});
+
+export const curriculumSchema = z.object({
+  schema_version: z.literal(1),
+  id,
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  title: z.string().min(3),
+  summary: z.string().min(20),
+  revision: z.number().int().positive(),
+  verified_at: isoDate,
+  reference: z.object({
+    title: z.string().min(3),
+    publisher: z.string().min(2),
+    url: z.url({ protocol: /^https?$/ }),
+  }),
+  modules: z.array(z.object({
+    id,
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    title: z.string().min(2),
+    summary: z.string().min(10),
+    steps: z.array(curriculumStepSchema).min(1),
+  })).min(1),
+}).superRefine((curriculum, context) => {
+  const moduleIds = new Set<string>();
+  const moduleSlugs = new Set<string>();
+  const stepIds = new Set<string>();
+  for (const [moduleIndex, module] of curriculum.modules.entries()) {
+    if (moduleIds.has(module.id)) {
+      context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'id'], message: `duplicate module ID ${module.id}` });
+    }
+    if (moduleSlugs.has(module.slug)) {
+      context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'slug'], message: `duplicate module slug ${module.slug}` });
+    }
+    moduleIds.add(module.id);
+    moduleSlugs.add(module.slug);
+    for (const [stepIndex, step] of module.steps.entries()) {
+      if (stepIds.has(step.id)) {
+        context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'steps', stepIndex, 'id'], message: `duplicate curriculum step ID ${step.id}` });
+      }
+      stepIds.add(step.id);
+      if (new Set(step.unit_ids).size !== step.unit_ids.length) {
+        context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'steps', stepIndex, 'unit_ids'], message: 'mapped unit IDs must be unique within a course step' });
+      }
+      if (['lesson', 'demo'].includes(step.kind) && step.unit_ids.length === 0) {
+        context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'steps', stepIndex, 'unit_ids'], message: 'teaching steps require independently authored mapped material' });
+      }
+    }
+  }
+});
+
 export const certificationRegistrySchema = z.object({
   schema_version: z.literal(1),
   verified_at: isoDate,
@@ -408,6 +465,7 @@ export type PracticeSet = z.infer<typeof practiceSetSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 export type LessonExercise = z.infer<typeof lessonExerciseSchema>;
 export type LearningPath = z.infer<typeof pathSchema>;
+export type Curriculum = z.infer<typeof curriculumSchema>;
 export type CertificationRegistry = z.infer<typeof certificationRegistrySchema>;
 
 export interface LearningUnit {

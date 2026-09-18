@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-delivery-gitops
-revision: 3
+revision: 4
 questions:
   - id: fpp:cloud-native-delivery-gitops/q-ci
     kind: explain
@@ -26,3 +26,19 @@ questions:
       - "Built artifact, environment desired revision and synchronized runtime are separate identities."
       - "A Git revert changes desired configuration, not external data history."
     objective_ids: [fpp:cloud-native-delivery-gitops/pipeline, fpp:cloud-native-delivery-gitops/gitops]
+  - id: fpp:cloud-native-delivery-gitops/q-push-pull
+    kind: explain
+    prompt: A CI job calls kubectl apply with production credentials. Another design has an in-cluster agent pull the reviewed manifest repository continuously. What changes about deployment ownership and credentials, and why is Git alone insufficient to call the first design GitOps?
+    model_answer: The first pushes a deployment from an external job; the second lets the target-side agent pull and reconcile desired state. Production write access can move from CI to the agent, but permissions and repository credentials still need protection. Git records configuration in either design; declarative/versioned intent plus automatic pulling and continuous reconciliation establishes the GitOps operating contract, not one apply command.
+    critical_points:
+      - Push/pull describes where deployment/reconciliation is initiated.
+      - Credential location changes; credentials do not disappear.
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops]
+  - id: fpp:cloud-native-delivery-gitops/q-argocd-status
+    kind: scenario
+    prompt: Argo CD reports an Application Synced to the intended revision, but its Deployment is unhealthy and checkout fails. A teammate also assumes automated sync always prunes removed resources and reverses all manual edits. Which conclusions are supported and which policies should you inspect?
+    model_answer: Sync identifies agreement with desired source; it is not a guarantee of workload health or successful user transactions. Inspect Deployment readiness/events and the failing request. Deletion of removed desired resources depends on pruning policy; manual drift correction depends on self-heal policy, which is separate from automated sync. Review the diff and deletion implications before enabling pruning in an authorized environment.
+    critical_points:
+      - Sync status and live health/user outcomes are different evidence.
+      - Automated sync, pruning and self-healing are independently configured behaviors.
+    objective_ids: [fpp:cloud-native-delivery-gitops/gitops, fpp:cloud-native-delivery-gitops/pipeline]

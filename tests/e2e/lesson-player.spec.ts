@@ -3,10 +3,10 @@ import { expect, test, type Page } from '@playwright/test';
 
 const lessonRoute = '/lesson/kcna-kubernetes-resources';
 const checkpointLessons = [
-  { checkpoint: 'fundamentals', title: 'Kubernetes Fundamentals', route: '/lesson/kcna-kubernetes-fundamentals', exercises: 11 },
-  { checkpoint: 'resources', title: 'Kubernetes Resources', route: lessonRoute, exercises: 12 },
-  { checkpoint: 'cluster-behavior', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 18 },
-  { checkpoint: 'cloud-native', title: 'Cloud-Native Context', route: '/lesson/kcna-cloud-native-context', exercises: 11 },
+  { checkpoint: 'fundamentals', anchor: 'kubernetes-fundamentals', title: 'Kubernetes Fundamentals', route: '/lesson/kcna-kubernetes-fundamentals', exercises: 11 },
+  { checkpoint: 'resources', anchor: 'kubernetes-resources', title: 'Kubernetes Resources', route: lessonRoute, exercises: 12 },
+  { checkpoint: 'cluster-behavior', anchor: 'scheduling', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 18 },
+  { checkpoint: 'cloud-native', anchor: 'cloud-native-architecture', title: 'Cloud-Native Context', route: '/lesson/kcna-cloud-native-context', exercises: 11 },
 ] as const;
 
 async function check(page: Page, explore = true) {
@@ -32,8 +32,8 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
   });
 
   await page.goto('/kcna');
-  await page.locator('[data-checkpoint="resources"] > summary').click();
-  await page.getByRole('link', { name: /Learn Kubernetes Resources by doing/ }).click();
+  await page.getByText('Guided lessons, mental models, and scheduled review', { exact: true }).click();
+  await page.getByRole('link', { name: 'KCNA Kubernetes Resources', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`${lessonRoute}/?$`));
 
   await expect(page.locator('.site-header')).toHaveCount(0);
@@ -42,7 +42,7 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
   await expect(page.locator('.page-hero')).toHaveCount(0);
   await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
   await expect(page.getByRole('progressbar', { name: 'Lesson progress' })).toHaveAttribute('aria-valuenow', '8');
-  await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', '/kcna#resources');
+  await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', '/kcna#kubernetes-resources');
 
   const heading = page.getByTestId('lesson-active-task').getByRole('heading', { level: 1 });
   const box = await heading.boundingBox();
@@ -76,24 +76,21 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
   await expect(page.getByRole('heading', { name: /Put these workload objects/ })).toBeVisible();
 });
 
-test('every KCNA checkpoint exposes the same interactive lesson model', async ({ page }, testInfo) => {
+test('every KCNA guided lesson stays reachable beside the course-ordered curriculum', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Catalog and checkpoint identity only need one browser project');
 
   await page.goto('/kcna');
-  const launches = page.locator('.kcna-lesson-launch');
-  await expect(launches).toHaveCount(checkpointLessons.length);
+  await page.getByText('Guided lessons, mental models, and scheduled review', { exact: true }).click();
   for (const lesson of checkpointLessons) {
-    const launch = page.locator(`[data-checkpoint="${lesson.checkpoint}"] a.kcna-lesson-launch`);
+    const launch = page.locator(`.path-extras a[href="${lesson.route}"]`);
     await expect(launch).toHaveAttribute('href', lesson.route);
-    await expect(launch).toContainText(`Learn ${lesson.title} by doing`);
-    await expect(launch).toContainText(`${lesson.exercises} focused interactions`);
   }
 
   for (const lesson of checkpointLessons) {
     await page.goto(lesson.route);
     await expect(page.locator('.lesson-player-title span')).toHaveText(lesson.title);
     await expect(page.locator('.lesson-step-count')).toHaveText(`1 / ${lesson.exercises}`);
-    await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', `/kcna#${lesson.checkpoint}`);
+    await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', `/kcna#${lesson.anchor}`);
     await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
     await page.getByRole('button', { name: 'Learn first' }).click();
     const visual = page.getByTestId('lesson-visual-guide');
@@ -385,6 +382,6 @@ test('lesson supports light, dark, reduced motion, and serious accessibility che
 test('Exit returns safely to the Resources checkpoint', async ({ page }) => {
   await page.goto(lessonRoute);
   await page.getByRole('link', { name: /Exit/ }).click();
-  await expect(page).toHaveURL(/\/kcna\/?#resources$/);
+  await expect(page).toHaveURL(/\/kcna\/?#kubernetes-resources$/);
   await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
 });

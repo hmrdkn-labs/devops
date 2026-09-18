@@ -52,11 +52,11 @@ test('initial lesson actions follow the response without a viewport-sized gap', 
 test('MCQ starts with the task and explicitly exposes session configuration', async ({ page }) => {
   await page.goto('/practice/kcna');
   await expect(page.locator('#mcq-question-title')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'All 49', exact: true })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'All 63', exact: true })).toBeHidden();
   const options = page.locator('.mcq-session-options');
   await options.locator('summary').click();
-  await page.getByRole('button', { name: 'All 49', exact: true }).click();
-  await expect(page.locator('.mcq-progress-row')).toContainText('Question 1 / 49');
+  await page.getByRole('button', { name: 'All 63', exact: true }).click();
+  await expect(page.locator('.mcq-progress-row')).toContainText('Question 1 / 63');
   await expect(page.locator('#mcq-question-title')).toBeFocused();
   await page.getByRole('button', { name: 'Quick 12', exact: true }).click();
   await page.getByRole('button', { name: 'New mix', exact: true }).click();

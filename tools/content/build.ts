@@ -16,6 +16,7 @@ import { mentalModelSchema, type MentalModel } from '../../src/lib/content/menta
 import {
   cardFileSchema,
   certificationRegistrySchema,
+  curriculumSchema,
   lessonSchema,
   pathSchema,
   practiceSetSchema,
@@ -28,6 +29,7 @@ import {
   type Lesson,
   type LearningUnit,
   type PracticeSet,
+  type Curriculum,
 } from '../../src/lib/content/schema';
 
 const root = process.cwd();
@@ -247,6 +249,53 @@ export function validateLessons(
   }
 }
 
+export function validateCurricula(
+  curricula: Curriculum[],
+  units: LearningUnit[],
+  practiceSets: PracticeSet[] = [],
+) {
+  const unitIds = new Set(units.map((unit) => unit.metadata.id));
+  const curriculumIds = new Set<string>();
+  const slugs = new Set<string>();
+  const modulesBySlug = new Map<string, Set<string>>();
+  for (const curriculum of curricula) {
+    for (const module of curriculum.modules) {
+      const mappedUnits = modulesBySlug.get(module.slug) ?? new Set<string>();
+      module.steps.flatMap((step) => step.unit_ids).forEach((id) => mappedUnits.add(id));
+      modulesBySlug.set(module.slug, mappedUnits);
+    }
+  }
+  const questions = practiceSets.flatMap((set) => set.questions);
+  for (const question of questions) {
+    if (!question.course_module) continue;
+    const mappedUnits = modulesBySlug.get(question.course_module);
+    if (!mappedUnits) throw new Error(`${question.id}: unknown course module ${question.course_module}`);
+    if (!question.unit_ids.some((id) => mappedUnits.has(id))) {
+      throw new Error(`${question.id}: course module ${question.course_module} has no mapped source unit for this question`);
+    }
+  }
+  for (const curriculum of curricula) {
+    if (curriculumIds.has(curriculum.id)) throw new Error(`Duplicate curriculum ID: ${curriculum.id}`);
+    if (slugs.has(curriculum.slug)) throw new Error(`Duplicate curriculum slug: ${curriculum.slug}`);
+    curriculumIds.add(curriculum.id);
+    slugs.add(curriculum.slug);
+    for (const module of curriculum.modules) {
+      const mappedUnits = new Set(module.steps.flatMap((step) => step.unit_ids));
+      for (const step of module.steps) {
+        for (const unitId of step.unit_ids) {
+          if (!unitIds.has(unitId)) throw new Error(`${step.id}: unknown mapped unit ${unitId}`);
+        }
+      }
+      if (module.steps.some((step) => step.kind === 'quiz')) {
+        const hasPractice = questions.some((question) => question.course_module
+          ? question.course_module === module.slug
+          : question.unit_ids.some((id) => mappedUnits.has(id)));
+        if (!hasPractice) throw new Error(`${module.id}: quiz module requires at least one authored practice question`);
+      }
+    }
+  }
+}
+
 export function manifestEntry(unit: LearningUnit) {
   const objectiveHashes = Object.fromEntries(unit.metadata.objectives.map((objective) => {
     const questions = unit.questions.filter((question) => question.objective_ids.includes(objective.id));
@@ -373,6 +422,12 @@ async function main() {
     .sort();
   const lessons = await Promise.all(lessonFiles.map((file) =>
     readYaml(path.join(lessonDir, file), lessonSchema)));
+  const curriculaDir = path.join(contentRoot, 'curricula');
+  const curriculaFiles = (await readdir(curriculaDir))
+    .filter((file) => file.endsWith('.yaml'))
+    .sort();
+  const curricula = await Promise.all(curriculaFiles.map((file) =>
+    readYaml(path.join(curriculaDir, file), curriculumSchema)));
   const modelDir = path.join(contentRoot, 'mental-models');
   const modelFiles = (await readdir(modelDir)).filter((file) => file.endsWith('.yaml')).sort();
   const mentalModels = await Promise.all(modelFiles.map((file) => readYaml(path.join(modelDir, file), mentalModelSchema)));
@@ -384,6 +439,7 @@ async function main() {
   validateGraph(units, paths, certificationIds);
   validatePracticeSets(practiceSets, units, certificationIds);
   validateLessons(lessons, units, certificationIds);
+  validateCurricula(curricula, units, practiceSets);
   validateMentalModels(mentalModels, units);
   const entries = units.map(manifestEntry);
   const verifiedAt = units
@@ -392,6 +448,7 @@ async function main() {
       certifications.verified_at,
       ...practiceSets.map((set) => set.verified_at),
       ...lessons.map((lesson) => lesson.verified_at),
+      ...curricula.map((curriculum) => curriculum.verified_at),
       ...mentalModels.map((model) => model.verified_at),
     )
     .sort()
@@ -408,6 +465,7 @@ async function main() {
     units: entries,
     paths,
     certifications,
+    curricula,
     lessons,
     mental_models: mentalModels.map((model) => ({
       id: model.id,
@@ -441,7 +499,7 @@ async function main() {
   };
 
   if (checkOnly) {
-    console.log(`Validated ${units.length} units, ${paths.length} path, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, ${lessons.length} interactive lesson, ${lessons.reduce((total, lesson) => total + lesson.exercises.length, 0)} lesson exercises, ${mentalModels.length} mental models, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
+    console.log(`Validated ${units.length} units, ${paths.length} path, ${curricula.length} curriculum, ${practiceSets.length} practice set, ${practiceSets.reduce((total, set) => total + set.questions.length, 0)} MCQs, ${lessons.length} interactive lesson, ${lessons.reduce((total, lesson) => total + lesson.exercises.length, 0)} lesson exercises, ${mentalModels.length} mental models, and ${units.reduce((total, unit) => total + unit.cards.length, 0)} cards.`);
     return;
   }
 

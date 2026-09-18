@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-networking-request-path
-revision: 4
+revision: 5
 cards:
   - id: fpp:kubernetes-networking-request-path/c-cni
     type: short
@@ -31,4 +31,16 @@ cards:
     front: A NetworkPolicy exists but traffic is still unrestricted. What key implementation question should you ask?
     back: Whether the cluster network plugin/dataplane supports and enforces NetworkPolicy for that traffic.
     critical_points: [Policy intent requires an enforcing implementation]
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/c-ipam
+    type: short
+    front: What is IPAM's responsibility in Pod network setup?
+    back: Selecting/tracking IP-address allocation without collisions, according to the network implementation.
+    critical_points: []
+    objective_ids: [fpp:kubernetes-networking-request-path/boundaries]
+  - id: fpp:kubernetes-networking-request-path/c-cni-call
+    type: prompt
+    front: Locate CNI in the scheduler-to-running-Pod sequence.
+    back: After placement, kubelet asks the runtime to create the Pod sandbox; the runtime's networking integration invokes its configured CNI plugin to establish network setup. The installed network dataplane later carries packets.
+    critical_points: [Configuration interface and live packet execution are different]
     objective_ids: [fpp:kubernetes-networking-request-path/boundaries]

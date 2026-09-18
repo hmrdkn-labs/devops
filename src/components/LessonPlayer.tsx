@@ -82,7 +82,12 @@ export default function LessonPlayer(props: Props) {
     'cluster-behavior': 'Cluster Behavior',
     'cloud-native': 'Cloud-Native Context',
   })[props.lesson.checkpoint] ?? props.lesson.title.replace(/^KCNA\s+/, ''));
-  const checkpointHref = createMemo(() => `/kcna#${props.lesson.checkpoint}`);
+  const checkpointHref = createMemo(() => `/kcna#${({
+    fundamentals: 'kubernetes-fundamentals',
+    resources: 'kubernetes-resources',
+    'cluster-behavior': 'scheduling',
+    'cloud-native': 'cloud-native-architecture',
+  })[props.lesson.checkpoint] ?? props.lesson.checkpoint}`);
 
   const [me, { refetch: refetchMe }] = createResource(() => typeof window !== 'undefined', async () => {
     setAuthError(false);

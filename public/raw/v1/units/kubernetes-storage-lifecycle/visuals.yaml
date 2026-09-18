@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-storage-lifecycle
-revision: 4
+revision: 5
 visuals:
   - id: fpp:kubernetes-storage-lifecycle/visual-volume-lifecycle
     kind: lifecycle

@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cncf-ecosystem-community
-revision: 3
+revision: 4
 cards:
   - id: fpp:cncf-ecosystem-community/c-prometheus
     type: short
@@ -31,4 +31,10 @@ cards:
     front: A Kubernetes networking design discussion belongs to a community ownership group focused on networking. What kind of Kubernetes group is this likely to be?
     back: A Special Interest Group (SIG), such as SIG Network, which organizes contributors around a technical area.
     critical_points: [Community ownership is organized by technical responsibility]
+    objective_ids: [fpp:cncf-ecosystem-community/community]
+  - id: fpp:cncf-ecosystem-community/c-kep
+    type: short
+    front: What does a Kubernetes Enhancement Proposal record, and what does it not prove?
+    back: It records motivation, design, risks, testing and graduation plans. Approval alone does not prove a feature has shipped or is enabled in your cluster version.
+    critical_points: []
     objective_ids: [fpp:cncf-ecosystem-community/community]

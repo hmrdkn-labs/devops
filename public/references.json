@@ -1,5 +1,38 @@
 [
   {
+    "id": "fpp:cloud-native-architecture-principles/source-autoscaling",
+    "title": "Autoscaling Workloads",
+    "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Horizontal versus vertical scaling and separate controller responsibilities.",
+    "unit_id": "fpp:cloud-native-architecture-principles",
+    "unit_slug": "cloud-native-architecture-principles"
+  },
+  {
+    "id": "fpp:cloud-native-architecture-principles/source-node-autoscaling",
+    "title": "Node Autoscaling",
+    "url": "https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Placement constraints, node provisioning and capacity limitations.",
+    "unit_id": "fpp:cloud-native-architecture-principles",
+    "unit_slug": "cloud-native-architecture-principles"
+  },
+  {
+    "id": "fpp:cloud-native-architecture-principles/source-service-mesh",
+    "title": "Istio Architecture",
+    "url": "https://istio.io/latest/docs/ops/deployment/architecture/",
+    "publisher": "Istio",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Envoy data plane and Istiod control plane in sidecar mode.",
+    "unit_id": "fpp:cloud-native-architecture-principles",
+    "unit_slug": "cloud-native-architecture-principles"
+  },
+  {
     "id": "source:cncf-cloud-native-definition",
     "title": "Cloud Native Definition",
     "url": "https://github.com/cncf/toc/blob/main/DEFINITION.md",
@@ -33,6 +66,28 @@
     "unit_slug": "cloud-native-architecture-principles"
   },
   {
+    "id": "fpp:cloud-native-delivery-gitops/source-argocd-concepts",
+    "title": "Argo CD Core Concepts",
+    "url": "https://argo-cd.readthedocs.io/en/stable/core_concepts/",
+    "publisher": "Argo CD",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Application source/destination, synchronization and health.",
+    "unit_id": "fpp:cloud-native-delivery-gitops",
+    "unit_slug": "cloud-native-delivery-gitops"
+  },
+  {
+    "id": "fpp:cloud-native-delivery-gitops/source-argocd-sync",
+    "title": "Argo CD Automated Sync Policy",
+    "url": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+    "publisher": "Argo CD",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Automated sync, pruning and self-healing are separately configured policies.",
+    "unit_id": "fpp:cloud-native-delivery-gitops",
+    "unit_slug": "cloud-native-delivery-gitops"
+  },
+  {
     "id": "source:opengitops-principles",
     "title": "OpenGitOps Principles",
     "url": "https://opengitops.dev/",
@@ -64,6 +119,50 @@
     "note": "Deployment rollout behavior beneath a delivery system.",
     "unit_id": "fpp:cloud-native-delivery-gitops",
     "unit_slug": "cloud-native-delivery-gitops"
+  },
+  {
+    "id": "fpp:cloud-native-observability-signals/source-slo",
+    "title": "Service Level Objectives",
+    "url": "https://sre.google/sre-book/service-level-objectives/",
+    "publisher": "Google SRE",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "SLI, SLO and SLA distinctions; checkout figures are independently authored examples.",
+    "unit_id": "fpp:cloud-native-observability-signals",
+    "unit_slug": "cloud-native-observability-signals"
+  },
+  {
+    "id": "fpp:cloud-native-observability-signals/source-scrape-config",
+    "title": "Prometheus Configuration",
+    "url": "https://prometheus.io/docs/prometheus/latest/configuration/configuration/",
+    "publisher": "Prometheus",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "scrape_interval, jobs and target configuration; example configuration independently authored.",
+    "unit_id": "fpp:cloud-native-observability-signals",
+    "unit_slug": "cloud-native-observability-signals"
+  },
+  {
+    "id": "fpp:cloud-native-observability-signals/source-node-exporter",
+    "title": "Monitoring Linux Host Metrics with the Node Exporter",
+    "url": "https://prometheus.io/docs/guides/node-exporter/",
+    "publisher": "Prometheus",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Host exporter and Prometheus pull/scrape responsibilities.",
+    "unit_id": "fpp:cloud-native-observability-signals",
+    "unit_slug": "cloud-native-observability-signals"
+  },
+  {
+    "id": "fpp:cloud-native-observability-signals/source-object-metrics",
+    "title": "Metrics for Kubernetes Object States",
+    "url": "https://kubernetes.io/docs/concepts/cluster-administration/kube-state-metrics/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "API-derived measurements versus resource-consumption and business signals.",
+    "unit_id": "fpp:cloud-native-observability-signals",
+    "unit_slug": "cloud-native-observability-signals"
   },
   {
     "id": "source:kubernetes-observability",
@@ -152,6 +251,17 @@
     "note": "Verified endpoint readiness conditions and publishNotReadyAddresses exception.",
     "unit_id": "fpp:cloud-native-release-debugging",
     "unit_slug": "cloud-native-release-debugging"
+  },
+  {
+    "id": "fpp:cncf-ecosystem-community/source-enhancements",
+    "title": "Kubernetes Enhancements Tracking",
+    "url": "https://github.com/kubernetes/enhancements",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Enhancement lifecycle, release tracking and technical ownership; KEP approval is not runtime proof.",
+    "unit_id": "fpp:cncf-ecosystem-community",
+    "unit_slug": "cncf-ecosystem-community"
   },
   {
     "id": "fpp:cncf-ecosystem-community/source-cri-contract",
@@ -1056,6 +1166,17 @@
     "unit_slug": "kubernetes-namespaces-scope"
   },
   {
+    "id": "fpp:kubernetes-networking-request-path/source-network-plugins",
+    "title": "Network Plugins",
+    "url": "https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "CRI runtime integration loads CNI plugins; modern kubelet does not manage CNI.",
+    "unit_id": "fpp:kubernetes-networking-request-path",
+    "unit_slug": "kubernetes-networking-request-path"
+  },
+  {
     "id": "source:kubernetes-cluster-networking",
     "title": "Cluster Networking",
     "url": "https://kubernetes.io/docs/concepts/cluster-administration/networking/",
@@ -1463,6 +1584,50 @@
     "unit_slug": "kubernetes-scheduling-placement"
   },
   {
+    "id": "fpp:kubernetes-security-access/source-kubeconfig",
+    "title": "Organizing Cluster Access Using kubeconfig Files",
+    "url": "https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Contexts, connection settings, credentials and untrusted configuration cautions.",
+    "unit_id": "fpp:kubernetes-security-access",
+    "unit_slug": "kubernetes-security-access"
+  },
+  {
+    "id": "fpp:kubernetes-security-access/source-tls",
+    "title": "Manage TLS Certificates in a Cluster",
+    "url": "https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "CSR, approval and signing responsibilities; original conceptual certificate flow.",
+    "unit_id": "fpp:kubernetes-security-access",
+    "unit_slug": "kubernetes-security-access"
+  },
+  {
+    "id": "fpp:kubernetes-security-access/source-api-groups",
+    "title": "API Overview",
+    "url": "https://kubernetes.io/docs/reference/using-api/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "API groups/versions and server discovery.",
+    "unit_id": "fpp:kubernetes-security-access",
+    "unit_slug": "kubernetes-security-access"
+  },
+  {
+    "id": "fpp:kubernetes-security-access/source-security-context",
+    "title": "Configure a Security Context for a Pod or Container",
+    "url": "https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Pod/container privilege and execution settings.",
+    "unit_id": "fpp:kubernetes-security-access",
+    "unit_slug": "kubernetes-security-access"
+  },
+  {
     "id": "source:kubernetes-authentication",
     "title": "Authenticating",
     "url": "https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
@@ -1527,6 +1692,28 @@
     "note": "Verified admission enforcement is distinct from authorization; authored denial comparison.",
     "unit_id": "fpp:kubernetes-security-access",
     "unit_slug": "kubernetes-security-access"
+  },
+  {
+    "id": "fpp:kubernetes-storage-lifecycle/source-docker-volumes",
+    "title": "Docker Volumes",
+    "url": "https://docs.docker.com/engine/storage/volumes/",
+    "publisher": "Docker",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Container writable layer, independent volume lifecycle and storage drivers.",
+    "unit_id": "fpp:kubernetes-storage-lifecycle",
+    "unit_slug": "kubernetes-storage-lifecycle"
+  },
+  {
+    "id": "fpp:kubernetes-storage-lifecycle/source-pod-volumes",
+    "title": "Kubernetes Volumes",
+    "url": "https://kubernetes.io/docs/concepts/storage/volumes/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Pod-scoped emptyDir, hostPath and claim-backed volume distinctions.",
+    "unit_id": "fpp:kubernetes-storage-lifecycle",
+    "unit_slug": "kubernetes-storage-lifecycle"
   },
   {
     "id": "source:kubernetes-storage-lifecycle-persistent-volumes",
@@ -1747,6 +1934,17 @@
     "note": "Upstream probe behavior and configuration reference.",
     "unit_id": "fpp:scheduling-resources-health",
     "unit_slug": "scheduling-resources-health"
+  },
+  {
+    "id": "fpp:services-dns-ingress/source-mesh-architecture",
+    "title": "Istio Architecture",
+    "url": "https://istio.io/latest/docs/ops/deployment/architecture/",
+    "publisher": "Istio",
+    "type": "documentation",
+    "verified_at": "2026-09-18",
+    "note": "Proxy data-plane placement versus configuration and certificate control plane.",
+    "unit_id": "fpp:services-dns-ingress",
+    "unit_slug": "services-dns-ingress"
   },
   {
     "id": "source:kubernetes-services",

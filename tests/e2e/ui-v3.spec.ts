@@ -17,15 +17,17 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
 
   await expect(page.getByRole('heading', { name: 'KCNA learning path', exact: true })).toBeVisible();
   await expect(page.locator('.site-nav a[aria-current="page"], .mobile-dock a[aria-current="page"]').filter({ visible: true })).toHaveText('Learn');
-  await expect(page.locator('.kcna-checkpoint')).toHaveCount(4);
-  await expect(page.locator('.kcna-curriculum li > a')).toHaveCount(32);
+  await expect(page.locator('.kcna-checkpoint')).toHaveCount(13);
+  await expect(page.locator('.kcna-course-step')).toHaveCount(116);
   await expect(page.locator('#kcna-today-title')).toBeVisible();
   await expect(page.getByRole('link', { name: /Start learning/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
-  await page.getByText('Quiz companions and practice tools', { exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Container Orchestration – Service Mesh' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cloud Native Application Delivery' })).toBeVisible();
+  await page.getByText('Guided lessons, mental models, and scheduled review', { exact: true }).click();
   await expect(page.getByRole('link', { name: 'Scheduled KCNA review' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'MCQ practice', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: /KCNA question practice/ })).toBeVisible();
   const quickReview = page.locator('.path-extras');
   await expect(quickReview.getByRole('link', { name: 'KCNA Kubernetes Fundamentals quiz companion', exact: true })).toBeVisible();
   await expect(quickReview.getByRole('link', { name: 'KCNA Kubernetes Resources quiz companion', exact: true })).toBeVisible();
@@ -39,8 +41,13 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await expect(page.getByText('Question 1 / 12')).toBeVisible();
   await expect(page.getByText('Select one', { exact: true })).toBeVisible();
 
-  await page.getByText('kube-scheduler', { exact: true }).click();
-  await page.getByRole('button', { name: 'Check answer' }).click();
+  const schedulerOption = page.getByRole('radio', { name: 'B kube-scheduler', exact: true });
+  const checkAnswer = page.getByRole('button', { name: 'Check answer', exact: true });
+  await schedulerOption.check();
+  await expect(schedulerOption).toBeChecked();
+  await expect(page.locator('.mcq-option[data-state="selected"]')).toContainText('kube-scheduler');
+  await expect(checkAnswer).toBeEnabled();
+  await checkAnswer.click();
 
   await expect(page.getByText('Not quite', { exact: true })).toBeVisible();
   await expect(page.getByText(/Your answer: kube-scheduler\. Correct answer: kube-apiserver\./)).toBeVisible();
@@ -57,13 +64,27 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
 
   await page.getByRole('button', { name: 'Try again' }).click();
   await expect(page.getByText(/Correction attempt/)).toBeVisible();
-  await page.getByText('kube-apiserver', { exact: true }).click();
-  await page.getByRole('button', { name: 'Check answer' }).click();
+  const apiOption = page.getByRole('radio', { name: 'A kube-apiserver', exact: true });
+  await apiOption.check();
+  await expect(apiOption).toBeChecked();
+  await expect(page.locator('.mcq-option[data-state="selected"]')).toContainText('kube-apiserver');
+  await expect(checkAnswer).toBeEnabled();
+  await checkAnswer.click();
   await expect(page.getByText('Corrected', { exact: true })).toBeVisible();
   await page.getByText('Session options', { exact: true }).click();
   await expect(page.getByRole('button', { name: 'Quick 12', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'All 49', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'All 63', exact: true })).toBeVisible();
   await expect(page.getByText('0 correct', { exact: true })).toBeVisible();
+});
+
+test('KCNA practice can focus a course module from its quiz checkpoint', async ({ page }) => {
+  await page.goto('/practice/kcna?module=scheduling');
+  await page.getByText('Session options', { exact: true }).click();
+  const moduleSelect = page.getByLabel('Course module');
+  await expect(moduleSelect).toHaveValue('scheduling');
+  await expect(moduleSelect.locator('option[disabled]')).toHaveCount(0);
+  await expect(page.locator('.mcq-question-meta').getByText('Scheduling', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^All \d+$/ })).toBeVisible();
 });
 
 test('review reveal state is explicit and ratings start visually neutral', async ({ page }) => {

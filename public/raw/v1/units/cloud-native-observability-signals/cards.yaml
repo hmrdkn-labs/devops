@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-observability-signals
-revision: 3
+revision: 4
 cards:
   - id: fpp:cloud-native-observability-signals/c-metrics
     type: short
@@ -32,3 +32,27 @@ cards:
     back: No. It proves the configured metrics endpoint was reachable and scrapeable, not that the complete checkout transaction and all dependencies are healthy.
     critical_points: [Monitoring-path health is not user-path proof]
     objective_ids: [fpp:cloud-native-observability-signals/signals]
+  - id: fpp:cloud-native-observability-signals/c-sli-slo
+    type: short
+    front: SLI versus SLO versus SLA?
+    back: SLI is a defined service measurement; SLO is its target over a window; SLA is an agreement with service commitments and possible consequences.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-observability-signals/reliability]
+  - id: fpp:cloud-native-observability-signals/c-alertmanager
+    type: short
+    front: Does Alertmanager scrape targets or route firing-alert notifications?
+    back: It groups/routes notifications. Prometheus scrapes targets, stores time series and evaluates configured alert rules.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-observability-signals/tools]
+  - id: fpp:cloud-native-observability-signals/c-node-exporter
+    type: short
+    front: What does Node Exporter expose, compared with kube-state-metrics?
+    back: Node Exporter exposes host operating-system measurements; kube-state-metrics exposes measurements derived from Kubernetes API object state.
+    critical_points: []
+    objective_ids: [fpp:cloud-native-observability-signals/tools]
+  - id: fpp:cloud-native-observability-signals/c-cardinality
+    type: scenario
+    front: Why avoid labeling each metric sample with a unique request ID?
+    back: It produces unbounded time-series cardinality and resource cost. Correlate individual requests in logs/traces; use bounded dimensions for metrics.
+    critical_points: [Label cardinality affects monitoring cost and capacity]
+    objective_ids: [fpp:cloud-native-observability-signals/reliability, fpp:cloud-native-observability-signals/tools]
