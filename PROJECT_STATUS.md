@@ -5,6 +5,22 @@
 
 ## Read this first
 
+**Latest production cleanup: learner tasks are now separated from source-only
+course metadata.** [PR #16](https://github.com/hmrdkn-labs/devops/pull/16)
+merged as `bc738e6256bc7c4a38ffb580d3566b07d4061bd8`. The KCNA learner path now
+shows **13 modules / 105 learning and practice steps**. The complete **116-entry
+KodeKloud-aligned source catalog** is still retained for sequence traceability,
+but community, feedback, and other source-only entries are no longer rendered
+as tasks the learner is expected to complete. KodeKloud Notes remain reference
+and enrichment sources, not learner checkpoints. Exact-head PR CI
+`35311501270` and post-merge main CI `35311804782` passed; protected owner
+deployment `35312117103` then deployed the immutable merge source. Independent
+production verification reports `/api/health` `status=ok`, D1
+`database=ready`, manifest SHA
+`fb7d5aefbdf068e47b2fa7aeee49de8ea906bb02d4f0cc55e7704db59b74a7d7`, all
+**32 mapped KCNA units** present, and no learner-facing `Join Our Community` or
+KCNA feedback rows. **No implementation or deployment blocker remains.**
+
 **Current release candidate: KodeKloud-aligned KCNA curriculum and depth pass.**
 Branch `feat/kcna-kodekloud-sequence` now follows the reviewed KodeKloud KCNA
 course progression as a reference spine: **13 modules / 116 ordered steps** with
@@ -41,9 +57,10 @@ applied D1 migrations, deployed the Worker and route, restored owner secrets,
 and passed its public route/manifest/auth verification. Independent production
 verification reports `/api/health` `status=ok`, D1 `database=ready`, and manifest
 SHA `fb7d5aefbdf068e47b2fa7aeee49de8ea906bb02d4f0cc55e7704db59b74a7d7`,
-matching the generated release artifact. The live `/kcna/` page exposes the new
-13-module / 116-step course spine. **No implementation or deployment blocker
-remains.**
+matching the generated release artifact. That release established the full
+13-module / 116-entry source spine; the follow-up cleanup above now exposes 105
+learner-facing learning/practice steps while retaining all 116 source entries
+for traceability. **No implementation or deployment blocker remains.**
 
 **Current work: learner journey simplification.** Research and the feature/access
 map are recorded in [the redesign plan](docs/LEARNER-JOURNEY-REDESIGN.md).
