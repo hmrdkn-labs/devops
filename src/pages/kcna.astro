@@ -1,71 +1,95 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { lessons, paths, unitsById } from '@/lib/content/catalog';
+import { curricula, lessons, paths, unitsById } from '@/lib/content/catalog';
 
 export const prerender = true;
 
 const path = paths.find((candidate) => candidate.slug === 'kcna');
 if (!path) throw new Error('KCNA path is missing');
+const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-kodekloud');
+if (!curriculum) throw new Error('KCNA course curriculum is missing');
 
-const pathUnits = path.units.flatMap((entry, index) => {
-  const unit = unitsById.get(entry.unit_id);
-  return unit ? [{ unit, index, weight: entry.weight }] : [];
+const pathWeights = new Map(path.units.map((entry) => [entry.unit_id, entry.weight]));
+const pathUnitIds = new Set(path.units.map((entry) => entry.unit_id));
+const seenUnits = new Set<string>();
+const clientUnits: Array<{ id: string; slug: string; title: string; estimatedMinutes: number; checkpointId: string }> = [];
+
+const modules = curriculum.modules.map((module) => {
+  const unitIds = [...new Set(module.steps.flatMap((step) => step.unit_ids).filter((id) => pathUnitIds.has(id)))];
+  for (const unitId of unitIds) {
+    if (seenUnits.has(unitId)) continue;
+    const unit = unitsById.get(unitId);
+    if (!unit) continue;
+    seenUnits.add(unitId);
+    clientUnits.push({
+      id: unit.metadata.id,
+      slug: unit.metadata.slug,
+      title: unit.metadata.title,
+      estimatedMinutes: unit.metadata.estimated_minutes,
+      checkpointId: module.slug,
+    });
+  }
+  return { ...module, unitIds };
 });
 
-const checkpoints = [
-  {
-    id: 'fundamentals',
-    title: 'Kubernetes Fundamentals',
-    note: 'Machines, containers, and the control plane.',
-    start: 0,
-    end: 9,
-  },
-  {
-    id: 'resources',
-    title: 'Kubernetes Resources',
-    note: 'Pods, controllers, namespaces, and declarative resources.',
-    start: 9,
-    end: 18,
-  },
-  {
-    id: 'cluster-behavior',
-    title: 'Cluster Behavior',
-    note: 'Networking, scheduling, storage, configuration, and access.',
-    start: 18,
-    end: 26,
-  },
-  {
-    id: 'cloud-native',
-    title: 'Cloud-Native Context',
-    note: 'Delivery, observability, troubleshooting, and the CNCF ecosystem.',
-    start: 26,
-    end: pathUnits.length,
-  },
-].map((checkpoint) => ({
-  ...checkpoint,
-  units: pathUnits.slice(checkpoint.start, checkpoint.end),
-  lesson: lessons.find((lesson) => lesson.certification === 'cncf:kcna' && lesson.checkpoint === checkpoint.id),
+// Future KCNA units remain reachable even before they are mapped into the
+// external course spine.
+for (const entry of path.units) {
+  if (seenUnits.has(entry.unit_id)) continue;
+  const unit = unitsById.get(entry.unit_id);
+  if (!unit) continue;
+  clientUnits.push({
+    id: unit.metadata.id,
+    slug: unit.metadata.slug,
+    title: unit.metadata.title,
+    estimatedMinutes: unit.metadata.estimated_minutes,
+    checkpointId: 'unmapped',
+  });
+}
+
+const clientCheckpoints = modules.map((module) => ({
+  id: module.slug,
+  title: module.title,
+  unitIds: module.unitIds,
 }));
 
-const reviewUnits = pathUnits.filter(({ unit }) => unit.metadata.slug.startsWith('kcna-') && unit.metadata.slug.endsWith('-review'));
-const clientUnits = checkpoints.flatMap((checkpoint) => checkpoint.units.map(({ unit }) => ({
-  id: unit.metadata.id,
-  slug: unit.metadata.slug,
-  title: unit.metadata.title,
-  estimatedMinutes: unit.metadata.estimated_minutes,
-  checkpointId: checkpoint.id,
-})));
-const clientCheckpoints = checkpoints.map((checkpoint) => ({
-  id: checkpoint.id,
-  title: checkpoint.title,
-  unitIds: checkpoint.units.map(({ unit }) => unit.metadata.id),
-}));
+const stepHref = (moduleSlug: string, step: (typeof modules)[number]['steps'][number]) => {
+  if (step.kind === 'quiz') return `/practice/kcna?module=${moduleSlug}`;
+  if (step.kind === 'mock-exam') return '/practice/kcna?mode=all';
+  if (step.kind === 'feedback') return '/review?path=kcna';
+  const firstUnit = step.unit_ids.map((id) => unitsById.get(id)).find(Boolean);
+  return firstUnit ? `/learn/${firstUnit.metadata.slug}` : null;
+};
+
+const stepAction = (kind: string) => ({
+  lesson: 'Study',
+  demo: 'Practice concept',
+  quiz: 'Practice questions',
+  feedback: 'Review',
+  'mock-exam': 'Start mock practice',
+  conclusion: 'Review course',
+  community: 'Course step',
+})[kind] ?? 'Open';
+
+const mappedUnit = (step: (typeof modules)[number]['steps'][number]) =>
+  step.unit_ids.map((id) => unitsById.get(id)).find(Boolean);
+const mappedUnits = (step: (typeof modules)[number]['steps'][number]) =>
+  step.unit_ids.flatMap((id) => {
+    const unit = unitsById.get(id);
+    return unit ? [unit] : [];
+  });
+
+const reviewUnits = path.units.flatMap((entry) => {
+  const unit = unitsById.get(entry.unit_id);
+  return unit && unit.metadata.slug.startsWith('kcna-') && unit.metadata.slug.endsWith('-review') ? [unit] : [];
+});
+const totalSteps = modules.reduce((total, module) => total + module.steps.length, 0);
 ---
 
 <BaseLayout
   title="KCNA learning path"
-  description="A focused KCNA study workspace containing only the KCNA learning path, checkpoints, and review companions."
+  description="KCNA learning material arranged in the current KodeKloud course sequence, with independent explanations, practice, and review."
   canonicalPath="/kcna"
   pageClass="kcna-page"
   activeSection="kcna"
@@ -74,7 +98,12 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
     <div class="kcna-hero-copy">
       <p class="eyebrow">Learn · KCNA</p>
       <h1>KCNA learning path</h1>
-      <p class="lede">Build your Kubernetes foundations one unit at a time. Start your next step or browse the four sections below.</p>
+      <p class="lede">Follow the same module and lesson progression as the current KodeKloud KCNA course, using our own explanations, retrieval practice, and review.</p>
+      <p class="kcna-course-source">
+        <strong>{modules.length} modules · {totalSteps} course steps</strong>
+        <span>Sequence verified {curriculum.verified_at}.</span>
+        <a href={curriculum.reference.url} rel="noreferrer">Course reference ↗</a>
+      </p>
     </div>
   </header>
 
@@ -83,55 +112,80 @@ const clientCheckpoints = checkpoints.map((checkpoint) => ({
   </div>
 
   <div class="shell path-curriculum-shell">
-    <section class="kcna-curriculum" aria-label="KCNA curriculum">
-      {checkpoints.map((checkpoint, checkpointIndex) => (
-        <details id={checkpoint.id} class="kcna-checkpoint" data-checkpoint={checkpoint.id} open={checkpointIndex === 0}>
+    <section class="kcna-curriculum" aria-label="KCNA curriculum in course order">
+      {modules.map((module, moduleIndex) => (
+        <details
+          id={module.slug}
+          class="kcna-checkpoint kcna-course-module"
+          data-checkpoint={module.slug}
+          open={moduleIndex === 0}
+        >
           <summary>
-            <span>{String(checkpointIndex + 1).padStart(2, '0')}</span>
+            <span>{String(moduleIndex + 1).padStart(2, '0')}</span>
             <div>
-              <p class="section-kicker">Section {checkpointIndex + 1}</p>
-              <h2>{checkpoint.title}</h2>
-              <p>{checkpoint.note}</p>
+              <p class="section-kicker">Module {moduleIndex + 1}</p>
+              <h2>{module.title}</h2>
+              <p>{module.summary}</p>
             </div>
             <div class="kcna-checkpoint-meta">
-              <span class="kcna-checkpoint-state" data-checkpoint-progress={checkpoint.id}>Not started</span>
-              <small>{checkpoint.units.length} units</small>
+              <span class="kcna-checkpoint-state" data-checkpoint-progress={module.slug}>Not started</span>
+              <small>{module.steps.length} steps</small>
             </div>
           </summary>
-          {checkpoint.lesson && (
-            <a class="kcna-lesson-launch" href={'/lesson/' + checkpoint.lesson.slug}>
-              <span class="section-kicker">Interactive lesson</span>
-              <strong>Learn {checkpoint.title} by doing →</strong>
-              <small>{checkpoint.lesson.exercises.length} focused interactions · about {checkpoint.lesson.estimated_minutes} minutes</small>
-            </a>
-          )}
-          <ol>
-            {checkpoint.units.map(({ unit, index, weight }) => (
-              <li data-unit-id={unit.metadata.id}>
-                <span class="kcna-unit-number">{String(index + 1).padStart(2, '0')}</span>
-                <a href={'/learn/' + unit.metadata.slug}>
-                  <strong>{unit.metadata.title}</strong>
-                </a>
-                <div class="kcna-unit-meta">
-                  <span title="Learning completion" class="kcna-completion-state" data-unit-completion={unit.metadata.id}>Not started</span>
-                  <span title="Understanding evidence" class="kcna-understanding-state" data-unit-understanding={unit.metadata.id}>No evidence</span>
-                  {weight === 2 && <span class="critical-badge">Critical</span>}
-                  <span>{unit.metadata.estimated_minutes} min</span>
-                </div>
-                <details class="path-unit-details"><summary>Unit details</summary><p>{unit.metadata.summary}</p><small>{unit.metadata.layer}</small></details>
-              </li>
-            ))}
+
+          <ol class="kcna-course-steps">
+            {module.steps.map((step, stepIndex) => {
+              const href = stepHref(module.slug, step);
+              const unit = mappedUnit(step);
+              const units = mappedUnits(step);
+              const weight = unit ? pathWeights.get(unit.metadata.id) : undefined;
+              return (
+                <li class="kcna-course-step" data-course-step={step.id} data-unit-id={unit?.metadata.id}>
+                  <span class="kcna-unit-number">{String(stepIndex + 1).padStart(2, '0')}</span>
+                  <div class="kcna-course-step-copy">
+                    <div class="kcna-course-step-title">
+                      <strong>{step.title}</strong>
+                      <span class={`kcna-step-kind is-${step.kind}`}>{step.kind.replace('-', ' ')}</span>
+                    </div>
+                    {unit ? (
+                      <p>
+                        Our material:
+                        <span class="kcna-step-materials">
+                          {units.map((mapped) => (
+                            <a data-mapped-unit-id={mapped.metadata.id} href={`/learn/${mapped.metadata.slug}`}>{mapped.metadata.title}</a>
+                          ))}
+                        </span>
+                      </p>
+                    ) : (
+                      <p>Course navigation step; no standalone learning unit is required.</p>
+                    )}
+                  </div>
+                  <div class="kcna-course-step-action">
+                    {step.duration && <span>{step.duration}</span>}
+                    {weight === 2 && <span class="critical-badge">Critical</span>}
+                    {href && <a href={href}>{stepAction(step.kind)} →</a>}
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         </details>
       ))}
     </section>
   </div>
+
   <section class="shell path-extras" aria-labelledby="path-extras-title">
-    <h2 id="path-extras-title">Optional practice and lookup</h2>
-    <p><a href="/practice">Choose a practice activity →</a> · <a href="/library">Browse the library</a> · <a href="/paths/kcna">Full path outline</a></p>
-    <details><summary>Quiz companions and practice tools</summary>
-      <p><a href="/practice/kcna">MCQ practice</a> · <a href="/models/">Interactive mental models</a> · <a href="/review?path=kcna">Scheduled KCNA review</a></p>
-      <ul>{reviewUnits.map(({ unit }) => <li><a href={'/learn/' + unit.metadata.slug}>{unit.metadata.title}</a></li>)}</ul>
+    <h2 id="path-extras-title">Extra practice and lookup</h2>
+    <p><a href="/practice/kcna">KCNA question practice →</a> · <a href="/library">Browse the library</a> · <a href="/paths/kcna">32-unit concept outline</a></p>
+    <details>
+      <summary>Guided lessons, mental models, and scheduled review</summary>
+      <p><a href="/models/">Interactive mental models</a> · <a href="/review?path=kcna">Scheduled KCNA review</a></p>
+      <ul>
+        {lessons.filter((lesson) => lesson.certification === 'cncf:kcna').map((lesson) => (
+          <li><a href={`/lesson/${lesson.slug}`}>{lesson.title}</a> · {lesson.exercises.length} interactions</li>
+        ))}
+        {reviewUnits.map((unit) => <li><a href={`/learn/${unit.metadata.slug}`}>{unit.metadata.title}</a></li>)}
+      </ul>
     </details>
   </section>
 </BaseLayout>

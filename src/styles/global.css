@@ -633,6 +633,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .kcna-practice-launch b { color: var(--accent-strong); font-size: .7rem; }
 .kcna-secondary-link { color: var(--muted); font-size: .72rem; }
 .kcna-secondary-link:hover { color: var(--ink); }
+.kcna-course-source {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem .8rem;
+  align-items: center;
+  margin: .9rem 0 0;
+  color: var(--muted);
+  font-size: .72rem;
+}
+.kcna-course-source strong { color: var(--ink); }
+.kcna-course-source a { color: var(--accent-strong); }
 .kcna-curriculum { min-width: 0; }
 .kcna-checkpoint {
   scroll-margin-top: 76px;
@@ -699,6 +710,48 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   line-height: 1.45;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+}
+.kcna-course-step-copy { min-width: 0; }
+.kcna-course-step-title { display: flex; flex-wrap: wrap; gap: .45rem; align-items: baseline; }
+.kcna-course-step-title strong { font-size: .92rem; line-height: 1.35; }
+.kcna-course-step-copy p {
+  margin: .22rem 0 0;
+  color: var(--muted);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+.kcna-course-step-copy p a { color: var(--ink); }
+.kcna-course-step-copy p a:hover { color: var(--accent-strong); }
+.kcna-step-materials { display: inline-flex; flex-wrap: wrap; gap: .2rem .55rem; margin-left: .2rem; }
+.kcna-step-materials a + a::before { margin-right: .55rem; color: var(--muted); content: '·'; }
+.kcna-step-kind {
+  padding: .14rem .36rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font: 650 .55rem var(--mono);
+  text-transform: uppercase;
+}
+.kcna-step-kind.is-quiz,
+.kcna-step-kind.is-mock-exam { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); color: var(--accent-strong); }
+.kcna-course-step-action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: .3rem .55rem;
+  align-items: center;
+  padding-top: .08rem;
+  text-align: right;
+}
+.kcna-course-step-action > span { color: var(--muted); font: .62rem var(--mono); white-space: nowrap; }
+.kcna-course-step-action .critical-badge { color: var(--warning); font-family: var(--sans); font-weight: 700; }
+.kcna-course-step-action a {
+  min-height: 34px;
+  align-content: center;
+  color: var(--accent-strong);
+  font-size: .7rem;
+  font-weight: 750;
+  white-space: nowrap;
 }
 .kcna-unit-meta { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; align-items: center; padding-top: .08rem; }
 .kcna-unit-meta span { color: var(--muted); font: .62rem var(--mono); white-space: nowrap; }
@@ -1161,6 +1214,25 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   justify-content: space-between;
   gap: .75rem;
 }
+.mcq-module-filter {
+  display: grid;
+  flex: 1 1 280px;
+  gap: .25rem;
+  min-width: min(100%, 250px);
+  color: var(--muted);
+  font-size: .65rem;
+  font-weight: 650;
+}
+.mcq-module-filter select {
+  width: 100%;
+  min-height: 44px;
+  padding: .5rem .65rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 650 .72rem var(--sans);
+}
 .mcq-mode-switch {
   display: inline-flex;
   padding: .2rem;
@@ -1459,9 +1531,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   .kcna-checkpoint > summary,
   .kcna-checkpoint li { grid-template-columns: 1.9rem minmax(0, 1fr); gap: .65rem; }
   .kcna-checkpoint-meta,
-  .kcna-unit-meta { grid-column: 2; }
+  .kcna-unit-meta,
+  .kcna-course-step-action { grid-column: 2; }
   .kcna-checkpoint-meta { justify-items: start; }
   .kcna-unit-meta { padding-top: 0; }
+  .kcna-course-step-action { justify-content: flex-start; padding-top: 0; text-align: left; }
+  .kcna-course-step-title { gap: .3rem; }
   .kcna-checkpoint li > a > small { -webkit-line-clamp: 2; }
   .path-layout { grid-template-columns: 1fr; gap: 1rem; }
   .path-layout > .progress-compact, .study-rail { position: static; }

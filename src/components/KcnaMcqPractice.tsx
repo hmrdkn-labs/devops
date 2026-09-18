@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createSignal } from 'solid-js';
+import { For, Show, createMemo, createSignal, onMount } from 'solid-js';
 import { focusTask } from '@/lib/task-focus';
 
 type Checkpoint = 'fundamentals' | 'resources' | 'cluster-behavior' | 'cloud-native';
@@ -13,6 +13,8 @@ interface Option {
 interface Question {
   id: string;
   checkpoint: Checkpoint;
+  moduleId: string;
+  moduleTitle: string;
   category: 'concept' | 'kubectl' | 'scenario';
   select: 'single' | 'multiple';
   prompt: string;
@@ -24,16 +26,10 @@ interface Question {
 
 interface Props {
   questions: Question[];
+  modules: Array<{ id: string; title: string; questionCount: number }>;
 }
 
 const checkpointOrder: Checkpoint[] = ['fundamentals', 'resources', 'cluster-behavior', 'cloud-native'];
-const checkpointLabels: Record<Checkpoint, string> = {
-  fundamentals: 'Fundamentals',
-  resources: 'Resources',
-  'cluster-behavior': 'Cluster behavior',
-  'cloud-native': 'Cloud native',
-};
-
 function quickMix(questions: Question[], offset: number) {
   const grouped = new Map<Checkpoint, Question[]>(checkpointOrder.map((checkpoint) => [
     checkpoint,
@@ -47,8 +43,17 @@ function quickMix(questions: Question[], offset: number) {
   });
 }
 
+function quickModuleMix(questions: Question[], offset: number) {
+  if (!questions.length) return [];
+  const count = Math.min(12, questions.length);
+  const start = (offset * count) % questions.length;
+  return Array.from({ length: count }, (_, index) => questions[(start + index) % questions.length]!);
+}
+
 export default function KcnaMcqPractice(props: Props) {
+  const [hydrated, setHydrated] = createSignal(false);
   const [mode, setMode] = createSignal<'quick' | 'all'>('quick');
+  const [moduleFilter, setModuleFilter] = createSignal('all');
   const [mixOffset, setMixOffset] = createSignal(0);
   const [questionIndex, setQuestionIndex] = createSignal(0);
   const [selected, setSelected] = createSignal<string[]>([]);
@@ -59,7 +64,14 @@ export default function KcnaMcqPractice(props: Props) {
   let questionHeading: HTMLHeadingElement | undefined;
   let resultHeading: HTMLHeadingElement | undefined;
 
-  const sessionQuestions = createMemo(() => mode() === 'all' ? props.questions : quickMix(props.questions, mixOffset()));
+  const filteredQuestions = createMemo(() => moduleFilter() === 'all'
+    ? props.questions
+    : props.questions.filter((candidate) => candidate.moduleId === moduleFilter()));
+  const sessionQuestions = createMemo(() => {
+    const pool = filteredQuestions();
+    if (mode() === 'all') return pool;
+    return moduleFilter() === 'all' ? quickMix(pool, mixOffset()) : quickModuleMix(pool, mixOffset());
+  });
   const question = createMemo(() => sessionQuestions()[questionIndex()]);
   const progress = createMemo(() => {
     if (finished()) return 100;
@@ -79,8 +91,19 @@ export default function KcnaMcqPractice(props: Props) {
     });
   }
 
-  function resetSession(nextMode = mode(), nextOffset = mixOffset()) {
+  function syncUrl(nextMode: 'quick' | 'all', nextModule: string) {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (nextMode === 'all') url.searchParams.set('mode', 'all');
+    else url.searchParams.delete('mode');
+    if (nextModule === 'all') url.searchParams.delete('module');
+    else url.searchParams.set('module', nextModule);
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  }
+
+  function resetSession(nextMode = mode(), nextOffset = mixOffset(), nextModule = moduleFilter()) {
     setMode(nextMode);
+    setModuleFilter(nextModule);
     setMixOffset(nextOffset);
     setQuestionIndex(0);
     setSelected([]);
@@ -88,9 +111,20 @@ export default function KcnaMcqPractice(props: Props) {
     setScore(0);
     setFinished(false);
     setFirstAttemptCorrect(null);
+    syncUrl(nextMode, nextModule);
     animateQuestionCard();
     focusTask(() => questionHeading);
   }
+
+  onMount(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requestedModule = params.get('module');
+    const moduleAvailable = requestedModule && props.modules.some((module) => module.id === requestedModule && module.questionCount > 0);
+    const nextModule = moduleAvailable ? requestedModule! : 'all';
+    const nextMode = params.get('mode') === 'all' ? 'all' : 'quick';
+    if (nextModule !== moduleFilter() || nextMode !== mode()) resetSession(nextMode, 0, nextModule);
+    setHydrated(true);
+  });
 
   function choose(optionId: string) {
     if (checked()) return;
@@ -169,7 +203,10 @@ export default function KcnaMcqPractice(props: Props) {
   }
 
   return (
-    <section class="mcq-practice" aria-live="polite">
+    <section class="mcq-practice" aria-live="polite" aria-busy={!hydrated()}>
+      <Show when={!hydrated()}>
+        <p class="muted" role="status">Loading interactive practice… You can read the question while it loads.</p>
+      </Show>
       <Show when={!finished()} fallback={
         <section class="mcq-result" aria-labelledby="mcq-result-title">
           <p class="section-kicker">Session complete</p>
@@ -195,14 +232,14 @@ export default function KcnaMcqPractice(props: Props) {
 
         <article class="mcq-question-card" tabindex="-1">
           <div class="mcq-question-meta">
-            <span>{checkpointLabels[question().checkpoint]}</span>
+          <span>{question().moduleTitle}</span>
             <span>{question().category === 'kubectl' ? 'kubectl' : question().category}</span>
             <span>{question().select === 'multiple' ? 'Select all that apply' : 'Select one'}</span>
           </div>
           <h2 ref={questionHeading} tabindex="-1" id="mcq-question-title">{question().prompt}</h2>
 
           <form onSubmit={checkAnswer}>
-            <fieldset aria-labelledby="mcq-question-title">
+            <fieldset aria-labelledby="mcq-question-title" disabled={!hydrated()}>
               <legend class="sr-only">Answer options</legend>
               <div class="mcq-options">
                 <For each={question().options}>{(option) => {
@@ -214,7 +251,7 @@ export default function KcnaMcqPractice(props: Props) {
                         name="mcq-answer"
                         value={option.id}
                         checked={selected().includes(option.id)}
-                        disabled={checked()}
+                        disabled={!hydrated() || checked()}
                         onChange={() => choose(option.id)}
                       />
                       <span class="mcq-option-letter">{option.id.toUpperCase()}</span>
@@ -242,7 +279,7 @@ export default function KcnaMcqPractice(props: Props) {
               <Show when={firstAttemptCorrect() === false}>
                 <p class="mcq-correction-note" role="status">Correction attempt · your first answer remains the scored attempt.</p>
               </Show>
-              <button class="button mcq-check" type="submit" disabled={!selected().length}>Check answer</button>
+              <button class="button mcq-check" type="submit" disabled={!hydrated() || !selected().length}>Check answer</button>
             </Show>
 
             <Show when={checked()}>
@@ -273,12 +310,28 @@ export default function KcnaMcqPractice(props: Props) {
         <summary>Session options</summary>
         <p>Changing the length or mix starts a new session and resets this score.</p>
         <div class="mcq-session-controls" aria-label="Practice session length">
+          <label class="mcq-module-filter">
+            <span>Course module</span>
+            <select
+              aria-label="Course module"
+              disabled={!hydrated()}
+              value={moduleFilter()}
+              onChange={(event) => resetSession(mode(), 0, event.currentTarget.value)}
+            >
+              <option value="all">All KCNA modules ({props.questions.length})</option>
+              <For each={props.modules}>{(module) => (
+                <option value={module.id} disabled={module.questionCount === 0}>
+                  {module.title} ({module.questionCount})
+                </option>
+              )}</For>
+            </select>
+          </label>
           <div class="mcq-mode-switch">
-            <button type="button" class={mode() === 'quick' ? 'is-active' : ''} aria-pressed={mode() === 'quick'} onClick={() => resetSession('quick', mixOffset())}>Quick 12</button>
-            <button type="button" class={mode() === 'all' ? 'is-active' : ''} aria-pressed={mode() === 'all'} onClick={() => resetSession('all', mixOffset())}>All {props.questions.length}</button>
+            <button type="button" disabled={!hydrated()} class={mode() === 'quick' ? 'is-active' : ''} aria-pressed={mode() === 'quick'} onClick={() => resetSession('quick', mixOffset(), moduleFilter())}>Quick {Math.min(12, filteredQuestions().length)}</button>
+            <button type="button" disabled={!hydrated()} class={mode() === 'all' ? 'is-active' : ''} aria-pressed={mode() === 'all'} onClick={() => resetSession('all', mixOffset(), moduleFilter())}>All {filteredQuestions().length}</button>
           </div>
           <Show when={mode() === 'quick'}>
-            <button class="quiet-button mcq-new-mix" type="button" onClick={() => resetSession('quick', mixOffset() + 1)}>New mix</button>
+            <button class="quiet-button mcq-new-mix" type="button" disabled={!hydrated()} onClick={() => resetSession('quick', mixOffset() + 1, moduleFilter())}>New mix</button>
           </Show>
         </div>
       </details>

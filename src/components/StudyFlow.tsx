@@ -626,7 +626,7 @@ export default function StudyFlow(props: Props) {
   }
 
   return (
-    <div class="study-flow">
+    <div class="study-flow" aria-busy={!hydrated()}>
       <header class="unit-heading shell narrow">
         <div class="unit-meta">
           <Show when={props.focus}>
@@ -642,7 +642,14 @@ export default function StudyFlow(props: Props) {
           <strong>Recall</strong>
           <div class="study-context-actions" role="group" aria-label="Learning context">
             <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
-              <button type="button" aria-controls="learning-context-panel" aria-expanded={contextPanel() === panel} aria-pressed={contextPanel() === panel} onClick={(event) => openContext(panel, event.currentTarget)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
+              <button
+                type="button"
+                disabled={!hydrated()}
+                aria-controls="learning-context-panel"
+                aria-expanded={contextPanel() === panel}
+                aria-pressed={contextPanel() === panel}
+                onClick={(event) => openContext(panel, event.currentTarget)}
+              >{panel[0]!.toUpperCase() + panel.slice(1)}</button>
             )}</For>
           </div>
         </div>
@@ -991,13 +998,13 @@ export default function StudyFlow(props: Props) {
               type="button"
               class="context-close"
               aria-label="Close learning context"
-              disabled={contextPanel() === null}
+              disabled={!hydrated() || contextPanel() === null}
               onClick={closeContext}
             >×</button>
           </div>
           <div class="learning-context-tabs" role="tablist" aria-label="Context tools" onKeyDown={contextKey}>
             <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
-              <button type="button" role="tab" id={`context-tab-${panel}`} aria-controls={`context-${panel}`} tabindex={contextPanel() === panel || (contextPanel() === null && panel === 'history') ? 0 : -1} aria-selected={contextPanel() === panel} onClick={() => openContext(panel)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
+              <button type="button" disabled={!hydrated()} role="tab" id={`context-tab-${panel}`} aria-controls={`context-${panel}`} tabindex={contextPanel() === panel || (contextPanel() === null && panel === 'history') ? 0 : -1} aria-selected={contextPanel() === panel} onClick={() => openContext(panel)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
             )}</For>
           </div>
           <div class="learning-context-body">

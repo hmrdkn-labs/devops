@@ -1,21 +1,104 @@
 ---
 import KcnaMcqPractice from '@/components/KcnaMcqPractice';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { practiceSets, unitsById } from '@/lib/content/catalog';
+import { curricula, practiceSets, unitsById } from '@/lib/content/catalog';
 import '@/styles/task-focus.css';
 
 export const prerender = true;
 
 const practice = practiceSets.find((set) => set.slug === 'kcna-mcq');
 if (!practice) throw new Error('KCNA MCQ practice set is missing');
+const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-kodekloud');
+if (!curriculum) throw new Error('KCNA course curriculum is missing');
 
-const questions = practice.questions.map((question) => ({
-  ...question,
-  sourceUnits: question.unit_ids.flatMap((unitId) => {
-    const unit = unitsById.get(unitId);
-    return unit ? [{ href: `/learn/${unit.metadata.slug}`, title: unit.metadata.title }] : [];
-  }),
-}));
+const preferredModuleByUnit = new Map<string, string>([
+  ['fpp:container-lifecycle', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-control-loop', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-architecture-components', 'kubernetes-fundamentals'],
+  ['fpp:kcna-kubernetes-fundamentals-review', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-pod-model', 'kubernetes-resources'],
+  ['fpp:pods-workloads', 'kubernetes-resources'],
+  ['fpp:git-yaml-declarative', 'kubernetes-resources'],
+  ['fpp:kubernetes-manifests', 'kubernetes-resources'],
+  ['fpp:kubernetes-labels-replicasets', 'kubernetes-resources'],
+  ['fpp:kubernetes-deployments-rollouts', 'kubernetes-resources'],
+  ['fpp:kubernetes-apply-live-state', 'kubernetes-resources'],
+  ['fpp:kubernetes-resource-operations', 'kubernetes-resources'],
+  ['fpp:kubernetes-namespaces-scope', 'kubernetes-resources'],
+  ['fpp:kubernetes-object-lexicon', 'kubernetes-resources'],
+  ['fpp:kcna-kubernetes-resources-review', 'kubernetes-resources'],
+  ['fpp:kubernetes-scheduling-placement', 'scheduling'],
+  ['fpp:scheduling-resources-health', 'scheduling'],
+  ['fpp:kcna-scheduling-review', 'scheduling'],
+  ['fpp:kubernetes-security-access', 'security'],
+  ['fpp:ip-subnets', 'networking'],
+  ['fpp:ports-sockets-dns', 'networking'],
+  ['fpp:services-dns-ingress', 'networking'],
+  ['fpp:kubernetes-networking-request-path', 'networking'],
+  ['fpp:config-secrets-storage', 'storage'],
+  ['fpp:kubernetes-storage-lifecycle', 'storage'],
+  ['fpp:cloud-native-architecture-principles', 'cloud-native-architecture'],
+  ['fpp:cncf-ecosystem-community', 'cloud-native-architecture'],
+  ['fpp:cloud-native-observability-signals', 'cloud-native-observability'],
+  ['fpp:troubleshoot-process-to-pod', 'cloud-native-observability'],
+  ['fpp:cloud-native-delivery-gitops', 'cloud-native-application-delivery'],
+  ['fpp:cloud-native-release-debugging', 'cloud-native-application-delivery'],
+]);
+
+const moduleTitle = new Map(curriculum.modules.map((module) => [module.slug, module.title]));
+const modulePriority = [
+  'security',
+  'scheduling',
+  'networking',
+  'storage',
+  'cloud-native-observability',
+  'cloud-native-application-delivery',
+  'cloud-native-architecture',
+  'kubernetes-resources',
+  'kubernetes-fundamentals',
+];
+const moduleForUnits = (unitIds: string[]) => {
+  const candidates = new Set(unitIds.flatMap((unitId) => {
+    const moduleId = preferredModuleByUnit.get(unitId);
+    return moduleId ? [moduleId] : [];
+  }));
+  return modulePriority.find((moduleId) => candidates.has(moduleId)) ?? 'mixed';
+};
+
+const questions = practice.questions.map((question) => {
+  const moduleId = question.course_module ?? moduleForUnits(question.unit_ids);
+  return {
+    ...question,
+    moduleId,
+    moduleTitle: moduleTitle.get(moduleId) ?? 'Mixed KCNA',
+    sourceUnits: question.unit_ids.flatMap((unitId) => {
+      const unit = unitsById.get(unitId);
+      return unit ? [{ href: `/learn/${unit.metadata.slug}`, title: unit.metadata.title }] : [];
+    }),
+  };
+});
+
+const practiceModuleSlugs = [
+  'kubernetes-fundamentals',
+  'kubernetes-resources',
+  'scheduling',
+  'security',
+  'networking',
+  'service-mesh',
+  'storage',
+  'cloud-native-architecture',
+  'cloud-native-observability',
+  'cloud-native-application-delivery',
+];
+const modules = practiceModuleSlugs.flatMap((slug) => {
+  const module = curriculum.modules.find((candidate) => candidate.slug === slug);
+  if (!module) return [];
+  return [{
+    id: module.slug,
+    title: module.title,
+    questionCount: questions.filter((question) => question.moduleId === module.slug).length,
+  }];
+});
 ---
 
 <BaseLayout
@@ -29,12 +112,12 @@ const questions = practice.questions.map((question) => ({
     <div>
       <p class="eyebrow">Practice · KCNA</p>
       <h1>KCNA question practice</h1>
-      <p class="lede">Choose an answer, then check the reasoning.</p>
+      <p class="lede">Practice the same KCNA modules you are studying, then check the reasoning behind every option.</p>
     </div>
   </header>
 
   <div class="shell mcq-shell">
-    <KcnaMcqPractice questions={questions} client:load />
+    <KcnaMcqPractice questions={questions} modules={modules} client:load />
   </div>
   <p class="shell task-session-note">Session score stays in memory and does not change readiness or mastery evidence. These {practice.questions.length} questions are independently authored from public learning material.</p>
 </BaseLayout>
