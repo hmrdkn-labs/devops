@@ -8,7 +8,9 @@ test('guest starts a concrete unit and keeps the curriculum ahead of optional to
   await expect(page.locator('[data-session-action]')).toContainText('Start learning');
   await expect(page.locator('[data-session-action]')).toHaveAttribute('href', /^\/learn\//);
   await expect(page.locator('[data-checkpoint]')).toHaveCount(13);
-  await expect(page.locator('[data-course-step]')).toHaveCount(116);
+  await expect(page.locator('[data-course-step]')).toHaveCount(105);
+  await expect(page.getByText('Join Our Community', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/^Feedback – KCNA/)).toHaveCount(0);
   const uniqueUnits = await page.locator('[data-mapped-unit-id]').evaluateAll((elements) =>
     new Set(elements.map((element) => element.getAttribute('data-mapped-unit-id')).filter(Boolean)).size);
   expect(uniqueUnits).toBe(32);

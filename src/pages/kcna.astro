@@ -14,9 +14,11 @@ const pathWeights = new Map(path.units.map((entry) => [entry.unit_id, entry.weig
 const pathUnitIds = new Set(path.units.map((entry) => entry.unit_id));
 const seenUnits = new Set<string>();
 const clientUnits: Array<{ id: string; slug: string; title: string; estimatedMinutes: number; checkpointId: string }> = [];
+const learnerStepKinds = new Set(['lesson', 'demo', 'quiz', 'mock-exam', 'conclusion']);
 
 const modules = curriculum.modules.map((module) => {
-  const unitIds = [...new Set(module.steps.flatMap((step) => step.unit_ids).filter((id) => pathUnitIds.has(id)))];
+  const learningSteps = module.steps.filter((step) => learnerStepKinds.has(step.kind));
+  const unitIds = [...new Set(learningSteps.flatMap((step) => step.unit_ids).filter((id) => pathUnitIds.has(id)))];
   for (const unitId of unitIds) {
     if (seenUnits.has(unitId)) continue;
     const unit = unitsById.get(unitId);
@@ -30,7 +32,7 @@ const modules = curriculum.modules.map((module) => {
       checkpointId: module.slug,
     });
   }
-  return { ...module, unitIds };
+  return { ...module, learningSteps, unitIds };
 });
 
 // Future KCNA units remain reachable even before they are mapped into the
@@ -84,7 +86,8 @@ const reviewUnits = path.units.flatMap((entry) => {
   const unit = unitsById.get(entry.unit_id);
   return unit && unit.metadata.slug.startsWith('kcna-') && unit.metadata.slug.endsWith('-review') ? [unit] : [];
 });
-const totalSteps = modules.reduce((total, module) => total + module.steps.length, 0);
+const totalLearningSteps = modules.reduce((total, module) => total + module.learningSteps.length, 0);
+const totalSourceSteps = curriculum.modules.reduce((total, module) => total + module.steps.length, 0);
 ---
 
 <BaseLayout
@@ -100,8 +103,8 @@ const totalSteps = modules.reduce((total, module) => total + module.steps.length
       <h1>KCNA learning path</h1>
       <p class="lede">Follow the same module and lesson progression as the current KodeKloud KCNA course, using our own explanations, retrieval practice, and review.</p>
       <p class="kcna-course-source">
-        <strong>{modules.length} modules · {totalSteps} course steps</strong>
-        <span>Sequence verified {curriculum.verified_at}.</span>
+        <strong>{modules.length} modules · {totalLearningSteps} learning/practice steps</strong>
+        <span>{totalSourceSteps} source entries tracked · sequence verified {curriculum.verified_at}.</span>
         <a href={curriculum.reference.url} rel="noreferrer">Course reference ↗</a>
       </p>
     </div>
@@ -129,12 +132,12 @@ const totalSteps = modules.reduce((total, module) => total + module.steps.length
             </div>
             <div class="kcna-checkpoint-meta">
               <span class="kcna-checkpoint-state" data-checkpoint-progress={module.slug}>Not started</span>
-              <small>{module.steps.length} steps</small>
+              <small>{module.learningSteps.length} learning steps</small>
             </div>
           </summary>
 
           <ol class="kcna-course-steps">
-            {module.steps.map((step, stepIndex) => {
+            {module.learningSteps.map((step, stepIndex) => {
               const href = stepHref(module.slug, step);
               const unit = mappedUnit(step);
               const units = mappedUnits(step);
