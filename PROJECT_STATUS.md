@@ -1,9 +1,40 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-17 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-18 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**Current release candidate: KodeKloud-aligned KCNA curriculum and depth pass.**
+Branch `feat/kcna-kodekloud-sequence` now follows the reviewed KodeKloud KCNA
+course progression as a reference spine: **13 modules / 116 ordered steps** with
+lesson, demo, quiz, feedback, mock-exam, and conclusion checkpoints. All **32/32
+KCNA path units** are mapped into the sequence. Public explanations, diagrams,
+questions, and practice remain independently authored; proprietary KodeKloud
+lesson prose, screenshots, quiz questions, and course assets are not mirrored.
+
+The companion content was deepened across Kubernetes security (TLS/CSR,
+kubeconfig, API groups/RBAC, image and process security), networking/CNI,
+service mesh/Istio/Envoy, storage/CSI and Docker storage boundaries,
+HPA/VPA/node autoscaling and serverless, SLI/SLO/SLA and Prometheus, GitOps/Argo
+CD, and Kubernetes SIG/KEP governance. Current corpus: **40 units, 63 KCNA MCQs,
+252 review cards, 4 interactive lessons / 52 exercises, and 3 mental models**.
+Every quiz-bearing course module has module-scoped practice coverage.
+
+Local release acceptance is green after two real hydration races were fixed.
+The KCNA MCQ island and Study context controls now remain disabled until their
+Solid handlers are mounted, preventing server-rendered controls from accepting
+input before client state can observe it. `npm run ci` passes with **88/88
+Vitest tests**, zero Astro errors/warnings, content/revision/D1 checks,
+production build, and release-manifest generation. Final Playwright acceptance
+passes **187 cases / 44 intentional skips** across desktop, tablet, and mobile
+(231 cases total). The generated content manifest starts `fb7d5aefbdf0`.
+`revision:check --base=origin/main` and `git diff --check` are green.
+
+**Release state:** implementation and local acceptance complete; commit, push,
+PR/CI, merge, protected deployment, and production verification are the
+remaining steps. No implementation blocker remains. Production still serves the
+previous release until those protected release steps complete.
 
 **Current work: learner journey simplification.** Research and the feature/access
 map are recorded in [the redesign plan](docs/LEARNER-JOURNEY-REDESIGN.md).
