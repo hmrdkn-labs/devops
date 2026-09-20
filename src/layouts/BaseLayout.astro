@@ -42,8 +42,7 @@ const isCurrent = (item: typeof navigation[number]) => {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f6f4" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1210" />
+    <meta id="theme-color" name="theme-color" content="#f7f5f0" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -54,7 +53,11 @@ const isCurrent = (item: typeof navigation[number]) => {
     <link rel="icon" href="/favicon.svg" />
     <script is:inline>
       try {
-        document.documentElement.dataset.theme = localStorage.getItem('hmrdkn-theme') || 'system';
+        const savedTheme = localStorage.getItem('hmrdkn-theme');
+        const theme = savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system' ? savedTheme : 'system';
+        const dark = theme === 'dark' || (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('#theme-color')?.setAttribute('content', dark ? '#151c24' : '#f7f5f0');
       } catch {}
     </script>
     <title>{pageTitle}</title>

@@ -23,8 +23,9 @@ test('Learn starts a unit and each viewport exposes one primary navigation', asy
     await expect(page.locator('[data-session-action]')).toHaveAttribute('href', /^\/learn\//);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.locator('[data-session-action]').click();
-    await expect(page).toHaveURL(/\/learn\/[^/]+\/?$/);
-    await expect(page.getByRole('textbox', { name: 'Your explanation', exact: true })).toBeVisible();
+    await expect(page).toHaveURL(/\/learn\/[^/]+\/?\?mode=reference$/);
+    await expect(page.getByTestId('reader-workspace')).toBeVisible();
+    await expect(page.getByTestId('practice-workspace')).toBeHidden();
     for (const label of ['Learn', 'Review', 'Practice', 'Library']) {
       // Study is immersive; return to the shared navigation before exercising it.
       if (label === 'Learn') await page.goto('/');

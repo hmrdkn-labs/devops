@@ -84,6 +84,6 @@ test('unit progress is explicit and does not remount a recall draft', async ({ p
   await expect(answer).toHaveValue('A draft that should remain mounted.');
   await status.locator('summary').click();
   await expect(page.getByRole('button', { name: 'History', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Reference', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Read lesson', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notes', exact: true })).toBeVisible();
 });
