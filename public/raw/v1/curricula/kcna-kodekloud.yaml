@@ -3,8 +3,8 @@ id: curriculum:kcna-kodekloud
 slug: kcna-kodekloud
 title: KCNA course sequence
 summary: A portable KCNA curriculum spine that follows KodeKloud's current module and lesson order while mapping every step to independently authored hmrdkn-labs learning material and practice.
-revision: 1
-verified_at: 2026-09-18
+revision: 2
+verified_at: 2026-09-21
 reference:
   title: Kubernetes & Cloud-native Associate (KCNA) Course
   publisher: KodeKloud
@@ -157,57 +157,68 @@ modules:
         title: Manual Scheduling
         kind: lesson
         duration: "02:24"
-        unit_ids: [fpp:kubernetes-scheduling-placement]
+        unit_ids: [fpp:kubernetes-scheduling-placement, fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 2-direct-assignment-is-different-from-scheduler-policy, objective_ids: [fpp:kcna-scheduling-review/placement-policy] }
       - id: curriculum:kcna/scheduling/labels-selectors
         title: Labels and Selectors
         kind: lesson
         duration: "05:30"
         unit_ids: [fpp:kubernetes-labels-replicasets, fpp:kubernetes-scheduling-placement]
+        material: { unit_id: fpp:kubernetes-labels-replicasets, section: selector-and-template-labels-must-agree, objective_ids: [fpp:kubernetes-labels-replicasets/selection] }
       - id: curriculum:kcna/scheduling/taints-tolerations
         title: Taints and Tolerations
         kind: lesson
         duration: "09:34"
-        unit_ids: [fpp:kubernetes-scheduling-placement]
+        unit_ids: [fpp:kubernetes-scheduling-placement, fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 4-taints-and-tolerations-repel-versus-allow, objective_ids: [fpp:kcna-scheduling-review/placement-policy] }
       - id: curriculum:kcna/scheduling/node-selectors
         title: Node Selectors
         kind: lesson
         duration: "03:19"
-        unit_ids: [fpp:kubernetes-scheduling-placement]
+        unit_ids: [fpp:kubernetes-scheduling-placement, fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 3-labels-selectors-nodeselector-and-affinity, objective_ids: [fpp:kcna-scheduling-review/placement-policy] }
       - id: curriculum:kcna/scheduling/node-affinity
         title: Node Affinity
         kind: lesson
         duration: "07:05"
-        unit_ids: [fpp:kubernetes-scheduling-placement]
+        unit_ids: [fpp:kubernetes-scheduling-placement, fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 3-labels-selectors-nodeselector-and-affinity, objective_ids: [fpp:kcna-scheduling-review/placement-policy] }
       - id: curriculum:kcna/scheduling/taints-vs-affinity
         title: Taints and Tolerations vs Node Affinity
         kind: lesson
         duration: "02:34"
-        unit_ids: [fpp:kubernetes-scheduling-placement]
+        unit_ids: [fpp:kubernetes-scheduling-placement, fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 4-taints-and-tolerations-repel-versus-allow, objective_ids: [fpp:kcna-scheduling-review/placement-policy] }
       - id: curriculum:kcna/scheduling/resource-limits
         title: Resource Limits
         kind: lesson
         duration: "05:49"
         unit_ids: [fpp:scheduling-resources-health]
+        material: { unit_id: fpp:scheduling-resources-health, section: scheduling-resources-and-health-probes, objective_ids: [fpp:scheduling-resources-health/requests-limits] }
       - id: curriculum:kcna/scheduling/daemonsets
         title: DaemonSets
         kind: lesson
         duration: "04:04"
         unit_ids: [fpp:kcna-scheduling-review, fpp:kubernetes-resource-operations]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 6-daemonset-and-static-pod-are-different-ownership-models, objective_ids: [fpp:kcna-scheduling-review/node-ownership] }
       - id: curriculum:kcna/scheduling/static-pods
         title: Static Pods
         kind: lesson
         duration: "08:42"
         unit_ids: [fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: static-pod, objective_ids: [fpp:kcna-scheduling-review/node-ownership] }
       - id: curriculum:kcna/scheduling/multiple-schedulers
         title: Multiple Schedulers
         kind: lesson
         duration: "09:34"
         unit_ids: [fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 7-multiple-schedulers-and-scheduler-profiles, objective_ids: [fpp:kcna-scheduling-review/scheduler-extension] }
       - id: curriculum:kcna/scheduling/scheduler-profiles
         title: Configuring Kubernetes Scheduler Profiles
         kind: lesson
         duration: "09:52"
         unit_ids: [fpp:kcna-scheduling-review]
+        material: { unit_id: fpp:kcna-scheduling-review, section: 7-multiple-schedulers-and-scheduler-profiles, objective_ids: [fpp:kcna-scheduling-review/scheduler-extension] }
       - id: curriculum:kcna/scheduling/quiz
         title: Quiz-Scheduling
         kind: quiz
@@ -226,50 +237,62 @@ modules:
         title: Security – Kubernetes Security Primitives
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: api-request-path, objective_ids: [fpp:kubernetes-security-access/request] }
       - id: curriculum:kcna/security/authentication
         title: Authentication
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: api-request-path, objective_ids: [fpp:kubernetes-security-access/request] }
       - id: curriculum:kcna/security/tls-certificate-creation
         title: TLS in Kubernetes – Certificate Creation
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: tls-certificates-and-kubeconfig-come-before-api-permission, objective_ids: [fpp:kubernetes-security-access/client-trust] }
       - id: curriculum:kcna/security/kubeconfig
         title: KubeConfig
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: tls-certificates-and-kubeconfig-come-before-api-permission, objective_ids: [fpp:kubernetes-security-access/client-trust] }
       - id: curriculum:kcna/security/api-groups
         title: API Groups
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access, fpp:kubernetes-manifests]
+        material: { unit_id: fpp:kubernetes-security-access, section: api-groups-connect-manifests-to-rbac-rules, objective_ids: [fpp:kubernetes-security-access/client-trust, fpp:kubernetes-security-access/request] }
       - id: curriculum:kcna/security/authorization
         title: Authorization
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: api-request-path, objective_ids: [fpp:kubernetes-security-access/request] }
       - id: curriculum:kcna/security/rbac
         title: Role Based Access Controls
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: api-groups-connect-manifests-to-rbac-rules, objective_ids: [fpp:kubernetes-security-access/request, fpp:kubernetes-security-access/workload] }
       - id: curriculum:kcna/security/cluster-roles
         title: Cluster Roles
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: api-groups-connect-manifests-to-rbac-rules, objective_ids: [fpp:kubernetes-security-access/request, fpp:kubernetes-security-access/workload] }
       - id: curriculum:kcna/security/service-accounts
         title: Service Accounts
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: workload-identity-is-not-a-human-kubeconfig, objective_ids: [fpp:kubernetes-security-access/workload] }
       - id: curriculum:kcna/security/image-security
         title: Image Security
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access, fpp:container-lifecycle]
+        material: { unit_id: fpp:kubernetes-security-access, section: image-security-and-process-security-are-separate, objective_ids: [fpp:kubernetes-security-access/artifact-execution] }
       - id: curriculum:kcna/security/security-contexts
         title: Security Contexts
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: image-security-and-process-security-are-separate, objective_ids: [fpp:kubernetes-security-access/artifact-execution] }
       - id: curriculum:kcna/security/network-policies
         title: Network Policies
         kind: lesson
         unit_ids: [fpp:kubernetes-security-access]
+        material: { unit_id: fpp:kubernetes-security-access, section: pod-and-network-controls-answer-different-questions, objective_ids: [fpp:kubernetes-security-access/workload] }
       - id: curriculum:kcna/security/quiz
         title: Quiz-Security
         kind: quiz
@@ -496,56 +519,67 @@ modules:
         kind: lesson
         duration: "07:10"
         unit_ids: [fpp:cloud-native-observability-signals, fpp:troubleshoot-process-to-pod]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: metrics-answer-how-much-and-how-often, objective_ids: [fpp:cloud-native-observability-signals/signals] }
       - id: curriculum:kcna/cloud-native-observability/slo-sla-sli
         title: SLO/SLA/SLI
         kind: lesson
         duration: "03:32"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: sli-slo-and-sla-start-with-the-user-outcome, objective_ids: [fpp:cloud-native-observability-signals/reliability] }
       - id: curriculum:kcna/cloud-native-observability/prometheus-use-case
         title: Prometheus Use Case
         kind: lesson
         duration: "02:19"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: prometheus-collection-storage-rules-and-notification, objective_ids: [fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/prometheus-basics
         title: Prometheus Basics
         kind: lesson
         duration: "02:20"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: prometheus-collection-storage-rules-and-notification, objective_ids: [fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/prometheus-architecture
         title: Prometheus Architecture
         kind: lesson
         duration: "08:30"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: prometheus-collection-storage-rules-and-notification, objective_ids: [fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/node-exporter
         title: Prometheus – Node Exporter
         kind: lesson
         duration: "03:06"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: prometheus-collection-storage-rules-and-notification, objective_ids: [fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/configuration
         title: Prometheus Configuration
         kind: lesson
         duration: "08:47"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: prometheus-collection-storage-rules-and-notification, objective_ids: [fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/metrics
         title: Prometheus – Metrics
         kind: lesson
         duration: "14:35"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: metrics-types-and-labels, objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/monitoring-containers
         title: Prometheus – Monitoring Containers
         kind: lesson
         duration: "03:11"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: monitoring-kubernetes-requires-several-perspectives, objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/monitoring-kubernetes
         title: Prometheus – Monitoring Kubernetes
         kind: lesson
         duration: "09:52"
         unit_ids: [fpp:cloud-native-observability-signals]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: monitoring-kubernetes-requires-several-perspectives, objective_ids: [fpp:cloud-native-observability-signals/signals, fpp:cloud-native-observability-signals/tools] }
       - id: curriculum:kcna/cloud-native-observability/cost-management
         title: Cost Management
         kind: lesson
         duration: "05:45"
         unit_ids: [fpp:cloud-native-observability-signals, fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-observability-signals, section: cost-monitoring-is-also-a-feedback-loop, objective_ids: [fpp:cloud-native-observability-signals/reliability] }
       - id: curriculum:kcna/cloud-native-observability/quiz
         title: Quiz-Cloud Native Observability
         kind: quiz
@@ -565,41 +599,49 @@ modules:
         kind: lesson
         duration: "03:29"
         unit_ids: [fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: ci-builds-evidence-and-artifacts, objective_ids: [fpp:cloud-native-delivery-gitops/pipeline] }
       - id: curriculum:kcna/cloud-native-application-delivery/what-is-gitops
         title: What is GitOps
         kind: lesson
         duration: "04:24"
         unit_ids: [fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: gitops-adds-a-reconciliation-contract, objective_ids: [fpp:cloud-native-delivery-gitops/gitops] }
       - id: curriculum:kcna/cloud-native-application-delivery/gitops-principles
         title: GitOps Principles
         kind: lesson
         duration: "03:44"
         unit_ids: [fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: gitops-adds-a-reconciliation-contract, objective_ids: [fpp:cloud-native-delivery-gitops/gitops] }
       - id: curriculum:kcna/cloud-native-application-delivery/push-vs-pull
         title: Push vs Pull-based Deployments
         kind: lesson
         duration: "01:50"
         unit_ids: [fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: push-deployment-and-pull-reconciliation, objective_ids: [fpp:cloud-native-delivery-gitops/gitops] }
       - id: curriculum:kcna/cloud-native-application-delivery/cicd-gitops
         title: CI/CD with GitOps
         kind: lesson
         duration: "02:27"
         unit_ids: [fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: cd-changes-an-environment, objective_ids: [fpp:cloud-native-delivery-gitops/pipeline, fpp:cloud-native-delivery-gitops/gitops] }
       - id: curriculum:kcna/cloud-native-application-delivery/repositories-dockerfile
         title: Git Repositories, Dockerfile and Application Walkthrough
         kind: demo
         duration: "01:32"
         unit_ids: [fpp:cloud-native-delivery-gitops, fpp:container-lifecycle]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: ci-builds-evidence-and-artifacts, objective_ids: [fpp:cloud-native-delivery-gitops/pipeline] }
       - id: curriculum:kcna/cloud-native-application-delivery/argocd
         title: ArgoCD Walkthrough
         kind: demo
         duration: "02:30"
         unit_ids: [fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: argo-cd-trace-one-application-change, objective_ids: [fpp:cloud-native-delivery-gitops/gitops] }
       - id: curriculum:kcna/cloud-native-application-delivery/cicd-pipeline
         title: CICD Pipeline Demo
         kind: demo
         duration: "02:16"
         unit_ids: [fpp:cloud-native-release-debugging, fpp:cloud-native-delivery-gitops]
+        material: { unit_id: fpp:cloud-native-delivery-gitops, section: what-to-prove-after-delivery, objective_ids: [fpp:cloud-native-delivery-gitops/pipeline, fpp:cloud-native-delivery-gitops/gitops] }
       - id: curriculum:kcna/cloud-native-application-delivery/quiz
         title: Quiz-Cloud Native Application Delivery
         kind: quiz
