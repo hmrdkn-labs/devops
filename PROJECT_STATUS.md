@@ -1,9 +1,78 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-18 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-21 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**Current phase: approved experience improvements are in implementation.**
+**Now:** reader/progress repair and curriculum targets; Scheduling prototype
+being built in parallel. **Next:** integrated browser review, visual system,
+meaningful commits, then release verification. The user approved the audited
+direction and execution order on 2026-09-21, selected the beaver identity, and
+explicitly authorized **Sol Medium, otherwise Luna Max** for implementation
+after the requested Extra High subagent again failed to start. Sol Medium is
+working; the parent remains planner/reviewer and is not writing application code.
+
+Six independent GPT Image beaver candidates are generated and preserved in
+[`docs/assets/beaver-2026-09-21/`](docs/assets/beaver-2026-09-21/), with exact
+prompts, native dimensions, and intended palettes in the
+[character exploration](docs/BEAVER-CHARACTER-EXPLORATION.md). No rerolls,
+filtering, or image alterations were performed. Final candidate selection is
+pending; it does not block the reader/prototype work. The current application
+monogram remains until integration. Production is unchanged; new changes have
+not yet received integrated acceptance or been deployed.
+
+### Audit checkpoint · 2026-09-21
+
+**Experience audit complete; improvement plan approved subsequently.**
+**Audit → reader/progress contract → Scheduling prototype → usability check →
+propagate → protected release.** This checkpoint records the audit, not a new deployment.
+The [2026-09-21 audit and plan](docs/LEARNING-EXPERIENCE-AUDIT-2026-09-21.md)
+compares the live/local journeys with official Brilliant and Duolingo patterns,
+reviews content coverage, proposes an accessible paper/cobalt/slate palette,
+and applies the requested logo skill to three character directions and a
+six-candidate proposal. No image generation or application/content changes were
+made for this planning request; existing dirty implementation files are preserved.
+
+**Important newly identified gaps:** the local read-first panel still has no
+direct lesson-read completion/continue action (the button appears only after
+all recall questions), and several distinct curriculum lessons reopen the same
+broad unit with shared unit-level status. These are UX/contract gaps despite
+the prior passing test suite, not evidence that saved learner data was lost.
+The proposed next work is to make reading the main surface, preserve honest
+progress/history, and prove one short concept-to-practice sequence before
+spreading more features. No architecture replacement is indicated. Requested
+Extra High reviewers could not start due to model compatibility; the audit was
+completed by the parent reviewer without switching writer models. The local
+read-first branch below remains uncommitted and unpublished.
+
+### Previous implementation checkpoint · 2026-09-18
+
+**Current release candidate: KCNA study-first flow and saved-progress continuity.**
+Branch `fix/kcna-study-first-progress` now makes the learning mode explicit:
+learners can choose **Recall first** or **Read lesson first**, while History,
+Reference, and Notes stay inside the study workspace instead of transporting the
+learner to another page. Unread KCNA lesson CTAs open the readable lesson view;
+read lessons return to recall-first study. Reading does not grant recall/mastery
+credit. For the signed-in owner it records one Encountered event per page
+opening; guest reading remains memory-only. Saved KCNA progress now renders from
+a neutral loading state so returning evidence never briefly appears as “Not
+started”. The desktop reader is widened for long-form material and the mobile
+reader uses an almost-fullscreen, independently scrolling sheet while
+History/Notes keep the smaller contextual-sheet treatment.
+
+Local release verification is green on 2026-09-18. `npm run ci` passes content
+validation, Astro type checking with **0 errors / 0 warnings / 0 hints**, **89/89
+Vitest tests**, D1 migration/idempotency/evidence checks, production build, and
+release-manifest generation. A clean full Playwright run passes **207 cases / 48
+intentional skips** across desktop, tablet, and mobile. The only failure in the
+first clean matrix was an obsolete navigation expectation that required a bare
+`/learn/...` URL; it was updated to verify the intentional unread-unit
+`?mode=reference` reader state, after which the targeted spec passed 9/9 and the
+full matrix passed with zero failures. `git diff --check` is green. **No current
+implementation/test blocker remains.** This branch is still uncommitted and
+unpublished; production is unchanged pending review and an explicit release.
 
 **Latest production cleanup: learner tasks are now separated from source-only
 course metadata.** [PR #16](https://github.com/hmrdkn-labs/devops/pull/16)
