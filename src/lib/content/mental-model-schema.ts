@@ -7,6 +7,119 @@ const optionSchema = z.object({
   rationale: z.string().min(12),
 });
 
+const schedulingTaintSchema = z.object({
+  key: id,
+  value: z.string().min(1),
+  effect: z.literal('NoSchedule'),
+});
+
+const schedulingTolerationSchema = z.object({
+  key: id,
+  value: z.string().min(1),
+  effect: z.literal('NoSchedule'),
+});
+
+const schedulingPodSchema = z.object({
+  name: id,
+  cpu_m: z.number().int().positive(),
+  memory_mi: z.number().int().positive(),
+  required_labels: z.record(z.string(), z.string().min(1)),
+  preferred_labels: z.record(z.string(), z.string().min(1)).default({}),
+  tolerations: z.array(schedulingTolerationSchema),
+});
+
+const schedulingNodeSchema = z.object({
+  id,
+  name: z.string().min(2),
+  cpu_available_m: z.number().int().nonnegative(),
+  memory_available_mi: z.number().int().nonnegative(),
+  labels: z.record(z.string(), z.string().min(1)),
+  taints: z.array(schedulingTaintSchema),
+});
+
+const schedulingChoiceSchema = z.object({
+  id,
+  text: z.string().min(3),
+  rationale: z.string().min(12),
+});
+
+const schedulingScenarioSchema = z.object({
+  pod: schedulingPodSchema,
+  nodes: z.array(schedulingNodeSchema).length(3),
+  eligible_node_ids: z.array(id),
+  prompt: z.string().min(10),
+  choices: z.array(schedulingChoiceSchema).min(2).max(4),
+  answer_id: id,
+  correct_explanation: z.string().min(20),
+});
+
+const schedulingPrototypeSchema = z.object({
+  goal: z.string().min(20),
+  prerequisite: z.string().min(10),
+  assumptions: z.array(z.string().min(15)).min(3),
+  read: z.object({
+    title: z.string().min(3),
+    body: z.array(z.string().min(20)).min(2),
+    start_label: z.string().min(3),
+  }),
+  base: schedulingScenarioSchema,
+  change: z.object({
+    title: z.string().min(3),
+    description: z.string().min(15),
+    pod: schedulingPodSchema,
+    eligible_node_ids: z.array(id),
+    prompt: z.string().min(10),
+    choices: z.array(schedulingChoiceSchema).min(2).max(4),
+    answer_id: id,
+    correct_explanation: z.string().min(20),
+  }),
+  concepts: z.array(z.object({
+    term: z.string().min(3),
+    explanation: z.string().min(20),
+  })).min(3),
+  lifecycle: z.object({
+    title: z.string().min(3),
+    stages: z.array(z.object({
+      actor: z.string().min(3),
+      action: z.string().min(15),
+      observable: z.string().min(15),
+    })).min(3),
+    proof: z.object({
+      command: z.string().min(3),
+      expected: z.string().min(12),
+      proves: z.string().min(12),
+      limitation: z.string().min(12),
+    }),
+  }),
+  transfer: schedulingScenarioSchema.extend({
+    explain_prompt: z.string().min(10),
+    checklist: z.array(z.string().min(10)).min(3),
+    model_answer: z.string().min(30),
+  }),
+}).superRefine((prototype, context) => {
+  for (const [scenarioName, scenario] of [['base', prototype.base], ['transfer', prototype.transfer]] as const) {
+    const nodeIds = new Set(scenario.nodes.map((node) => node.id));
+    if (nodeIds.size !== scenario.nodes.length) context.addIssue({ code: 'custom', path: [scenarioName, 'nodes'], message: 'node IDs must be unique' });
+    const optionIds = new Set(scenario.choices.map((choice) => choice.id));
+    if (optionIds.size !== scenario.choices.length || !optionIds.has(scenario.answer_id)) {
+      context.addIssue({ code: 'custom', path: [scenarioName, 'choices'], message: 'choices must be unique and include the answer' });
+    }
+    const eligibleIds = new Set(scenario.eligible_node_ids);
+    if (eligibleIds.size !== scenario.eligible_node_ids.length || scenario.eligible_node_ids.some((nodeId) => !nodeIds.has(nodeId))) {
+      context.addIssue({ code: 'custom', path: [scenarioName, 'eligible_node_ids'], message: 'eligible node IDs must be unique known nodes' });
+    }
+  }
+  const changeOptionIds = new Set(prototype.change.choices.map((choice) => choice.id));
+  if (changeOptionIds.size !== prototype.change.choices.length || !changeOptionIds.has(prototype.change.answer_id)) {
+    context.addIssue({ code: 'custom', path: ['change', 'choices'], message: 'choices must be unique and include the answer' });
+  }
+  const baseNodeIds = new Set(prototype.base.nodes.map((node) => node.id));
+  const changedEligibleIds = new Set(prototype.change.eligible_node_ids);
+  if (changedEligibleIds.size !== prototype.change.eligible_node_ids.length || prototype.change.eligible_node_ids.some((nodeId) => !baseNodeIds.has(nodeId))) {
+    context.addIssue({ code: 'custom', path: ['change', 'eligible_node_ids'], message: 'eligible node IDs must be unique nodes from the base scenario' });
+  }
+}).strict();
+
 /** Portable deterministic teaching fixtures; no provisioning or runtime claims. */
 export const mentalModelSchema = z.object({
   schema_version: z.literal(1),
@@ -57,6 +170,7 @@ export const mentalModelSchema = z.object({
   })).min(3),
   transfer_questions: z.array(z.object({ prompt: z.string().min(10), answer: z.string().min(20) })).min(2),
   sources: z.array(z.object({ title: z.string().min(3), url: z.url() })).min(1),
+  scheduling_prototype: schedulingPrototypeSchema.optional(),
 }).superRefine((model, context) => {
   const components = new Set(model.components.map((component) => component.id));
   const steps = new Set(model.steps.map((step) => step.id));
@@ -81,3 +195,6 @@ export const mentalModelSchema = z.object({
 });
 
 export type MentalModel = z.infer<typeof mentalModelSchema>;
+export type SchedulingPrototype = NonNullable<MentalModel['scheduling_prototype']>;
+export type SchedulingPod = SchedulingPrototype['base']['pod'];
+export type SchedulingNode = SchedulingPrototype['base']['nodes'][number];
