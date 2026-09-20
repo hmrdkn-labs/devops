@@ -11,6 +11,8 @@ import {
   type Curriculum,
 } from '../src/lib/content/schema';
 import { validateCurricula, validateGraph, validateLessons } from '../tools/content/build';
+import { renderMarkdown } from '../src/lib/content/render';
+import { markdownHeadingIds } from '../src/lib/content/headings';
 
 function unit(
   id = 'fpp:test',
@@ -250,6 +252,61 @@ describe('content contract', () => {
     const duplicateModule = structuredClone(valid);
     duplicateModule.modules.push(duplicateModule.modules[0]!);
     expect(() => curriculumSchema.parse(duplicateModule)).toThrow('duplicate module');
+  });
+
+  it('validates curriculum section targets and renders matching heading anchors', () => {
+    const source = unit();
+    const valid = curriculumFor(source);
+    valid.modules[0]!.steps[0]!.material = {
+      unit_id: source.metadata.id,
+      section: 'fixture',
+      objective_ids: [source.metadata.objectives[0]!.id],
+    };
+    expect(() => validateCurricula([valid], [source])).not.toThrow();
+    expect(renderMarkdown(source.markdown)).toContain('<h1 id="fixture">Fixture</h1>');
+
+    const missingSection = structuredClone(valid);
+    missingSection.modules[0]!.steps[0]!.material!.section = 'missing-section';
+    expect(() => validateCurricula([missingSection], [source])).toThrow('unknown section');
+
+    const missingObjective = structuredClone(valid);
+    missingObjective.modules[0]!.steps[0]!.material!.objective_ids = ['fpp:test.missing'];
+    expect(() => validateCurricula([missingObjective], [source])).toThrow('unknown material objective');
+  });
+
+  it('derives validated heading targets from the same parsed Markdown as rendering', () => {
+    const markdown = [
+      '## A *marked-up* [heading](https://example.com)',
+      '',
+      '```markdown',
+      '## fenced pseudoheading',
+      '```',
+      '',
+      '## Duplicate',
+      '',
+      '## Duplicate 2',
+      '',
+      '## Duplicate',
+      '',
+      '## Duplicate',
+      '',
+      '## 👋',
+      '',
+      '## 👋',
+    ].join('\n');
+    expect([...markdownHeadingIds(markdown)]).toEqual([
+      'a-marked-up-heading', 'duplicate', 'duplicate-2', 'duplicate-3', 'duplicate-4',
+      'section', 'section-2',
+    ]);
+    const rendered = renderMarkdown(markdown);
+    expect(rendered).toContain('<h2 id="a-marked-up-heading">');
+    expect(rendered).toContain('<h2 id="duplicate">Duplicate</h2>');
+    expect(rendered).toContain('<h2 id="duplicate-2">Duplicate 2</h2>');
+    expect(rendered).toContain('<h2 id="duplicate-3">Duplicate</h2>');
+    expect(rendered).toContain('<h2 id="duplicate-4">Duplicate</h2>');
+    expect(rendered).toContain('<h2 id="section">👋</h2>');
+    expect(rendered).toContain('<h2 id="section-2">👋</h2>');
+    expect(rendered).not.toContain('id="fenced-pseudoheading"');
   });
 
   it('requires practice coverage for course quizzes and valid explicit module assignments', () => {
