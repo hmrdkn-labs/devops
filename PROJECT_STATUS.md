@@ -5,14 +5,51 @@
 
 ## Read this first
 
-**Current phase: approved experience improvements are in implementation.**
-**Now:** reader/progress repair and curriculum targets; Scheduling prototype
-being built in parallel. **Next:** integrated browser review, visual system,
-meaningful commits, then release verification. The user approved the audited
-direction and execution order on 2026-09-21, selected the beaver identity, and
-explicitly authorized **Sol Medium, otherwise Luna Max** for implementation
-after the requested Extra High subagent again failed to start. Sol Medium is
-working; the parent remains planner/reviewer and is not writing application code.
+**Current phase: tested learning-experience preview, ready for owner feedback.**
+**Audit ✓ → reader/progress ✓ → section targets ✓ → Scheduling prototype ✓ →
+palette/checks ✓ → owner trial NEXT → wider curriculum rollout → protected release.**
+
+The first implementation increment is complete on `fix/kcna-study-first-progress`.
+Reading is now the main surface, with an explicit **Mark read & try the concept**
+action; Practice, History, and Notes retain the current draft. A pending identity
+request no longer delays public reading, and reading never grants recall credit.
+**42 of 93 teaching rows** now target a validated section/objective set instead
+of reopening a broad unit at the top. Shared unit evidence is labeled honestly;
+source-video times are not presented as our reading estimates. The five-stage
+Scheduling prototype adds prediction, a changed condition, actor/proof tracing,
+and a distinct transfer scenario while retaining the older detailed walkthrough.
+
+The warm-paper/cobalt light theme and slate/soft-blue dark theme are implemented,
+with measured token contrast, stronger control boundaries, readable status text,
+and browser theme-color synchronization. The user approved the direction and
+authorized **Sol Medium, otherwise Luna Max** after Extra High compatibility
+failed. Sol Medium wrote application/content code; the parent reviewed,
+orchestrated, tested, and maintained documentation.
+
+**Verification:** fresh `npm run ci` passes: 117/117 Vitest tests, zero Astro
+errors/warnings/hints, content validation, D1 migration/idempotency/evidence
+checks, production build, and manifest generation. Final Playwright matrix:
+**215 passed / 52 intentional skips / 0 failures** across desktop, tablet, and
+mobile. Revision classification and diff checks pass. Manual browser review
+covered 390px and 1440px, both themes, wrong-answer feedback and next-stage focus,
+History/draft retention, and an exact Scheduling section link. Owner identity
+and persistence scenarios in browser tests are mocked; no production learner
+records were touched. These checks do not establish learning efficacy or a
+site-wide accessibility certification.
+
+Try the [Scheduling prototype](http://localhost:4321/models/pod-scheduling/),
+[main reader](http://localhost:4321/learn/kcna-scheduling-review/?mode=reference),
+and [KCNA curriculum](http://localhost:4321/kcna/). This local preview has no D1 or
+auth binding: answers are memory-only. It is available while the local preview
+process is running, not a public deployment.
+
+**Focused commits:** `ffdf240` reader/visual system; `f26787c` curriculum targets;
+`51d8fc1` Scheduling teaching sequence; `315d2a5` portable generated exports.
+The approved audit and six original candidate images were preserved separately
+in `a08fbec`. **No current implementation/test blocker.** Owner usability feedback,
+final character selection/integration, coverage-led expansion, and remote
+CI/protected release are still outstanding. Changes are committed locally,
+not pushed, merged, or deployed. Production is unchanged.
 
 Six independent GPT Image beaver candidates are generated and preserved in
 [`docs/assets/beaver-2026-09-21/`](docs/assets/beaver-2026-09-21/), with exact
@@ -20,8 +57,9 @@ prompts, native dimensions, and intended palettes in the
 [character exploration](docs/BEAVER-CHARACTER-EXPLORATION.md). No rerolls,
 filtering, or image alterations were performed. Final candidate selection is
 pending; it does not block the reader/prototype work. The current application
-monogram remains until integration. Production is unchanged; new changes have
-not yet received integrated acceptance or been deployed.
+monogram remains until integration. See the
+[preview acceptance record](docs/LEARNING-PREVIEW-ACCEPTANCE-2026-09-21.md) for
+the tested scope, limitations, and next trial.
 
 ### Audit checkpoint · 2026-09-21
 

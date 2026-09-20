@@ -1,13 +1,16 @@
 # Learning experience audit and improvement plan
 
-2026-09-21 · **Research complete → direction approved → implementation in progress**
+2026-09-21 · **Research complete → direction approved → first preview verified**
 
 The user approved the recommendations and execution order, selected the beaver
 direction, and authorized Sol Medium (otherwise Luna Max) as implementation
 writer after Extra High compatibility failed. The findings below describe the
 audit baseline. See PROJECT_STATUS.md for current implementation and verification
-state, and [the beaver exploration](BEAVER-CHARACTER-EXPLORATION.md) for generated
-candidates. Proposed gates are not claimed as passed until verified.
+state, [the preview acceptance record](LEARNING-PREVIEW-ACCEPTANCE-2026-09-21.md)
+for tested implementation scope, and
+[the beaver exploration](BEAVER-CHARACTER-EXPLORATION.md) for generated candidates.
+The findings and proposals below retain the audit baseline; owner usability,
+wider propagation, and protected release gates are not claimed as passed.
 
 ## Decision in one minute
 
