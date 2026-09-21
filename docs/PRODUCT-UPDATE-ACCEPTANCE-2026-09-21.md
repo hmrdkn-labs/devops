@@ -1,8 +1,8 @@
 # Learning experience update — acceptance record
 
-2026-09-21 · local acceptance passed; publication receipt follows in PROJECT_STATUS.md
+2026-09-21 · acceptance passed; merged, deployed, and live-verified
 
-## Shipped scope of this release candidate
+## Shipped scope
 
 - First-class reading with explicit reading completion, peer Read/Practice
   modes, retained drafts, and contextual History/Notes. Reading is not recall.
@@ -68,8 +68,43 @@ axe checks on the guided entry and incorrect-answer surfaces.
    native focus scrolling (24 → 33 → 37 → 39px). The test now waits for heading
    and scroll geometry to settle across four animation frames before measuring.
    All existing 4px limits remain; no app behavior or tolerance was changed.
-   The corrected test passed 50 repeated local mobile runs. Remote CI is rerun
-   against the resulting exact head before merge.
+   The corrected test passed 50 repeated local mobile runs. Exact-head PR CI
+   and post-merge main CI subsequently passed all gates.
+
+## Production release receipt
+
+| Evidence | Result |
+| --- | --- |
+| Public source | [PR #17](https://github.com/hmrdkn-labs/devops/pull/17), merged with meaningful commits retained |
+| Deployed source SHA | `31df4f5c5fd078df698e1eb7283299515f87730f` |
+| Tested PR head | `aded607e19228782806e8860dc817363afeaee83`; merge tree identical |
+| PR CI | [35547706451](https://github.com/hmrdkn-labs/devops/actions/runs/35547706451), all gates passed |
+| Main CI | [35548008732](https://github.com/hmrdkn-labs/devops/actions/runs/35548008732), all gates passed |
+| Private protected deployment | [35548278032](https://github.com/hamardikan/hamardikan-infra/actions/runs/35548278032), successful owner-mode deployment |
+| Deployment verification time | 2026-09-21 00:38 UTC / 07:38 WIB |
+| Live service | [devops.hamardikan.com](https://devops.hamardikan.com/) |
+| Health | `status: ok`, `database: ready`; live manifest matches the SHA above |
+| Authentication | Configured; unauthenticated session endpoint returns 2xx |
+| Migrations | No migrations to apply |
+| Previous Worker rollback target | `d6a21a1f-9803-447a-97bb-2a095adc69a5` (preserve D1) |
+
+After deployment, public HTTP checks returned 200 for the home, KCNA curriculum,
+three guided models, security practice, Scheduling reader, raw Scheduling
+Markdown, and the mascot asset. The live 64px PNG has the same SHA-256 as the
+tested repository asset:
+`81cfbf36633880e8c1474bd8fa76ad6e519fba86eca4b8d116990842daa4b288`.
+
+Manual production browser checks verified the selected A1 identity and decoded
+small assets on desktop, Start learning opening the full reader, and the
+reconciliation guide at 390px. An intentionally incorrect scheduler prediction
+revealed the specific correction and working next-stage control. Both themes
+had no horizontal page overflow; theme and viewport settings were restored.
+The browser session was a guest. No owner learning records were written.
+
+This receipt is a documentation-only follow-up; the deployed application SHA
+remains the exact source above. No dependency, database-schema, auth, or private
+infrastructure architecture change was required. The private infrastructure
+checkout's unrelated uncommitted changes were left untouched.
 
 ## Boundaries and remaining work
 
@@ -86,6 +121,8 @@ thin transfer objectives. Those remain a content review queue, not hidden
 behind question counts. Broader 70–100-unit growth, new persistence, container
 migration, and advanced platform features remain outside this release.
 
-Public exact-head CI, merge, private owner-mode deployment, live manifest and
-health verification, and a recorded previous Worker rollback version are the
-remaining publication gates at the time this acceptance record is committed.
+All publication gates for this increment are complete. Real owner sessions and
+authenticated production persistence verification remain follow-up learning and
+operational checks; the release does not claim those were performed by the
+guest smoke tests. Subsequent documentation commits do not imply another
+application deployment.

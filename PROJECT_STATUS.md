@@ -5,10 +5,16 @@
 
 ## Read this first
 
-**Current phase: updated product verified locally; remote CI and protected release next.**
+**Current phase: the approved product update is live and verified.**
 
 **Audit ✓ → reader and progress ✓ → A1 identity ✓ → three guided models ✓ →
-practice enrichment ✓ → local acceptance ✓ → GitHub CI/merge → protected deployment.**
+practice enrichment ✓ → local acceptance ✓ → PR CI/merge ✓ → main CI ✓ → protected deployment ✓ → live checks ✓.**
+
+**Open [the updated product](https://devops.hamardikan.com/).** Try the
+[KCNA curriculum](https://devops.hamardikan.com/kcna/),
+[Scheduling reader](https://devops.hamardikan.com/learn/kcna-scheduling-review/?mode=reference),
+[guided reconciliation](https://devops.hamardikan.com/models/kubernetes-reconciliation/),
+or [KCNA practice](https://devops.hamardikan.com/practice/kcna/).
 
 The selected original A1 beaver is integrated in the header, favicon, and home
 welcome. The warm-paper/cobalt and slate/soft-blue themes support the main
@@ -28,18 +34,32 @@ No production learner records were changed. See the
 [release acceptance record](docs/PRODUCT-UPDATE-ACCEPTANCE-2026-09-21.md) and
 [content coverage report](docs/CONTENT-COVERAGE-2026-09-21.md).
 
-PR #17 is open. Initial remote validation passed; its browser run found one
-mid-scroll geometry measurement race. The saved trace established the cause,
-and the test now measures settled geometry without relaxing its 4px contract
-(50 repeated local mobile passes). The corrected head is awaiting remote CI.
-No current implementation blocker. Publishing still requires exact-head public
-CI, merge, and the existing private owner-mode workflow; none of those are
-claimed complete at this checkpoint. Sol Medium wrote code and content; the
+[PR #17](https://github.com/hmrdkn-labs/devops/pull/17) is merged as
+`31df4f5c5fd078df698e1eb7283299515f87730f`, retaining the meaningful commits.
+The corrected PR CI and [main CI](https://github.com/hmrdkn-labs/devops/actions/runs/35548008732)
+passed all gates. The existing private owner-mode workflow deployed that exact
+merge successfully on **2026-09-21 at 00:38 UTC / 07:38 WIB**. Production reports
+`status: ok`, `database: ready`, and the expected manifest
+`7b0b7ee64bc1aa27fc4d09e24630d96ee99973bb30882fd52347fcfb7e8f851f`.
+Authentication remains configured. No migrations were pending.
+
+Live guest checks verified the home, curriculum, all three models, practice,
+full reader, raw Markdown, and optimized mascot asset; the mascot bytes match
+the tested build. Manual production checks covered desktop identity, read-first
+navigation, 390px mobile wrong-answer feedback and next-stage progression, and
+both themes without horizontal page overflow. These checks did not write owner
+learning data. The [acceptance record](docs/PRODUCT-UPDATE-ACCEPTANCE-2026-09-21.md#production-release-receipt)
+contains the deployment and rollback receipt. **No release blocker remains.**
+
+**Next:** real owner sessions and feedback, the two documented worked-example
+gaps, thin transfer objectives, then remaining exact-section targets. These are
+follow-up quality work, not unfinished publication gates for this increment.
+Sol Medium wrote code and content; the
 parent orchestrated, reviewed, tested, and documented. No database migration,
 dependency, auth, or infrastructure architecture change is introduced. The
 private infrastructure checkout's unrelated changes remain untouched.
 
-### Verified preview checkpoint
+### Historical preview checkpoint · superseded by the live release above
 
 **Tested learning-experience preview completed.**
 **Audit ✓ → reader/progress ✓ → section targets ✓ → Scheduling prototype ✓ →
