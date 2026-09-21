@@ -17,6 +17,9 @@ test('model controls wait for delayed island handlers before accepting a predict
     await route.continue();
   });
   await page.goto(`/models/${model.slug}/`, { waitUntil: 'commit' });
+  if (model.scheduling_prototype || model.guided_sequence) {
+    await page.getByText('Detailed component walkthrough — separate example', { exact: true }).click();
+  }
   const workspace = page.locator('.mental-model-workspace');
   const radio = page.getByRole('radio', { name: wrong.text, exact: true });
   const reveal = page.getByRole('button', { name: 'Check prediction & reveal', exact: true });
@@ -90,7 +93,7 @@ test('unit reference offers the same model while preserving the current explanat
 test.describe('every model teaches prediction, evidence, failure reasoning, transfer, and replay', () => {
   for (const model of models) test(model.title, async ({ page }) => {
     await page.goto(`/models/${model.slug}/`);
-    if (model.scheduling_prototype) {
+    if (model.scheduling_prototype || model.guided_sequence) {
       await page.getByText('Detailed component walkthrough — separate example', { exact: true }).click();
     }
     const workspace = page.locator('.mental-model-workspace');

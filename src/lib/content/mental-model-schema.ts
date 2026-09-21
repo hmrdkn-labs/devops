@@ -6,6 +6,90 @@ const optionSchema = z.object({
   text: z.string().min(3),
   rationale: z.string().min(12),
 });
+const componentLocationSchema = z.enum(['client', 'control-plane', 'worker-node', 'data-plane', 'cluster-addon', 'external']);
+
+const guidedChoiceSchema = z.object({
+  id,
+  text: z.string().min(3),
+  rationale: z.string().min(12),
+}).strict();
+
+const guidedCardSchema = z.object({
+  id,
+  title: z.string().min(2),
+  eyebrow: z.string().min(2),
+  facts: z.array(z.object({ label: z.string().min(2), value: z.string().min(1) }).strict()).min(2).max(5),
+}).strict();
+
+const guidedScenarioSchema = z.object({
+  title: z.string().min(3),
+  setup: z.string().min(20),
+  cards: z.array(guidedCardSchema).min(2).max(4),
+  prompt: z.string().min(10),
+  choices: z.array(guidedChoiceSchema).min(2).max(4),
+  answer_id: id,
+  correct_explanation: z.string().min(20),
+}).strict();
+
+const guidedSequenceSchema = z.object({
+  goal: z.string().min(20),
+  prerequisite: z.string().min(10),
+  assumptions: z.array(z.string().min(15)).min(2),
+  read: z.object({
+    title: z.string().min(3),
+    worked_example: z.string().min(20),
+    body: z.array(z.string().min(20)).min(2),
+    start_label: z.string().min(3),
+  }).strict(),
+  initial: guidedScenarioSchema,
+  change: guidedScenarioSchema.extend({ changed_condition: z.string().min(15) }).strict(),
+  explain: z.object({
+    title: z.string().min(3),
+    intro: z.string().min(20),
+    actors: z.array(z.object({
+      id,
+      name: z.string().min(2),
+      location: componentLocationSchema,
+      responsibility: z.string().min(15),
+      observable: z.string().min(15),
+    }).strict()).min(3),
+    tracks: z.array(z.object({
+      kind: z.enum(['control', 'execution']),
+      title: z.string().min(3),
+      steps: z.array(z.string().min(10)).min(2),
+    }).strict()).length(2),
+    proof: z.object({
+      command: z.string().min(3),
+      expected: z.string().min(12),
+      proves: z.string().min(12),
+      limitation: z.string().min(12),
+    }).strict(),
+  }).strict(),
+  transfer: guidedScenarioSchema.extend({
+    explain_prompt: z.string().min(10),
+    checklist: z.array(z.string().min(10)).min(3),
+    model_answer: z.string().min(30),
+  }).strict(),
+  next_links: z.array(z.object({
+    label: z.string().min(3),
+    description: z.string().min(10),
+    href: z.string().regex(/^\/learn\/[a-z0-9-]+\/?(?:\?mode=reference)?$|^\/(?:practice|lesson|models)(?:\/[a-z0-9-]+)*\/?$|^\/review(?:\?[a-z0-9=&_-]+)?$/),
+  }).strict()).min(1).max(3),
+}).superRefine((sequence, context) => {
+  for (const scenarioName of ['initial', 'change', 'transfer'] as const) {
+    const scenario = sequence[scenarioName];
+    const choiceIds = new Set(scenario.choices.map((choice) => choice.id));
+    if (choiceIds.size !== scenario.choices.length || !choiceIds.has(scenario.answer_id)) {
+      context.addIssue({ code: 'custom', path: [scenarioName, 'choices'], message: 'choices must be unique and include the answer' });
+    }
+    const cardIds = new Set(scenario.cards.map((card) => card.id));
+    if (cardIds.size !== scenario.cards.length) context.addIssue({ code: 'custom', path: [scenarioName, 'cards'], message: 'card IDs must be unique' });
+  }
+  const actorIds = new Set(sequence.explain.actors.map((actor) => actor.id));
+  if (actorIds.size !== sequence.explain.actors.length) context.addIssue({ code: 'custom', path: ['explain', 'actors'], message: 'actor IDs must be unique' });
+  const trackKinds = new Set(sequence.explain.tracks.map((track) => track.kind));
+  if (trackKinds.size !== 2) context.addIssue({ code: 'custom', path: ['explain', 'tracks'], message: 'one control and one execution track are required' });
+}).strict();
 
 const schedulingTaintSchema = z.object({
   key: id,
@@ -138,7 +222,7 @@ export const mentalModelSchema = z.object({
   components: z.array(z.object({
     id,
     name: z.string().min(2),
-    location: z.enum(['client', 'control-plane', 'worker-node', 'data-plane', 'cluster-addon', 'external']),
+    location: componentLocationSchema,
     responsibility: z.string().min(12),
   })).min(2),
   steps: z.array(z.object({
@@ -171,6 +255,7 @@ export const mentalModelSchema = z.object({
   transfer_questions: z.array(z.object({ prompt: z.string().min(10), answer: z.string().min(20) })).min(2),
   sources: z.array(z.object({ title: z.string().min(3), url: z.url() })).min(1),
   scheduling_prototype: schedulingPrototypeSchema.optional(),
+  guided_sequence: guidedSequenceSchema.optional(),
 }).superRefine((model, context) => {
   const components = new Set(model.components.map((component) => component.id));
   const steps = new Set(model.steps.map((step) => step.id));
@@ -198,3 +283,4 @@ export type MentalModel = z.infer<typeof mentalModelSchema>;
 export type SchedulingPrototype = NonNullable<MentalModel['scheduling_prototype']>;
 export type SchedulingPod = SchedulingPrototype['base']['pod'];
 export type SchedulingNode = SchedulingPrototype['base']['nodes'][number];
+export type GuidedSequence = NonNullable<MentalModel['guided_sequence']>;

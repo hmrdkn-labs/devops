@@ -4,7 +4,7 @@ test('Pod scheduling teaches read, prediction, changed condition, proof, and ind
   await page.goto('/models/pod-scheduling/');
   const lesson = page.locator('.scheduling-prototype');
   await expect(lesson).toContainText('Why can a Pod stay Pending?');
-  await expect(lesson).toContainText('no score or mastery claim');
+  await expect(lesson).toContainText('Exploration only · progress is not saved');
 
   await page.getByRole('button', { name: 'Try the placement decision' }).click();
   await expect(page.getByRole('heading', { name: 'Inspect the Pod and three nodes' })).toBeVisible();

@@ -3,11 +3,11 @@ id: mental:service-request-path
 slug: service-request-path
 title: Who carries a request to a Pod?
 summary: Resolve a Service name, inspect endpoint membership, then follow node forwarding and Pod networking to an application without sending traffic through the API server.
-revision: 1
+revision: 2
 unit_ids: [fpp:kubernetes-networking-request-path, fpp:services-dns-ingress, fpp:kubernetes-architecture-components]
 objective_ids: [fpp:kubernetes-networking-request-path/service-path, fpp:kubernetes-networking-request-path/boundaries]
 estimated_minutes: 8
-verified_at: 2026-09-17
+verified_at: 2026-09-21
 evidence_mode: authored-fixture
 scenario: A client Pod requests http://web.demo.svc.cluster.local:80/health. The ClusterIP Service web has IP 10.96.20.8 and targetPort 8080. A ready selected Pod has IP 10.244.2.7 on another worker. Trace the request and the configuration that makes forwarding possible.
 assumptions:
@@ -126,6 +126,124 @@ transfer_questions:
     answer: Existing data-plane rules and reachable healthy workloads may continue serving requests. Updating endpoint and forwarding configuration becomes impaired; control availability and existing packet execution are different boundaries.
   - prompt: Does setting containerPort=8080 expose this application publicly?
     answer: No. containerPort documents the intended container port; an actual listener, network reachability, Service or ingress configuration, and applicable policy determine how it can be reached.
+guided_sequence:
+  goal: Trace a ClusterIP request while keeping control-plane endpoint configuration separate from the packet's execution path.
+  prerequisite: Know that Pods have addresses and a Service provides a stable name and virtual address.
+  assumptions:
+    - This fixture uses a normal non-headless ClusterIP Service and kube-proxy in iptables mode; other implementations can realize Service forwarding differently.
+    - Cluster DNS works, applicable policy allows the request, and the selected application listens on target port 8080 unless a changed condition says otherwise.
+    - EndpointSlice is API configuration consumed by implementations; application packets do not travel through the EndpointSlice object or API server.
+  read:
+    title: Configuration makes a route possible; it does not carry the request
+    worked_example: CoreDNS resolves web.demo.svc.cluster.local to Service ClusterIP 10.96.20.8. The EndpointSlice advertises ready backend 10.244.2.7:8080, kube-proxy uses that API state to program node rules, and the kernel plus Pod network carry the actual connection to the application.
+    body:
+      - The EndpointSlice controller writes backend membership through the API. kube-proxy watches Service and EndpointSlice state and configures the selected node forwarding implementation.
+      - A client packet targets the Service virtual IP. In this iptables-mode example, kernel rules translate it to a backend address, and the Pod network delivers it. Neither the API server nor the EndpointSlice object is a packet hop.
+    start_label: Predict the request boundary
+  initial:
+    title: Inspect configuration and live traffic roles
+    setup: The Service has one ready backend and node rules are synchronized. Decide which item describes the application packet rather than configuration used to prepare its route.
+    cards:
+      - id: endpoints
+        title: EndpointSlice
+        eyebrow: API configuration
+        facts: [{label: backend, value: '10.244.2.7:8080'}, {label: ready, value: 'true'}]
+      - id: rules
+        title: Node iptables rules
+        eyebrow: Programmed data plane
+        facts: [{label: Service destination, value: '10.96.20.8:80'}, {label: backend translation, value: '10.244.2.7:8080'}]
+      - id: request
+        title: Client connection
+        eyebrow: Live execution
+        facts: [{label: name, value: web.demo.svc.cluster.local}, {label: destination after DNS, value: '10.96.20.8:80'}]
+    prompt: In this fixture, what actually handles destination translation for the live Service connection?
+    choices:
+      - {id: endpointslice, text: "The EndpointSlice object receives and forwards the packet", rationale: EndpointSlice records backend configuration; it is not an executable hop on the packet path.}
+      - {id: kernel-rules, text: Kernel forwarding rules programmed by kube-proxy, rationale: "kube-proxy configures iptables rules from API state, and the kernel executes translation for the connection."}
+      - {id: api, text: "The API server proxies the application's HTTP bytes", rationale: The API server exposes configuration and is not the normal ClusterIP application data path.}
+    answer_id: kernel-rules
+    correct_explanation: In this stated iptables-mode fixture, kernel rules execute Service destination translation. EndpointSlice and the API server provide control data used to configure that path; they do not carry the HTTP connection.
+  change:
+    title: Keep the Service, remove selected backends
+    changed_condition: The Service selector now matches no Pods; the Service object, ClusterIP, and DNS record remain.
+    setup: The client can still resolve the normal Service name, but the controller has no selected ready Pod address to publish as a usable backend.
+    cards:
+      - id: dns
+        title: CoreDNS answer
+        eyebrow: Discovery
+        facts: [{label: name, value: web.demo.svc.cluster.local}, {label: answer, value: 10.96.20.8}]
+      - id: service
+        title: Service web
+        eyebrow: Stable API object
+        facts: [{label: ClusterIP, value: 10.96.20.8}, {label: selector matches, value: No Pods}]
+      - id: endpoints
+        title: EndpointSlice membership
+        eyebrow: Changed configuration
+        facts: [{label: usable backends, value: None}, {label: application route, value: No selected destination}]
+    prompt: Which observation is expected after this selector change?
+    choices:
+      - {id: dns-no-backend, text: DNS can still return the ClusterIP while Service connections lack a usable backend, rationale: A normal Service name resolves to its stable ClusterIP independently of whether its selector currently yields ready endpoints.}
+      - {id: dns-removed, text: CoreDNS must remove the Service name immediately because no Pod matches, rationale: "The normal Service object and ClusterIP still exist, so its DNS record is not equivalent to backend membership."}
+      - {id: api-forwards, text: The API server forwards connections directly because EndpointSlice is empty, rationale: The API server does not become the application data path when a Service has no usable backend.}
+    answer_id: dns-no-backend
+    correct_explanation: Discovery of the stable Service address can succeed while backend membership is empty. Compare the Service selector with Pod labels and inspect EndpointSlices before treating DNS success as end-to-end reachability.
+  explain:
+    title: Separate watches and rules from the packet path
+    intro: Configuration flows through API objects and watchers. The application connection follows the programmed node and Pod-network data plane.
+    actors:
+      - {id: dns, name: CoreDNS, location: cluster-addon, responsibility: Answers the normal Service name with its ClusterIP in this fixture., observable: "nslookup can prove name resolution to the expected virtual address, not application reachability."}
+      - {id: endpoints, name: EndpointSlice controller, location: control-plane, responsibility: Maintains backend endpoint API objects for Pods selected by this Service., observable: "EndpointSlice fields expose advertised backend addresses, ports, and conditions."}
+      - {id: proxy, name: kube-proxy, location: worker-node, responsibility: Watches Service and EndpointSlice state and programs this node's iptables Service rules., observable: Node rule inspection can show configured translations but not that a particular request succeeded.}
+      - {id: kernel, name: Kernel and Pod network, location: data-plane, responsibility: Execute destination translation and carry packets to the selected Pod address., observable: Connection and packet evidence can exercise the data path independently of API object inspection.}
+      - {id: app, name: Application process, location: worker-node, responsibility: Accepts the connection on 8080 and produces the HTTP response., observable: Correlated access logs or response evidence can identify application handling when such logging exists.}
+    tracks:
+      - kind: control
+        title: Publish and program possible destinations
+        steps:
+          - EndpointSlice controller writes selected backend membership through the API; these objects describe destinations rather than carrying packets.
+          - kube-proxy watches Service and EndpointSlice state and programs iptables rules on its node.
+      - kind: execution
+        title: Resolve, translate, and deliver one connection
+        steps:
+          - Client resolves the normal Service name to 10.96.20.8 and opens a connection to port 80.
+          - Kernel rules translate the destination to 10.244.2.7:8080, and the Pod network carries packets to the listening application.
+    proof:
+      command: kubectl get endpointslices -n demo -l kubernetes.io/service-name=web -o yaml
+      expected: The selected backend address 10.244.2.7, port 8080, and ready condition appear in EndpointSlice API state.
+      proves: The control-plane configuration advertises that backend as an eligible destination for the Service at observation time.
+      limitation: Endpoint membership does not prove node rules are synchronized, a packet traversed the network, the application listened, or an HTTP response succeeded.
+  transfer:
+    title: Correct objects, failing connection on one node
+    setup: DNS returns 10.96.20.8 and EndpointSlice advertises ready backend 10.244.2.7:8080. A client on node-a cannot connect through the Service, while an allowed direct-Pod probe from that same client reaches the backend.
+    cards:
+      - id: discovery
+        title: DNS and Service
+        eyebrow: Control evidence
+        facts: [{label: DNS answer, value: 10.96.20.8}, {label: Service port, value: '80'}]
+      - id: membership
+        title: EndpointSlice
+        eyebrow: Control evidence
+        facts: [{label: backend, value: '10.244.2.7:8080'}, {label: ready, value: 'true'}]
+      - id: probes
+        title: node-a client
+        eyebrow: Execution evidence
+        facts: [{label: Service probe, value: Fails}, {label: allowed direct-Pod probe, value: Succeeds}]
+    prompt: Which boundary is the most useful next investigation in this simplified case?
+    choices:
+      - {id: endpoints-hop, text: Trace where the packet gets stuck inside the EndpointSlice object, rationale: "EndpointSlice is configuration and cannot be a packet hop, even when its advertised membership is correct."}
+      - {id: dns-only, text: Recreate the DNS record because any connection failure proves DNS is broken, rationale: "The client already resolved the expected ClusterIP, so that observation does not explain a later Service-path failure."}
+      - {id: node-rules, text: "Inspect node-a's Service forwarding implementation and programmed rules", rationale: "Discovery and backend reachability work, while the Service virtual-IP path fails specifically from node-a."}
+    answer_id: node-rules
+    correct_explanation: The contrast isolates a likely boundary between correct control data/backend reachability and node-a's Service virtual-IP execution. Inspect the configured Service implementation without claiming the EndpointSlice carried the failed packet.
+    explain_prompt: Explain why correct EndpointSlice and DNS output cannot by themselves prove that this Service request reached the application.
+    checklist:
+      - Calls DNS and EndpointSlice output control or discovery evidence rather than packet hops.
+      - Names the programmed node forwarding and Pod network as execution boundaries.
+      - States what the observations narrow down without claiming more than they prove.
+    model_answer: DNS proves the client received the expected Service virtual address, and EndpointSlice output proves the API advertises a ready backend. Neither observation executes the connection. In this case I would inspect node-a's programmed Service rules because the allowed direct-Pod probe reaches the backend while the Service virtual-IP probe fails.
+  next_links:
+    - {label: Read the Kubernetes networking request path, description: "Trace DNS, Service forwarding, Pod networking, policy, and application proof in the full lesson.", href: '/learn/kubernetes-networking-request-path/?mode=reference'}
+    - {label: "Study Services, DNS, and ingress", description: "Compare stable discovery, backend membership, and external HTTP routing.", href: '/learn/services-dns-ingress/?mode=reference'}
 sources:
   - {title: Kubernetes Service, url: 'https://kubernetes.io/docs/concepts/services-networking/service/'}
   - {title: Virtual IPs and Service Proxies, url: 'https://kubernetes.io/docs/reference/networking/virtual-ips/'}

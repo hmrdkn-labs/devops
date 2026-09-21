@@ -136,7 +136,6 @@ scheduling_prototype:
     body:
       - The scheduler first filters nodes using hard requirements such as requested capacity, required labels, and untolerated NoSchedule taints. A node that fails any hard requirement is not feasible.
       - Preferences only help rank nodes that survived filtering. A toleration allows a Pod to be considered despite a matching taint; it does not require or attract the Pod to that node.
-      - This lesson is an explicitly simplified teaching model. A real scheduler uses additional plugins and current cluster state, so confirm an actual incident with Pod events and object status.
     start_label: Try the placement decision
   base:
     pod:

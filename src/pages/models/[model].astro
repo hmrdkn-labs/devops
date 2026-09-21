@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import MentalModelPlayer from '@/components/MentalModelPlayer';
 import SchedulingPrototype from '@/components/SchedulingPrototype';
+import GuidedModelSequence from '@/components/GuidedModelSequence';
 import { mentalModels } from '@/lib/content/mental-models';
 import type { MentalModel } from '@/lib/content/mental-model-schema';
 import { unitsById } from '@/lib/content/catalog';
@@ -11,9 +12,11 @@ const { model } = Astro.props as { model: MentalModel };
 ---
 <BaseLayout title={model.title} description={model.summary}>
   <div class="shell"><header class="page-hero"><a href="/models">← All mental models</a><p class="eyebrow">Interactive mental model</p><h1>{model.title}</h1><p class="lede">{model.summary}</p></header>
-  {model.scheduling_prototype ? <>
-    <SchedulingPrototype content={model.scheduling_prototype} client:load />
-    <details class="scheduling-detailed-walkthrough">
+  {model.scheduling_prototype || model.guided_sequence ? <>
+    {model.scheduling_prototype
+      ? <SchedulingPrototype content={model.scheduling_prototype} client:load />
+      : <GuidedModelSequence content={model.guided_sequence!} title={model.title} client:load />}
+    <details id="detailed-component-walkthrough" class={model.scheduling_prototype ? 'scheduling-detailed-walkthrough' : 'guided-model-detailed'}>
       <summary>Detailed component walkthrough — separate example</summary>
       <p>This optional walkthrough uses the original fixture and its own stated assumptions. It adds component inspection, failure branches, and per-step evidence.</p>
       <MentalModelPlayer model={model} client:load />

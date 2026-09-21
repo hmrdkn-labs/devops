@@ -3,11 +3,11 @@ id: mental:kubernetes-reconciliation
 slug: kubernetes-reconciliation
 title: Who replaces a missing Pod?
 summary: Follow a ReplicaSet from a missing Pod through reconciliation, scheduling, and worker execution, separating each component's responsibility.
-revision: 1
+revision: 2
 unit_ids: [fpp:kubernetes-control-loop, fpp:kubernetes-labels-replicasets, fpp:kubernetes-architecture-components]
 objective_ids: [fpp:kubernetes-control-loop/reconciliation]
 estimated_minutes: 8
-verified_at: 2026-09-17
+verified_at: 2026-09-21
 evidence_mode: authored-fixture
 scenario: The web ReplicaSet desires three Pods. Pod web-p7 has been deleted from the API. Two matching Pods remain. Trace how the cluster returns to three running Pods.
 assumptions:
@@ -89,7 +89,7 @@ steps:
     edges: [{from: api, to: scheduler, label: watch unbound Pod}, {from: scheduler, to: api, label: record binding to node-a}]
     proof:
       command: kubectl get pod web-p8 -o wide
-      expected: The NODE column shows node-a; PodScheduled is True after a successful binding.
+      expected: The NODE column shows node-a after the binding is accepted.
       proves: Placement was recorded for this Pod.
       limitation: Assignment does not prove image pull, container startup, application health, or readiness.
     failure:
@@ -125,7 +125,125 @@ transfer_questions:
     answer: The replacement object can exist and existing assigned Pods can continue running. The unbound replacement needs a scheduler to receive a node assignment.
   - prompt: Does restoring the number of Pod objects to three prove that all three are serving requests?
     answer: No. Pod existence, node assignment, container startup, readiness, Service membership, and successful requests are distinct observations.
+guided_sequence:
+  goal: Explain how Kubernetes replaces a deleted ReplicaSet Pod without confusing desired state, object creation, scheduling, and execution.
+  prerequisite: Know that a ReplicaSet declares a desired number of matching Pod objects.
+  assumptions:
+    - The ReplicaSet selector and Pod template are valid, and two healthy matching Pods remain after one deletion.
+    - The API server, scheduler, selected worker, and runtime are healthy unless the changed condition says otherwise.
+    - Commands and output are authored examples; this sequence does not connect to a cluster or save progress.
+  read:
+    title: A deletion changes observed state, not declared intent
+    worked_example: The web ReplicaSet still declares replicas=3 after web-p7 is deleted. Two matching Pod objects remain, so the ReplicaSet controller observes a one-Pod gap and requests a new Pod object through the API.
+    body:
+      - The controller owns the replica-count decision. The API server validates and stores accepted objects, but it does not invent the missing replica or start a container.
+      - A replacement Pod can exist before it has a node. The scheduler later records a binding, and the selected node's kubelet asks the runtime to realize the assigned Pod.
+    start_label: Predict the repair
+  initial:
+    title: Inspect desired and observed state
+    setup: web-p7 was deleted. Compare the ReplicaSet declaration with the matching Pod objects before deciding which actor moves first.
+    cards:
+      - id: desired
+        title: web ReplicaSet
+        eyebrow: Declared intent
+        facts: [{label: replicas, value: '3'}, {label: selector, value: app=web}]
+      - id: observed
+        title: Matching Pods
+        eyebrow: Observed objects
+        facts: [{label: count, value: '2'}, {label: missing, value: web-p7}]
+      - id: replacement
+        title: Replacement
+        eyebrow: Current state
+        facts: [{label: Pod object, value: Not created yet}, {label: node binding, value: None}]
+    prompt: Which component decides that another Pod object is required?
+    choices:
+      - {id: scheduler, text: kube-scheduler, rationale: The scheduler places an existing unbound Pod; it does not maintain the ReplicaSet's desired count.}
+      - {id: controller, text: The ReplicaSet controller, rationale: It compares matching Pod objects with replicas=3 and requests another object when the count is short.}
+      - {id: kubelet, text: A worker kubelet, rationale: A kubelet realizes Pods already assigned to its node and does not decide ReplicaSet membership.}
+    answer_id: controller
+    correct_explanation: The ReplicaSet controller owns this reconciliation decision. It requests a replacement through the API; scheduling and worker execution happen only after an accepted Pod object exists.
+  change:
+    title: Keep the intent, pause the controller
+    changed_condition: The ReplicaSet controller is unavailable; every other stated component remains healthy.
+    setup: The desired count remains three and two matching Pods still run, but the component responsible for comparing those states is unavailable.
+    cards:
+      - id: desired
+        title: web ReplicaSet
+        eyebrow: Declared intent
+        facts: [{label: replicas, value: '3'}, {label: stored by API, value: Yes}]
+      - id: observed
+        title: Matching Pods
+        eyebrow: Observed objects
+        facts: [{label: count, value: '2'}, {label: existing Pods, value: Can keep running}]
+      - id: controller
+        title: ReplicaSet controller
+        eyebrow: Changed condition
+        facts: [{label: availability, value: Unavailable}, {label: replacement request, value: Not issued}]
+    prompt: What is the best prediction while that controller remains unavailable?
+    choices:
+      - {id: gap-remains, text: "Two existing Pods can keep running, but no replacement is requested by that controller", rationale: Stored intent and existing workers can persist while the unavailable controller cannot reconcile the one-Pod gap.}
+      - {id: scheduler-creates, text: The scheduler creates the missing Pod from the ReplicaSet template, rationale: Scheduling assigns unbound Pods; it does not replace the ReplicaSet controller's object-creation decision.}
+      - {id: api-creates, text: The API server notices replicas=3 and independently creates a Pod, rationale: The API server exposes and validates state; the reconciliation logic belongs to the controller.}
+    answer_id: gap-remains
+    correct_explanation: Desired state remains stored and existing assigned Pods may continue executing. Repair waits because the unavailable ReplicaSet controller is the actor that requests a replacement object.
+  explain:
+    title: Follow control decisions before worker execution
+    intro: Each actor has a bounded responsibility. Object count, node assignment, container state, and readiness are separate observations.
+    actors:
+      - {id: replicaset, name: ReplicaSet controller, location: control-plane, responsibility: Compares desired replicas with matching Pod objects and requests a replacement object., observable: ReplicaSet status and events can expose the count mismatch and create failures.}
+      - {id: api, name: API server, location: control-plane, responsibility: "Validates API requests and exposes accepted ReplicaSet, Pod, binding, and status state.", observable: A new Pod UID and ownerReference show that an accepted replacement object exists.}
+      - {id: scheduler, name: kube-scheduler, location: control-plane, responsibility: Selects a feasible node for the accepted unbound Pod and records a binding through the API., observable: "spec.nodeName and PodScheduled=True show accepted placement, not startup."}
+      - {id: kubelet, name: Node kubelet and runtime, location: worker-node, responsibility: Realize the Pod assigned to that node and report container state and readiness observations., observable: Container states and events show execution after binding; readiness remains a separate criterion.}
+    tracks:
+      - kind: control
+        title: Reconcile and bind API state
+        steps:
+          - ReplicaSet controller observes two matching objects for replicas=3 and submits a Pod create request.
+          - API server accepts a new Pod with an owner reference; kube-scheduler later records its selected node.
+      - kind: execution
+        title: Realize the accepted assignment
+        steps:
+          - The selected node's kubelet observes the Pod assignment through the API.
+          - The kubelet asks the runtime to create the sandbox and containers, then reports status independently of the controller's count decision.
+    proof:
+      command: kubectl get pod web-p8 -o yaml
+      expected: A new metadata.uid and web ReplicaSet ownerReference appear; spec.nodeName may be absent before scheduling and present after binding.
+      proves: The replacement is a distinct accepted Pod object owned by the ReplicaSet, and nodeName separately records placement when present.
+      limitation: These fields do not prove why the controller created the Pod, that its containers started, that it is Ready, or that it serves traffic.
+  transfer:
+    title: A matching Pod exists but is not Ready
+    setup: A ReplicaSet declares four replicas and four non-terminating Pod objects match its selector. One matching Pod is bound but in ImagePullBackOff and not Ready.
+    cards:
+      - id: desired
+        title: api ReplicaSet
+        eyebrow: Declared intent
+        facts: [{label: replicas, value: '4'}, {label: matching objects, value: '4'}]
+      - id: unhealthy
+        title: api-p4
+        eyebrow: Worker outcome
+        facts: [{label: binding, value: node-b}, {label: state, value: ImagePullBackOff}, {label: Ready, value: 'False'}]
+      - id: controller
+        title: ReplicaSet controller
+        eyebrow: Count input
+        facts: [{label: object deficit, value: None}, {label: fifth Pod requested, value: No}]
+    prompt: Does this ReplicaSet normally create a fifth Pod only because api-p4 is not Ready?
+    choices:
+      - {id: yes, text: "Yes; every unready matching Pod automatically adds another replica", rationale: Readiness does not by itself change spec.replicas or turn four matching non-terminating Pod objects into an object-count deficit.}
+      - {id: scheduler, text: "The scheduler increases replicas because api-p4 failed to start", rationale: The scheduler binds unbound Pods and does not edit the ReplicaSet replica count in response to image-pull failures.}
+      - {id: no, text: "No; diagnose api-p4 execution while the matching object count already equals four", rationale: ReplicaSet count reconciliation and the bound Pod's image-pull/readiness problem are different responsibilities.}
+    answer_id: no
+    correct_explanation: Four matching Pod objects satisfy the stated replica count, even though one has a later execution problem. Inspect image-pull evidence on api-p4 rather than expecting count reconciliation to create a fifth object.
+    explain_prompt: In your own words, separate the ReplicaSet controller's decision from the scheduler and kubelet responsibilities in this case.
+    checklist:
+      - Identifies the ReplicaSet controller as owner of matching object-count reconciliation.
+      - Separates scheduler binding from kubelet and runtime container startup.
+      - Uses object, binding, and execution evidence without treating one as proof of the others.
+    model_answer: The ReplicaSet controller sees four matching Pod objects for replicas=4, so this case has no stated object-count gap. The scheduler already bound api-p4 to node-b. Its ImagePullBackOff is worker execution evidence for the kubelet/runtime path, not a reason for the scheduler or ReplicaSet controller to invent a fifth replica.
+  next_links:
+    - {label: Read Kubernetes API and control loops, description: "Connect declared intent, observed state, and controller reconciliation in the full lesson.", href: '/learn/kubernetes-control-loop/?mode=reference'}
+    - {label: "Study labels, selectors, and ReplicaSets", description: "Go deeper on membership, ownership, and replica-count drift.", href: '/learn/kubernetes-labels-replicasets/?mode=reference'}
 sources:
   - {title: Kubernetes ReplicaSet, url: 'https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/'}
+  - {title: ReplicaSet API reference, url: 'https://kubernetes.io/docs/reference/kubernetes-api/apps-resources/replica-set-v1/'}
   - {title: Kubernetes components, url: 'https://kubernetes.io/docs/concepts/overview/components/'}
   - {title: Pod lifecycle, url: 'https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/'}

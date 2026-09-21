@@ -106,10 +106,10 @@ export default function SchedulingPrototype(props: { content: SchedulingPrototyp
     go(0);
   }
 
-  return <section class="scheduling-prototype" aria-label="Pod scheduling teaching prototype" aria-busy={!hydrated()}>
+  return <section class="scheduling-prototype" aria-label="Pod scheduling guided exploration" aria-busy={!hydrated()}>
     <div class="scheduling-progress" aria-label="Lesson progress">
       <span>Read</span><span>Try</span><span>Explain</span><span>Check</span>
-      <p>Step {stage() + 1} of 5 · no score or mastery claim</p>
+      <p>Step {stage() + 1} of 5 · Exploration only · progress is not saved</p>
     </div>
     <Show when={!hydrated()}><p class="muted" role="status">Loading the interactive controls… The lesson remains readable.</p></Show>
 
