@@ -22,9 +22,9 @@ mode, and an original beaver character**. See the
 [six candidate assets](docs/BEAVER-CHARACTER-EXPLORATION.md). This contract
 describes the target; PROJECT_STATUS.md distinguishes implementation from release.
 
-- Keep the `DevOps` wordmark and quiet `hmrdkn-labs` signature. The existing
-  `<H>` monogram remains until a beaver candidate is selected and integrated;
-  do not invent route-specific marks or a second mascot.
+- Keep the `DevOps` wordmark and quiet `hmrdkn-labs` signature. Candidate A1
+  is the selected character and shared mark; do not invent route-specific
+  marks, redraw it, or introduce a second mascot.
 - Blue denotes action, selection, and navigational focus. Green denotes correct
   or successfully saved state, not every clickable surface. Amber signals
   caution/assistance and red signals errors; always pair status with text/icons.
@@ -34,6 +34,9 @@ describes the target; PROJECT_STATUS.md distinguishes implementation from releas
 - Use the character sparingly for welcome, help, and completion. It must not
   displace technical diagrams, distract from a mistake explanation, or imply
   earned mastery. Preserve the original generated asset and its prompt record.
+  Header, favicon, and home/help uses load versioned, losslessly encoded
+  32/64/144/288px derivatives of the exact A1 source so small marks do not
+  request the 1 MB original, including on server-rendered routes.
 
 ## Visual principles
 

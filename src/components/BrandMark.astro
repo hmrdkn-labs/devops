@@ -1,0 +1,28 @@
+---
+interface Props {
+  alt?: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+  size?: 32 | 144;
+}
+
+const {
+  alt = '',
+  class: className,
+  loading = 'lazy',
+  size = 32,
+} = Astro.props;
+const source = `/assets/brand/beaver-a1-${size}.png`;
+const doubleSource = `/assets/brand/beaver-a1-${size * 2}.png`;
+---
+
+<img
+  src={source}
+  srcset={`${source} 1x, ${doubleSource} 2x`}
+  alt={alt}
+  class:list={['beaver-mark', className]}
+  width={size}
+  height={size}
+  loading={loading}
+  decoding="async"
+/>

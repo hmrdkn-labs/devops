@@ -19,6 +19,19 @@ test('Learn starts a unit and each viewport exposes one primary navigation', asy
     await expect(navigation.locator('[aria-current="page"]')).toHaveText('Learn');
     await expect(page.getByRole('link', { name: 'Search', exact: true })).toBeVisible();
     await expect(page.locator('.mobile-nav')).toHaveCount(0);
+    const brand = page.getByRole('link', { name: 'DevOps by hmrdkn-labs home' });
+    const brandMark = brand.locator('img.brand-mark');
+    await expect(brandMark).toBeVisible();
+    await expect(brandMark).toHaveAttribute('alt', '');
+    await expect(page.locator('img.home-welcome-mark')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'See the concrete example' })).toHaveAttribute('href', '/learn/container-lifecycle?mode=reference');
+    const targets = await brand.evaluate((element) => ({ width: element.getBoundingClientRect().width, height: element.getBoundingClientRect().height }));
+    expect(targets.width).toBeGreaterThanOrEqual(44);
+    expect(targets.height).toBeGreaterThanOrEqual(44);
+    const mark = await brandMark.evaluate((element) => ({ width: element.getBoundingClientRect().width, height: element.getBoundingClientRect().height }));
+    expect(mark).toEqual({ width: 32, height: 32 });
+    const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
+    expect(favicon).toMatch(/\.png$/);
     await expect(page.locator('[data-session-action]')).toContainText('Start learning');
     await expect(page.locator('[data-session-action]')).toHaveAttribute('href', /^\/learn\//);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -66,8 +79,52 @@ test('Practice and Library expose existing activities and lookup routes', async 
     await expect(page).toHaveURL(new RegExp(`${href}/?$`));
     if (selector.includes('/practice/kcna')) await expect(page.getByRole('button', { name: 'Check answer', exact: true })).toBeVisible();
     else if (selector.includes('/lesson/')) await expect(page.getByTestId('lesson-active-task')).toBeVisible();
-    else await expect(page.getByRole('button', { name: 'Check prediction & reveal', exact: true })).toBeVisible();
+    else {
+      const guidedIntro = page.locator('.guided-model-reading, .scheduling-reading');
+      await expect(guidedIntro).toBeVisible();
+      await expect(guidedIntro.getByRole('button')).toBeEnabled();
+      await expect(page.locator('.guided-model, .scheduling-prototype')).toContainText('Step 1 of 5');
+    }
     if (!selector.includes('/lesson/')) await expect(page.locator('.site-nav [aria-current="page"], .mobile-dock [aria-current="page"]').filter({ visible: true })).toHaveText('Practice');
+  }
+});
+
+test('optimized beaver assets load and decode on static and server-rendered layouts', async ({ page, request }) => {
+  for (const path of ['/', '/dashboard']) {
+    await page.goto(path);
+    const brandMark = page.locator('img.brand-mark');
+    await expect(brandMark).toBeVisible();
+    await expect(brandMark).toHaveAttribute('srcset', / 2x/);
+
+    const imageState = await brandMark.evaluate(async (image) => {
+      await (image as HTMLImageElement).decode();
+      return {
+        complete: (image as HTMLImageElement).complete,
+        naturalWidth: (image as HTMLImageElement).naturalWidth,
+        naturalHeight: (image as HTMLImageElement).naturalHeight,
+        src: (image as HTMLImageElement).currentSrc,
+      };
+    });
+    expect(imageState).toMatchObject({ complete: true, naturalWidth: 32, naturalHeight: 32 });
+    const imageResponse = await request.get(imageState.src);
+    expect(imageResponse.status()).toBe(200);
+    expect(imageResponse.headers()['content-type']).toContain('image/png');
+    expect((await imageResponse.body()).byteLength).toBeLessThan(1_082_749);
+
+    const faviconHref = await page.locator('link[rel="icon"]').getAttribute('href');
+    expect(faviconHref).not.toBeNull();
+    const faviconUrl = new URL(faviconHref!, page.url()).href;
+    const faviconResponse = await request.get(faviconUrl);
+    expect(faviconResponse.status()).toBe(200);
+    expect(faviconResponse.headers()['content-type']).toContain('image/png');
+    expect((await faviconResponse.body()).byteLength).toBeLessThan(1_082_749);
+    const faviconSize = await page.evaluate(async (source) => {
+      const image = new Image();
+      image.src = source;
+      await image.decode();
+      return { width: image.naturalWidth, height: image.naturalHeight };
+    }, faviconUrl);
+    expect(faviconSize).toEqual({ width: 64, height: 64 });
   }
 });
 

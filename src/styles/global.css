@@ -149,6 +149,7 @@ button, a, summary, input, textarea, select { outline-offset: 3px; }
   display: inline-flex;
   align-items: center;
   gap: .62rem;
+  min-height: 44px;
   font-weight: 720;
   line-height: 1.05;
   text-decoration: none;
@@ -156,10 +157,11 @@ button, a, summary, input, textarea, select { outline-offset: 3px; }
 }
 .brand-mark {
   display: block;
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
 }
+.beaver-mark { object-fit: contain; }
 .brand-name { display: block; font-size: .9rem; letter-spacing: -.01em; }
 .brand-name small {
   display: block;
@@ -414,6 +416,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
 .page-hero.compact-hero { padding-bottom: 1.2rem; }
 .page-hero h1 { max-width: 850px; margin: .35rem 0 .45rem; font-size: clamp(2rem, 3.2vw, 2.5rem); letter-spacing: -.045em; }
 .page-hero .lede { margin-bottom: 0; }
+.home-welcome {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 144px;
+  gap: clamp(1rem, 4vw, 3rem);
+  align-items: center;
+}
+.home-welcome-mark {
+  width: 144px;
+  height: 144px;
+  border-radius: var(--radius-surface);
+}
 
 .guest-progress {
   padding: .75rem .85rem;
@@ -1521,6 +1534,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { border-color
   .theme-label { display: none; }
   .owner-chip { max-width: 112px; }
   .brand-name small { display: none; }
+  .home-welcome { grid-template-columns: minmax(0, 1fr) 88px; }
+  .home-welcome-mark { width: 88px; height: 88px; }
 
   body { padding-bottom: 72px; }
   .mobile-dock {

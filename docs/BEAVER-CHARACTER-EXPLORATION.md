@@ -1,6 +1,6 @@
 # Beaver character exploration — approved direction
 
-2026-09-21 · Six independent candidates · Application identity not switched yet
+2026-09-21 · Six independent candidates · A1 selected and integrated
 
 The user selected the beaver direction and approved the six-candidate exploration.
 A beaver connects to building and repairing systems; the treatment is intended
@@ -27,9 +27,18 @@ The built-in image-generation skill provided tool and project asset handling.
 | A5 | lower-left | #D1A248 warm ochre; #23454B deep teal | #BCD0F0 powder periwinkle blue | [A5](assets/beaver-2026-09-21/A5.png) |
 | A6 | lower-right | #D1A248 warm ochre; #23454B deep teal | #BCD0F0 powder periwinkle blue | [A6](assets/beaver-2026-09-21/A6.png) |
 
-These candidates are for selection, not a ranked quality/compliance report.
-The existing monogram remains until a candidate is selected for integration.
-The warm-paper/cobalt/slate UI system is approved independently of this choice.
+These candidates document the exploration rather than a ranked
+quality/compliance report. The user selected **A1** as the application identity.
+The exact original is `docs/assets/beaver-2026-09-21/A1.png` (1254 × 1254,
+1,082,749 bytes, SHA-256
+`5890d0143f18db40c6f4e4fa26994c84b0a7432cf38e3e784bd694e2e330128e`).
+It remains unchanged. Versioned 32, 64, 144, and 288px PNG derivatives in
+`public/assets/brand/` are standard proportional resamples for the favicon and
+1×/2× UI placements; no crop, redraw, recolor, or image-generation rerun is
+part of the integration. Checked-in derivatives keep server-rendered routes
+independent of an image-transformation binding. A1 appears in the shared header
+and favicon and the home welcome/help—not on every card or mistake state. The
+`DevOps` / `hmrdkn-labs` wordmark remains alongside it.
 
 ## Exact generation prompts
 
@@ -140,4 +149,3 @@ Constraints: Use no text or watermark. Add no borders, frames, cards, or present
 ```
 
 Original tool output: `/Users/hamardikan-mac/.codex/generated_images/01a0239e-07b8-79e3-b43c-4472f19f8902/exec-bbad4149-a6dd-4fdb-bb66-c63fc5b3a8ff.png`.
-

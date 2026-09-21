@@ -1,5 +1,6 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
+import BrandMark from '@/components/BrandMark.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { paths, unitsById } from '@/lib/content/catalog';
 
@@ -24,10 +25,13 @@ const checkpoints = sections.map((section) => ({
 ---
 
 <BaseLayout title="Learn" activeSection="learn" description="Start or resume a concrete DevOps learning task.">
-  <header class="page-hero shell compact-hero">
-    <p class="eyebrow">Learn</p>
-    <h1>Your next learning task</h1>
-    <p class="lede">Work through the KCNA path one unit at a time. Answer first, then compare your explanation and apply it.</p>
+  <header class="page-hero shell compact-hero home-welcome">
+    <div>
+      <p class="eyebrow">Learn</p>
+      <h1>Your next learning task</h1>
+      <p class="lede">Work through the KCNA path one unit at a time. Read when a concept is new, then explain and apply it.</p>
+    </div>
+    <BrandMark class="home-welcome-mark" size={144} loading="eager" />
   </header>
   <div class="shell learn-entry">
     <KcnaFocusClient units={clientUnits} checkpoints={checkpoints} compact showProgress={false} client:load />
@@ -39,10 +43,10 @@ const checkpoints = sections.map((section) => ({
         <a href="/kcna">Browse the full path outline →</a>
       </div>
       <div>
-        <p class="section-kicker">Build the foundations</p>
-        <h2>From Process to Pod</h2>
-        <p>Trace a workload through Linux, networking, containers, and Kubernetes when you want the underlying model.</p>
-        <a href="/paths/from-process-to-pod">Open the foundation path →</a>
+        <p class="section-kicker">New to containers?</p>
+        <h2>An image is not a running container</h2>
+        <p>An image is stored input. A container adds a process, writable state, isolation, logs, and an exit status.</p>
+        <a href="/learn/container-lifecycle?mode=reference">See the concrete example →</a>
       </div>
     </section>
   </div>
