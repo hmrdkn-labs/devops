@@ -25,6 +25,13 @@ link to exact authored sections. Existing IDs, saved answers, notes, review
 history, and mastery rules remain intact. Guided explorations are explicitly
 untracked, not falsely counted as saved mastery.
 
+**Brand pose refinement in progress:** the existing A1 image is confirmed as
+the character identity reference, but its full-body pose is not the finished
+logo mark. Six dedicated compact beaver poses (P1–P6) are now generated and
+preserved for selection, including a labeled review sheet and 32px comparison.
+Production remains unchanged until one pose is selected. See
+[the logo-pose exploration](docs/BEAVER-LOGO-POSE-EXPLORATION.md).
+
 **Latest verification:** `npm run ci` passes with **127 tests**, zero Astro
 diagnostics, D1 checks, and production build. Full Playwright matrix:
 **227 passed / 52 intentional skips / 0 failures**. Revision and diff checks
