@@ -309,9 +309,29 @@ test('context keyboard switching preserves retrieval geometry and returns focus'
   const draft = page.getByLabel('Your explanation', { exact: true });
   await draft.fill('Draft survives contextual lookup.');
   const heading = page.locator('.question-stage h2').first();
-  const before = await heading.boundingBox();
+  const settledGeometry = () => heading.evaluate(async (element) => {
+    const measure = () => {
+      const box = element.getBoundingClientRect();
+      return { x: box.x, y: box.y, scrollY: window.scrollY };
+    };
+    let previous = measure();
+    let stableFrames = 0;
+    for (let frame = 0; frame < 120; frame++) {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      const current = measure();
+      const movement = Math.max(
+        Math.abs(current.x - previous.x),
+        Math.abs(current.y - previous.y),
+        Math.abs(current.scrollY - previous.scrollY),
+      );
+      stableFrames = movement <= 0.1 ? stableFrames + 1 : 0;
+      previous = current;
+      if (stableFrames >= 4) return current;
+    }
+    throw new Error('Retrieval geometry did not settle within two seconds.');
+  });
+  const before = await settledGeometry();
   const url = page.url();
-  const scroll = await page.evaluate(() => window.scrollY);
   const opener = page.getByRole('button', { name: 'History', exact: true });
   await opener.click();
   const historyTab = page.getByRole('tab', { name: 'History', exact: true });
@@ -324,12 +344,10 @@ test('context keyboard switching preserves retrieval geometry and returns focus'
   await expect(opener).toBeFocused();
   await expect(draft).toHaveValue('Draft survives contextual lookup.');
   await expect(page).toHaveURL(url);
-  const after = await heading.boundingBox();
-  expect(before).not.toBeNull();
-  expect(after).not.toBeNull();
-  expect(Math.abs(after!.x - before!.x)).toBeLessThanOrEqual(4);
-  expect(Math.abs(after!.y - before!.y)).toBeLessThanOrEqual(4);
-  expect(Math.abs(await page.evaluate(() => window.scrollY) - scroll)).toBeLessThanOrEqual(4);
+  const after = await settledGeometry();
+  expect(Math.abs(after.x - before.x)).toBeLessThanOrEqual(4);
+  expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(4);
+  expect(Math.abs(after.scrollY - before.scrollY)).toBeLessThanOrEqual(4);
 });
 
 test('Scheduling reader and counter fit narrow viewports', async ({ page }, info) => {

@@ -63,6 +63,13 @@ axe checks on the guided entry and incorrect-answer surfaces.
 6. Guided links labeled Read now enter the reader, not recall-first practice.
 7. Source enrichment increments unit and sidecar revisions consistently while
    retaining objective/card mastery hashes and existing learning evidence.
+8. The first remote browser run reported a 6px mobile geometry difference in
+   the History keyboard test. Its trace showed the baseline was sampled during
+   native focus scrolling (24 → 33 → 37 → 39px). The test now waits for heading
+   and scroll geometry to settle across four animation frames before measuring.
+   All existing 4px limits remain; no app behavior or tolerance was changed.
+   The corrected test passed 50 repeated local mobile runs. Remote CI is rerun
+   against the resulting exact head before merge.
 
 ## Boundaries and remaining work
 

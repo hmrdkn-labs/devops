@@ -28,6 +28,10 @@ No production learner records were changed. See the
 [release acceptance record](docs/PRODUCT-UPDATE-ACCEPTANCE-2026-09-21.md) and
 [content coverage report](docs/CONTENT-COVERAGE-2026-09-21.md).
 
+PR #17 is open. Initial remote validation passed; its browser run found one
+mid-scroll geometry measurement race. The saved trace established the cause,
+and the test now measures settled geometry without relaxing its 4px contract
+(50 repeated local mobile passes). The corrected head is awaiting remote CI.
 No current implementation blocker. Publishing still requires exact-head public
 CI, merge, and the existing private owner-mode workflow; none of those are
 claimed complete at this checkpoint. Sol Medium wrote code and content; the
