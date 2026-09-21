@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { kcnaAllQuestionsLabel } from './kcna-practice-content';
 
 const primarySurfaces = [
   ['home', '/'],
@@ -74,7 +75,7 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await expect(page.getByText('Corrected', { exact: true })).toBeVisible();
   await page.getByText('Session options', { exact: true }).click();
   await expect(page.getByRole('button', { name: 'Quick 12', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'All 63', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: kcnaAllQuestionsLabel, exact: true })).toBeVisible();
   await expect(page.getByText('0 correct', { exact: true })).toBeVisible();
 });
 

@@ -3,7 +3,7 @@ id: curriculum:kcna-kodekloud
 slug: kcna-kodekloud
 title: KCNA course sequence
 summary: A portable KCNA curriculum spine that follows KodeKloud's current module and lesson order while mapping every step to independently authored hmrdkn-labs learning material and practice.
-revision: 2
+revision: 3
 verified_at: 2026-09-21
 reference:
   title: Kubernetes & Cloud-native Associate (KCNA) Course
@@ -308,16 +308,19 @@ modules:
         kind: lesson
         duration: "02:11"
         unit_ids: [fpp:ip-subnets, fpp:kubernetes-networking-request-path]
+        material: { unit_id: fpp:kubernetes-networking-request-path, section: why-pod-ips-matter, objective_ids: [fpp:kubernetes-networking-request-path/boundaries] }
       - id: curriculum:kcna/networking/pod-networking
         title: Pod Networking
         kind: lesson
         duration: "08:41"
         unit_ids: [fpp:kubernetes-networking-request-path]
+        material: { unit_id: fpp:kubernetes-networking-request-path, section: why-pod-ips-matter, objective_ids: [fpp:kubernetes-networking-request-path/boundaries] }
       - id: curriculum:kcna/networking/cni
         title: CNI in Kubernetes
         kind: lesson
         duration: "02:48"
         unit_ids: [fpp:kubernetes-networking-request-path]
+        material: { unit_id: fpp:kubernetes-networking-request-path, section: cni-is-an-interface-the-installed-network-is-an-implementation, objective_ids: [fpp:kubernetes-networking-request-path/boundaries] }
       - id: curriculum:kcna/networking/cni-weave
         title: CNI weave
         kind: lesson
@@ -328,11 +331,13 @@ modules:
         kind: lesson
         duration: "05:41"
         unit_ids: [fpp:ports-sockets-dns, fpp:services-dns-ingress]
+        material: { unit_id: fpp:ports-sockets-dns, section: dns-gives-records-not-reachability, objective_ids: [fpp:ports-sockets-dns/dns-resolution] }
       - id: curriculum:kcna/networking/ingress
         title: Ingress
         kind: lesson
         duration: "21:04"
         unit_ids: [fpp:services-dns-ingress]
+        material: { unit_id: fpp:services-dns-ingress, section: ingress-a-gateway-and-a-service-mesh-are-different-boundaries, objective_ids: [fpp:services-dns-ingress/external-routing] }
       - id: curriculum:kcna/networking/quiz
         title: Quiz-Networking
         kind: quiz
@@ -352,11 +357,13 @@ modules:
         kind: lesson
         duration: "01:38"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: service-mesh-adds-a-communication-operating-model, objective_ids: [fpp:cloud-native-architecture-principles/mesh] }
       - id: curriculum:kcna/service-mesh/envoy
         title: Envoy
         kind: lesson
         duration: "01:41"
         unit_ids: [fpp:cloud-native-architecture-principles, fpp:services-dns-ingress]
+        material: { unit_id: fpp:services-dns-ingress, section: ingress-a-gateway-and-a-service-mesh-are-different-boundaries, objective_ids: [fpp:services-dns-ingress/mesh-path] }
       - id: curriculum:kcna/service-mesh/monoliths-microservices
         title: Monoliths & Microservices
         kind: lesson
@@ -367,26 +374,31 @@ modules:
         kind: lesson
         duration: "01:18"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: service-mesh-adds-a-communication-operating-model, objective_ids: [fpp:cloud-native-architecture-principles/mesh] }
       - id: curriculum:kcna/service-mesh/istio
         title: Istio
         kind: lesson
         duration: "01:18"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: understand-an-istio-installation-and-first-app-walkthrough, objective_ids: [fpp:cloud-native-architecture-principles/mesh] }
       - id: curriculum:kcna/service-mesh/installing-istio
         title: Installing Istio
         kind: demo
         duration: "01:24"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: understand-an-istio-installation-and-first-app-walkthrough, objective_ids: [fpp:cloud-native-architecture-principles/mesh] }
       - id: curriculum:kcna/service-mesh/first-app-istio
         title: Deploying our First Application on Istio
         kind: demo
         duration: "02:22"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: understand-an-istio-installation-and-first-app-walkthrough, objective_ids: [fpp:cloud-native-architecture-principles/mesh] }
       - id: curriculum:kcna/service-mesh/continue-istio
         title: Continue Learning Istio
         kind: lesson
         duration: "00:40"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: understand-an-istio-installation-and-first-app-walkthrough, objective_ids: [fpp:cloud-native-architecture-principles/mesh] }
       - id: curriculum:kcna/service-mesh/quiz
         title: Quiz-ServiceMesh
         kind: quiz
@@ -406,6 +418,7 @@ modules:
         kind: lesson
         duration: "00:48"
         unit_ids: [fpp:config-secrets-storage, fpp:kubernetes-storage-lifecycle]
+        material: { unit_id: fpp:kubernetes-storage-lifecycle, section: start-with-docker-storage-boundaries, objective_ids: [fpp:kubernetes-storage-lifecycle/persistence] }
       - id: curriculum:kcna/storage/docker-storage-intro
         title: Introduction to Docker Storage
         kind: lesson
@@ -426,6 +439,7 @@ modules:
         kind: lesson
         duration: "03:45"
         unit_ids: [fpp:kubernetes-storage-lifecycle]
+        material: { unit_id: fpp:kubernetes-storage-lifecycle, section: separate-request-policy-resource-and-executor, objective_ids: [fpp:kubernetes-storage-lifecycle/claim] }
       - id: curriculum:kcna/storage/volumes
         title: Volumes
         kind: lesson
@@ -436,16 +450,19 @@ modules:
         kind: lesson
         duration: "02:51"
         unit_ids: [fpp:kubernetes-storage-lifecycle]
+        material: { unit_id: fpp:kubernetes-storage-lifecycle, section: separate-request-policy-resource-and-executor, objective_ids: [fpp:kubernetes-storage-lifecycle/claim] }
       - id: curriculum:kcna/storage/persistent-volume-claims
         title: Persistent Volume Claims
         kind: lesson
         duration: "03:53"
         unit_ids: [fpp:kubernetes-storage-lifecycle]
+        material: { unit_id: fpp:kubernetes-storage-lifecycle, section: separate-request-policy-resource-and-executor, objective_ids: [fpp:kubernetes-storage-lifecycle/claim] }
       - id: curriculum:kcna/storage/storage-class
         title: Storage Class
         kind: lesson
         duration: "03:57"
         unit_ids: [fpp:kubernetes-storage-lifecycle]
+        material: { unit_id: fpp:kubernetes-storage-lifecycle, section: dynamic-provisioning, objective_ids: [fpp:kubernetes-storage-lifecycle/claim] }
       - id: curriculum:kcna/storage/quiz
         title: Quiz-Storage
         kind: quiz
@@ -465,41 +482,49 @@ modules:
         kind: lesson
         duration: "02:04"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: replication-autoscaling-and-elasticity-are-different, objective_ids: [fpp:cloud-native-architecture-principles/scale] }
       - id: curriculum:kcna/cloud-native-architecture/hpa
         title: Horizontal Pod Autoscaler
         kind: lesson
         duration: "03:06"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: choose-the-autoscaler-by-the-resource-it-changes, objective_ids: [fpp:cloud-native-architecture-principles/scale] }
       - id: curriculum:kcna/cloud-native-architecture/vpa
         title: Vertical Pod Autoscaler
         kind: lesson
         duration: "08:24"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: choose-the-autoscaler-by-the-resource-it-changes, objective_ids: [fpp:cloud-native-architecture-principles/scale] }
       - id: curriculum:kcna/cloud-native-architecture/cluster-autoscaler
         title: Cluster Autoscaler
         kind: lesson
         duration: "01:42"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: choose-the-autoscaler-by-the-resource-it-changes, objective_ids: [fpp:cloud-native-architecture-principles/scale] }
       - id: curriculum:kcna/cloud-native-architecture/serverless
         title: Serverless
         kind: lesson
         duration: "04:51"
         unit_ids: [fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cloud-native-architecture-principles, section: serverless-is-delegated-infrastructure-not-absent-infrastructure, objective_ids: [fpp:cloud-native-architecture-principles/scale] }
       - id: curriculum:kcna/cloud-native-architecture/keps
         title: Kubernetes Enhancement Proposals (KEPs)
         kind: lesson
         duration: "06:45"
         unit_ids: [fpp:cncf-ecosystem-community]
+        material: { unit_id: fpp:cncf-ecosystem-community, section: sigs-own-areas-keps-explain-proposed-changes, objective_ids: [fpp:cncf-ecosystem-community/community] }
       - id: curriculum:kcna/cloud-native-architecture/kubernetes-sig
         title: Kubernetes SIG
         kind: lesson
         duration: "11:01"
         unit_ids: [fpp:cncf-ecosystem-community]
+        material: { unit_id: fpp:cncf-ecosystem-community, section: sigs-own-areas-keps-explain-proposed-changes, objective_ids: [fpp:cncf-ecosystem-community/community] }
       - id: curriculum:kcna/cloud-native-architecture/open-standards
         title: Open Standards
         kind: lesson
         duration: "07:11"
         unit_ids: [fpp:cncf-ecosystem-community, fpp:cloud-native-architecture-principles]
+        material: { unit_id: fpp:cncf-ecosystem-community, section: open-interfaces-reduce-hard-coupling, objective_ids: [fpp:cncf-ecosystem-community/projects, fpp:cncf-ecosystem-community/community] }
       - id: curriculum:kcna/cloud-native-architecture/quiz
         title: Quiz-Cloud Native Architecture
         kind: quiz

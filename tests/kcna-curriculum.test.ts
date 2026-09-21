@@ -16,7 +16,7 @@ describe('verified KCNA course sequence', () => {
     expect(curriculum.modules.reduce((count, module) => count + module.steps.length, 0)).toBe(116);
     expect(new URL(curriculum.reference.url).hostname).toBe('kodekloud.com');
     expect(curriculum.reference.publisher).toBe('KodeKloud');
-    expect(curriculum.revision).toBe(2);
+    expect(curriculum.revision).toBe(3);
     expect(curriculum.verified_at).toBe('2026-09-21');
   });
 
@@ -70,6 +70,21 @@ describe('verified KCNA course sequence', () => {
       expect(step.unit_ids).toContain('fpp:kubernetes-scheduling-placement');
       expect(step.unit_ids).toContain('fpp:kcna-scheduling-review');
       expect(step.material?.section).toBe(section);
+    }
+  });
+
+  it('adds section targets only where the remaining module has exact authored coverage', () => {
+    const expected = new Map<string, [number, number]>([
+      ['networking', [5, 6]],
+      ['service-mesh', [7, 8]],
+      ['storage', [5, 9]],
+      ['cloud-native-architecture', [8, 8]],
+    ]);
+    for (const [slug, [targeted, teaching]] of expected) {
+      const module = curriculum.modules.find((entry) => entry.slug === slug)!;
+      const teachingSteps = module.steps.filter((step) => step.kind === 'lesson' || step.kind === 'demo');
+      expect(teachingSteps).toHaveLength(teaching);
+      expect(teachingSteps.filter((step) => step.material)).toHaveLength(targeted);
     }
   });
 });

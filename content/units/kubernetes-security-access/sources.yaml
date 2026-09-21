@@ -71,3 +71,10 @@ sources:
     type: documentation
     verified_at: 2026-09-16
     note: "Verified admission enforcement is distinct from authorization; authored denial comparison."
+  - id: source:kubernetes-network-policies
+    title: Network Policies
+    url: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+    publisher: Kubernetes
+    type: documentation
+    verified_at: 2026-09-21
+    note: NetworkPolicy isolation semantics, additive allow rules, and enforcement dependency on a supporting network implementation.
