@@ -1,6 +1,6 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
-import BrandMark from '@/components/BrandMark.astro';
+import BrandCharacter from '@/components/BrandCharacter.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { paths, unitsById } from '@/lib/content/catalog';
 
@@ -31,7 +31,7 @@ const checkpoints = sections.map((section) => ({
       <h1>Your next learning task</h1>
       <p class="lede">Work through the KCNA path one unit at a time. Read when a concept is new, then explain and apply it.</p>
     </div>
-    <BrandMark class="home-welcome-mark" size={144} loading="eager" />
+    <BrandCharacter class="home-welcome-mark" size={144} loading="eager" />
   </header>
   <div class="shell learn-entry">
     <KcnaFocusClient units={clientUnits} checkpoints={checkpoints} compact showProgress={false} client:load />

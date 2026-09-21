@@ -1,6 +1,6 @@
 # Beaver logo-pose exploration
 
-2026-09-21 · six one-pass pose candidates · selection pending
+2026-09-21 · six one-pass pose candidates · P2 selected
 
 The selected A1 beaver remains the character identity reference. This pass
 redraws that same beaver into compact square poses intended to work as the
@@ -14,8 +14,9 @@ using the established palette:
 - tail and facial marks: `#563A2F`
 - background: `#A9C2E8`
 
-No candidate has been selected, filtered, repaired, recolored, or deployed.
-The live site still uses the existing A1 character asset until a pose is chosen.
+The user selected **P2**. The production mark uses a tighter square crop of P2
+so the face, ears, and tail stay readable at favicon scale while the lower body
+falls outside the frame. The crop is deterministic; P2 itself is preserved.
 
 ## Candidates
 
@@ -37,9 +38,11 @@ Review sheet:
 Small-size strip:
 [32px-strip.png](assets/beaver-logo-poses-2026-09-21/32px-strip.png)
 
-## Next step after selection
+## Selected production framing
 
-Once one pose is selected, generate only its production derivatives, replace
-the header/favicon mark, produce light/dark wordmark lockups, update brand
-documentation, run the relevant visual/browser checks, and release it through
-the existing protected deployment flow.
+Selected source: [P2-peek-right.png](assets/beaver-logo-poses-2026-09-21/P2-peek-right.png).
+
+Production crop: [P2-selected-mark-crop.png](assets/beaver-logo-poses-2026-09-21/P2-selected-mark-crop.png),
+820 × 820 pixels, cropped from the 1254 × 1254 P2 source at x=215, y=145.
+This intentionally reads as a close character mark rather than a full-body
+illustration. P2's full source remains available for larger character use.
