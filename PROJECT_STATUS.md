@@ -5,7 +5,39 @@
 
 ## Read this first
 
-**Current phase: tested learning-experience preview, ready for owner feedback.**
+**Current phase: updated product verified locally; remote CI and protected release next.**
+
+**Audit ✓ → reader and progress ✓ → A1 identity ✓ → three guided models ✓ →
+practice enrichment ✓ → local acceptance ✓ → GitHub CI/merge → protected deployment.**
+
+The selected original A1 beaver is integrated in the header, favicon, and home
+welcome. The warm-paper/cobalt and slate/soft-blue themes support the main
+reader and in-place study context. All three mental models now offer short
+read/try/explain/transfer sequences alongside their detailed walkthroughs.
+KCNA practice grows from 63 to **82 original MCQs**; **67 of 93 teaching rows**
+link to exact authored sections. Existing IDs, saved answers, notes, review
+history, and mastery rules remain intact. Guided explorations are explicitly
+untracked, not falsely counted as saved mastery.
+
+**Latest verification:** `npm run ci` passes with **127 tests**, zero Astro
+diagnostics, D1 checks, and production build. Full Playwright matrix:
+**227 passed / 52 intentional skips / 0 failures**. Revision and diff checks
+pass. Manual mobile/desktop review covered reading, wrong-answer feedback,
+component boundaries, both themes, and optimized assets on the dynamic dashboard.
+No production learner records were changed. See the
+[release acceptance record](docs/PRODUCT-UPDATE-ACCEPTANCE-2026-09-21.md) and
+[content coverage report](docs/CONTENT-COVERAGE-2026-09-21.md).
+
+No current implementation blocker. Publishing still requires exact-head public
+CI, merge, and the existing private owner-mode workflow; none of those are
+claimed complete at this checkpoint. Sol Medium wrote code and content; the
+parent orchestrated, reviewed, tested, and documented. No database migration,
+dependency, auth, or infrastructure architecture change is introduced. The
+private infrastructure checkout's unrelated changes remain untouched.
+
+### Verified preview checkpoint
+
+**Tested learning-experience preview completed.**
 **Audit ✓ → reader/progress ✓ → section targets ✓ → Scheduling prototype ✓ →
 palette/checks ✓ → owner trial NEXT → wider curriculum rollout → protected release.**
 
@@ -55,9 +87,9 @@ Six independent GPT Image beaver candidates are generated and preserved in
 [`docs/assets/beaver-2026-09-21/`](docs/assets/beaver-2026-09-21/), with exact
 prompts, native dimensions, and intended palettes in the
 [character exploration](docs/BEAVER-CHARACTER-EXPLORATION.md). No rerolls,
-filtering, or image alterations were performed. Final candidate selection is
-pending; it does not block the reader/prototype work. The current application
-monogram remains until integration. See the
+filtering, or image alterations were performed. **A1 is now selected**; the
+original is preserved while implementation adds project-owned optimized display
+assets without redrawing it. See the
 [preview acceptance record](docs/LEARNING-PREVIEW-ACCEPTANCE-2026-09-21.md) for
 the tested scope, limitations, and next trial.
 

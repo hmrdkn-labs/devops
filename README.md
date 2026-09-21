@@ -1,25 +1,28 @@
 # DevOps by hmrdkn-labs
 
-A portable, question-first DevOps learning system planned for
+A portable, read-and-recall DevOps learning system available at
 [`devops.hamardikan.com`](https://devops.hamardikan.com). Download the Markdown
-or run the same curriculum locally today.
+or run the same curriculum locally.
 
-> The guest production route is live; the Google-only owner rollout is in
-> progress. See [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for the exact
-> implementation state, blockers, and safe resume order.
+> Production supports public guest learning and the allowlisted Google owner
+> workflow. See [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for the exact state of
+> current release work, verification, and safe resume order.
 
-The owner beta starts with **From Process to Pod**: 18 original learning units
-that connect computer processes, Linux, networking, containers, Git/YAML, and
-Kubernetes. It includes 36 explain-or-predict questions, guided practice, and
-90 FSRS review cards.
+The portable library currently contains 40 original learning units. Its
+18-unit **From Process to Pod** foundation connects computer processes, Linux,
+networking, containers, Git/YAML, and Kubernetes; the 32-unit KCNA path reuses
+that foundation and extends it through the current certification scope. Units
+include explain-or-predict questions, guided practice, and FSRS review cards.
 
 ## What makes it a learning tool
 
-Each unit asks for an explanation or prediction before revealing prose. The
-learner then compares against a concise model, checks critical points, and rates
-the retrieval as Again, Hard, Good, or Easy. Reviews mix approximately 60%
-short cards, 20% explanation prompts, and 20% troubleshooting/configuration
-scenarios.
+Each unit offers first-class Read and Practice modes. A learner can read a new
+concept, explicitly mark the lesson read, and begin practice without first
+answering every recall question. Practice asks for an explanation or prediction
+before comparison with a concise model and critical points. Reading completion
+and recall/application evidence remain separate. Scheduled reviews use Again,
+Hard, Good, and Easy ratings and mix short cards, explanation prompts, and
+troubleshooting/configuration scenarios.
 
 Study mode keeps retrieval-first as the default, but it no longer forces a
 learner to bluff through unseen material. `Give me a hint` supplies a
@@ -59,13 +62,13 @@ manifest, exact-search index, reference catalog, Atom feed, `llms.txt`,
 `llms-full.txt`, and a downloadable ZIP archive.
 
 For focused certification study, `/kcna` is the dedicated KCNA workspace. It
-renders only the 32-unit KCNA path, grouped into four checkpoints, with the
-Fundamentals, Resources, and Scheduling quiz companions surfaced as
-quick-review material. The underlying units remain the same portable Markdown
-source used by the wider knowledge base. The workspace also builds a focused
-daily session from due KCNA reviews plus the next unencountered unit, exposes
-checkpoint state, separates the four readiness evidence dimensions, and
-surfaces weak objectives without introducing a second content tree.
+maps the 32-unit KCNA path into the current 13-module course-aligned sequence
+and surfaces module-scoped practice without duplicating curriculum content. The
+underlying units remain the same portable Markdown source used by the wider
+knowledge base. The workspace also builds a focused session from due KCNA
+reviews plus the next unfinished unit, exposes module state, separates the four
+readiness evidence dimensions, and surfaces weak objectives without introducing
+a second content tree.
 
 The private KodeKloud collection is not a dependency, submodule, build input,
 or deployment artifact. This repository contains independently written prose,
@@ -75,8 +78,9 @@ structure do not belong here.
 
 ## Run locally
 
-Current learner-workspace acceptance and future backlog are tracked in
-[the learning experience plan](docs/LEARNING-EXPERIENCE-PLAN.md).
+Current learner-workspace acceptance and future work are tracked in
+[`PROJECT_STATUS.md`](PROJECT_STATUS.md) and the
+[2026-09-21 learning-experience audit](docs/LEARNING-EXPERIENCE-AUDIT-2026-09-21.md).
 
 Requirements: Node.js 22+, npm 10+, and a Cloudflare account only when testing
 remote resources or deploying.
