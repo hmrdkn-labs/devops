@@ -16,10 +16,12 @@ practice enrichment ✓ → local acceptance ✓ → PR CI/merge ✓ → main CI
 [guided reconciliation](https://devops.hamardikan.com/models/kubernetes-reconciliation/),
 or [KCNA practice](https://devops.hamardikan.com/practice/kcna/).
 
-The selected original A1 beaver is integrated in the header, favicon, and home
-welcome. The warm-paper/cobalt and slate/soft-blue themes support the main
-reader and in-place study context. All three mental models now offer short
-read/try/explain/transfer sequences alongside their detailed walkthroughs.
+The beaver identity now has two production roles: the cropped **P2** mark is
+used in the header and favicon, while the full original **A1** character remains
+the larger home-welcome illustration. The warm-paper/cobalt and slate/soft-blue
+themes support the main reader and in-place study context. All three mental
+models now offer short read/try/explain/transfer sequences alongside their
+detailed walkthroughs.
 KCNA practice grows from 63 to **82 original MCQs**; **67 of 93 teaching rows**
 link to exact authored sections. Existing IDs, saved answers, notes, review
 history, and mastery rules remain intact. Guided explorations are explicitly
@@ -38,6 +40,21 @@ Vitest tests**, zero Astro diagnostics, D1 checks, and production build; the
 isolated Playwright matrix passes **227 / 52 intentional skips / 0 failures**
 across desktop, tablet, and mobile. Manual 1440px and 390px captures confirm
 the cropped P2 header mark while the full A1 character remains on the welcome.
+
+**P2 brand mark release is live and production-verified.** [PR #18](https://github.com/hmrdkn-labs/devops/pull/18)
+merged as `a94ccb1b85a90f92a73a8c3de2358886ebd13ac5`. Post-merge
+[main CI 35559125609](https://github.com/hmrdkn-labs/devops/actions/runs/35559125609)
+passed validation, browser, and no-production-secrets gates. Protected owner-mode
+[deployment 35559567859](https://github.com/hamardikan/hamardikan-infra/actions/runs/35559567859)
+rebuilt and deployed that exact immutable source successfully. Independent live
+verification reports `status: ok`, `database: ready`, and manifest
+`7b0b7ee64bc1aa27fc4d09e24630d96ee99973bb30882fd52347fcfb7e8f851f`.
+The live 32px/64px cropped P2 mark bytes match the merged repository assets
+exactly (`d7111d8a…` / `1dc3518a…` SHA-256), and the 144px/288px full A1 home
+assets also match (`0432c4ac…` / `5599f96b…`). Production HTML references the
+P2 mark, touch icon, and full A1 welcome assets together as intended. This
+documentation follow-up does not require another application deployment; the
+production application source remains `a94ccb1b85a90f92a73a8c3de2358886ebd13ac5`.
 
 **Latest verification:** `npm run ci` passes with **127 tests**, zero Astro
 diagnostics, D1 checks, and production build. Full Playwright matrix:
