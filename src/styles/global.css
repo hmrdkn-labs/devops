@@ -161,7 +161,7 @@ button, a, summary, input, textarea, select { outline-offset: 3px; }
   height: 32px;
   border-radius: 8px;
 }
-.beaver-mark { object-fit: contain; }
+.beaver-mark, .beaver-character { object-fit: contain; }
 .brand-name { display: block; font-size: .9rem; letter-spacing: -.01em; }
 .brand-name small {
   display: block;

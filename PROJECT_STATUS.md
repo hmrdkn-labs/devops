@@ -25,6 +25,20 @@ link to exact authored sections. Existing IDs, saved answers, notes, review
 history, and mastery rules remain intact. Guided explorations are explicitly
 untracked, not falsely counted as saved mastery.
 
+**Brand pose refinement selected:** P2 is the chosen beaver mark pose. Its
+production framing is a tighter 820 × 820 crop that emphasizes the face and
+tail at 32px instead of showing the whole character. The header/favicon use the
+cropped mark; the home welcome keeps the full A1 character. Canonical mark,
+touch-icon, and light/dark lockup assets are now defined. See
+[the logo-pose exploration](docs/BEAVER-LOGO-POSE-EXPLORATION.md) and
+[brand identity](docs/BRAND-IDENTITY.md).
+
+Brand-release verification passes locally: `npm run ci` completes with **128
+Vitest tests**, zero Astro diagnostics, D1 checks, and production build; the
+isolated Playwright matrix passes **227 / 52 intentional skips / 0 failures**
+across desktop, tablet, and mobile. Manual 1440px and 390px captures confirm
+the cropped P2 header mark while the full A1 character remains on the welcome.
+
 **Latest verification:** `npm run ci` passes with **127 tests**, zero Astro
 diagnostics, D1 checks, and production build. Full Playwright matrix:
 **227 passed / 52 intentional skips / 0 failures**. Revision and diff checks
