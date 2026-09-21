@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:cloud-native-architecture-principles
-revision: 4
+revision: 5
 cards:
   - id: fpp:cloud-native-architecture-principles/c-declarative
     type: short

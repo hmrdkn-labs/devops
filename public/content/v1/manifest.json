@@ -13,8 +13,8 @@
       "slug": "cloud-native-architecture-principles",
       "title": "Cloud-native architecture principles",
       "summary": "Understand cloud-native systems as loosely coupled, declarative, observable, resilient, automated systems rather than as applications that merely happen to run in a cloud.",
-      "revision": 4,
-      "revision_impact": "mastery_affecting",
+      "revision": 5,
+      "revision_impact": "enrichment",
       "status": "published",
       "layer": "architecture",
       "prerequisites": [
@@ -28,9 +28,9 @@
         "fpp:cloud-native-architecture-principles/scale": "ba897acc5944b7a3bc1836c704891e0c3a9c18daeb0e61e94ea88fd855ac7213"
       },
       "mastery_hash": "594fe0bae95b60988339e4e180cc7a28a4a67997bd1229f9054cffed2b63212b",
-      "enrichment_hash": "f95c98485a494a823075cc84e331d0d12b1e5cc53dc1a15b411fd01375ce1f72",
-      "editorial_hash": "cba3642567cb517994de2869efe1ae66f1ae82f4df6b0ff8004ba333f1e1a62b",
-      "content_hash": "56cdbb076528b7d23cb7a818f135ef2b0049497b93b7072a4d28e8cdec790319",
+      "enrichment_hash": "ec802ee91e3ad91f79d4e2de9b414dde38513848ae4f6726eea1a2d28107d0d4",
+      "editorial_hash": "1b58b4a950a3e84f3eeca6a41ecf2b8097dea4016dafcbd71e2676adcf444df2",
+      "content_hash": "a6d5c48fb53bc6c7cf72fa08c2a8e9b4efeaf37fd01034875e0c6912cf699ffc",
       "raw_markdown_url": "/raw/v1/units/cloud-native-architecture-principles/unit.md",
       "raw_visuals_url": "/raw/v1/units/cloud-native-architecture-principles/visuals.yaml",
       "visual_count": 2
@@ -778,8 +778,8 @@
       "slug": "kubernetes-security-access",
       "title": "Kubernetes identity, authorization, admission, and workload boundaries",
       "summary": "Separate authentication, RBAC authorization, admission, workload identity, Secret handling, Pod security, and network segmentation into clear security boundaries.",
-      "revision": 5,
-      "revision_impact": "mastery_affecting",
+      "revision": 6,
+      "revision_impact": "enrichment",
       "status": "published",
       "layer": "kubernetes",
       "prerequisites": [
@@ -794,9 +794,9 @@
         "fpp:kubernetes-security-access/workload": "1c8acd15af7e4c3ec362bd21f36c0e9a6d04e22bf2d2c0fb1cb20effbb6d7eff"
       },
       "mastery_hash": "91eb725cba8b22835e0dfa01f34435188db784dbff1ded5f130e4f4c01416560",
-      "enrichment_hash": "6ddbb50732d9f9b92ad01983f8668d98964a7b52a0ad2977500e8e8ec8b59c01",
-      "editorial_hash": "23f9a3a336658ee3bd2588cea72ddbd1cafae6acd0be51d2da67ea829a84126c",
-      "content_hash": "aa9b9ae277d489ccd479a8abc20e06ef41923e1ce6a6ab819ff2c5b31d0f8f2f",
+      "enrichment_hash": "18aec23161d30c1d4554de1d2938ae07de07623eb71029b749d8bcb10bf45e57",
+      "editorial_hash": "dafeabd34fad91930dbea541d430bf0b6d51219fb5036a2dc13728b8a0170047",
+      "content_hash": "5ab49b52b319a4fb931f9ea909a62d8936bf4f862f4f6cfa89bcada0c49ab371",
       "raw_markdown_url": "/raw/v1/units/kubernetes-security-access/unit.md",
       "raw_visuals_url": "/raw/v1/units/kubernetes-security-access/visuals.yaml",
       "visual_count": 2
@@ -1339,7 +1339,7 @@
       "slug": "kcna-kodekloud",
       "title": "KCNA course sequence",
       "summary": "A portable KCNA curriculum spine that follows KodeKloud's current module and lesson order while mapping every step to independently authored hmrdkn-labs learning material and practice.",
-      "revision": 2,
+      "revision": 3,
       "verified_at": "2026-09-21",
       "reference": {
         "title": "Kubernetes & Cloud-native Associate (KCNA) Course",
@@ -2016,7 +2016,14 @@
               "unit_ids": [
                 "fpp:ip-subnets",
                 "fpp:kubernetes-networking-request-path"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-networking-request-path",
+                "section": "why-pod-ips-matter",
+                "objective_ids": [
+                  "fpp:kubernetes-networking-request-path/boundaries"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/networking/pod-networking",
@@ -2025,7 +2032,14 @@
               "duration": "08:41",
               "unit_ids": [
                 "fpp:kubernetes-networking-request-path"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-networking-request-path",
+                "section": "why-pod-ips-matter",
+                "objective_ids": [
+                  "fpp:kubernetes-networking-request-path/boundaries"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/networking/cni",
@@ -2034,7 +2048,14 @@
               "duration": "02:48",
               "unit_ids": [
                 "fpp:kubernetes-networking-request-path"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-networking-request-path",
+                "section": "cni-is-an-interface-the-installed-network-is-an-implementation",
+                "objective_ids": [
+                  "fpp:kubernetes-networking-request-path/boundaries"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/networking/cni-weave",
@@ -2053,7 +2074,14 @@
               "unit_ids": [
                 "fpp:ports-sockets-dns",
                 "fpp:services-dns-ingress"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:ports-sockets-dns",
+                "section": "dns-gives-records-not-reachability",
+                "objective_ids": [
+                  "fpp:ports-sockets-dns/dns-resolution"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/networking/ingress",
@@ -2062,7 +2090,14 @@
               "duration": "21:04",
               "unit_ids": [
                 "fpp:services-dns-ingress"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:services-dns-ingress",
+                "section": "ingress-a-gateway-and-a-service-mesh-are-different-boundaries",
+                "objective_ids": [
+                  "fpp:services-dns-ingress/external-routing"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/networking/quiz",
@@ -2096,7 +2131,14 @@
               "duration": "01:38",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "service-mesh-adds-a-communication-operating-model",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/mesh"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/envoy",
@@ -2106,7 +2148,14 @@
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles",
                 "fpp:services-dns-ingress"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:services-dns-ingress",
+                "section": "ingress-a-gateway-and-a-service-mesh-are-different-boundaries",
+                "objective_ids": [
+                  "fpp:services-dns-ingress/mesh-path"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/monoliths-microservices",
@@ -2124,7 +2173,14 @@
               "duration": "01:18",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "service-mesh-adds-a-communication-operating-model",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/mesh"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/istio",
@@ -2133,7 +2189,14 @@
               "duration": "01:18",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "understand-an-istio-installation-and-first-app-walkthrough",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/mesh"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/installing-istio",
@@ -2142,7 +2205,14 @@
               "duration": "01:24",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "understand-an-istio-installation-and-first-app-walkthrough",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/mesh"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/first-app-istio",
@@ -2151,7 +2221,14 @@
               "duration": "02:22",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "understand-an-istio-installation-and-first-app-walkthrough",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/mesh"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/continue-istio",
@@ -2160,7 +2237,14 @@
               "duration": "00:40",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "understand-an-istio-installation-and-first-app-walkthrough",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/mesh"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/service-mesh/quiz",
@@ -2194,7 +2278,14 @@
               "unit_ids": [
                 "fpp:config-secrets-storage",
                 "fpp:kubernetes-storage-lifecycle"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-storage-lifecycle",
+                "section": "start-with-docker-storage-boundaries",
+                "objective_ids": [
+                  "fpp:kubernetes-storage-lifecycle/persistence"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/storage/docker-storage-intro",
@@ -2230,7 +2321,14 @@
               "duration": "03:45",
               "unit_ids": [
                 "fpp:kubernetes-storage-lifecycle"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-storage-lifecycle",
+                "section": "separate-request-policy-resource-and-executor",
+                "objective_ids": [
+                  "fpp:kubernetes-storage-lifecycle/claim"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/storage/volumes",
@@ -2248,7 +2346,14 @@
               "duration": "02:51",
               "unit_ids": [
                 "fpp:kubernetes-storage-lifecycle"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-storage-lifecycle",
+                "section": "separate-request-policy-resource-and-executor",
+                "objective_ids": [
+                  "fpp:kubernetes-storage-lifecycle/claim"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/storage/persistent-volume-claims",
@@ -2257,7 +2362,14 @@
               "duration": "03:53",
               "unit_ids": [
                 "fpp:kubernetes-storage-lifecycle"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-storage-lifecycle",
+                "section": "separate-request-policy-resource-and-executor",
+                "objective_ids": [
+                  "fpp:kubernetes-storage-lifecycle/claim"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/storage/storage-class",
@@ -2266,7 +2378,14 @@
               "duration": "03:57",
               "unit_ids": [
                 "fpp:kubernetes-storage-lifecycle"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:kubernetes-storage-lifecycle",
+                "section": "dynamic-provisioning",
+                "objective_ids": [
+                  "fpp:kubernetes-storage-lifecycle/claim"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/storage/quiz",
@@ -2299,7 +2418,14 @@
               "duration": "02:04",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "replication-autoscaling-and-elasticity-are-different",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/scale"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/hpa",
@@ -2308,7 +2434,14 @@
               "duration": "03:06",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "choose-the-autoscaler-by-the-resource-it-changes",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/scale"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/vpa",
@@ -2317,7 +2450,14 @@
               "duration": "08:24",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "choose-the-autoscaler-by-the-resource-it-changes",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/scale"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/cluster-autoscaler",
@@ -2326,7 +2466,14 @@
               "duration": "01:42",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "choose-the-autoscaler-by-the-resource-it-changes",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/scale"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/serverless",
@@ -2335,7 +2482,14 @@
               "duration": "04:51",
               "unit_ids": [
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cloud-native-architecture-principles",
+                "section": "serverless-is-delegated-infrastructure-not-absent-infrastructure",
+                "objective_ids": [
+                  "fpp:cloud-native-architecture-principles/scale"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/keps",
@@ -2344,7 +2498,14 @@
               "duration": "06:45",
               "unit_ids": [
                 "fpp:cncf-ecosystem-community"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cncf-ecosystem-community",
+                "section": "sigs-own-areas-keps-explain-proposed-changes",
+                "objective_ids": [
+                  "fpp:cncf-ecosystem-community/community"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/kubernetes-sig",
@@ -2353,7 +2514,14 @@
               "duration": "11:01",
               "unit_ids": [
                 "fpp:cncf-ecosystem-community"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cncf-ecosystem-community",
+                "section": "sigs-own-areas-keps-explain-proposed-changes",
+                "objective_ids": [
+                  "fpp:cncf-ecosystem-community/community"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/open-standards",
@@ -2363,7 +2531,15 @@
               "unit_ids": [
                 "fpp:cncf-ecosystem-community",
                 "fpp:cloud-native-architecture-principles"
-              ]
+              ],
+              "material": {
+                "unit_id": "fpp:cncf-ecosystem-community",
+                "section": "open-interfaces-reduce-hard-coupling",
+                "objective_ids": [
+                  "fpp:cncf-ecosystem-community/projects",
+                  "fpp:cncf-ecosystem-community/community"
+                ]
+              }
             },
             {
               "id": "curriculum:kcna/cloud-native-architecture/quiz",
@@ -6360,7 +6536,7 @@
       "slug": "kubernetes-reconciliation",
       "title": "Who replaces a missing Pod?",
       "summary": "Follow a ReplicaSet from a missing Pod through reconciliation, scheduling, and worker execution, separating each component's responsibility.",
-      "revision": 1,
+      "revision": 2,
       "unit_ids": [
         "fpp:kubernetes-control-loop",
         "fpp:kubernetes-labels-replicasets",
@@ -6369,9 +6545,9 @@
       "objective_ids": [
         "fpp:kubernetes-control-loop/reconciliation"
       ],
-      "verified_at": "2026-09-17",
+      "verified_at": "2026-09-21",
       "step_count": 4,
-      "content_hash": "64e84069ba5b508eebe08f8decf4d9954090874cb3c489eed84cdf33153d42ee",
+      "content_hash": "0615cb5dabd03d756d7e421b741bef6e8349ae1e404f40fa29445cb81bfade99",
       "raw_url": "/raw/v1/mental-models/kubernetes-reconciliation.yaml"
     },
     {
@@ -6391,7 +6567,7 @@
       ],
       "verified_at": "2026-09-21",
       "step_count": 4,
-      "content_hash": "6ef22d9fd683db705c2259ceb68892687cb0d4b3dcd06898c8b31910b68e60c8",
+      "content_hash": "7ba5a7346309eda8e222a13d8c373189ab242ae22298d1d4375fbc9c7a480678",
       "raw_url": "/raw/v1/mental-models/pod-scheduling.yaml"
     },
     {
@@ -6399,7 +6575,7 @@
       "slug": "service-request-path",
       "title": "Who carries a request to a Pod?",
       "summary": "Resolve a Service name, inspect endpoint membership, then follow node forwarding and Pod networking to an application without sending traffic through the API server.",
-      "revision": 1,
+      "revision": 2,
       "unit_ids": [
         "fpp:kubernetes-networking-request-path",
         "fpp:services-dns-ingress",
@@ -6409,9 +6585,9 @@
         "fpp:kubernetes-networking-request-path/service-path",
         "fpp:kubernetes-networking-request-path/boundaries"
       ],
-      "verified_at": "2026-09-17",
+      "verified_at": "2026-09-21",
       "step_count": 4,
-      "content_hash": "6f6d5568ff29d07fb4ef40f8e458a420999651714f6b93a9e69bcccef9222a02",
+      "content_hash": "2c6216491bc899121b3c4d0fac68b69c28fe94ba0af5c162f294f2db5bfd2681",
       "raw_url": "/raw/v1/mental-models/service-request-path.yaml"
     }
   ],
@@ -6421,13 +6597,13 @@
       "slug": "kcna-mcq",
       "title": "KCNA MCQ refresher",
       "summary": "Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.",
-      "revision": 5,
+      "revision": 6,
       "certification": "cncf:kcna",
-      "verified_at": "2026-09-18",
-      "question_count": 63,
-      "content_hash": "b5d661d802bbd68a8cf783f6b5a7e48a4b6c905f4d56389bf88b90b0349d16b7",
+      "verified_at": "2026-09-21",
+      "question_count": 82,
+      "content_hash": "821eab81aa8392bfb5099c0485fea7f77753accd4585bdca4c53df9fd9b860bd",
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "d65e8ead227f8e78500c0f0e5b51b9739cca4eb775904af124a5181194235c31"
+  "manifest_sha256": "7b0b7ee64bc1aa27fc4d09e24630d96ee99973bb30882fd52347fcfb7e8f851f"
 }
