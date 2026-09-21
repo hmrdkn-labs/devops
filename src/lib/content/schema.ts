@@ -392,6 +392,11 @@ const curriculumStepSchema = z.object({
   kind: z.enum(['lesson', 'demo', 'quiz', 'feedback', 'community', 'mock-exam', 'conclusion']),
   duration: z.string().regex(/^\d{2}:[0-5]\d$/).optional(),
   unit_ids: z.array(id).default([]),
+  material: z.object({
+    unit_id: id,
+    section: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    objective_ids: z.array(id).min(1),
+  }).optional(),
 });
 
 export const curriculumSchema = z.object({
@@ -437,6 +442,9 @@ export const curriculumSchema = z.object({
       }
       if (['lesson', 'demo'].includes(step.kind) && step.unit_ids.length === 0) {
         context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'steps', stepIndex, 'unit_ids'], message: 'teaching steps require independently authored mapped material' });
+      }
+      if (step.material && !step.unit_ids.includes(step.material.unit_id)) {
+        context.addIssue({ code: 'custom', path: ['modules', moduleIndex, 'steps', stepIndex, 'material', 'unit_id'], message: 'section material must use a unit mapped to the course step' });
       }
     }
   }

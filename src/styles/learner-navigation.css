@@ -41,7 +41,6 @@ html { scroll-padding-top: 76px; scroll-padding-bottom: 24px; }
 }
 @media (max-width: 360px) {
   .brand { gap: .35rem; }
-  .brand-mark { width: 24px; height: 24px; }
   .brand-name { font-size: .8rem; }
   .status-dot { display: none; }
 }

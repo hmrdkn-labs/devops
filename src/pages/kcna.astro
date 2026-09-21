@@ -60,22 +60,29 @@ const stepHref = (moduleSlug: string, step: (typeof modules)[number]['steps'][nu
   if (step.kind === 'quiz') return `/practice/kcna?module=${moduleSlug}`;
   if (step.kind === 'mock-exam') return '/practice/kcna?mode=all';
   if (step.kind === 'feedback') return '/review?path=kcna';
-  const firstUnit = step.unit_ids.map((id) => unitsById.get(id)).find(Boolean);
-  return firstUnit ? `/learn/${firstUnit.metadata.slug}` : null;
+  const firstUnit = step.material
+    ? unitsById.get(step.material.unit_id)
+    : step.unit_ids.map((id) => unitsById.get(id)).find(Boolean);
+  if (!firstUnit) return null;
+  return step.material || step.kind === 'lesson'
+    ? `/learn/${firstUnit.metadata.slug}?mode=reference${step.material ? `#${step.material.section}` : ''}`
+    : `/learn/${firstUnit.metadata.slug}`;
 };
 
-const stepAction = (kind: string) => ({
-  lesson: 'Study',
-  demo: 'Practice concept',
+const stepAction = (step: (typeof modules)[number]['steps'][number]) => ({
+  lesson: 'Read lesson',
+  demo: step.material ? 'Open walkthrough' : 'Practice concept',
   quiz: 'Practice questions',
   feedback: 'Review',
   'mock-exam': 'Start mock practice',
   conclusion: 'Review course',
   community: 'Course step',
-})[kind] ?? 'Open';
+})[step.kind] ?? 'Open';
 
 const mappedUnit = (step: (typeof modules)[number]['steps'][number]) =>
-  step.unit_ids.map((id) => unitsById.get(id)).find(Boolean);
+  step.material
+    ? unitsById.get(step.material.unit_id)
+    : step.unit_ids.map((id) => unitsById.get(id)).find(Boolean);
 const mappedUnits = (step: (typeof modules)[number]['steps'][number]) =>
   step.unit_ids.flatMap((id) => {
     const unit = unitsById.get(id);
@@ -131,7 +138,7 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
               <p>{module.summary}</p>
             </div>
             <div class="kcna-checkpoint-meta">
-              <span class="kcna-checkpoint-state" data-checkpoint-progress={module.slug}>Not started</span>
+              <span class="kcna-checkpoint-state" data-checkpoint-progress={module.slug}>Loading…</span>
               <small>{module.learningSteps.length} learning steps</small>
             </div>
           </summary>
@@ -155,7 +162,10 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
                         Our material:
                         <span class="kcna-step-materials">
                           {units.map((mapped) => (
-                            <a data-mapped-unit-id={mapped.metadata.id} href={`/learn/${mapped.metadata.slug}`}>{mapped.metadata.title}</a>
+                            <a
+                              data-mapped-unit-id={mapped.metadata.id}
+                              href={`/learn/${mapped.metadata.slug}?mode=reference${step.material?.unit_id === mapped.metadata.id ? `#${step.material.section}` : ''}`}
+                            >{mapped.metadata.title}{step.material?.unit_id === mapped.metadata.id ? ' · relevant section' : ''}</a>
                           ))}
                         </span>
                       </p>
@@ -164,9 +174,12 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
                     )}
                   </div>
                   <div class="kcna-course-step-action">
-                    {step.duration && <span>{step.duration}</span>}
+                    {step.duration && <span>Source video · {step.duration}</span>}
                     {weight === 2 && <span class="critical-badge">Critical</span>}
-                    {href && <a href={href}>{stepAction(step.kind)} →</a>}
+                    {href && <a href={href}>{stepAction(step)} →</a>}
+                    {unit && <div class="kcna-course-step-progress" aria-label="Evidence shared by the related canonical unit">
+                      <span class="kcna-completion-state" data-unit-evidence={unit.metadata.id}>Loading shared unit evidence…</span>
+                    </div>}
                   </div>
                 </li>
               );

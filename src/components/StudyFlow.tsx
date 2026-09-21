@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createResource, createSignal, onMount, onCleanup } from 'solid-js';
+import { For, Show, createEffect, createMemo, createResource, createSignal, onMount, onCleanup } from 'solid-js';
 import LessonVisualGuide from '@/components/LessonVisualGuide';
 import MentalModelLinks, { type MentalModelLink } from '@/components/MentalModelLinks';
 import { focusTask } from '@/lib/task-focus';
@@ -189,10 +189,12 @@ interface AnswerHistoryMetadataResponse {
   answers: PrivateAnswerHistoryMetadataEntry[];
 }
 
-type ContextPanel = 'history' | 'reference' | 'notes';
+type StudyMode = 'read' | 'practice';
+type ContextPanel = 'history' | 'notes';
 
 export default function StudyFlow(props: Props) {
   const [hydrated, setHydrated] = createSignal(false);
+  const [studyMode, setStudyMode] = createSignal<StudyMode | null>(null);
   const [contextPanel, setContextPanel] = createSignal<ContextPanel | null>(null);
   const [questionIndex, setQuestionIndex] = createSignal(0);
   const [answer, setAnswer] = createSignal('');
@@ -221,12 +223,38 @@ export default function StudyFlow(props: Props) {
   const [taskMessage, setTaskMessage] = createSignal('');
   const [guestLessonCompleted, setGuestLessonCompleted] = createSignal(false);
   const [guestPracticesCompleted, setGuestPracticesCompleted] = createSignal<string[]>([]);
+  const [encounterRequested, setEncounterRequested] = createSignal(false);
+  const [encounterMessage, setEncounterMessage] = createSignal('');
+  let encounterStarted = false;
   let saveSequence = 0;
   let noteMutationSequence = 0;
   let taskHeading: HTMLHeadingElement | undefined;
-  let lessonHeading: HTMLDivElement | undefined;
   let contextElement: HTMLElement | undefined;
   let contextOpener: HTMLElement | undefined;
+  let readHeading: HTMLElement | undefined;
+  let readScrollY = 0;
+  let practiceScrollY = 0;
+
+  const requestedMode = (): StudyMode => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('mode') === 'reference' || params.get('context') === 'reference' ? 'read' : 'practice';
+  };
+
+  // Reading is public content and must not wait for the identity request. Keep
+  // persistence controls disabled and encounter writes deferred until mount.
+  if (typeof window !== 'undefined') {
+    const initialMode = requestedMode();
+    queueMicrotask(() => {
+      if (studyMode() === null) setStudyMode(initialMode);
+      if (initialMode === 'read' && window.location.hash) {
+        requestAnimationFrame(() => {
+          const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+          if (target && target.closest('[data-testid="reader-workspace"]')) target.scrollIntoView();
+        });
+      }
+    });
+  }
+
   const [me, { refetch: refetchMe }] = createResource(() => typeof window !== 'undefined', async () => {
     setAuthError(false);
     try {
@@ -288,8 +316,9 @@ export default function StudyFlow(props: Props) {
   });
 
   onMount(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('mode') === 'reference' || params.get('context') === 'reference') setContextPanel('reference');
+    const initialMode = studyMode() ?? requestedMode();
+    setStudyMode(initialMode);
+    if (initialMode === 'read') setEncounterRequested(true);
     setHydrated(true);
     const escapeContext = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && contextPanel() !== null) {
@@ -300,6 +329,29 @@ export default function StudyFlow(props: Props) {
     document.addEventListener('keydown', escapeContext);
     onCleanup(() => document.removeEventListener('keydown', escapeContext));
   });
+
+  createEffect(() => {
+    if (!hydrated() || !encounterRequested() || me.loading) return;
+    if (authError()) {
+      setEncounterMessage('Sign-in could not be checked. Reading creates no recall credit; saving is unconfirmed.');
+      return;
+    }
+    if (!me()?.authenticated) {
+      setEncounterMessage('Guest reading stays on this page only. No progress or recall credit is saved.');
+      return;
+    }
+    if (encounterStarted) return;
+    encounterStarted = true;
+    void persistEncounter(question().id);
+  });
+
+  function syncReferenceMode(reading: boolean) {
+    const url = new URL(window.location.href);
+    if (reading) url.searchParams.set('mode', 'reference');
+    else if (url.searchParams.get('mode') === 'reference') url.searchParams.delete('mode');
+    if (url.searchParams.get('context') === 'reference') url.searchParams.delete('context');
+    window.history.replaceState(window.history.state, '', url);
+  }
 
   function closeContext() {
     setContextPanel(null);
@@ -343,13 +395,28 @@ export default function StudyFlow(props: Props) {
     }
   }
 
-  async function learnFirst() {
-    openContext('reference', document.activeElement as HTMLElement);
+  function switchMode(mode: StudyMode, focus = false) {
+    const current = studyMode();
+    if (current === mode) return;
+    if (current === 'read') readScrollY = window.scrollY;
+    if (current === 'practice') practiceScrollY = window.scrollY;
+    setStudyMode(mode);
+    syncReferenceMode(mode === 'read');
+    if (mode === 'read') setEncounterRequested(true);
     setShowHint(false);
-    setSaveMessage(me()?.authenticated
-      ? 'Reference opened. Marked as encountered only; no recall credit was created.'
-      : 'Reference opened. Guest mode keeps this encounter on this page only.');
-    if (!me()?.authenticated) return;
+    queueMicrotask(() => {
+      window.scrollTo({ top: mode === 'read' ? readScrollY : practiceScrollY, behavior: 'auto' });
+      if (focus) (mode === 'read' ? readHeading : taskHeading)?.focus({ preventScroll: true });
+    });
+  }
+
+  function learnFirst() {
+    switchMode('read', true);
+    setShowHint(false);
+  }
+
+  async function persistEncounter(questionId: string) {
+    setEncounterMessage('Saving this lesson encounter… Reading creates no recall credit.');
     try {
     const response = await fetch('/api/encounter', {
       method: 'POST',
@@ -358,13 +425,16 @@ export default function StudyFlow(props: Props) {
       body: JSON.stringify({
         unitId: props.unit.id,
         unitRevision: props.unit.revision,
-        questionId: question().id,
+        questionId,
         idempotencyKey: crypto.randomUUID(),
       }),
     });
-    if (!response.ok) setSaveMessage('Learn-first mode opened; encounter evidence could not be saved.');
-    else void refetchLearningProgress();
-    } catch { setSaveMessage('Reference opened; encounter evidence could not be saved.'); }
+    if (!response.ok) setEncounterMessage('Lesson opened; encounter evidence could not be saved. No recall credit was created.');
+    else {
+      setEncounterMessage('Encounter saved. Reading creates no recall credit.');
+      void refetchLearningProgress();
+    }
+    } catch { setEncounterMessage('Lesson opened; encounter evidence could not be saved. No recall credit was created.'); }
   }
 
   async function persistAttempt(questionId: string, answerMarkdown: string, sequence: number) {
@@ -518,7 +588,7 @@ export default function StudyFlow(props: Props) {
         ? [...new Set([...ids, taskId])]
         : ids.filter((id) => id !== taskId));
       setTaskMessage('Guest mode: completion stays in memory for this page only.');
-      return;
+      return true;
     }
 
     setTaskSaving(key);
@@ -539,11 +609,24 @@ export default function StudyFlow(props: Props) {
     if (response.ok) {
       await refetchLearningProgress();
       setTaskMessage(completed ? 'Progress saved.' : 'Completion cleared.');
+      return true;
     } else {
       setTaskMessage('Could not save progress.');
+      return false;
     }
-    } catch { setTaskMessage('Could not save progress. Your completion was not confirmed; try again.'); }
+    } catch {
+      setTaskMessage('Could not save progress. Your completion was not confirmed; try again.');
+      return false;
+    }
     finally { setTaskSaving(null); }
+  }
+
+  async function completeReadAndPractice() {
+    if (!taskIsCompleted('lesson', 'lesson')) {
+      const saved = await setTaskCompleted('lesson', 'lesson', true);
+      if (!saved) return;
+    }
+    switchMode('practice', true);
   }
 
   function next() {
@@ -561,7 +644,7 @@ export default function StudyFlow(props: Props) {
       focusTask(taskHeading);
     } else {
       setFinished(true);
-      focusTask(() => lessonHeading);
+      switchMode('read', true);
     }
   }
 
@@ -636,12 +719,25 @@ export default function StudyFlow(props: Props) {
           <span>{props.unit.estimatedMinutes} min</span>
           <span>revision {props.unit.revision}</span>
         </div>
-        <h1>{props.unit.title}</h1>
-        <p>{props.unit.summary}</p>
+        <h1 hidden={studyMode() === 'read'}>{props.unit.title}</h1>
+        <p hidden={studyMode() === 'read'}>{props.unit.summary}</p>
         <div class="study-workspace-bar">
-          <strong>Recall</strong>
+          <div class="study-mode-switch" role="group" aria-label="How to start this unit">
+            <button
+              type="button"
+              disabled={!hydrated()}
+              aria-pressed={studyMode() === 'read'}
+              onClick={() => learnFirst()}
+            >Read lesson</button>
+            <button
+              type="button"
+              disabled={!hydrated()}
+              aria-pressed={studyMode() === 'practice'}
+              onClick={() => switchMode('practice', true)}
+            >Practice · recall first</button>
+          </div>
           <div class="study-context-actions" role="group" aria-label="Learning context">
-            <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
+            <For each={['history', 'notes'] as ContextPanel[]}>{(panel) => (
               <button
                 type="button"
                 disabled={!hydrated()}
@@ -652,11 +748,15 @@ export default function StudyFlow(props: Props) {
               >{panel[0]!.toUpperCase() + panel.slice(1)}</button>
             )}</For>
           </div>
+          <span hidden={studyMode() === 'read'}>{!hydrated() || me.loading ? 'Checking whether progress can be saved…'
+            : authError() ? 'Sign-in is unconfirmed; saving is unavailable.'
+              : me()?.authenticated ? 'Your saved progress stays with the unit whichever mode you choose.'
+                : 'Guest progress stays on this page only. Sign in as owner to save it.'}</span>
         </div>
       </header>
 
-      <div class="study-layout shell">
-        <aside class="study-rail" aria-label="Unit context">
+      <div class="study-layout shell" classList={{ 'is-reading': studyMode() === 'read', 'has-context': contextPanel() !== null }}>
+        <aside class="study-rail" aria-label="Unit context" hidden={studyMode() !== 'practice'}>
           <ol class="rail-list" aria-label="Questions in this unit">
             <For each={props.unit.questions}>{(item, index) => (
               <li classList={{ 'is-active': index() === questionIndex() }}>
@@ -668,11 +768,59 @@ export default function StudyFlow(props: Props) {
         </aside>
 
         <div class="study-main">
+          <section class="study-mode-loading" data-testid="study-mode-loading" hidden={studyMode() !== null} aria-live="polite">
+            <p class="section-kicker">Preparing workspace</p>
+            <h2>Opening this lesson in the requested mode…</h2>
+            <p>The reading and recall surfaces stay inactive until the page knows which one you requested.</p>
+          </section>
+          <noscript>
+            <section class="study-noscript">
+              <h2>Read this lesson without JavaScript</h2>
+              <p>The interactive workspace needs JavaScript. The complete lesson remains available as portable Markdown.</p>
+              <a class="button primary" href={'/raw/v1/units/' + props.unit.id.split(':')[1] + '/unit.md'}>Open lesson Markdown</a>
+            </section>
+          </noscript>
+
+          <article ref={readHeading} tabindex="-1" id="lesson" class="reader-workspace" data-testid="reader-workspace" hidden={studyMode() !== 'read'} aria-label={`Lesson: ${props.unit.title}`}>
+            <header class="reader-workspace-intro">
+              <p data-testid="encounter-status" aria-live="polite">{!hydrated() || me.loading
+                ? 'Checking whether reading progress can be saved…'
+                : encounterMessage()}</p>
+              <details class="reader-evidence-help">
+                <summary>How reading affects progress</summary>
+                <p>Marking this lesson read records reading completion. It does not create recall or mastery evidence.</p>
+              </details>
+            </header>
+            <ReferenceMarkdown html={props.unit.lessonHtml} />
+            <details class="feedback-depth reference-models" data-testid="reference-models">
+              <summary>Visual models ({props.unit.visuals.length})</summary>
+              <ReferenceVisuals visuals={props.unit.visuals} />
+            </details>
+            <MentalModelLinks models={props.unit.mentalModels} />
+            <footer class="reader-completion" aria-label="Finish reading">
+              <div>
+                <strong>{taskIsCompleted('lesson', 'lesson') ? 'Lesson marked read' : 'Finished the lesson?'}</strong>
+                <p>{taskIsCompleted('lesson', 'lesson')
+                  ? 'Practice is available now; your reading record remains separate from recall.'
+                  : 'Mark the reading complete, then try the first concept without answering every question first.'}</p>
+              </div>
+              <button
+                type="button"
+                class="button primary"
+                disabled={!hydrated() || me.loading || taskSaving() !== null || (Boolean(me()?.authenticated) && (learningProgress.loading || progressError()))}
+                onClick={() => void completeReadAndPractice()}
+              >{taskSaving() === 'lesson:lesson' ? 'Saving…' : taskIsCompleted('lesson', 'lesson') ? 'Practice this concept' : 'Mark read & try the concept'}</button>
+              <button type="button" class="text-button" disabled={!hydrated()} onClick={() => switchMode('practice', true)}>Already familiar? Recall first</button>
+              <span role="status">{taskMessage()}</span>
+            </footer>
+          </article>
+
+          <section class="practice-workspace" data-testid="practice-workspace" hidden={studyMode() !== 'practice'} aria-label="Recall-first practice">
           <Show when={authError()}>
             <p class="workspace-message" role="status">Could not verify sign-in. This attempt stays in memory. <button type="button" class="text-button" onClick={() => void refetchMe()}>Retry sign-in check</button></p>
           </Show>
           <div class="learning-status-slot" data-testid="learning-status-slot" aria-busy={me.loading || learningProgress.loading}>
-          <details class="learning-progress-disclosure">
+          <details class="learning-progress-disclosure" open={Boolean(unitLearningProgress())}>
           <summary>Learning progress <span>{me.loading || learningProgress.loading ? 'Loading…' : progressError() ? 'Unavailable' : !me()?.authenticated ? 'Memory only' : unitLearningProgress() ? unitLearningProgress()!.completion.state : 'No saved progress yet'}</span></summary>
           <Show when={unitLearningProgress()}>
             {(unitProgress) => (
@@ -778,7 +926,7 @@ export default function StudyFlow(props: Props) {
                 <button type="button" class="text-button" disabled={!hydrated()} onClick={() => setShowHint((value) => !value)}>
                   {showHint() ? 'Hide hint' : 'Give me a hint'}
                 </button>
-                <button type="button" class="text-button" disabled={!hydrated()} onClick={learnFirst}>I haven't learned this yet</button>
+                <button type="button" class="text-button" disabled={!hydrated()} onClick={() => learnFirst()}>Read the lesson first</button>
               </div>
               <Show when={showHint()}>
                 <aside class="learning-hint" aria-live="polite">
@@ -893,25 +1041,6 @@ export default function StudyFlow(props: Props) {
             </Show>
 
             <Show when={finished()}>
-              <article class="lesson">
-              <div ref={lessonHeading} tabindex="-1" class="lesson-divider"><span>Lesson revealed</span></div>
-              <ReferenceVisuals visuals={props.unit.visuals} />
-              <MentalModelLinks models={props.unit.mentalModels} />
-              <div class="markdown-body" innerHTML={props.unit.lessonHtml} />
-              <div class="completion-action">
-                <button
-                  type="button"
-                  class="completion-toggle"
-                  aria-pressed={taskIsCompleted('lesson', 'lesson')}
-                  disabled={taskSaving() !== null || learningProgress.loading || progressError()}
-                  onClick={() => setTaskCompleted('lesson', 'lesson', !taskIsCompleted('lesson', 'lesson'))}
-                >
-                  {taskIsCompleted('lesson', 'lesson') ? 'Lesson read ✓' : 'Mark lesson read'}
-                </button>
-                <span>{taskMessage()}</span>
-              </div>
-            </article>
-
             <section class="depth-grid" aria-labelledby="practice-title">
               <div>
                 <p class="section-kicker">Guided practice</p>
@@ -974,6 +1103,7 @@ export default function StudyFlow(props: Props) {
               </nav>
             </Show>
           </div>
+          </section>
         </div>
 
         <aside
@@ -989,9 +1119,8 @@ export default function StudyFlow(props: Props) {
               <span class="section-kicker">Learning context</span>
               <strong>
                 {contextPanel() === 'history' ? 'Previous answers'
-                  : contextPanel() === 'reference' ? 'Reference'
-                    : contextPanel() === 'notes' ? 'Private notes'
-                      : 'Stay on the question'}
+                  : contextPanel() === 'notes' ? 'Private notes'
+                    : 'Stay in the lesson'}
               </strong>
             </div>
             <button
@@ -1003,7 +1132,7 @@ export default function StudyFlow(props: Props) {
             >×</button>
           </div>
           <div class="learning-context-tabs" role="tablist" aria-label="Context tools" onKeyDown={contextKey}>
-            <For each={['history', 'reference', 'notes'] as ContextPanel[]}>{(panel) => (
+            <For each={['history', 'notes'] as ContextPanel[]}>{(panel) => (
               <button type="button" disabled={!hydrated()} role="tab" id={`context-tab-${panel}`} aria-controls={`context-${panel}`} tabindex={contextPanel() === panel || (contextPanel() === null && panel === 'history') ? 0 : -1} aria-selected={contextPanel() === panel} onClick={() => openContext(panel)}>{panel[0]!.toUpperCase() + panel.slice(1)}</button>
             )}</For>
           </div>
@@ -1071,21 +1200,6 @@ export default function StudyFlow(props: Props) {
                       </Show>
                     </Show>
                   </Show>
-                </section>
-              </Show>
-
-              <Show when={contextPanel() === 'reference'}>
-                <section role="tabpanel" id="context-reference" class="context-reference" aria-labelledby="context-tab-reference">
-                  <div class="context-reference-intro">
-                    <h2 id="context-reference-title">Build or inspect the model</h2>
-                    <p>Use this without leaving the current question. Reading here creates no recall evidence.</p>
-                  </div>
-                  <details class="feedback-depth reference-models" data-testid="reference-models">
-                    <summary>Visual models ({props.unit.visuals.length})</summary>
-                    <ReferenceVisuals visuals={props.unit.visuals} />
-                  </details>
-                  <MentalModelLinks models={props.unit.mentalModels} />
-                  <ReferenceMarkdown html={props.unit.lessonHtml} />
                 </section>
               </Show>
 

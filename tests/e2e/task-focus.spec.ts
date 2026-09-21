@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { kcnaAllQuestionsLabel, kcnaQuestionCount } from './kcna-practice-content';
 
 for (const response of [{ index: 1, verdict: 'Correct' }, { index: 0, verdict: 'Not quite' }]) {
   test(`mobile checked ${response.verdict.toLowerCase()} feedback is focused and clear of actions`, async ({ page }, testInfo) => {
@@ -52,11 +53,11 @@ test('initial lesson actions follow the response without a viewport-sized gap', 
 test('MCQ starts with the task and explicitly exposes session configuration', async ({ page }) => {
   await page.goto('/practice/kcna');
   await expect(page.locator('#mcq-question-title')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'All 63', exact: true })).toBeHidden();
+  await expect(page.getByRole('button', { name: kcnaAllQuestionsLabel, exact: true })).toBeHidden();
   const options = page.locator('.mcq-session-options');
   await options.locator('summary').click();
-  await page.getByRole('button', { name: 'All 63', exact: true }).click();
-  await expect(page.locator('.mcq-progress-row')).toContainText('Question 1 / 63');
+  await page.getByRole('button', { name: kcnaAllQuestionsLabel, exact: true }).click();
+  await expect(page.locator('.mcq-progress-row')).toContainText(`Question 1 / ${kcnaQuestionCount}`);
   await expect(page.locator('#mcq-question-title')).toBeFocused();
   await page.getByRole('button', { name: 'Quick 12', exact: true }).click();
   await page.getByRole('button', { name: 'New mix', exact: true }).click();
@@ -84,6 +85,6 @@ test('unit progress is explicit and does not remount a recall draft', async ({ p
   await expect(answer).toHaveValue('A draft that should remain mounted.');
   await status.locator('summary').click();
   await expect(page.getByRole('button', { name: 'History', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Reference', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Read lesson', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Notes', exact: true })).toBeVisible();
 });

@@ -47,7 +47,7 @@ test('returning owner gets an explicit due-review handoff and a direct learning 
   const first = page.locator('[data-unit-id]').first();
   const id = await first.getAttribute('data-unit-id');
   const href = await first.locator('.kcna-course-step-copy a').first().getAttribute('href');
-  const slug = href!.replace('/learn/', '');
+  const slug = href!.replace('/learn/', '').split('?')[0]!;
   await page.unroute('**/api/progress');
   await page.unroute('**/api/review?*');
   await page.route('**/api/progress', (route) => route.fulfill({ json: {
@@ -58,7 +58,26 @@ test('returning owner gets an explicit due-review handoff and a direct learning 
   await page.reload();
   await expect(page.locator('[data-session-action]')).toHaveText('Review 3 due cards →');
   await expect(page.locator('[data-session-action]')).toHaveAttribute('href', `/review?path=kcna&next=${encodeURIComponent(slug)}`);
-  await expect(page.getByRole('link', { name: 'Continue learning', exact: true })).toHaveAttribute('href', href!);
+  await expect(page.getByRole('link', { name: 'Continue learning', exact: true })).toHaveAttribute('href', `/learn/${slug}?mode=reference`);
+});
+
+test('KCNA course exposes saved unit progress and Read lesson opens the readable lesson view', async ({ page }) => {
+  await page.route('**/api/review?*', (route) => route.fulfill({ json: { dueCount: 0 } }));
+  await page.goto('/kcna');
+  const step = page.locator('[data-unit-id]').first();
+  const id = await step.getAttribute('data-unit-id');
+  const materialHref = await step.locator('.kcna-course-step-copy a').first().getAttribute('href');
+  const slug = materialHref!.replace('/learn/', '').split('?')[0]!;
+  await page.route('**/api/progress', (route) => route.fulfill({ json: {
+    paths: [], recentUnitId: id, units: [{ id, slug, title: 'Current unit', score: 0.52,
+      completion: { state: 'In progress', percent: 0.5, questionsCompleted: 1, questionsTotal: 2, lessonCompleted: false, practicesCompleted: 0, practicesTotal: 1 },
+      understanding: { state: 'Understands basics', evidenceState: 'Recalled', score: 0.52, needsRefresh: false }, objectives: [] }],
+  } }));
+  await page.reload();
+  await expect(step.locator('[data-unit-evidence]')).toHaveText('Prior unit practice · Understands basics');
+  const study = step.locator('.kcna-course-step-action a');
+  await expect(study).toHaveText('Read lesson →');
+  await expect(study).toHaveAttribute('href', new RegExp(`^/learn/${slug}\\?mode=reference$`));
 });
 
 test('pending due reviews are explicit while learning stays available, then hand off to review', async ({ page }) => {
@@ -79,7 +98,7 @@ test('pending due reviews are explicit while learning stays available, then hand
     releaseReview();
     await expect(page.locator('[data-session-action]')).toHaveText('Review 5 due cards →');
     await expect(page.locator('.path-session-status')).not.toContainText('Checking due reviews…');
-    const slug = learningHref!.slice('/learn/'.length);
+    const slug = learningHref!.slice('/learn/'.length).split('?')[0]!;
     await expect(page.locator('[data-session-action]')).toHaveAttribute('href', `/review?path=kcna&next=${encodeURIComponent(slug)}`);
     await expect(page.getByRole('link', { name: 'Continue learning', exact: true })).toHaveAttribute('href', learningHref!);
   } finally { releaseReview(); }

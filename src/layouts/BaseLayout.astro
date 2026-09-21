@@ -1,5 +1,6 @@
 ---
 import AuthMenu from '@/components/AuthMenu';
+import BrandMark from '@/components/BrandMark.astro';
 import ThemeToggle from '@/components/ThemeToggle';
 import '../styles/global.css';
 import '../styles/learner-navigation.css';
@@ -42,8 +43,7 @@ const isCurrent = (item: typeof navigation[number]) => {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f6f4" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1210" />
+    <meta id="theme-color" name="theme-color" content="#f7f5f0" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -51,10 +51,14 @@ const isCurrent = (item: typeof navigation[number]) => {
     <meta name="twitter:card" content="summary" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="DevOps by hmrdkn-labs" />
-    <link rel="icon" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/assets/brand/beaver-a1-64.png" />
     <script is:inline>
       try {
-        document.documentElement.dataset.theme = localStorage.getItem('hmrdkn-theme') || 'system';
+        const savedTheme = localStorage.getItem('hmrdkn-theme');
+        const theme = savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system' ? savedTheme : 'system';
+        const dark = theme === 'dark' || (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('#theme-color')?.setAttribute('content', dark ? '#151c24' : '#f7f5f0');
       } catch {}
     </script>
     <title>{pageTitle}</title>
@@ -64,7 +68,7 @@ const isCurrent = (item: typeof navigation[number]) => {
     {!immersive && <header class="site-header">
       <div class="site-header-inner">
         <a class="brand" href="/" aria-label="DevOps by hmrdkn-labs home">
-          <img class="brand-mark" src="/favicon.svg" alt="" width="30" height="30" />
+          <BrandMark class="brand-mark" size={32} loading="eager" />
           <span class="brand-name">DevOps <small>hmrdkn-labs</small></span>
         </a>
         <nav class="site-nav" aria-label="Primary navigation">

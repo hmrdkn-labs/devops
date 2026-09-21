@@ -180,28 +180,27 @@ export default function KcnaFocusClient(props: Props) {
   });
 
   createEffect(() => {
+    const result = progressResult();
     const data = progress();
-    if (!data) return;
+    const fallback = progressResult.loading || !result ? 'Loading…'
+      : result.state === 'guest' ? 'Not saved'
+        : result.state === 'error' ? 'Unavailable' : null;
     const byUnit = progressByUnit();
-    document.querySelectorAll<HTMLElement>('[data-unit-completion]').forEach((element) => {
-      const unit = byUnit.get(element.dataset.unitCompletion ?? '');
-      const state = unit?.completion.state ?? 'Not started';
-      element.textContent = state;
-      element.dataset.state = state.toLowerCase().replaceAll(' ', '-');
-    });
-    document.querySelectorAll<HTMLElement>('[data-unit-understanding]').forEach((element) => {
-      const unit = byUnit.get(element.dataset.unitUnderstanding ?? '');
-      const state = unit?.understanding.state ?? 'No evidence';
-      element.textContent = state;
+    document.querySelectorAll<HTMLElement>('[data-unit-evidence]').forEach((element) => {
+      const unit = byUnit.get(element.dataset.unitEvidence ?? '');
+      const state = fallback ?? unit?.completion.state ?? 'Not started';
+      element.textContent = fallback ?? (state === 'Not started'
+        ? 'No prior unit practice'
+        : `Prior unit practice · ${unit?.understanding.state ?? 'evidence available'}`);
       element.dataset.state = state.toLowerCase().replaceAll(/\s|\//g, '-');
     });
     const states = checkpointStates();
     document.querySelectorAll<HTMLElement>('[data-checkpoint-progress]').forEach((element) => {
-      const state = states.get(element.dataset.checkpointProgress ?? '') ?? 'Not started';
+      const state = fallback ?? states.get(element.dataset.checkpointProgress ?? '') ?? 'Not started';
       element.textContent = state;
       element.dataset.state = state.toLowerCase().replaceAll(' ', '-');
     });
-    if (!autoOpened() && !checkpointTouched() && !window.location.hash) {
+    if (data && !autoOpened() && !checkpointTouched() && !window.location.hash) {
       const activeCheckpoint = nextUnit()?.checkpointId;
       document.querySelectorAll<HTMLDetailsElement>('details[data-checkpoint]').forEach((element) => {
         element.open = element.dataset.checkpoint === activeCheckpoint;
@@ -212,11 +211,16 @@ export default function KcnaFocusClient(props: Props) {
 
   const dueCount = () => review()?.dueCount ?? 0;
   const hasStarted = () => (progress()?.units ?? []).some((unit) => props.units.some((spec) => spec.id === unit.id) && (unit.completion.state !== 'Not started' || unit.understanding.state !== 'No evidence'));
+  const learningHref = createMemo(() => {
+    const unit = nextUnit();
+    if (!unit) return '/kcna';
+    return `/learn/${unit.slug}${progressByUnit().get(unit.id)?.completion.lessonCompleted ? '' : '?mode=reference'}`;
+  });
   const sessionHref = createMemo(() => {
     const unit = nextUnit();
     if (!unit) return '/kcna';
     if (dueCount() > 0 && progressResult()?.state === 'owner') return `/review?path=kcna&next=${encodeURIComponent(unit.slug)}`;
-    return `/learn/${unit.slug}`;
+    return learningHref();
   });
 
   return (
@@ -239,7 +243,7 @@ export default function KcnaFocusClient(props: Props) {
         <div class="kcna-session-actions">
           <a class="button primary" data-session-action href={sessionHref()}>{dueCount() > 0 && progressResult()?.state === 'owner' ? `Review ${dueCount()} due cards` : hasStarted() ? 'Continue learning' : 'Start learning'} →</a>
           <Show when={dueCount() > 0 && progressResult()?.state === 'owner'}>
-            <a class="button" href={`/learn/${nextUnit()?.slug}`}>Continue learning</a>
+            <a class="button" href={learningHref()}>Continue learning</a>
           </Show>
         </div>
         <div class="path-session-status" aria-live="polite">

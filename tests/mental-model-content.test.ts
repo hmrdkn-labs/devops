@@ -40,4 +40,31 @@ describe('portable mental models', () => {
   it('rejects unknown canonical unit edges', () => {
     expect(() => validateMentalModels([model], [])).toThrow('unknown unit');
   });
+
+  it('validates portable guided sequences and local continuation links', () => {
+    for (const slug of ['kubernetes-reconciliation', 'service-request-path']) {
+      const fixture = mentalModelSchema.parse(read(`content/mental-models/${slug}.yaml`));
+      const guide = fixture.guided_sequence!;
+      expect(guide.explain.tracks.map((track) => track.kind).sort()).toEqual(['control', 'execution']);
+      expect(guide.transfer.answer_id).not.toBe(guide.initial.answer_id);
+      const unitSlugs = fixture.unit_ids.map((unitId) => unitMetadataSchema.parse(read(`content/units/${unitId.replace('fpp:', '')}/metadata.yaml`)).slug);
+      for (const link of guide.next_links.filter((item) => item.href.startsWith('/learn/'))) {
+        expect(unitSlugs).toContain(link.href.split('/')[2]);
+      }
+    }
+  });
+
+  it('rejects protocol-relative continuation links in a guide', () => {
+    const changed = structuredClone(model);
+    changed.guided_sequence!.next_links[0]!.href = '//external.example/path';
+    expect(mentalModelSchema.safeParse(changed).success).toBe(false);
+  });
+
+  it('allows only the reference-mode query on guided lesson links', () => {
+    const changed = structuredClone(model);
+    changed.guided_sequence!.next_links[0]!.href = '/learn/kubernetes-control-loop/?mode=practice';
+    expect(mentalModelSchema.safeParse(changed).success).toBe(false);
+    changed.guided_sequence!.next_links[0]!.href = '/learn/kubernetes-control-loop/?mode=reference';
+    expect(mentalModelSchema.safeParse(changed).success).toBe(true);
+  });
 });

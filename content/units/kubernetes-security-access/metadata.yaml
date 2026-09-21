@@ -3,8 +3,9 @@ id: fpp:kubernetes-security-access
 slug: kubernetes-security-access
 title: Kubernetes identity, authorization, admission, and workload boundaries
 summary: Separate authentication, RBAC authorization, admission, workload identity, Secret handling, Pod security, and network segmentation into clear security boundaries.
-revision: 5
-revision_impact: mastery_affecting
+# Revision 6 adds the reviewed Kubernetes NetworkPolicy reference only; objectives and mastery content are unchanged.
+revision: 6
+revision_impact: enrichment
 status: published
 layer: kubernetes
 estimated_minutes: 42
@@ -32,4 +33,4 @@ certification_mappings:
     advisory: false
 authors: [hmrdkn-labs]
 reviewers: [hmrdkn-labs-editorial]
-verified_at: 2026-09-18
+verified_at: 2026-09-21

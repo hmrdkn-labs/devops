@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { parse } from 'yaml';
 import { curriculumSchema } from '../../src/lib/content/schema';
+import { kcnaAllQuestionsLabel } from './kcna-practice-content';
 
 const curriculum = curriculumSchema.parse(parse(readFileSync('content/curricula/kcna-kodekloud.yaml', 'utf8')));
 const quizModules = curriculum.modules.filter((module) => module.steps.some((step) => step.kind === 'quiz'));
@@ -27,7 +28,7 @@ test('MCQ controls wait for island handlers before accepting an answer', async (
     await expect(checkAnswer).toBeDisabled();
     await page.getByText('Session options', { exact: true }).click();
     await expect(page.getByLabel('Course module')).toBeDisabled();
-    await expect(page.getByRole('button', { name: 'All 63', exact: true })).toBeDisabled();
+    await expect(page.getByRole('button', { name: kcnaAllQuestionsLabel, exact: true })).toBeDisabled();
     await option.evaluate((element) => (element as HTMLInputElement).click());
     await expect(option).not.toBeChecked();
   } finally { release(); }

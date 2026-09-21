@@ -27,18 +27,18 @@ test('every generated unit keeps retrieval and reference within the viewport', a
     const answer = page.getByLabel('Your explanation', { exact: true });
     await expect(answer, slug).toBeEnabled();
     await answer.fill(`Draft for ${slug}`);
-    const heading = page.locator('.question-stage h2').first();
-    const before = await heading.boundingBox();
-    await page.locator('.study-context-actions').getByRole('button', { name: 'Reference', exact: true }).click();
-    const context = page.getByTestId('learning-context');
-    await expect(context).toBeVisible();
-    const models = context.getByTestId('reference-models');
+    await page.getByRole('button', { name: 'Read lesson', exact: true }).click();
+    const reader = page.getByTestId('reader-workspace');
+    await expect(reader).toBeVisible();
+    const models = reader.getByTestId('reference-models');
     if (await models.count()) await models.locator(':scope > summary').click();
     await expect(answer, slug).toHaveValue(`Draft for ${slug}`);
-    const after = await heading.boundingBox();
-    expect(after?.x, slug).toBe(before?.x);
     expect(await page.evaluate(() => document.documentElement.scrollWidth), slug).toBeLessThanOrEqual(width);
-    for (const table of await context.locator('.markdown-body table').all()) {
+    if (info.project.name === 'desktop') {
+      const readerBox = await reader.boundingBox();
+      expect(readerBox?.width ?? 0, `${slug} readable reference width`).toBeGreaterThanOrEqual(500);
+    }
+    for (const table of await reader.locator('.markdown-body table').all()) {
       const contained = await table.evaluate((element) => {
         const parent = element.parentElement!;
         const table = element.getBoundingClientRect();
@@ -53,13 +53,13 @@ test('every generated unit keeps retrieval and reference within the viewport', a
 test('reference code stays contained and overflowing blocks support keyboard scrolling', async ({ page }, info) => {
   test.skip(info.project.name !== 'mobile', 'Focused narrow code scrolling contract');
   await page.goto('/learn/container-network-storage');
-  await page.locator('.study-context-actions').getByRole('button', { name: 'Reference', exact: true }).click();
-  const context = page.getByTestId('learning-context');
-  await expect(context).toBeVisible();
-  await expect(context.locator('.context-reference .markdown-body')).toBeVisible();
-  const blocks = context.getByRole('region', { name: /Reference code example/ });
+  await page.getByRole('button', { name: 'Read lesson', exact: true }).click();
+  const reader = page.getByTestId('reader-workspace');
+  await expect(reader).toBeVisible();
+  await expect(reader.locator('.markdown-body')).toBeVisible();
+  const blocks = reader.getByRole('region', { name: /Reference code example/ });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
-  const referenceFits = await context.locator('.learning-context-body').evaluate((element) => {
+  const referenceFits = await reader.evaluate((element) => {
     const reference = element.getBoundingClientRect();
     return reference.left >= 0 && reference.right <= window.innerWidth + 1;
   });
@@ -68,7 +68,7 @@ test('reference code stays contained and overflowing blocks support keyboard scr
   // Code-specific semantics apply only to regions the unit actually renders.
   for (const block of await blocks.all()) {
     const dimensions = await block.evaluate((element) => {
-      const body = element.closest('.learning-context-body')!.getBoundingClientRect();
+      const body = element.closest('.reader-workspace')!.getBoundingClientRect();
       const code = element.getBoundingClientRect();
       return {
         contained: code.left >= body.left && code.right <= body.right + 1,
@@ -309,14 +309,34 @@ test('context keyboard switching preserves retrieval geometry and returns focus'
   const draft = page.getByLabel('Your explanation', { exact: true });
   await draft.fill('Draft survives contextual lookup.');
   const heading = page.locator('.question-stage h2').first();
-  const before = await heading.boundingBox();
+  const settledGeometry = () => heading.evaluate(async (element) => {
+    const measure = () => {
+      const box = element.getBoundingClientRect();
+      return { x: box.x, y: box.y, scrollY: window.scrollY };
+    };
+    let previous = measure();
+    let stableFrames = 0;
+    for (let frame = 0; frame < 120; frame++) {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      const current = measure();
+      const movement = Math.max(
+        Math.abs(current.x - previous.x),
+        Math.abs(current.y - previous.y),
+        Math.abs(current.scrollY - previous.scrollY),
+      );
+      stableFrames = movement <= 0.1 ? stableFrames + 1 : 0;
+      previous = current;
+      if (stableFrames >= 4) return current;
+    }
+    throw new Error('Retrieval geometry did not settle within two seconds.');
+  });
+  const before = await settledGeometry();
   const url = page.url();
-  const scroll = await page.evaluate(() => window.scrollY);
-  const opener = page.locator('.study-context-actions').getByRole('button', { name: 'Reference', exact: true });
+  const opener = page.getByRole('button', { name: 'History', exact: true });
   await opener.click();
-  const referenceTab = page.getByRole('tab', { name: 'Reference', exact: true });
-  await referenceTab.focus();
-  await referenceTab.press('ArrowRight');
+  const historyTab = page.getByRole('tab', { name: 'History', exact: true });
+  await historyTab.focus();
+  await historyTab.press('ArrowRight');
   await expect(page.getByRole('tab', { name: 'Notes', exact: true })).toBeFocused();
   await page.getByRole('tab', { name: 'Notes', exact: true }).press('Home');
   await expect(page.getByRole('tab', { name: 'History', exact: true })).toBeFocused();
@@ -324,15 +344,13 @@ test('context keyboard switching preserves retrieval geometry and returns focus'
   await expect(opener).toBeFocused();
   await expect(draft).toHaveValue('Draft survives contextual lookup.');
   await expect(page).toHaveURL(url);
-  const after = await heading.boundingBox();
-  expect(before).not.toBeNull();
-  expect(after).not.toBeNull();
-  expect(Math.abs(after!.x - before!.x)).toBeLessThanOrEqual(4);
-  expect(Math.abs(after!.y - before!.y)).toBeLessThanOrEqual(4);
-  expect(Math.abs(await page.evaluate(() => window.scrollY) - scroll)).toBeLessThanOrEqual(4);
+  const after = await settledGeometry();
+  expect(Math.abs(after.x - before.x)).toBeLessThanOrEqual(4);
+  expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(4);
+  expect(Math.abs(after.scrollY - before.scrollY)).toBeLessThanOrEqual(4);
 });
 
-test('Scheduling reference and counter fit narrow context', async ({ page }, info) => {
+test('Scheduling reader and counter fit narrow viewports', async ({ page }, info) => {
   test.skip(info.project.name !== 'mobile', 'Focused narrow responsive acceptance');
   for (const width of [320, 390, 768]) {
     await page.setViewportSize({ width, height: 844 });
@@ -343,12 +361,12 @@ test('Scheduling reference and counter fit narrow context', async ({ page }, inf
   }
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/learn/kubernetes-architecture-components');
-  await page.locator('.study-context-actions').getByRole('button', { name: 'Reference', exact: true }).click();
-  const context = page.getByTestId('learning-context');
-  for (const table of await context.locator('.markdown-body table').all()) {
+  await page.getByRole('button', { name: 'Read lesson', exact: true }).click();
+  const reader = page.getByTestId('reader-workspace');
+  for (const table of await reader.locator('.markdown-body table').all()) {
     await expect(table).toBeVisible();
     const containment = await table.evaluate((element) => {
-      const body = element.closest('.learning-context-body')!;
+      const body = element.closest('.reader-workspace')!;
       const tableBox = element.getBoundingClientRect();
       const bodyBox = body.getBoundingClientRect();
       let parent = element.parentElement;
@@ -362,8 +380,8 @@ test('Scheduling reference and counter fit narrow context', async ({ page }, inf
     });
     expect(containment.fits || containment.accessibleScroll, 'Reference table must fit context or have its own accessible horizontal scroll').toBe(true);
   }
-  await context.getByTestId('reference-models').locator(':scope > summary').click();
-  const counters = context.locator('.lesson-visual-counter');
+  await reader.getByTestId('reference-models').locator(':scope > summary').click();
+  const counters = reader.locator('.lesson-visual-counter');
   expect(await counters.count()).toBeGreaterThan(0);
   for (const counter of await counters.all()) {
     await expect(counter).toBeVisible();

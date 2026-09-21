@@ -13,6 +13,7 @@ import { pathToFileURL } from 'node:url';
 import { zipSync, strToU8, type Zippable } from 'fflate';
 import { parse } from 'yaml';
 import { mentalModelSchema, type MentalModel } from '../../src/lib/content/mental-model-schema';
+import { markdownHeadingIds } from '../../src/lib/content/headings';
 import {
   cardFileSchema,
   certificationRegistrySchema,
@@ -255,6 +256,7 @@ export function validateCurricula(
   practiceSets: PracticeSet[] = [],
 ) {
   const unitIds = new Set(units.map((unit) => unit.metadata.id));
+  const unitsById = new Map(units.map((unit) => [unit.metadata.id, unit]));
   const curriculumIds = new Set<string>();
   const slugs = new Set<string>();
   const modulesBySlug = new Map<string, Set<string>>();
@@ -284,6 +286,17 @@ export function validateCurricula(
       for (const step of module.steps) {
         for (const unitId of step.unit_ids) {
           if (!unitIds.has(unitId)) throw new Error(`${step.id}: unknown mapped unit ${unitId}`);
+        }
+        if (step.material) {
+          const materialUnit = unitsById.get(step.material.unit_id);
+          if (!materialUnit) throw new Error(`${step.id}: unknown section material unit ${step.material.unit_id}`);
+          if (!markdownHeadingIds(materialUnit.markdown).has(step.material.section)) {
+            throw new Error(`${step.id}: unknown section ${step.material.section} in ${step.material.unit_id}`);
+          }
+          const objectiveIds = new Set(materialUnit.metadata.objectives.map((objective) => objective.id));
+          for (const objectiveId of step.material.objective_ids) {
+            if (!objectiveIds.has(objectiveId)) throw new Error(`${step.id}: unknown material objective ${objectiveId}`);
+          }
         }
       }
       if (module.steps.some((step) => step.kind === 'quiz')) {

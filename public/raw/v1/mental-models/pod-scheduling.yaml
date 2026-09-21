@@ -3,11 +3,11 @@ id: mental:pod-scheduling
 slug: pod-scheduling
 title: Which node can run this Pod?
 summary: Apply hard placement constraints and resource requests before considering preference, then distinguish node binding from worker execution.
-revision: 1
+revision: 2
 unit_ids: [fpp:kubernetes-scheduling-placement, fpp:scheduling-resources-health, fpp:kubernetes-architecture-components]
 objective_ids: [fpp:kubernetes-scheduling-placement/feasibility, fpp:kubernetes-scheduling-placement/policy]
 estimated_minutes: 7
-verified_at: 2026-09-17
+verified_at: 2026-09-21
 evidence_mode: authored-fixture
 scenario: report-p1 requests 600m CPU and 512Mi memory, requires disk=ssd, and has no tolerations. node-a has disk=ssd with 400m CPU available for new requests. node-b has disk=ssd and 1000m available but dedicated=batch:NoSchedule. node-c has disk=ssd and 1000m available with no blocking taint.
 assumptions:
@@ -123,6 +123,138 @@ transfer_questions:
     answer: node-b can pass the taint check if every other constraint also passes. Both node-b and node-c may then be feasible; toleration does not select node-b.
   - prompt: What changes if you add preferred affinity for node-a?
     answer: node-a still fails the resource request filter. Preferences rank feasible candidates and cannot override an insufficient-resource hard filter.
+scheduling_prototype:
+  goal: Explain why an unbound Pod stays Pending, identify feasible nodes, and separate placement from execution evidence.
+  prerequisite: Know that a Pod specification declares containers and resource requests.
+  assumptions:
+    - Only the requested capacity, required labels, listed NoSchedule taints, tolerations, and preference shown here affect placement.
+    - All nodes are Ready, memory is sufficient, and the displayed available CPU is allocatable CPU minus existing Pod requests, not live utilization.
+    - A toleration matches here only when its key, value, and NoSchedule effect equal the taint; broader operators and other effects are outside this exercise.
+    - Real scheduler plugins, concurrent cluster changes, and scoring details are intentionally omitted from this simplified teaching filter.
+  read:
+    title: Why can a Pod stay Pending?
+    body:
+      - The scheduler first filters nodes using hard requirements such as requested capacity, required labels, and untolerated NoSchedule taints. A node that fails any hard requirement is not feasible.
+      - Preferences only help rank nodes that survived filtering. A toleration allows a Pod to be considered despite a matching taint; it does not require or attract the Pod to that node.
+    start_label: Try the placement decision
+  base:
+    pod:
+      name: report-p1
+      cpu_m: 600
+      memory_mi: 512
+      required_labels: {disk: ssd}
+      preferred_labels: {zone: west}
+      tolerations: []
+    nodes:
+      - id: node-a
+        name: node-a
+        cpu_available_m: 400
+        memory_available_mi: 2048
+        labels: {disk: ssd, zone: west}
+        taints: []
+      - id: node-b
+        name: node-b
+        cpu_available_m: 1000
+        memory_available_mi: 2048
+        labels: {disk: ssd, zone: west}
+        taints: [{key: dedicated, value: batch, effect: NoSchedule}]
+      - id: node-c
+        name: node-c
+        cpu_available_m: 1000
+        memory_available_mi: 2048
+        labels: {disk: hdd, zone: east}
+        taints: []
+    eligible_node_ids: []
+    prompt: Before revealing the filters, which nodes are eligible for report-p1?
+    choices:
+      - {id: no-nodes, text: No nodes, rationale: node-a lacks requested CPU, node-b has an untolerated NoSchedule taint, and node-c fails the required disk label.}
+      - {id: b-and-c, text: node-b and node-c, rationale: node-b has enough requested capacity but its untolerated NoSchedule taint still blocks this Pod.}
+      - {id: only-c, text: Only node-c, rationale: node-c has capacity but fails the required disk=ssd label, so it is not feasible.}
+    answer_id: no-nodes
+    correct_explanation: node-a fails the 600m CPU request, node-b fails the independent taint check, and node-c fails the required disk label. With no feasible node, the Pod remains unbound and Pending; the preferred zone cannot rescue any hard failure.
+  change:
+    title: Change one condition
+    description: Add a toleration for dedicated=batch:NoSchedule. Keep the request, required disk label, and zone preference unchanged.
+    pod:
+      name: report-p1
+      cpu_m: 600
+      memory_mi: 512
+      required_labels: {disk: ssd}
+      preferred_labels: {zone: west}
+      tolerations: [{key: dedicated, value: batch, effect: NoSchedule}]
+    eligible_node_ids: [node-b]
+    prompt: After adding the matching toleration, what changes before ranking?
+    choices:
+      - {id: only-b, text: Only node-b becomes feasible, rationale: The toleration removes node-b's stated blocker; node-a still lacks CPU and node-c still fails the required label.}
+      - {id: must-b, text: The toleration attracts the Pod to node-b, rationale: A toleration permits consideration; it does not attract a Pod or express a placement preference.}
+      - {id: all-nodes, text: All three nodes become feasible, rationale: The toleration changes the taint result only; it does not add requested capacity to node-a.}
+    answer_id: only-b
+    correct_explanation: node-b now passes the stated hard filters, while node-a and node-c keep their original failures. The toleration removed one blocker; it did not attract the Pod. If another node were feasible, both could still be ranked.
+  concepts:
+    - term: Hard constraints filter
+      explanation: Resource fit, required labels, and untolerated NoSchedule taints can remove a node from consideration entirely.
+    - term: Preferences rank
+      explanation: Preferred affinity contributes to ranking among feasible nodes; it does not override a failed hard constraint.
+    - term: Toleration permits
+      explanation: A matching toleration lets the Pod remain eligible for a tainted node, but does not attract it there or guarantee selection.
+  lifecycle:
+    title: Placement is not execution
+    stages:
+      - actor: kube-scheduler
+        action: Watches the unbound Pod, filters and ranks candidates, and chooses a feasible node.
+        observable: A Pending Pod can still have no spec.nodeName while FailedScheduling events explain rejected candidates.
+      - actor: API server
+        action: Accepts and records the binding so the Pod specification names the selected node.
+        observable: spec.nodeName and the PodScheduled condition prove an accepted assignment, not a running container.
+      - actor: Node kubelet and runtime
+        action: The selected node's kubelet observes the assigned Pod and asks its runtime to create the sandbox and containers.
+        observable: Container states and startup events provide execution evidence after scheduling. An image-pull failure does not cause the scheduler to automatically rebind this existing Pod; readiness is a further check.
+    proof:
+      command: kubectl describe pod report-p1
+      expected: 'Illustrative event: 0/3 nodes are available: 1 Insufficient cpu, 1 had untolerated taint {dedicated: batch}, 1 did not match required labels.'
+      proves: A FailedScheduling event reports why the scheduler could not place that version of the unbound Pod at that observation time.
+      limitation: This authored output is not a live cluster observation, can become stale as cluster state changes, and does not prove anything about container startup.
+  transfer:
+    pod:
+      name: api-p2
+      cpu_m: 500
+      memory_mi: 256
+      required_labels: {pool: general}
+      preferred_labels: {zone: east}
+      tolerations: []
+    nodes:
+      - id: node-x
+        name: node-x
+        cpu_available_m: 900
+        memory_available_mi: 1024
+        labels: {pool: gpu, zone: east}
+        taints: []
+      - id: node-y
+        name: node-y
+        cpu_available_m: 700
+        memory_available_mi: 1024
+        labels: {pool: general, zone: west}
+        taints: []
+      - id: node-z
+        name: node-z
+        cpu_available_m: 800
+        memory_available_mi: 1024
+        labels: {pool: general, zone: east}
+        taints: []
+    eligible_node_ids: [node-y, node-z]
+    prompt: In this new scenario, which nodes are eligible before the zone preference ranks them?
+    choices:
+      - {id: y-and-z, text: node-y and node-z, rationale: Both meet the general-pool requirement and resource requests; the east preference ranks only after both remain feasible.}
+      - {id: only-z, text: Only node-z, rationale: zone=east is preferred rather than required, so node-y remains feasible despite not matching it.}
+      - {id: x-and-z, text: node-x and node-z, rationale: node-x matches the preference but fails the required pool=general label.}
+    answer_id: y-and-z
+    correct_explanation: node-x fails the required pool label. node-y and node-z pass all hard filters; the east preference may rank node-z higher but does not exclude node-y.
+    explain_prompt: In your own words, why can a preferred node still be ineligible, and what would you inspect for a Pending Pod?
+    checklist:
+      - Separates hard filtering from preference ranking.
+      - Says that one failed hard constraint makes a node ineligible.
+      - Names Pod events or binding status as evidence and limits what that evidence proves.
+    model_answer: A preference ranks only nodes that survive hard filters, so a preferred node can still fail a required label, request, or taint check. For a Pending Pod I would inspect scheduling events and spec.nodeName; those show placement evidence, not whether a container later started successfully.
 sources:
   - {title: Assigning Pods to Nodes, url: 'https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/'}
   - {title: Resource Management for Pods and Containers, url: 'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'}

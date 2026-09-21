@@ -3,9 +3,9 @@ id: practice:kcna
 slug: kcna-mcq
 title: KCNA MCQ refresher
 summary: Independently authored KCNA refresher questions covering Kubernetes concepts, kubectl command recognition, scenarios, and multi-select reasoning.
-revision: 5
+revision: 6
 certification: cncf:kcna
-verified_at: 2026-09-18
+verified_at: 2026-09-21
 questions:
   - id: practice:kcna/q-api-entry
     checkpoint: fundamentals
@@ -1460,3 +1460,288 @@ questions:
     answer_ids: [a]
     explanation: Keep artifact creation, desired-state promotion, reconciliation, and runtime proof separate. D2 exists, but production has not declared or reconciled it yet.
     unit_ids: [fpp:cloud-native-delivery-gitops, fpp:cloud-native-release-debugging]
+
+  - id: practice:kcna/q-fundamentals-image-container-process
+    checkpoint: fundamentals
+    course_module: kubernetes-fundamentals
+    category: concept
+    select: single
+    prompt: An image exists in a registry, but no container has been created from it. Which statement is accurate?
+    options:
+      - {id: b, text: The image is already a running container because it has a tag, rationale: A tag names an image reference; it does not create a container or start a process.}
+      - {id: a, text: The image is an immutable-style artifact; it is not yet a running process, rationale: An image supplies filesystem and configuration inputs. A container and its processes exist only after runtime creation and start.}
+      - {id: c, text: The image is a Pod scheduled on whichever node pulled it, rationale: Pulling an image caches an artifact on a node but does not create a Pod or record a scheduling decision.}
+      - {id: d, text: The image is the same object as a container runtime, rationale: A runtime manages container execution; an image is one input consumed by that runtime.}
+    answer_ids: [a]
+    explanation: Keep artifact, runtime object, and process separate. The runtime creates a container from an image and then starts its configured process.
+    unit_ids: [fpp:container-lifecycle]
+
+  - id: practice:kcna/q-fundamentals-api-to-execution
+    checkpoint: fundamentals
+    course_module: kubernetes-fundamentals
+    category: scenario
+    select: multiple
+    prompt: After a Deployment manifest is accepted by the API server, which later actions belong to separate control and execution layers? Select all that apply.
+    options:
+      - {id: a, text: A controller reconciles desired replicas through API objects, rationale: Deployment and ReplicaSet controllers react to persisted desired state and create or update subordinate objects.}
+      - {id: b, text: The scheduler selects a feasible node for each unscheduled Pod, rationale: Scheduling is a placement decision after a Pod object exists and needs a node assignment.}
+      - {id: c, text: The selected node kubelet asks its runtime to realize assigned containers, rationale: The kubelet handles node-side execution after placement rather than replacing API admission or scheduling.}
+      - {id: d, text: kubectl directly starts every container on the chosen worker, rationale: kubectl submits API requests; it does not bypass reconciliation and contact each runtime to start workload processes.}
+    answer_ids: [a, b, c]
+    explanation: Trace accepted intent through reconciliation, placement, and node execution. An accepted API write alone does not prove a running or ready workload.
+    unit_ids: [fpp:kubernetes-control-loop, fpp:kubernetes-architecture-components]
+
+  - id: practice:kcna/q-fundamentals-cri-boundary
+    checkpoint: fundamentals
+    course_module: kubernetes-fundamentals
+    category: concept
+    select: single
+    prompt: What problem does the Container Runtime Interface primarily solve in Kubernetes?
+    options:
+      - {id: b, text: It gives Pods stable DNS names, rationale: Cluster DNS and Service discovery solve naming; CRI concerns node-side container runtime integration.}
+      - {id: c, text: It chooses a node for every pending Pod, rationale: kube-scheduler performs placement; CRI is used after a Pod is assigned to a node.}
+      - {id: a, text: It gives kubelet a standard runtime-facing API for Pod sandboxes and containers, rationale: CRI separates kubelet from runtime-specific implementations through a defined gRPC interface.}
+      - {id: d, text: It stores Kubernetes desired state, rationale: The API server and etcd persist cluster state; CRI does not act as the control-plane database.}
+    answer_ids: [a]
+    explanation: CRI is the kubelet-to-runtime boundary. It does not replace scheduling, networking, storage, DNS, or API persistence.
+    unit_ids: [fpp:container-lifecycle, fpp:kcna-kubernetes-fundamentals-review]
+
+  - id: practice:kcna/q-fundamentals-restart-replacement
+    checkpoint: fundamentals
+    course_module: kubernetes-fundamentals
+    category: scenario
+    select: single
+    prompt: A process exits inside a restartable container and kubelet restarts it in the same Pod sandbox. What should you avoid claiming?
+    options:
+      - {id: b, text: The restart count can increase for that container, rationale: Container status records restart activity within the Pod and is relevant evidence for this case.}
+      - {id: c, text: The container process was started again by node-side execution machinery, rationale: kubelet and the runtime manage container restart behavior for an assigned Pod.}
+      - {id: d, text: Pod identity and process identity are different boundaries, rationale: A stable Pod UID can contain multiple process executions across container restarts.}
+      - {id: a, text: A controller necessarily created a replacement Pod with a new UID, rationale: A container restart can occur within the existing Pod; Pod replacement is a separate ownership event with a different UID.}
+    answer_ids: [a]
+    explanation: A process or container restart does not by itself prove Pod replacement. Compare Pod UID, container restart count, and owner references before naming the lifecycle event.
+    unit_ids: [fpp:container-lifecycle, fpp:kubernetes-pod-model]
+
+  - id: practice:kcna/q-resources-selector-template
+    checkpoint: resources
+    course_module: kubernetes-resources
+    category: scenario
+    select: single
+    prompt: A Deployment selector requires app=api, but its Pod template labels contain app=web. What is the core problem?
+    options:
+      - {id: a, text: The controller membership rule and the Pods it would create do not agree, rationale: A workload selector must match the template labels so the controller can consistently own the intended Pods.}
+      - {id: b, text: The namespace automatically rewrites both labels, rationale: Namespaces scope objects but do not repair mismatched workload selectors and template labels.}
+      - {id: c, text: The scheduler changes the template label after placement, rationale: Scheduling selects a node; it does not rewrite controller selectors or Pod template membership labels.}
+      - {id: d, text: The Service port must be changed to app=api, rationale: Ports and labels are different fields; a Service selector may use labels but cannot repair an invalid workload template relationship.}
+    answer_ids: [a]
+    explanation: Read selector and template labels as one ownership contract. Matching syntax elsewhere does not fix a controller whose membership rule excludes its own template.
+    unit_ids: [fpp:kubernetes-labels-replicasets]
+
+  - id: practice:kcna/q-resources-scale-vs-rollout
+    checkpoint: resources
+    course_module: kubernetes-resources
+    category: concept
+    select: single
+    prompt: Which change creates a new Deployment rollout revision rather than only changing desired replica count?
+    options:
+      - {id: b, text: Scaling replicas from three to five without changing the template, rationale: Scaling adjusts desired count on the active workload and does not by itself create a new Pod template revision.}
+      - {id: c, text: Listing Pods with kubectl get pods, rationale: A read operation observes live objects and does not mutate the Deployment template or replica count.}
+      - {id: a, text: Changing the Pod template image, rationale: A Pod template change creates a new ReplicaSet and rollout revision because the desired Pod specification changed.}
+      - {id: d, text: Adding a local kubectl context, rationale: "Client context configuration changes connection defaults, not the live Deployment Pod template."}
+    answer_ids: [a]
+    explanation: Separate rollout history from scaling. Template mutations create revisions; replica-count changes adjust quantity without creating a new template.
+    unit_ids: [fpp:kubernetes-deployments-rollouts]
+
+  - id: practice:kcna/q-resources-kubectl-explain
+    checkpoint: resources
+    course_module: kubernetes-resources
+    category: kubectl
+    select: single
+    prompt: Before editing an unfamiliar Deployment field, which command best asks the current API schema what spec.template.spec.containers means?
+    options:
+      - {id: b, text: kubectl logs deployment.spec.template.spec.containers, code: true, rationale: kubectl logs retrieves container output; it does not describe API object field schemas.}
+      - {id: c, text: kubectl top deployment.spec.template.spec.containers, code: true, rationale: kubectl top reports resource metrics and does not explain manifest structure.}
+      - {id: d, text: kubectl rollout undo deployment.spec.template.spec.containers, code: true, rationale: rollout undo changes workload history and is not a schema discovery operation.}
+      - {id: a, text: kubectl explain deployment.spec.template.spec.containers, code: true, rationale: kubectl explain queries the API schema and describes the requested field path for the configured cluster.}
+    answer_ids: [a]
+    explanation: Use schema discovery before guessing YAML structure. Then inspect the live object separately because a valid field does not prove the desired value is deployed.
+    unit_ids: [fpp:kubernetes-object-lexicon, fpp:kubernetes-manifests]
+
+  - id: practice:kcna/q-resources-namespace-scope
+    checkpoint: resources
+    course_module: kubernetes-resources
+    category: scenario
+    select: multiple
+    prompt: You need to distinguish two ConfigMaps named app-config in namespaces blue and green. Which statements are correct? Select all that apply.
+    options:
+      - {id: a, text: Their namespace plus name identifies different namespaced objects, rationale: Namespaced resources can reuse the same name in different namespaces because namespace participates in API scope.}
+      - {id: b, text: kubectl get configmap app-config -n blue selects the blue object, rationale: The namespace flag scopes this namespaced lookup to blue.}
+      - {id: c, text: Changing the current namespace deletes the green object, rationale: Client context defaults affect command targeting; they do not delete objects in another namespace.}
+      - {id: d, text: A namespace alone is a complete workload security boundary, rationale: "Namespaces provide API scope, but isolation also depends on authorization, network, admission, and workload controls."}
+    answer_ids: [a, b]
+    explanation: Namespace is part of identity and lookup for namespaced objects. It is an organizational and policy scope, not complete isolation by itself.
+    unit_ids: [fpp:kubernetes-namespaces-scope]
+
+  - id: practice:kcna/q-security-serviceaccount-default
+    checkpoint: cluster-behavior
+    course_module: security
+    category: concept
+    select: single
+    prompt: A Pod uses the default ServiceAccount in its namespace. With RBAC enabled and no additional binding, what should you assume?
+    options:
+      - {id: b, text: It is automatically cluster-admin, rationale: The default ServiceAccount does not receive broad administrative privileges merely because a Pod uses it.}
+      - {id: a, text: It has an identity but no broad workload permissions by default, rationale: "ServiceAccounts authenticate workloads, while RBAC bindings separately grant authorized actions."}
+      - {id: c, text: It inherits the permissions of whoever created the Pod, rationale: Creator identity and workload ServiceAccount identity are separate subjects for authorization.}
+      - {id: d, text: It bypasses API authentication because it runs inside the cluster, rationale: In-cluster location does not bypass API authentication and authorization boundaries.}
+    answer_ids: [a]
+    explanation: ServiceAccount identity, token delivery, and RBAC grants are separate. Bind only the permissions the workload needs.
+    unit_ids: [fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-security-imagepull-vs-context
+    checkpoint: cluster-behavior
+    course_module: security
+    category: scenario
+    select: multiple
+    prompt: A private image cannot be pulled, and the workload also must not run as root. Which controls address these different failures? Select all that apply.
+    options:
+      - {id: a, text: imagePullSecrets or node registry credentials address registry authentication, rationale: Image pull credentials let the runtime authenticate to a private registry before a container can start.}
+      - {id: b, text: securityContext runAsNonRoot addresses process execution identity, rationale: runAsNonRoot constrains the process user after image retrieval; it does not provide registry credentials.}
+      - {id: c, text: A NetworkPolicy grants registry credentials, rationale: NetworkPolicy can affect allowed connectivity but does not supply registry authentication material.}
+      - {id: d, text: A RoleBinding rewrites the image user to non-root, rationale: RBAC authorizes Kubernetes API actions; it does not change the user configured for a container process.}
+    answer_ids: [a, b]
+    explanation: Separate artifact retrieval from runtime process restrictions. Both may need correction, and success at one boundary does not prove the other.
+    unit_ids: [fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-security-pod-network-boundaries
+    checkpoint: cluster-behavior
+    course_module: security
+    category: scenario
+    select: multiple
+    prompt: Which statements correctly distinguish Pod security admission, securityContext, and NetworkPolicy? Select all that apply.
+    options:
+      - {id: a, text: Pod security admission can reject a Pod whose security settings violate namespace policy, rationale: Admission evaluates the submitted Pod against the configured Pod Security level before normal workload execution.}
+      - {id: b, text: securityContext configures process and privilege settings for the Pod or container, rationale: Security context fields constrain runtime identity and privileges rather than selecting allowed network peers.}
+      - {id: c, text: NetworkPolicy expresses allowed Pod network connectivity where the network plugin enforces it, rationale: NetworkPolicy controls traffic relationships and does not replace API authorization or process privilege settings.}
+      - {id: d, text: Any one of these controls fully replaces the other two, rationale: "Admission, process execution, and network connectivity are separate boundaries that need distinct controls."}
+    answer_ids: [a, b, c]
+    explanation: Defense in depth depends on naming the boundary. Admission policy, runtime security settings, and network policy answer different questions.
+    unit_ids: [fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-security-auth-can-i
+    checkpoint: cluster-behavior
+    course_module: security
+    category: kubectl
+    select: single
+    prompt: The caller may impersonate ServiceAccount reporter, and a RoleBinding names that exact subject rather than a group. Which command checks whether it may list ConfigMaps in payments?
+    options:
+      - {id: b, text: kubectl get serviceaccount reporter -n payments, code: true, rationale: Reading the ServiceAccount proves the object exists but does not evaluate whether RBAC permits listing ConfigMaps.}
+      - {id: c, text: kubectl describe configmap reporter -n payments, code: true, rationale: Describing a ConfigMap neither impersonates the ServiceAccount nor checks its authorization for a resource type.}
+      - {id: a, text: kubectl auth can-i list configmaps -n payments --as=system:serviceaccount:payments:reporter, code: true, rationale: auth can-i checks the verb resource and namespace as the named subject when the caller is authorized to impersonate it.}
+      - {id: d, text: kubectl config use-context reporter, code: true, rationale: A context selects client connection and credential defaults; its name alone is not an RBAC authorization query.}
+    answer_ids: [a]
+    explanation: Test the exact subject, verb, resource, and namespace. The caller needs impersonation permission for --as; group-based bindings can also require appropriate --as-group values, which this exact-subject case deliberately avoids.
+    unit_ids: [fpp:kubernetes-security-access]
+
+  - id: practice:kcna/q-storage-rwo-rwop
+    checkpoint: cluster-behavior
+    course_module: storage
+    category: concept
+    select: single
+    prompt: Which statement correctly distinguishes ReadWriteOnce from ReadWriteOncePod?
+    options:
+      - {id: b, text: ReadWriteOnce always guarantees exactly one Pod cluster-wide, rationale: That stronger single-Pod constraint is the purpose of ReadWriteOncePod for supported CSI volumes.}
+      - {id: a, text: ReadWriteOnce allows read-write mounting by a single node; multiple Pods on that node may still use it, rationale: RWO constrains read-write mounting to one node and does not itself mean exactly one Pod.}
+      - {id: c, text: ReadWriteOncePod allows every node to mount read-write, rationale: RWOP restricts the volume to one Pod rather than enabling many-node access.}
+      - {id: d, text: Both modes encrypt the stored data automatically, rationale: Access modes describe mounting constraints and do not guarantee encryption.}
+    answer_ids: [a]
+    explanation: Do not read “once” as “one Pod” for RWO. Use provider capabilities and the exact access mode when reasoning about attachment and exclusivity.
+    unit_ids: [fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-storage-wait-first-consumer
+    checkpoint: cluster-behavior
+    course_module: storage
+    category: scenario
+    select: single
+    prompt: Why can a StorageClass use volumeBindingMode WaitForFirstConsumer?
+    options:
+      - {id: b, text: To keep every PVC permanently Pending, rationale: The delay is tied to a consumer and topology-aware placement; it is not intended to prevent binding forever.}
+      - {id: c, text: To convert an ephemeral emptyDir into a PersistentVolume, rationale: emptyDir follows Pod lifetime and is not converted into a PVC-backed resource by this binding mode.}
+      - {id: a, text: To delay binding or provisioning until Pod scheduling requirements can influence topology, rationale: Waiting lets storage placement consider the consuming Pod's node selectors affinity and other scheduling constraints.}
+      - {id: d, text: To make the kubelet choose a StorageClass name at runtime, rationale: The PVC and defaulting rules identify the class; kubelet does not arbitrarily choose a class during mount.}
+    answer_ids: [a]
+    explanation: WaitForFirstConsumer coordinates storage topology with workload placement. It does not turn ephemeral volumes into persistent claims.
+    unit_ids: [fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-storage-reclaim-policy
+    checkpoint: cluster-behavior
+    course_module: storage
+    category: scenario
+    select: single
+    prompt: A dynamically provisioned PV has reclaimPolicy Retain. The bound PVC is deleted. What should you expect?
+    options:
+      - {id: b, text: Kubernetes must immediately erase the backing storage, rationale: Immediate backing-volume deletion corresponds to Delete behavior rather than Retain.}
+      - {id: c, text: The deleted PVC remains a valid mount reference for new Pods, rationale: A Pod cannot continue to declare a deleted claim as though the namespaced PVC still exists.}
+      - {id: d, text: The StatefulSet controller changes the PV to emptyDir, rationale: Reclaim policy does not convert persistent storage into a Pod-scoped ephemeral volume.}
+      - {id: a, text: The PV and backing data require deliberate reclamation rather than automatic deletion, rationale: Retain preserves the storage resource after claim release so an administrator can decide how to recover or reuse it.}
+    answer_ids: [a]
+    explanation: Claim deletion, PV phase, and backing-storage cleanup are separate lifecycle events. Reclaim policy controls what happens after release.
+    unit_ids: [fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-storage-pvc-evidence
+    checkpoint: cluster-behavior
+    course_module: storage
+    category: kubectl
+    select: multiple
+    prompt: A PVC remains Pending. Which observations are useful before changing storage configuration? Select all that apply.
+    options:
+      - {id: a, text: kubectl describe pvc data -n app, code: true, rationale: PVC conditions and events can show provisioning binding class or topology failures.}
+      - {id: b, text: kubectl get storageclass, code: true, rationale: Available classes defaults provisioners and binding modes are directly relevant to dynamic provisioning.}
+      - {id: c, text: kubectl get pv, code: true, rationale: Existing PV capacity class access modes and claim state can help explain static binding possibilities.}
+      - {id: d, text: kubectl logs pvc/data -n app, code: true, rationale: A PVC is an API object rather than a process with container logs. Inspect events and the responsible provisioner instead.}
+    answer_ids: [a, b, c]
+    explanation: Start with claim events, class configuration, and candidate PV state. Then inspect the CSI provisioner or scheduler evidence indicated by those observations.
+    unit_ids: [fpp:kubernetes-storage-lifecycle]
+
+  - id: practice:kcna/q-mesh-routing-objects
+    checkpoint: cloud-native
+    course_module: service-mesh
+    category: concept
+    select: multiple
+    prompt: In Istio sidecar mode, which statements correctly separate routing configuration from traffic execution? Select all that apply.
+    options:
+      - {id: a, text: VirtualService expresses how matching requests should be routed, rationale: VirtualService contains ordered routing rules that the control plane distributes to relevant proxies.}
+      - {id: b, text: DestinationRule defines policies and subsets for traffic after a destination is selected, rationale: DestinationRule commonly describes versions and traffic policy for a service destination.}
+      - {id: c, text: Envoy proxies in the data plane execute configured traffic behavior, rationale: Sidecar Envoy proxies mediate workload traffic using configuration produced through the control plane.}
+      - {id: d, text: The application process must import the Envoy client library for every request, rationale: Sidecar traffic interception does not require each application to become an Envoy library client.}
+    answer_ids: [a, b, c]
+    explanation: Configuration objects express intent, the control plane translates and distributes it, and data-plane proxies act on matching traffic.
+    unit_ids: [fpp:cloud-native-architecture-principles, fpp:services-dns-ingress]
+
+  - id: practice:kcna/q-mesh-gateway-sidecar
+    checkpoint: cloud-native
+    course_module: service-mesh
+    category: scenario
+    select: single
+    prompt: In a sidecar-based mesh, where should you first distinguish an ingress gateway problem from an internal workload-proxy problem?
+    options:
+      - {id: b, text: Treat the gateway and every sidecar as the same single process, rationale: They may both use Envoy but run at different locations with different attached configuration and traffic responsibilities.}
+      - {id: a, text: Check the edge gateway path separately from the destination workload sidecar path, rationale: Gateway proxies handle mesh ingress or egress while workload sidecars mediate traffic near individual services.}
+      - {id: c, text: Assume Kubernetes DNS directly executes all mesh routing policy, rationale: DNS supplies name resolution; it does not execute Istio routing rules or proxy traffic.}
+      - {id: d, text: Replace the ServiceAccount because it is the packet forwarder, rationale: A ServiceAccount supplies workload identity and is not itself a data-plane packet-forwarding process.}
+    answer_ids: [a]
+    explanation: Trace the request through edge and workload proxy boundaries. Similar proxy technology does not make every hop or configuration scope interchangeable.
+    unit_ids: [fpp:cloud-native-architecture-principles, fpp:services-dns-ingress]
+
+  - id: practice:kcna/q-mesh-observability-limit
+    checkpoint: cloud-native
+    course_module: service-mesh
+    category: scenario
+    select: multiple
+    prompt: A sidecar proxy reports successful upstream connections. What does that evidence prove, and what remains separate? Select all that apply.
+    options:
+      - {id: a, text: The proxy observed successful connections at its traffic boundary, rationale: Proxy telemetry is useful evidence about requests or connections that actually passed through that proxy.}
+      - {id: b, text: The application returned semantically correct data for every user request, rationale: Transport success and proxy status do not prove business correctness for all responses.}
+      - {id: c, text: Requests that bypassed the proxy require other evidence, rationale: Mesh telemetry only covers traffic captured by the relevant data-plane path and configuration.}
+      - {id: d, text: Control-plane configuration and proxy data-plane execution are still separate checks, rationale: Accepted configuration does not alone prove every proxy received or executed the intended state.}
+    answer_ids: [a, c, d]
+    explanation: Proxy telemetry is boundary-specific evidence. Combine it with configuration status, application signals, and user-visible checks before claiming end-to-end correctness.
+    unit_ids: [fpp:cloud-native-architecture-principles, fpp:services-dns-ingress]

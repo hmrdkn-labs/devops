@@ -1,6 +1,6 @@
 schema_version: 1
 unit_id: fpp:kubernetes-security-access
-revision: 5
+revision: 6
 visuals:
   - id: fpp:kubernetes-security-access/visual-api-security
     kind: flow

@@ -1,9 +1,152 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-18 · This is the canonical running log. Update it
+> **Last updated:** 2026-09-21 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**Current phase: updated product verified locally; remote CI and protected release next.**
+
+**Audit ✓ → reader and progress ✓ → A1 identity ✓ → three guided models ✓ →
+practice enrichment ✓ → local acceptance ✓ → GitHub CI/merge → protected deployment.**
+
+The selected original A1 beaver is integrated in the header, favicon, and home
+welcome. The warm-paper/cobalt and slate/soft-blue themes support the main
+reader and in-place study context. All three mental models now offer short
+read/try/explain/transfer sequences alongside their detailed walkthroughs.
+KCNA practice grows from 63 to **82 original MCQs**; **67 of 93 teaching rows**
+link to exact authored sections. Existing IDs, saved answers, notes, review
+history, and mastery rules remain intact. Guided explorations are explicitly
+untracked, not falsely counted as saved mastery.
+
+**Latest verification:** `npm run ci` passes with **127 tests**, zero Astro
+diagnostics, D1 checks, and production build. Full Playwright matrix:
+**227 passed / 52 intentional skips / 0 failures**. Revision and diff checks
+pass. Manual mobile/desktop review covered reading, wrong-answer feedback,
+component boundaries, both themes, and optimized assets on the dynamic dashboard.
+No production learner records were changed. See the
+[release acceptance record](docs/PRODUCT-UPDATE-ACCEPTANCE-2026-09-21.md) and
+[content coverage report](docs/CONTENT-COVERAGE-2026-09-21.md).
+
+PR #17 is open. Initial remote validation passed; its browser run found one
+mid-scroll geometry measurement race. The saved trace established the cause,
+and the test now measures settled geometry without relaxing its 4px contract
+(50 repeated local mobile passes). The corrected head is awaiting remote CI.
+No current implementation blocker. Publishing still requires exact-head public
+CI, merge, and the existing private owner-mode workflow; none of those are
+claimed complete at this checkpoint. Sol Medium wrote code and content; the
+parent orchestrated, reviewed, tested, and documented. No database migration,
+dependency, auth, or infrastructure architecture change is introduced. The
+private infrastructure checkout's unrelated changes remain untouched.
+
+### Verified preview checkpoint
+
+**Tested learning-experience preview completed.**
+**Audit ✓ → reader/progress ✓ → section targets ✓ → Scheduling prototype ✓ →
+palette/checks ✓ → owner trial NEXT → wider curriculum rollout → protected release.**
+
+The first implementation increment is complete on `fix/kcna-study-first-progress`.
+Reading is now the main surface, with an explicit **Mark read & try the concept**
+action; Practice, History, and Notes retain the current draft. A pending identity
+request no longer delays public reading, and reading never grants recall credit.
+**42 of 93 teaching rows** now target a validated section/objective set instead
+of reopening a broad unit at the top. Shared unit evidence is labeled honestly;
+source-video times are not presented as our reading estimates. The five-stage
+Scheduling prototype adds prediction, a changed condition, actor/proof tracing,
+and a distinct transfer scenario while retaining the older detailed walkthrough.
+
+The warm-paper/cobalt light theme and slate/soft-blue dark theme are implemented,
+with measured token contrast, stronger control boundaries, readable status text,
+and browser theme-color synchronization. The user approved the direction and
+authorized **Sol Medium, otherwise Luna Max** after Extra High compatibility
+failed. Sol Medium wrote application/content code; the parent reviewed,
+orchestrated, tested, and maintained documentation.
+
+**Verification:** fresh `npm run ci` passes: 117/117 Vitest tests, zero Astro
+errors/warnings/hints, content validation, D1 migration/idempotency/evidence
+checks, production build, and manifest generation. Final Playwright matrix:
+**215 passed / 52 intentional skips / 0 failures** across desktop, tablet, and
+mobile. Revision classification and diff checks pass. Manual browser review
+covered 390px and 1440px, both themes, wrong-answer feedback and next-stage focus,
+History/draft retention, and an exact Scheduling section link. Owner identity
+and persistence scenarios in browser tests are mocked; no production learner
+records were touched. These checks do not establish learning efficacy or a
+site-wide accessibility certification.
+
+Try the [Scheduling prototype](http://localhost:4321/models/pod-scheduling/),
+[main reader](http://localhost:4321/learn/kcna-scheduling-review/?mode=reference),
+and [KCNA curriculum](http://localhost:4321/kcna/). This local preview has no D1 or
+auth binding: answers are memory-only. It is available while the local preview
+process is running, not a public deployment.
+
+**Focused commits:** `ffdf240` reader/visual system; `f26787c` curriculum targets;
+`51d8fc1` Scheduling teaching sequence; `315d2a5` portable generated exports.
+The approved audit and six original candidate images were preserved separately
+in `a08fbec`. **No current implementation/test blocker.** Owner usability feedback,
+final character selection/integration, coverage-led expansion, and remote
+CI/protected release are still outstanding. Changes are committed locally,
+not pushed, merged, or deployed. Production is unchanged.
+
+Six independent GPT Image beaver candidates are generated and preserved in
+[`docs/assets/beaver-2026-09-21/`](docs/assets/beaver-2026-09-21/), with exact
+prompts, native dimensions, and intended palettes in the
+[character exploration](docs/BEAVER-CHARACTER-EXPLORATION.md). No rerolls,
+filtering, or image alterations were performed. **A1 is now selected**; the
+original is preserved while implementation adds project-owned optimized display
+assets without redrawing it. See the
+[preview acceptance record](docs/LEARNING-PREVIEW-ACCEPTANCE-2026-09-21.md) for
+the tested scope, limitations, and next trial.
+
+### Audit checkpoint · 2026-09-21
+
+**Experience audit complete; improvement plan approved subsequently.**
+**Audit → reader/progress contract → Scheduling prototype → usability check →
+propagate → protected release.** This checkpoint records the audit, not a new deployment.
+The [2026-09-21 audit and plan](docs/LEARNING-EXPERIENCE-AUDIT-2026-09-21.md)
+compares the live/local journeys with official Brilliant and Duolingo patterns,
+reviews content coverage, proposes an accessible paper/cobalt/slate palette,
+and applies the requested logo skill to three character directions and a
+six-candidate proposal. No image generation or application/content changes were
+made for this planning request; existing dirty implementation files are preserved.
+
+**Important newly identified gaps:** the local read-first panel still has no
+direct lesson-read completion/continue action (the button appears only after
+all recall questions), and several distinct curriculum lessons reopen the same
+broad unit with shared unit-level status. These are UX/contract gaps despite
+the prior passing test suite, not evidence that saved learner data was lost.
+The proposed next work is to make reading the main surface, preserve honest
+progress/history, and prove one short concept-to-practice sequence before
+spreading more features. No architecture replacement is indicated. Requested
+Extra High reviewers could not start due to model compatibility; the audit was
+completed by the parent reviewer without switching writer models. The local
+read-first branch below remains uncommitted and unpublished.
+
+### Previous implementation checkpoint · 2026-09-18
+
+**Current release candidate: KCNA study-first flow and saved-progress continuity.**
+Branch `fix/kcna-study-first-progress` now makes the learning mode explicit:
+learners can choose **Recall first** or **Read lesson first**, while History,
+Reference, and Notes stay inside the study workspace instead of transporting the
+learner to another page. Unread KCNA lesson CTAs open the readable lesson view;
+read lessons return to recall-first study. Reading does not grant recall/mastery
+credit. For the signed-in owner it records one Encountered event per page
+opening; guest reading remains memory-only. Saved KCNA progress now renders from
+a neutral loading state so returning evidence never briefly appears as “Not
+started”. The desktop reader is widened for long-form material and the mobile
+reader uses an almost-fullscreen, independently scrolling sheet while
+History/Notes keep the smaller contextual-sheet treatment.
+
+Local release verification is green on 2026-09-18. `npm run ci` passes content
+validation, Astro type checking with **0 errors / 0 warnings / 0 hints**, **89/89
+Vitest tests**, D1 migration/idempotency/evidence checks, production build, and
+release-manifest generation. A clean full Playwright run passes **207 cases / 48
+intentional skips** across desktop, tablet, and mobile. The only failure in the
+first clean matrix was an obsolete navigation expectation that required a bare
+`/learn/...` URL; it was updated to verify the intentional unread-unit
+`?mode=reference` reader state, after which the targeted spec passed 9/9 and the
+full matrix passed with zero failures. `git diff --check` is green. **No current
+implementation/test blocker remains.** This branch is still uncommitted and
+unpublished; production is unchanged pending review and an explicit release.
 
 **Latest production cleanup: learner tasks are now separated from source-only
 course metadata.** [PR #16](https://github.com/hmrdkn-labs/devops/pull/16)

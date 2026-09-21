@@ -16,26 +16,34 @@ streak pressure, decorative gamification, or obscuring the evidence model.
 
 ## Identity
 
-- The primary mark is the compact `<H>` monogram: angle brackets communicate
-  code/configuration, while `H` ties the product to hmrdkn-labs. Use the mark
-  with the `DevOps` wordmark and the quiet `hmrdkn-labs` signature in the
-  application shell. Do not create route-specific logo variants.
-- Terminal green is the identity accent, not a decorative headline color.
-  Reserve it for the primary action, active navigation, focus, progress, and
-  meaningful saved/success state. Display headings stay neutral ink.
-- Light and dark modes use the same hierarchy: neutral canvas, neutral ink,
-  thin rules, and one green accent. No gradients, glow, neon backgrounds, or
-  multi-accent dashboard palettes.
-- The favicon and header mark are the same symbol. Identity changes therefore
-  remain visible even when the learning content is consumed outside the home
-  page.
+The approved 2026-09-21 direction is **warm paper, cobalt actions, slate dark
+mode, and an original beaver character**. See the
+[audit and execution plan](docs/LEARNING-EXPERIENCE-AUDIT-2026-09-21.md) and
+[six candidate assets](docs/BEAVER-CHARACTER-EXPLORATION.md). This contract
+describes the target; PROJECT_STATUS.md distinguishes implementation from release.
+
+- Keep the `DevOps` wordmark and quiet `hmrdkn-labs` signature. Candidate A1
+  is the selected character and shared mark; do not invent route-specific
+  marks, redraw it, or introduce a second mascot.
+- Blue denotes action, selection, and navigational focus. Green denotes correct
+  or successfully saved state, not every clickable surface. Amber signals
+  caution/assistance and red signals errors; always pair status with text/icons.
+- Light mode uses warm paper and white reading surfaces. Dark mode uses slate
+  surfaces and soft blue actions. Use restrained surfaces and clear hierarchy,
+  not gradients, glow, or rainbow dashboards.
+- Use the character sparingly for welcome, help, and completion. It must not
+  displace technical diagrams, distract from a mistake explanation, or imply
+  earned mastery. Preserve the original generated asset and its prompt record.
+  Header, favicon, and home/help uses load versioned, losslessly encoded
+  32/64/144/288px derivatives of the exact A1 source so small marks do not
+  request the 1 MB original, including on server-rendered routes.
 
 ## Visual principles
 
 1. **Content before chrome.** A learner's question, answer, explanation, or
    review card gets the strongest hierarchy on its page.
-2. **Calm, tactile learning surfaces.** Use a neutral canvas, dark ink, one
-   unmistakable terminal accent, and bounded surfaces that make interactive
+2. **Calm, tactile learning surfaces.** Use a quiet canvas, readable ink, one
+   unmistakable action accent, and bounded surfaces that make interactive
    regions obvious. Cards and restrained elevation are appropriate for the
    current task, progress, checkpoints, questions, and reviews; long-form
    reading remains quieter.
@@ -51,25 +59,27 @@ streak pressure, decorative gamification, or obscuring the evidence model.
    respect `prefers-reduced-motion`.
 6. **Progress is evidence.** Use compact, honest status chips and bars; never
    use celebratory streak mechanics or noisy gamification.
-7. **Retrieval is the default, not a trap.** Study mode asks for an answer
-   before explanation, but a learner seeing a concept for the first time may
-   explicitly choose Learn first. That action records Encountered evidence
-   only. Reference mode is a lookup surface and must never silently create
-   recall evidence.
+7. **Reading and retrieval are both first-class.** An unfamiliar lesson may
+   start with Read; a returning learner may choose Recall first. Reading owns
+   the main workspace rather than squeezing beside a competing question form.
+   Explicit reading completion is distinct from recall/application evidence.
+   History and Notes stay in context and never erase the current draft.
 
 ## Layout contract
 
 - Desktop content shell: `min(1180px, calc(100% - 40px))`.
 - Reading column: approximately 68ch; code and tables may widen with an
   explicit overflow boundary.
-- Study pages: desktop two-column layout with a compact context/progress rail
-  and a primary question/lesson column; collapse to one column on mobile.
+- Study pages: one primary activity at a time. Reading uses a comfortable main
+  column; practice may show a compact question rail. History/Notes are secondary
+  context, not a competing permanent third task. Collapse to one main column
+  on mobile, with sheets reserved for secondary context.
 - Primary controls have at least a 44px touch target.
 - Mobile pages must not require horizontal scrolling except for code or data
   tables with an explicit scroll container.
-- A learning unit must show its active question completely in the initial
-  1440×1000 and 375×812 viewport. Unit title/summary context cannot consume the
-  first screen and force the learner to scroll before answering.
+- The initial viewport must make the current objective/activity obvious. Unit
+  title/summary and repeated tool instructions must not consume the whole first
+  screen. Do not shrink long questions or prose merely to fit them above the fold.
 
 ## Type, density, and surface guardrails
 
@@ -77,7 +87,8 @@ streak pressure, decorative gamification, or obscuring the evidence model.
   commands, immutable IDs, revision/time metadata, and numeric evidence.
 - Home and standard page display headings cap at 40px on desktop. Unit titles
   cap at roughly 39px, section headings at 22–28px, normal reading text at
-  15–17px, and metadata at roughly 10–13px.
+  16–18px, and secondary labels around 14px. Essential status must not depend on
+  10px text. Code may use a distinct compact scale without becoming illegible.
 - Static document sections should still prefer spacing and rules, but
   task-oriented sections may use repeated bounded surfaces when the grouping
   communicates interaction or progression. Avoid wrapping every paragraph in
@@ -97,6 +108,24 @@ focus. Components consume tokens instead of inventing page-specific colors.
 Light and dark themes must carry the same semantic roles and meet WCAG AA
 contrast for normal text and controls.
 
+| Role | Light | Dark |
+| --- | --- | --- |
+| Canvas | `#F7F5F0` | `#151C24` |
+| Main surface | `#FFFFFF` | `#1D2732` |
+| Primary text | `#202B33` | `#F1F3F5` |
+| Secondary text | `#52616B` | `#B2BEC9` |
+| Action | `#2358C4` | `#A9C2FF` |
+| Text on action | `#FFFFFF` | `#142238` |
+| Correct | `#23745A` | `#82CEAF` |
+| Caution | `#8A5400` | `#E5B96B` |
+| Incorrect | `#B34436` | `#FFB3A7` |
+| Required control boundary | `#788690` | `#778793` |
+
+Hover/pressed/selected/focus states need measured real combinations too. Subtle
+decorative dividers are not substitutes for a visible interactive boundary.
+Never rely on red/green alone; diagrams name their components and distinguish
+control from execution paths with labeled line styles as well as color.
+
 ## Component vocabulary
 
 Prefer native, accessible elements first: links, buttons, `details`, `summary`,
@@ -112,7 +141,7 @@ are:
   correction prompt, and explicit next-unit action;
 - progress/meter, timeline/stepper, filter row, search field, and note editor;
 - popover/menu with a visible trigger and a keyboard-safe focus path.
-- a four-destination mobile learning dock for Home, KCNA, Review, and Library;
+- a four-destination mobile learning dock for Learn, Review, Practice, and Library;
   less frequent navigation stays in the header menu.
 
 Do not add a React/Tailwind component dependency solely for styling this
@@ -124,6 +153,10 @@ surface primitives the product actually needs.
 Default to no animation for repeated study interactions. If motion is added,
 it must explain a state change, be interruptible, use transform/opacity rather
 than layout animation, and disappear or simplify for reduced-motion users.
+Keep action/feedback positioning stable without giant empty fixed-height cards.
+Preserve drafts, selection, and focus return when opening context. Save success
+is shown only after acknowledgement; a failed save must remain retryable without
+erasing work. Do not animate the entire page on every question change.
 
 ## Verification contract
 

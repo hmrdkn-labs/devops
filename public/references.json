@@ -33,6 +33,17 @@
     "unit_slug": "cloud-native-architecture-principles"
   },
   {
+    "id": "source:istio-traffic-management",
+    "title": "Istio Traffic Management",
+    "url": "https://istio.io/latest/docs/concepts/traffic-management/",
+    "publisher": "Istio",
+    "type": "documentation",
+    "verified_at": "2026-09-21",
+    "note": "VirtualService, DestinationRule, Gateway, and sidecar traffic-management responsibilities in Istio.",
+    "unit_id": "fpp:cloud-native-architecture-principles",
+    "unit_slug": "cloud-native-architecture-principles"
+  },
+  {
     "id": "source:cncf-cloud-native-definition",
     "title": "Cloud Native Definition",
     "url": "https://github.com/cncf/toc/blob/main/DEFINITION.md",
@@ -1690,6 +1701,17 @@
     "type": "documentation",
     "verified_at": "2026-09-16",
     "note": "Verified admission enforcement is distinct from authorization; authored denial comparison.",
+    "unit_id": "fpp:kubernetes-security-access",
+    "unit_slug": "kubernetes-security-access"
+  },
+  {
+    "id": "source:kubernetes-network-policies",
+    "title": "Network Policies",
+    "url": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    "publisher": "Kubernetes",
+    "type": "documentation",
+    "verified_at": "2026-09-21",
+    "note": "NetworkPolicy isolation semantics, additive allow rules, and enforcement dependency on a supporting network implementation.",
     "unit_id": "fpp:kubernetes-security-access",
     "unit_slug": "kubernetes-security-access"
   },
