@@ -5,7 +5,7 @@
 
 ## Read this first
 
-**Current phase: five KCNA Anatomy companions are implemented and locally verified; protected release is next.**
+**Current phase: five KCNA Anatomy companions are live and verified; owned worker cleanup is complete.**
 
 The new `/anatomy/` collection has five original animated-object pages:
 cluster responsibilities, replica reconciliation, scheduling placement,
@@ -30,14 +30,37 @@ hydration guards, keyboard object movement, mobile table scrolling, and draft
 preservation. Integration fixes and their observed causes are in
 [`docs/kb/anatomy.md`](docs/kb/anatomy.md).
 
-The active production path is the private `deploy-devops-learning` workflow,
-using an exact public source SHA and owner mode. This candidate has not yet
-been merged or deployed; the prior release records below remain historical.
+The five-page release merged through [PR #22](https://github.com/hmrdkn-labs/devops/pull/22)
+with one complete commit per page. Independent review reported zero findings or
+blockers on candidate `1448d7f4e3c8bbabce2413b517b1294f9e1d44dd`.
+Merged source `a011ec583dc36af89fed7568bba988c2a0d813ff` passed
+[main CI 38145189502](https://github.com/hmrdkn-labs/devops/actions/runs/38145189502)
+and was released in owner mode through the protected private
+[`deploy-devops-learning` run 38145569046](https://github.com/hamardikan/hamardikan-infra/actions/runs/38145569046).
+Owner credential checks, secret installation, D1 migrations, and route/manifest
+verification passed; no production protection was bypassed.
+
+Live acceptance on `https://devops.hamardikan.com`: **27 Anatomy browser
+scenarios passed / 0 failures** across desktop, tablet, and mobile; **35
+visual/no-JavaScript records passed** across 320/390/1440px and light/dark.
+All five figure bundles match the locally verified build; all ten raw
+Markdown/YAML files match canonical content. The live ZIP matches SHA-256
+`70ee9c2d25d8d1588b7ad756c43350ccacac532295989b5569e298877eeacd8a`.
+Health reports `ok`, D1 `ready`, and the expected content manifest; the anonymous
+auth-session endpoint returns HTTP 200. This does not claim a new interactive
+owner sign-in test or a production learner-data write.
+
+The five builder panes and reviewer were collected into `DevopsAnatomy`, then
+closed after live verification. Their five clean worktrees, six temporary
+branches, and owned local servers were removed/stopped. Session transcripts and
+acceptance evidence remain available; the KCNA tutor and unrelated panes were
+left untouched. The prior release records below remain historical.
 
 **Audit ✓ → reader and progress ✓ → A1 identity ✓ → three guided models ✓ →
 practice enrichment ✓ → local acceptance ✓ → PR CI/merge ✓ → main CI ✓ → protected deployment ✓ → live checks ✓.**
 
 **Open [the updated product](https://devops.hamardikan.com/).** Try the
+[Anatomy collection](https://devops.hamardikan.com/anatomy/),
 [KCNA curriculum](https://devops.hamardikan.com/kcna/),
 [Scheduling reader](https://devops.hamardikan.com/learn/kcna-scheduling-review/?mode=reference),
 [guided reconciliation](https://devops.hamardikan.com/models/kubernetes-reconciliation/),
