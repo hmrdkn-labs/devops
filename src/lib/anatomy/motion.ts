@@ -63,6 +63,7 @@ export function createAnatomyMotion(
     if (reduced) step(0, true);
   });
   onCleanup(() => {
+    if (!mounted) return;
     mounted = false;
     stop();
     observer?.disconnect();

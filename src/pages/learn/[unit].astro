@@ -1,5 +1,6 @@
 ---
 import StudyFlow from '@/components/StudyFlow';
+import AnatomyLinks from '@/components/AnatomyLinks.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { curricula, paths, units } from '@/lib/content/catalog';
 import { renderMarkdown } from '@/lib/content/render';
@@ -59,4 +60,5 @@ const payload = {
     nextUnit={nextKcnaUnit ? { href: `/learn/${nextKcnaUnit.metadata.slug}`, title: nextKcnaUnit.metadata.title } : undefined}
     client:load
   />
+  <AnatomyLinks unitId={unit.metadata.id} />
 </BaseLayout>

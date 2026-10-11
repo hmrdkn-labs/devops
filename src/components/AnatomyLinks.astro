@@ -1,0 +1,12 @@
+---
+import { anatomyPages } from '@/lib/anatomy/catalog';
+interface Props { unitId?: string }
+const { unitId } = Astro.props;
+const pages = unitId ? anatomyPages.filter((page) => page.unitIds.includes(unitId)) : anatomyPages;
+---
+{pages.length > 0 && <section class="shell anatomy-discovery" aria-label="Anatomy explainers">
+  <header><p class="eyebrow">See the mechanism</p><h2>Explore the Anatomy</h2><p>Manipulate an original object, then read the explanation below it. These explorations are untracked.</p></header>
+  <div class="library-grid">{pages.map((page) => <a class="library-card" href={'/anatomy/' + page.slug + '/'}><span>{page.module} · Animated object</span><h3>{page.title}</h3><p>{page.summary}</p></a>)}</div>
+  <p><a href="/anatomy/">Browse all Anatomy explainers →</a></p>
+</section>}
+<style>.anatomy-discovery { margin-block: 2rem 3rem; } .anatomy-discovery > header { max-width: 72ch; } .anatomy-discovery .library-card { text-decoration: none; } .anatomy-discovery h3 { font-size: 1.2rem; }</style>
