@@ -20,6 +20,8 @@ and later retention—not page completion.
 - **Focus path**: the learner's one active guided sequence.
 - **Technical map**: a secondary prerequisite view; not a second curriculum.
 - **Reference**: source metadata and a link, not mirrored third-party content.
+- **Anatomy explainer**: an original animated-object companion to existing
+  objectives; exploring it is not assessed mastery or retention evidence.
 - **Canonical content**: GFM plus YAML sidecars under `content/`.
 
 Canonical technical vocabulary is English. Explanations may add translations

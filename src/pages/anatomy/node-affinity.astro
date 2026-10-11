@@ -1,0 +1,14 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import Figure from '@/components/anatomy/node-affinity/Figure';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import explanation from '../../../content/anatomy/node-affinity.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('node-affinity');
+if (!entry) throw new Error('Missing node-affinity Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

@@ -1,0 +1,21 @@
+schema_version: 1
+slug: cluster-responsibilities
+title: Who turns Kubernetes intent into running containers?
+summary: Inspect a cluster control console and trace one Deployment from an API request to durable
+  state, controller-created objects, node assignment and node-side execution.
+module: Kubernetes Fundamentals
+order: 1
+revision: 1
+verified_at: 2026-10-11
+unit_ids:
+  - fpp:kubernetes-architecture-components
+objective_ids:
+  - fpp:kubernetes-architecture-components/roles
+  - fpp:kubernetes-architecture-components/request-path
+sources:
+  - title: Kubernetes Components
+    url: https://kubernetes.io/docs/concepts/overview/components/
+  - title: Controllers
+    url: https://kubernetes.io/docs/concepts/architecture/controller/
+  - title: Container Runtimes
+    url: https://kubernetes.io/docs/setup/production-environment/container-runtimes/

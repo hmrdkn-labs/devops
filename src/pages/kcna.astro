@@ -1,5 +1,6 @@
 ---
 import KcnaFocusClient from '@/components/KcnaFocusClient';
+import AnatomyLinks from '@/components/AnatomyLinks.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { curricula, lessons, paths, unitsById } from '@/lib/content/catalog';
 
@@ -120,6 +121,8 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
   <div class="shell kcna-today-shell">
     <KcnaFocusClient units={clientUnits} checkpoints={clientCheckpoints} client:load />
   </div>
+
+  <AnatomyLinks />
 
   <div class="shell path-curriculum-shell">
     <section class="kcna-curriculum" aria-label="KCNA curriculum in course order">

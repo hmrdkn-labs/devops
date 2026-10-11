@@ -13,3 +13,8 @@ public reference material; it does not imply endorsement.
 External links and source metadata remain subject to their publishers' terms.
 This repository does not redistribute private course lessons, screenshots,
 images, codebases, or course structure.
+
+The Anatomy geometry core in `src/lib/anatomy/vendor/iso-kit.ts` is MIT licensed,
+copyright 2026 Ryan, from `wheresryan22/anatomy` at commit
+`dbf697a527bbf7d358668e1557cb1e35ff725d46`. Its upstream license is retained
+beside the source. The Kubernetes teaching figures and explanations are original.

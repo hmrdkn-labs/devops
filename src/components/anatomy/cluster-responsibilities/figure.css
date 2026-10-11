@@ -1,0 +1,19 @@
+.cluster-console .anatomy-figure-header { flex-wrap: wrap; }
+.cluster-console .cc-assembly[data-selected='true'] .iso-edge { stroke: var(--accent); stroke-width: 1; }
+.cluster-console .cc-assembly[data-selected='true'] .iso-top { fill: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.cluster-console .cc-hint, .cluster-console .cc-caption { color: var(--muted); font-size: .86rem; line-height: 1.6; }
+.cluster-console .anatomy-controls select { max-width: 100%; min-width: 0; width: min(100%, 24rem); }
+.cluster-console .anatomy-controls label { min-width: 0; max-width: 100%; }
+.cluster-console button:focus-visible, .cluster-console select:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.cluster-console .anatomy-readout p { margin: .5rem 0 1rem; line-height: 1.6; }
+.cluster-console .cc-state { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: 0; }
+.cluster-console .cc-state dt { font-size: .75rem; color: var(--muted); }
+.cluster-console .cc-state dd { margin: .2rem 0 0; overflow-wrap: anywhere; }
+.cluster-console .cc-inspection { padding-block: .5rem; line-height: 1.6; }
+.cluster-console .cc-inspection p { margin: .5rem 0; }
+@media (max-width: 560px) {
+  .cluster-console .cc-state { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cluster-console .anatomy-controls label { width: 100%; }
+  .cluster-console .anatomy-controls select { width: 100%; }
+  .cluster-console .anatomy-controls button { white-space: normal; }
+}

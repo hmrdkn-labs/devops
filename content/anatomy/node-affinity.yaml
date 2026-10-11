@@ -1,0 +1,21 @@
+schema_version: 1
+slug: node-affinity
+title: "Node affinity: filter before preference"
+summary: Read a label sorter to combine nodeSelector and required affinity, score only feasible
+  nodes, and preserve a running assignment after labels change.
+module: Scheduling
+order: 5
+revision: 1
+verified_at: 2026-10-11
+unit_ids:
+  - fpp:kubernetes-scheduling-placement
+objective_ids:
+  - fpp:kubernetes-scheduling-placement/feasibility
+  - fpp:kubernetes-scheduling-placement/policy
+sources:
+  - title: "Kubernetes: Assigning Pods to Nodes"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  - title: "Kubernetes: Labels and Selectors"
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  - title: "Kubernetes: Scheduling Framework"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/

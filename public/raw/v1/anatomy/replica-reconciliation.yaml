@@ -1,0 +1,23 @@
+schema_version: 1
+slug: replica-reconciliation
+title: "Replica reconciliation: replace an instance, preserve intent"
+summary: A cartridge bench separates Pod replacement, replica-count scaling and template rollouts.
+  Follow the Deployment–ReplicaSet–Pod ownership boundary one event at a time.
+module: Kubernetes Resources
+order: 2
+revision: 1
+verified_at: 2026-10-11
+unit_ids:
+  - fpp:kubernetes-labels-replicasets
+  - fpp:kubernetes-deployments-rollouts
+objective_ids:
+  - fpp:kubernetes-labels-replicasets/reconciliation
+  - fpp:kubernetes-deployments-rollouts/ownership-chain
+  - fpp:kubernetes-deployments-rollouts/revision
+sources:
+  - title: "Kubernetes: ReplicaSet"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+  - title: "Kubernetes: Deployments"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - title: "Kubernetes: Pod lifecycle and replacement identity"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
