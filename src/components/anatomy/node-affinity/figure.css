@@ -1,0 +1,11 @@
+.affinity-sorter .anatomy-figure-header { flex-wrap: wrap; }
+.affinity-sorter .anatomy-controls select { max-width: 100%; min-width: 0; }
+.affinity-sorter .anatomy-controls label { max-width: 100%; font-size: .88rem; }
+.affinity-sorter .anatomy-controls input[type='range'] { width: 120px; min-width: 0; }
+.affinity-sorter :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.affinity-sorter .anatomy-readout { overflow-wrap: anywhere; }
+.affinity-candidates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-top: 1rem; }
+.affinity-candidates section { border: 1px solid var(--line); border-radius: 10px; padding: .7rem; min-width: 0; }
+.affinity-candidates h3 { font: .9rem var(--mono); margin: 0 0 .5rem; }
+.affinity-candidates p { font-size: .8rem; margin: .4rem 0; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .affinity-candidates { grid-template-columns: 1fr; } .affinity-sorter .anatomy-controls label { width: 100%; } }
