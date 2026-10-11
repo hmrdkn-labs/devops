@@ -1,0 +1,13 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { anatomyPages } from '@/lib/anatomy/catalog';
+import '../../styles/anatomy.css';
+export const prerender = true;
+---
+<BaseLayout title="KCNA Anatomy" description="Explore original animated objects that make Kubernetes responsibilities and placement rules visible." activeSection="practice">
+  <header class="page-hero shell"><p class="eyebrow">KCNA · Anatomy</p><h1>Make the mechanism visible</h1><p class="lede">Change one condition, watch the object respond, then read the explanation below it. These original teaching models help you reason about Kubernetes—not memorize a picture.</p></header>
+  <div class="shell library-grid anatomy-catalog">
+    {anatomyPages.map((page) => <a class="library-card" href={'/anatomy/' + page.slug + '/'}><span>{page.module} · Interactive object</span><h2>{page.title}</h2><p>{page.summary}</p></a>)}
+  </div>
+  <section class="shell narrow"><p>Explorations are untracked. They do not change saved answers, mastery, or review schedules.</p><p><a href="/kcna/">Continue the KCNA learning path</a> · <a href="/models/">Other guided mental models</a></p></section>
+</BaseLayout>

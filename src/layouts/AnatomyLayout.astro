@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { AnatomyPage } from '@/lib/anatomy/types';
+import { unitsById } from '@/lib/content/catalog';
+import '../styles/anatomy.css';
+
+interface Props { entry: AnatomyPage }
+const { entry } = Astro.props;
+const units = entry.unitIds.map((id) => {
+  const unit = unitsById.get(id);
+  if (!unit) throw new Error(`Anatomy page ${entry.slug} references unknown unit ${id}`);
+  return unit;
+});
+const objectives = new Set(units.flatMap((unit) => unit.metadata.objectives.map((objective) => objective.id)));
+for (const id of entry.objectiveIds) {
+  if (!objectives.has(id)) throw new Error(`Anatomy page ${entry.slug} references unknown objective ${id}`);
+}
+---
+<BaseLayout title={entry.title} description={entry.summary} canonicalPath={'/anatomy/' + entry.slug + '/'} activeSection="practice">
+  <article class="shell anatomy-page" data-anatomy-page={entry.slug}>
+    <header class="anatomy-page-heading">
+      <a class="anatomy-back" href="/anatomy/">← All Anatomy explainers</a>
+      <p class="eyebrow">KCNA · {entry.module} · Anatomy</p>
+      <h1>{entry.title}</h1>
+      <p class="lede">{entry.summary}</p>
+    </header>
+    <section class="anatomy-stage-section" aria-label="Interactive object">
+      <slot name="figure" />
+      <p class="anatomy-fixture-note">An original teaching model, not a live cluster. Exploring it does not record mastery or change your progress.</p>
+    </section>
+    <section class="anatomy-explanation" aria-label="Explanation below the object"><slot /></section>
+    <footer class="anatomy-learning-links">
+      <h2>Keep learning</h2>
+      <ul>{units.map((unit) => <li><a href={'/learn/' + unit.metadata.slug + '?mode=reference'}>{unit.metadata.title}</a></li>)}</ul>
+      <p><a href="/kcna/">KCNA learning path</a> · <a href="/practice/kcna/">Original KCNA practice</a></p>
+      <h2>Public references</h2>
+      <ul>{entry.sources.map((source) => <li><a href={source.url} rel="noreferrer">{source.title}</a></li>)}</ul>
+      <p class="anatomy-source-note">Explanation revision {entry.revision} · reviewed {entry.verifiedAt}. Original prose and diagrams: CC BY-SA 4.0.</p>
+    </footer>
+  </article>
+</BaseLayout>
