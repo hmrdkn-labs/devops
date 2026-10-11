@@ -70,6 +70,21 @@ reviews plus the next unfinished unit, exposes module state, separates the four
 readiness evidence dimensions, and surfaces weak objectives without introducing
 a second content tree.
 
+`/anatomy/` adds original animated-object companions for Kubernetes component
+responsibilities, replica reconciliation, scheduling requests, taints/tolerations,
+and node selectors/affinity. Each object sits above a standalone explanation,
+misconception, practical observation, and transfer exercise. Explore them from
+KCNA, Practice, mental models, or related unit pages; unit links open a new tab
+so the current learning draft stays intact. These fixtures never contact a
+cluster or write learning progress.
+
+Anatomy explanations and metadata are portable Markdown/YAML under
+`content/anatomy/`, included in raw content and the ZIP. Geometry and interaction
+remain app-owned, using a project-local MIT-licensed core pinned to
+`wheresryan22/anatomy`; no global skill install or private collection is a build
+dependency. Controls stay disabled until hydration, motion stops when settled
+or offscreen, and reduced motion reaches the same stable outcomes.
+
 The private KodeKloud collection is not a dependency, submodule, build input,
 or deployment artifact. This repository contains independently written prose,
 diagrams, questions, and examples. External course titles and links may be
