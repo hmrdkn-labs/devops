@@ -1,0 +1,15 @@
+.replica-figure .anatomy-figure-header { flex-wrap: wrap; }
+.replica-figure .anatomy-readout { overflow-wrap: anywhere; }
+.replica-figure .anatomy-readout p { margin: .5rem 0 0; }
+.replica-figure :is(button, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.replica-figure select { max-width: 100%; }
+.replica-ledger { margin-top: 1.2rem; }
+.replica-ledger h3 { font-size: 1rem; margin-bottom: .6rem; }
+.replica-ledger ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); padding: 0; gap: .5rem; list-style: none; }
+.replica-ledger li { border: 1px solid var(--line); border-radius: 8px; padding: .65rem; display: grid; gap: .25rem; font: .8rem var(--mono); }
+.replica-ledger p, .replica-hint { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .replica-figure .anatomy-controls label { width: 100%; justify-content: space-between; }
+  .replica-figure .anatomy-controls button { flex-basis: 100%; }
+  .replica-figure .anatomy-readout { padding: .7rem; font-size: .8rem; }
+}
