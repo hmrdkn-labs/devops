@@ -1,11 +1,38 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-09-21 · This is the canonical running log. Update it
+> **Last updated:** 2026-10-11 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
 
-**Current phase: the approved product update is live and verified.**
+**Current phase: five KCNA Anatomy companions are implemented and locally verified; protected release is next.**
+
+The new `/anatomy/` collection has five original animated-object pages:
+cluster responsibilities, replica reconciliation, scheduling placement,
+taints/tolerations, and node selectors/affinity. Each object precedes its
+standalone explanation and references existing unit/objective IDs. Related-unit
+links preserve the current learning draft by opening in another tab. Exploration
+does not write mastery, retention, review, or learner-progress events.
+
+Canonical explanations and metadata live together in GFM/YAML under
+`content/anatomy/`; app-owned geometry uses the pinned MIT Anatomy core.
+The raw export and ZIP contain all five explanation/sidecar pairs. Private
+course collections and screenshots are not build inputs or public assets.
+
+Local acceptance: `npm run ci` passes **148 Vitest tests**, zero Astro
+diagnostics, D1 checks, and all five prerendered routes. The complete native
+Playwright matrix passes **254 / 52 intentional skips / 0 failures**.
+Independent visual/no-JavaScript capture passes **35 records** across
+320px, 390px, and 1440px in light/dark themes. Browser checks exercise fresh
+Pod identity, rollout surge/availability, feasibility before scoring, taint
+permission without attraction, running-label changes without eviction,
+hydration guards, keyboard object movement, mobile table scrolling, and draft
+preservation. Integration fixes and their observed causes are in
+[`docs/kb/anatomy.md`](docs/kb/anatomy.md).
+
+The active production path is the private `deploy-devops-learning` workflow,
+using an exact public source SHA and owner mode. This candidate has not yet
+been merged or deployed; the prior release records below remain historical.
 
 **Audit ✓ → reader and progress ✓ → A1 identity ✓ → three guided models ✓ →
 practice enrichment ✓ → local acceptance ✓ → PR CI/merge ✓ → main CI ✓ → protected deployment ✓ → live checks ✓.**
