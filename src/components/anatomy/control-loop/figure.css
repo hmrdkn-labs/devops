@@ -1,0 +1,70 @@
+.loop-figure .anatomy-figure-header { flex-wrap: wrap; }
+.loop-figure :is(button, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.loop-figure select { max-width: 100%; min-width: 0; }
+.loop-svg { max-height: none; }
+
+/* Semantic fills: colour plus shape, so Ready, Created and desired never depend on hue alone. */
+.loop-figure .loop-ready > .iso-top { fill: color-mix(in srgb, var(--success) 45%, var(--surface)); }
+.loop-figure .loop-ready > .iso-shade[data-shade='0'] { fill: color-mix(in srgb, var(--success) 70%, var(--surface)); }
+.loop-figure .loop-ready > .iso-shade[data-shade='1'] { fill: color-mix(in srgb, var(--success) 58%, var(--surface)); }
+.loop-figure .loop-ready > .iso-shade[data-shade='2'] { fill: color-mix(in srgb, var(--success) 46%, var(--surface)); }
+.loop-figure .loop-ready > .iso-shade[data-shade='3'] { fill: color-mix(in srgb, var(--success) 34%, var(--surface)); }
+.loop-figure .loop-created > .iso-top { fill: color-mix(in srgb, var(--warning) 45%, var(--surface)); }
+.loop-figure .loop-created > .iso-shade[data-shade='0'] { fill: color-mix(in srgb, var(--warning) 70%, var(--surface)); }
+.loop-figure .loop-created > .iso-shade[data-shade='1'] { fill: color-mix(in srgb, var(--warning) 58%, var(--surface)); }
+.loop-figure .loop-created > .iso-shade[data-shade='2'] { fill: color-mix(in srgb, var(--warning) 46%, var(--surface)); }
+.loop-figure .loop-created > .iso-shade[data-shade='3'] { fill: color-mix(in srgb, var(--warning) 34%, var(--surface)); }
+.loop-figure .loop-desired > .iso-top { fill: color-mix(in srgb, var(--accent) 50%, var(--surface)); }
+.loop-figure .loop-desired > .iso-shade[data-shade='0'] { fill: color-mix(in srgb, var(--accent) 75%, var(--surface)); }
+.loop-figure .loop-desired > .iso-shade[data-shade='1'] { fill: color-mix(in srgb, var(--accent) 62%, var(--surface)); }
+.loop-figure .loop-desired > .iso-shade[data-shade='2'] { fill: color-mix(in srgb, var(--accent) 50%, var(--surface)); }
+.loop-figure .loop-desired > .iso-shade[data-shade='3'] { fill: color-mix(in srgb, var(--accent) 38%, var(--surface)); }
+
+.loop-figure .loop-pointer,
+.loop-figure .loop-needle { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; }
+.loop-figure .loop-beam { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; }
+.loop-figure .loop-chain { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.loop-figure .loop-lamp[data-on='true'] path { fill: var(--success); }
+.loop-figure .loop-glass { opacity: 0.45; }
+.loop-figure .loop-glass .iso-fill { fill: var(--surface); fill-opacity: 0.2; }
+
+.loop-figure .loop-numeral { font: 700 14px var(--mono); fill: var(--ink); stroke: var(--surface-subtle); stroke-width: 3px; paint-order: stroke; text-anchor: middle; }
+.loop-figure .loop-tag-label { font: 600 13px var(--mono); fill: var(--ink); stroke: var(--surface-subtle); stroke-width: 3px; paint-order: stroke; text-anchor: middle; }
+.loop-figure .loop-tag-value { font: 700 24px var(--mono); fill: var(--ink); stroke: var(--surface-subtle); stroke-width: 4px; paint-order: stroke; text-anchor: middle; }
+
+.loop-pods-wrap { margin-top: 0.8rem; min-width: 0; }
+.loop-pods { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.loop-pods li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; border: 1px solid var(--line); border-radius: 8px; padding: 0.35rem 0.55rem; font: 0.8rem var(--mono); min-width: 0; }
+.loop-pods li[data-selected='true'] { border-color: var(--accent); background: var(--accent-soft); }
+.loop-pods strong { overflow-wrap: anywhere; }
+.loop-pods span { color: var(--muted); }
+.loop-empty { margin: 0; font: 0.8rem var(--mono); color: var(--muted); }
+.loop-retired { margin: 0.5rem 0 0; font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+
+.loop-key { margin-top: 0.8rem; font-size: 0.88rem; }
+.loop-key summary { cursor: pointer; color: var(--muted); }
+.loop-key .anatomy-legend { margin-top: 0.4rem; }
+.loop-hint { font-size: 0.85rem; color: var(--muted); overflow-wrap: anywhere; }
+
+.loop-controls { margin-top: 0.9rem; }
+.loop-controls label { min-width: 0; }
+.loop-controls button { min-height: 2.5rem; }
+
+.loop-status { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.9rem; }
+.loop-compare { display: grid; gap: 0.4rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0.9rem 0 0; }
+@media (min-width: 700px) { .loop-compare { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.loop-compare > div { display: grid; gap: 0.1rem; min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 0.4rem 0.5rem; background: var(--surface-subtle); }
+.loop-compare dt { font: 0.72rem var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.loop-compare dd { margin: 0; font: 0.95rem var(--mono); }
+.loop-manifest { margin-top: 1.2rem; min-width: 0; }
+
+@media (max-width: 480px) {
+  .loop-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.4rem; }
+  .loop-controls label { display: grid; gap: 0.2rem; font-size: 0.8rem; }
+  .loop-controls select { width: 100%; }
+  .loop-controls button { min-height: 2.4rem; padding: 0.3rem 0.45rem; font-size: 0.82rem; line-height: 1.2; }
+  .loop-controls .loop-wide { grid-column: 1 / -1; }
+  .loop-status { gap: 0.3rem; margin-top: 0.6rem; }
+  .loop-compare { gap: 0.3rem; margin-top: 0.6rem; }
+  .loop-compare > div { padding: 0.3rem 0.4rem; }
+}
