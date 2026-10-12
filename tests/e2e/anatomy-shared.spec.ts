@@ -19,11 +19,11 @@ test('delayed hydration keeps the original object readable and controls inert', 
     await expect.poll(() => held).toBe(true);
     await expect(figure).toHaveAttribute('aria-busy', 'true');
     await expect(figure.getByRole('img')).toBeVisible();
-    const step = figure.getByRole('button', { name: 'Step placement', exact: true });
+    const step = figure.getByRole('button', { name: 'Evaluate node requirements', exact: true });
     await expect(step).toBeDisabled();
-    const before = await figure.locator('.anatomy-readout').textContent();
+    const before = await figure.locator('.anatomy-change').textContent();
     await step.evaluate((element) => (element as HTMLButtonElement).click());
-    expect(await figure.locator('.anatomy-readout').textContent()).toBe(before);
+    expect(await figure.locator('.anatomy-change').textContent()).toBe(before);
     const object = await figure.boundingBox();
     const explanation = await page.locator('.anatomy-explanation').boundingBox();
     expect(object).not.toBeNull();
@@ -31,7 +31,7 @@ test('delayed hydration keeps the original object readable and controls inert', 
     expect(explanation!.y).toBeGreaterThanOrEqual(object!.y + object!.height);
   } finally { release(); }
   await expect(figure).toHaveAttribute('aria-busy', 'false');
-  await expect(figure.getByRole('button', { name: 'Step placement', exact: true })).toBeEnabled();
+  await expect(figure.getByRole('button', { name: 'Evaluate node requirements', exact: true })).toBeEnabled();
 });
 
 test('related Anatomy exploration preserves the current learner draft', async ({ page }) => {
