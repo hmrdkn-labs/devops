@@ -1,0 +1,28 @@
+schema_version: 1
+slug: dns-ingress
+title: "DNS and ingress: a name is not a Ready Pod"
+summary: Resolve a Service name through the client's search path, see where the answer stops
+  short of a Ready endpoint, and follow an external HTTP request through an edge controller that
+  must actually exist.
+module: Networking
+section: networking
+order: 2
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:services-dns-ingress
+  - fpp:kubernetes-networking-request-path
+objective_ids:
+  - fpp:services-dns-ingress/service-endpoints
+  - fpp:services-dns-ingress/external-routing
+  - fpp:kubernetes-networking-request-path/service-path
+  - fpp:kubernetes-networking-request-path/boundaries
+sources:
+  - title: "Kubernetes: DNS for Services and Pods"
+    url: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+  - title: "Kubernetes: Service"
+    url: https://kubernetes.io/docs/concepts/services-networking/service/
+  - title: "Kubernetes: Ingress"
+    url: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  - title: "Kubernetes: Gateway API"
+    url: https://kubernetes.io/docs/concepts/services-networking/gateway/
