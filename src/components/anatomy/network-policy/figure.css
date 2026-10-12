@@ -1,0 +1,49 @@
+.np-figure .anatomy-figure-header { flex-wrap: wrap; }
+.np-identities { display: flex; flex-wrap: wrap; gap: .3rem .9rem; margin: .75rem 0 0; font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.np-identities b { color: var(--ink); font-family: var(--mono); font-weight: 600; font-size: .82rem; }
+
+/* Object semantics: a closed accent-edged lid checks, a raised lid passes, a dashed edge is stored only. */
+.np-svg .np-hole { fill: color-mix(in srgb, var(--surface) 30%, #000); }
+.np-svg .np-lid[data-posture='armed'] .iso-top { fill: var(--accent-soft); }
+.np-svg .np-lid[data-posture='armed'] .iso-shade { fill: color-mix(in srgb, var(--accent) 16%, var(--surface)); }
+.np-svg .np-lid[data-posture='armed'] .iso-edge { stroke: var(--accent); stroke-width: 1.1; }
+.np-svg .np-lid[data-posture='stored'] .iso-edge { stroke-dasharray: 2 1.6; }
+.np-svg .np-latch { opacity: 0; }
+.np-svg .np-lid[data-posture='armed'] .np-latch { opacity: 1; }
+.np-svg .np-stop [data-tone='red'] { stroke: var(--error); stroke-width: 1.3; }
+.np-svg .np-stop-label, .np-svg .np-id { font-family: var(--mono); font-size: 11px; fill: var(--anatomy-mid); }
+.np-svg .np-stop-label { fill: var(--error); font-size: 10px; }
+.np-svg .np-port-tag rect { fill: var(--surface); stroke: var(--accent); stroke-width: .9; }
+.np-svg .np-port-tag text { font-family: var(--mono); font-size: 10px; font-weight: 600; fill: var(--anatomy-hi); }
+/* Identity text is decorative on phones: the per-Pod cards and the identity strip carry names below 640px. */
+@media (max-width: 640px) { .np-svg text, .np-svg .np-port-tag { display: none; } }
+
+.np-fields { display: grid; gap: .55rem; min-width: 0; margin: 0; padding: .7rem .8rem; border: 1px solid var(--line-strong); border-radius: 10px; }
+.np-fields:disabled { opacity: .7; }
+.np-fields legend { padding: 0 .3rem; font-size: .85rem; color: var(--muted); }
+.np-fields label { min-width: 0; max-width: 100%; font-size: .92rem; }
+.np-fields input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.np-fields select, .np-probe-controls select { min-height: 44px; max-width: 100%; }
+.np-controls { flex-direction: column; align-items: stretch; }
+.np-probe-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.np-probe-controls label { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-width: 0; max-width: 100%; }
+.np-probe-controls select { min-width: 0; }
+.np-controls :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.np-hint { font-size: .85rem; color: var(--muted); margin: .6rem 0 0; overflow-wrap: anywhere; }
+.np-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.np-card { min-width: 0; padding: .6rem .7rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); font-size: .85rem; overflow-wrap: anywhere; }
+.np-card h4 { margin: 0 0 .25rem; font-size: .9rem; }
+.np-card p { margin: .35rem 0 0; }
+.np-labels, .np-selected { color: var(--muted); font-family: var(--mono); font-size: .78rem; }
+.np-card .anatomy-badge { max-width: 100%; white-space: normal; text-align: left; }
+.np-ledger-wrap { margin-top: 1rem; }
+.np-ledger-wrap h4 { margin: 0 0 .4rem; font-size: .95rem; }
+.np-ledger { display: grid; gap: .4rem; margin: .5rem 0 0; padding: 0; list-style: none; font-size: .88rem; }
+.np-ledger li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .6rem; min-width: 0; padding: .45rem .6rem; border-radius: 8px; background: var(--surface-subtle); }
+.np-gate { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.np-muted { color: var(--muted); font-family: var(--mono); font-size: .8rem; overflow-wrap: anywhere; }
+@media (max-width: 720px) { .np-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) {
+  .np-fields label { width: 100%; }
+  .np-probe-controls button { flex: 1 1 8rem; }
+}

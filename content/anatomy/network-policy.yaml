@@ -1,0 +1,24 @@
+schema_version: 1
+slug: network-policy
+title: "NetworkPolicy: isolation is per direction, and both ends must allow"
+summary: Send probes through egress and ingress gates to see which applied policy stops a connection, and why a stored policy does nothing until the network plugin enforces it.
+module: Networking
+section: networking
+order: 3
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-networking-request-path
+  - fpp:kubernetes-security-access
+objective_ids:
+  - fpp:kubernetes-networking-request-path/boundaries
+  - fpp:kubernetes-security-access/workload
+sources:
+  - title: "Kubernetes: Network Policies"
+    url: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+  - title: "Kubernetes: NetworkPolicy API reference (networking.k8s.io/v1)"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/networking/network-policy-v1/
+  - title: "Kubernetes: Service"
+    url: https://kubernetes.io/docs/concepts/services-networking/service/
+  - title: "Kubernetes: Debugging DNS Resolution"
+    url: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/
