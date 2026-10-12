@@ -1,0 +1,59 @@
+.pp-figure .anatomy-figure-header { flex-wrap: wrap; }
+.pp-purpose { margin: .8rem 0 0; font-size: .92rem; overflow-wrap: anywhere; }
+/* The racks are tall, so the cropped canvas is nearly square. Capping its width keeps the object near 600px tall;
+   the box keeps the viewBox aspect, so the label percentages stay on their objects. */
+.pp-stage { position: relative; min-width: 0; max-width: 600px; margin-inline: auto; }
+.pp-stage svg { max-height: none; }
+/* Identity labels sit beside their block: on a rack to the right of it, elsewhere above it. */
+.pp-tag {
+  position: absolute; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap;
+  padding: .1rem .45rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface);
+  color: var(--ink); font: .68rem var(--mono); line-height: 1.5;
+}
+.pp-tag[data-anchor='side'] { transform: translate(0, -50%); }
+.pp-tag[data-anchor='top'] { transform: translate(-50%, -100%); }
+.pp-tag[data-state='nominated'] { border-color: var(--accent); background: var(--accent-soft); }
+.pp-tag[data-state='terminating'] { border-style: dashed; color: var(--muted); }
+.pp-tag[data-state='absent'], .pp-tag[data-state='gone'] { display: none; }
+.pp-tag.pp-fixed { color: var(--muted); border-style: dashed; background: transparent; }
+.pp-tag.pp-node { white-space: normal; text-align: center; line-height: 1.35; border-radius: 10px; padding: .2rem .5rem; }
+.pp-actions { margin-top: .9rem; }
+.pp-config {
+  display: flex; flex-wrap: wrap; gap: .6rem .9rem; align-items: flex-end; min-width: 0;
+  margin: 1rem 0 0; padding: .6rem .8rem .8rem; border: 1px solid var(--line); border-radius: 12px;
+}
+.pp-config legend { padding: 0 .3rem; font: .8rem var(--mono); color: var(--muted); }
+.pp-config label { display: flex; align-items: center; gap: .4rem; min-width: 0; max-width: 100%; font-size: .9rem; }
+.pp-config select { width: 100%; max-width: 24rem; min-height: 44px; padding: .4rem .6rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); color: var(--ink); }
+.pp-config input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.pp-config label:has(> input[type='checkbox']) { flex-wrap: nowrap; }
+.pp-figure :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.pp-cards { display: grid; gap: .6rem; margin-top: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.pp-card { min-width: 0; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+.pp-card p { margin: .2rem 0; overflow-wrap: anywhere; }
+.pp-badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+.pp-residents { margin: .5rem 0 0; padding: 0; list-style: none; font: .8rem var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.pp-residents li { padding: .15rem 0; border-top: 1px dashed var(--line); }
+.pp-match-scroll { margin-top: 1rem; overflow-x: auto; max-width: 100%; }
+.pp-ledger { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.pp-ledger caption { text-align: left; font: .8rem var(--mono); color: var(--muted); padding-bottom: .3rem; }
+.pp-ledger th, .pp-ledger td { padding: .35rem .5rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.pp-ledger th[scope='row'] { white-space: nowrap; }
+.pp-ledger-wrap { margin-top: 1rem; min-width: 0; }
+.pp-facts { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.pp-caption { font-size: .9rem; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  /* On a phone the object's labels would pile up, so the cards carry the identities instead. */
+  .pp-tag { display: none; }
+  .pp-config label { width: 100%; }
+  .pp-config select { max-width: none; }
+  /* The ledger becomes one card per Pod, so every field stays inside the phone width. */
+  .pp-match-scroll { overflow-x: visible; }
+  .pp-ledger caption { display: block; }
+  .pp-ledger, .pp-ledger tbody, .pp-ledger tr, .pp-ledger th, .pp-ledger td { display: block; width: 100%; }
+  .pp-ledger thead { display: none; }
+  .pp-ledger tr { margin-bottom: .6rem; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 10px; }
+  .pp-ledger th, .pp-ledger td { padding: .1rem 0; border: 0; overflow-wrap: anywhere; }
+  .pp-ledger th[scope='row'] { padding-bottom: .25rem; font-weight: 600; }
+  .pp-ledger td::before { content: attr(data-label) ': '; color: var(--muted); }
+}
