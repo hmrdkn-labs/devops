@@ -1,0 +1,36 @@
+.wc-figure .anatomy-figure-header { flex-wrap: wrap; }
+.wc-figure .anatomy-controls { margin-top: .6rem; }
+.wc-figure .anatomy-controls label { min-width: 0; max-width: 100%; }
+.wc-figure .anatomy-controls select { max-width: 100%; }
+.wc-figure .anatomy-controls :is(button, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wc-figure .wc-lamp { fill: var(--anatomy-faint); stroke: var(--anatomy-lo); stroke-width: .5; }
+.wc-figure .wc-lamp[data-ready='true'] { fill: var(--accent); }
+.wc-figure .wc-status { margin-top: .8rem; }
+.wc-figure .wc-owner { margin: 0; font-size: .92rem; overflow-wrap: anywhere; }
+.wc-figure .wc-badges { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: .5rem 0 0; }
+.wc-figure .wc-bench { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: .5rem; margin-top: 1rem; }
+.wc-figure .wc-card { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .6rem .7rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); font-size: .85rem; overflow-wrap: anywhere; }
+.wc-figure .wc-card[data-present='false'] { border-style: dashed; color: var(--muted); }
+.wc-figure .wc-card h4 { margin: 0; font: .9rem var(--mono); }
+.wc-figure .wc-card p { margin: 0; color: var(--muted); }
+.wc-figure .wc-chips { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: .3rem 0 0; min-height: 1.6rem; }
+.wc-figure .wc-chips:empty::before { content: 'no Pods'; font-size: .8rem; color: var(--muted); }
+.wc-figure .wc-chip { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .25rem .4rem; padding: .15rem .3rem; border-radius: 8px; font-size: .8rem; }
+.wc-figure .wc-chip strong { font-family: var(--mono); font-weight: 600; }
+.wc-figure .wc-chip[data-selected='true'] { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wc-figure .wc-counts { margin: .6rem 0 0; font-size: .86rem; color: var(--muted); overflow-wrap: anywhere; }
+.wc-figure .wc-secondary { min-width: 0; margin: 1rem 0 0; padding: 0; border: 0; }
+.wc-figure .wc-secondary legend { padding: 0; margin-bottom: .3rem; font-size: .9rem; color: var(--muted); }
+.wc-figure .wc-ledger { margin-top: 1rem; }
+.wc-figure .wc-ledger h3 { font-size: 1rem; margin-bottom: .4rem; }
+.wc-figure .wc-ledger ul { display: grid; gap: .4rem; list-style: none; padding: 0; margin: 0; }
+.wc-figure .wc-ledger li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; min-width: 0; font-size: .88rem; overflow-wrap: anywhere; }
+.wc-figure .wc-ledger strong { font-family: var(--mono); }
+.wc-figure .wc-hint { margin: 1rem 0 0; font-size: .86rem; color: var(--muted); }
+@media (max-width: 480px) {
+  .wc-figure .anatomy-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+  .wc-figure .anatomy-controls > label { grid-column: 1 / -1; width: 100%; }
+  .wc-figure .anatomy-controls > button, .wc-figure .anatomy-controls > select { width: 100%; min-height: 44px; }
+  .wc-figure .wc-run { grid-column: 1 / -1; }
+  .wc-figure .wc-bench { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
