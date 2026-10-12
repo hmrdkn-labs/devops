@@ -163,5 +163,6 @@ test('chips label the object without overlapping or clipping on desktop, and bec
   await expect(figure.locator('.pl-identity')).toContainText('endpoint: out');
   await expect(figure.locator('.anatomy-change')).toBeVisible();
   await expect(figure.locator('.pl-ledger')).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  // The resize lands a frame before the layout viewport catches up, so poll until layout settles at 390px.
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 });

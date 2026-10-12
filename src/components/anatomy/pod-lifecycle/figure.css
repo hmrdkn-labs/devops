@@ -35,6 +35,17 @@
 .pl-ledger { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: .4rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .pl-ledger li { min-width: 0; }
 
+/* Workbench: the object column is too narrow for margin chips, so the same chips form one readable row under the drawing. */
+@media (min-width: 1100px) {
+  .pl-chips { position: static; display: flex; flex-wrap: wrap; align-items: flex-start; gap: .35rem; margin-top: .4rem; }
+  .pl-chip { position: static; transform: none; max-width: 100%; font-size: .78rem; }
+  .pl-figure .anatomy-bench-object .anatomy-legend { margin: .6rem 0 0; }
+  .pl-figure .pl-controls { gap: .5rem; }
+  .pl-figure .pl-fieldset label { flex-wrap: nowrap; white-space: nowrap; }
+  .pl-figure .pl-fieldset select { min-width: 0; flex: 0 1 auto; }
+  .pl-fieldset { padding: .35rem .7rem; }
+  .pl-ledger { margin-top: .6rem; gap: .3rem; }
+}
 @media (max-width: 640px) {
   .pl-chips { display: none; }
   .pl-identity { display: block; }
