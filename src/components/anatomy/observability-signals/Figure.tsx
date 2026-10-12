@@ -89,6 +89,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure obs-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG 03 · SIGNAL BENCH</span><span>Each signal keeps different history</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <svg class="iso-svg obs-svg" viewBox="0 0 760 470" role="img" aria-labelledby="obs-title obs-description">
         <title id="obs-title">Four instruments on a rear shelf and three Pod cabinets on a Service belt</title>
         <desc id="obs-description">Above the cabinets, a printer tape holds Events, a dial shows the metrics backend p99 for the subject Pod, a rack holds sampled trace cards, and a cassette holds the subject's container logs. Each cabinet has a gate on the belt that is raised only while its Pod is Ready, and two lamps: R for readiness and L for liveness. The subject is web-z5r1t, the cabinet on the right.</desc>
@@ -130,17 +132,37 @@ export default function Figure() {
         <li>Dial = metrics backend p99, not kubectl top</li>
         <li>Rack = sampled traces only · Cassette = subject logs</li>
       </ul>
+      </div>
+      <div class="anatomy-bench-panel">
       <div class="anatomy-controls">
-        <button type="button" disabled={!idle() || state().tick >= LAST_TICK} onClick={() => apply(advance(state()))}>{nextLabel()}</button>
+        <button type="button" data-anatomy-primary disabled={!idle() || state().tick >= LAST_TICK} onClick={() => apply(advance(state()))}>{nextLabel()}</button>
         <button type="button" disabled={!idle() || state().tick === 0} onClick={() => apply(initialState())}>Reset to 10:00</button>
         <span class="obs-note">Each step is 30 minutes and summarises many probe runs.</span>
       </div>
       <ChangeReport busy={moving()} change={state().change} />
-      <div class="obs-status">
-        <StateBadge tone={endpoints() === PODS.length ? 'pass' : 'wait'} label={`${endpoints()} of ${PODS.length} Pods in Service endpoints`} />
-        <Show when={moving()}><StateBadge tone="info" label="apparatus settling" /></Show>
-        <p>Clock {CLOCK[state().tick]} · Events on tape {counts().events} · Log lines {counts().logs} · Sampled traces {counts().traces}</p>
-      </div>
+      <section class="obs-state" data-anatomy-status aria-label="Service endpoints and Pods">
+        <div class="obs-status">
+          <StateBadge tone={endpoints() === PODS.length ? 'pass' : 'wait'} label={`${endpoints()} of ${PODS.length} Pods in Service endpoints`} />
+          <Show when={moving()}><StateBadge tone="info" label="apparatus settling" /></Show>
+          <p>Clock {CLOCK[state().tick]} · Events on tape {counts().events} · Log lines {counts().logs} · Sampled traces {counts().traces}</p>
+        </div>
+        <h3 class="anatomy-panel-heading">Pods behind the Service</h3>
+        <ul class="anatomy-status-list obs-pods">
+          <For each={PODS}>{(pod, index) => <li class="obs-pod">
+            <span><span class="obs-pod-name">{POD_NAME[pod]}</span> <span class="obs-note">cabinet {index() + 1}{pod === SUBJECT ? ' · subject' : ''}</span></span>
+            <StateBadge tone={snapshots()[index()]?.ready ? 'pass' : 'wait'} label={snapshots()[index()]?.ready ? 'Ready' : 'Not Ready'} />
+            <dl class="anatomy-status-detail obs-counts">
+              <div><dt>Gate</dt><dd>{snapshots()[index()]?.ready ? 'raised' : 'lowered'}</dd></div>
+              <div><dt>req/s</dt><dd>{snapshots()[index()]?.rps ?? 0}</dd></div>
+              <div><dt>Restarts</dt><dd>{snapshots()[index()]?.restarts ?? 0}</dd></div>
+              <div><dt>Liveness</dt><dd>{snapshots()[index()]?.live ? 'pass' : 'fail'}</dd></div>
+              <Show when={pod === SUBJECT}>
+                <div><dt>Backend p99</dt><dd>{P99_C[state().tick] === null ? 'none: no requests in this window' : `${P99_C[state().tick]} ms`}</dd></div>
+              </Show>
+            </dl>
+          </li>}</For>
+        </ul>
+      </section>
       <section class="obs-claims" aria-label="Claims to check">
         <h3>Which signal can prove this claim?</h3>
         <p class="obs-hint">Pick a signal, press Check. The verdict appears under its claim and is re-read as the clock moves.</p>
@@ -172,20 +194,7 @@ export default function Figure() {
           </li>}</For>
         </ol>
       </section>
-      <div class="obs-pods">
-        <For each={PODS}>{(pod, index) => <section class="obs-pod" aria-label={`Pod ${POD_NAME[pod]}`}>
-          <h3>{POD_NAME[pod]} <span class="obs-note">cabinet {index() + 1}{pod === SUBJECT ? ' · subject' : ''}</span></h3>
-          <StateBadge tone={snapshots()[index()]?.ready ? 'pass' : 'wait'} label={snapshots()[index()]?.ready ? 'Ready' : 'Not Ready'} />
-          <dl class="obs-counts">
-            <div><dt>Gate</dt><dd>{snapshots()[index()]?.ready ? 'raised' : 'lowered'}</dd></div>
-            <div><dt>req/s</dt><dd>{snapshots()[index()]?.rps ?? 0}</dd></div>
-            <div><dt>Restarts</dt><dd>{snapshots()[index()]?.restarts ?? 0}</dd></div>
-            <div><dt>Liveness</dt><dd>{snapshots()[index()]?.live ? 'pass' : 'fail'}</dd></div>
-          </dl>
-          <Show when={pod === SUBJECT}>
-            <p class="obs-note">Backend p99 {P99_C[state().tick] === null ? 'none: no requests in this window' : `${P99_C[state().tick]} ms`}</p>
-          </Show>
-        </section>}</For>
+      </div>
       </div>
       <div class="obs-ledgers">
         <section class="obs-ledger" aria-label="Events tape">
