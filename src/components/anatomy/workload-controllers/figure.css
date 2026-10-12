@@ -27,6 +27,20 @@
 .wc-figure .wc-ledger li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; min-width: 0; font-size: .88rem; overflow-wrap: anywhere; }
 .wc-figure .wc-ledger strong { font-family: var(--mono); }
 .wc-figure .wc-hint { margin: 1rem 0 0; font-size: .86rem; color: var(--muted); }
+@media (min-width: 1100px) {
+  .wc-figure .wc-primary { margin-top: 0; }
+  .wc-figure .wc-secondary { margin-top: .6rem; }
+  .wc-figure .wc-status, .wc-figure .wc-bench { margin-top: .6rem; }
+  .wc-figure .wc-counts { margin-top: .4rem; }
+}
+@media (max-width: 1099px) {
+  /* Single column: the drawing, then the primary controls, report and status; the key and node controls follow. */
+  .wc-figure .anatomy-bench { display: flex; flex-direction: column; }
+  .wc-figure .anatomy-bench-object { display: contents; }
+  .wc-figure .anatomy-bench-panel { order: 1; }
+  .wc-figure .anatomy-bench-object > .anatomy-legend { order: 2; margin: 0; }
+  .wc-figure .wc-secondary { order: 3; margin-top: 0; }
+}
 @media (max-width: 480px) {
   .wc-figure .anatomy-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
   .wc-figure .anatomy-controls > label { grid-column: 1 / -1; width: 100%; }
