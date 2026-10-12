@@ -235,6 +235,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure api-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG 02 · FILING PRESS</span><span>Accepted ≠ observed ≠ Ready</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <div class="api-stage">
         <svg class="iso-svg" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-labelledby="api-title api-description">
           <title id="api-title">A labelled filing press with a feeder card, a validation gate, a record cabinet and four Pod sockets</title>
@@ -277,6 +279,8 @@ export default function Figure() {
           <span class="api-label api-sockets" style={at([-8, 118, 20])}><b>sockets</b><i>{socketRow()}</i></span>
         </div>
       </div>
+      </div>
+      <div class="anatomy-bench-panel">
       <div class="anatomy-controls api-controls">
         <div class="api-selects">
           <label>Card replicas
@@ -291,36 +295,43 @@ export default function Figure() {
           </label>
         </div>
         <div class="api-actions">
-          <button type="button" disabled={!editable()} onClick={() => run(apply(state()), true)}>Apply card (kubectl apply)</button>
+          <button type="button" data-anatomy-primary disabled={!editable()} onClick={() => run(apply(state()), true)}>Apply card (kubectl apply)</button>
           <button type="button" disabled={!editable()} onClick={() => run(sync(state()))}>Run controller sync</button>
           <button type="button" disabled={!editable()} onClick={() => run(podsBecomeReady(state()))}>Fixture: Pods become Ready</button>
           <button type="button" disabled={!editable()} onClick={() => run(deleteObject(state()))}>Delete Deployment</button>
           <button type="button" disabled={!hydrated() || moving()} onClick={() => run(reset())}>Reset fixture</button>
         </div>
       </div>
-      <div class="api-status" role="group" aria-label="Per-object status">
-        <StateBadge tone={badge().card} label={badge().cardLabel} />
-        <StateBadge tone={GATE_TEXT[gate().result].tone} label={gateLabel()} />
-        <StateBadge tone={badge().stored} label={badge().storedLabel} />
-        <StateBadge tone={badge().observed} label={badge().observedLabel} />
-        <StateBadge tone={badge().status} label={badge().statusLabel} />
-        <StateBadge tone={badge().live} label={badge().liveLabel} />
-      </div>
       <ChangeReport change={report()} busy={moving()} />
-      <section class="api-ledger" aria-labelledby="api-ledger-title">
-        <h3 id="api-ledger-title">Pod ledger</h3>
-        <p class="api-owner">{owner()}</p>
-        <ul>
-          <For each={podRows()}>{(row) => (
-            <li data-slot={row.slot}>
-              <strong>{row.pod ? row.pod.name : 'empty socket'}</strong>
-              <span>Socket {row.slot + 1}</span>
-              <span>{row.pod ? (row.pod.ready ? '✓ Ready' : '… Pending, not Ready') : '— no Pod'}</span>
-            </li>
-          )}</For>
-        </ul>
-        <p>Names follow Deployment's pattern: &lt;name&gt;-&lt;ReplicaSet hash&gt;-&lt;suffix&gt;. Suffixes are fixture stand-ins. A deleted Pod's name never returns.</p>
-      </section>
+      <div class="anatomy-status-columns" data-anatomy-status>
+        <section class="api-status" role="group" aria-label="Per-object status">
+          <h3 class="anatomy-panel-heading">Objects</h3>
+          <div class="api-chips">
+            <StateBadge tone={badge().card} label={badge().cardLabel} />
+            <StateBadge tone={GATE_TEXT[gate().result].tone} label={gateLabel()} />
+            <StateBadge tone={badge().stored} label={badge().storedLabel} />
+            <StateBadge tone={badge().observed} label={badge().observedLabel} />
+            <StateBadge tone={badge().status} label={badge().statusLabel} />
+            <StateBadge tone={badge().live} label={badge().liveLabel} />
+          </div>
+        </section>
+        <section class="api-ledger" aria-labelledby="api-ledger-title">
+          <h3 class="anatomy-panel-heading" id="api-ledger-title">Pod ledger</h3>
+          <p class="api-owner">{owner()}</p>
+          <ul class="anatomy-status-list">
+            <For each={podRows()}>{(row) => (
+              <li data-slot={row.slot}>
+                <strong>{row.pod ? row.pod.name : 'empty socket'}</strong>
+                <StateBadge tone={row.pod ? (row.pod.ready ? 'pass' : 'wait') : 'info'} label={row.pod ? (row.pod.ready ? 'Ready' : 'Pending, not Ready') : 'no Pod'} />
+                <span class="anatomy-status-detail">Socket {row.slot + 1}</span>
+              </li>
+            )}</For>
+          </ul>
+        </section>
+      </div>
+      </div>
+      </div>
+      <p class="api-hint">Pod names follow Deployment's pattern: &lt;name&gt;-&lt;ReplicaSet hash&gt;-&lt;suffix&gt;. Suffixes are fixture stand-ins. A deleted Pod's name never returns.</p>
       <div class="anatomy-yaml-figure-grid">
         <ManifestPanel title="Manifest card (local file)" lines={manifestLines()} note="Template labels and image are fixed in this fixture." />
         <ManifestPanel title="Stored object (API server record)" lines={storedLines()} note="Template omitted: it matches the card. uid and resourceVersion are fixture stand-ins." />
