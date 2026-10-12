@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import Figure from '@/components/anatomy/observability-signals/Figure';
+import explanation from '../../../content/anatomy/observability-signals.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('observability-signals');
+if (!entry) throw new Error('Missing observability-signals Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>
