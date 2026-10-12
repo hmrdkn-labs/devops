@@ -1,89 +1,113 @@
-## The problem: a preference cannot make a node possible
+## The big picture
 
-A Pod can ask for SSD-labelled nodes and prefer a particular zone. Those requests answer different questions: **may this node accept the Pod?** and **which acceptable node is more attractive?** Mixing them up turns a useful preference into an imaginary override.
+A Pod that needs SSD disks, or a particular zone, must land on a node whose labels satisfy those rules, and the scheduler has to choose among the nodes that do. The rules split into two kinds. **Hard rules** (`nodeSelector`, `requiredDuringSchedulingIgnoredDuringExecution`, and enough free request capacity) decide which nodes are possible at all. **Preferred rules** (`preferredDuringSchedulingIgnoredDuringExecution`) only rank the nodes that already passed the hard rules. A preference cannot make an impossible node possible.
 
-The sorter is an authored fixture, not a live cluster observation. Label cards represent node metadata; paired feelers represent hard checks; a score plunger represents the raw contribution of one preferred rule. The accent cartridge represents one Pod assignment. It is not a Pod travelling between real machines. Kubernetes has no physical sorter, and animation duration says nothing about scheduling latency.
+The Pod author writes the rules in the Pod spec. Node administrators write the node labels. The scheduler matches the two, records an assignment, and then the kubelet on that node starts containers. Assignment and running are separate steps, and this sorter keeps them separate.
 
-## Actors and ownership
+The sorter is an authored fixture, not a live cluster observation. Node cards show labels, feelers show each hard check, the score plunger shows a raw preferred-rule contribution, and the accent cartridge is the one Pod. The cartridge is not travelling between real machines, and animation time says nothing about scheduling latency. Resource requests are covered in [Scheduling placement](/anatomy/scheduling-placement/), and taints work the other way round, repelling Pods, so [Taints and tolerations](/anatomy/taints-tolerations/) explains how they combine with the affinity rules here.
 
-- A workload author puts `nodeSelector` and `affinity.nodeAffinity` in the Pod specification (often through a controller's Pod template).
-- Node administrators and infrastructure components maintain node labels. A label is metadata, not proof that the named hardware or security property is trustworthy.
-- The scheduler evaluates unscheduled Pods against node information, filters infeasible candidates, scores feasible candidates, and records an assignment through the API.
-- The assigned node's kubelet and container runtime handle execution. **Selecting or assigning a node does not start containers.** The final start button simulates that separate actor; it does not invoke a real kubelet.
+## Who owns what
 
-## Read the rules in the right order
+- **Workload author:** writes `spec.nodeSelector` and `spec.affinity.nodeAffinity` in the Pod spec, often through a controller's Pod template.
+- **Node administrator or infrastructure tooling:** sets node labels. A label is metadata. It is not proof that the named hardware or security property exists. For node-isolation labels, choose keys the kubelet cannot change; the `NodeRestriction` admission plugin blocks kubelet changes to `node-restriction.kubernetes.io/` labels.
+- **kube-scheduler, filter stage:** the NodeAffinity plugin checks `nodeSelector` and `nodeAffinity`; the NodeResourcesFit plugin checks the Pod's resource requests against each node.
+- **kube-scheduler, score stage:** adds the weights of matching preferred rules to the node's score, alongside other score plugins.
+- **kube-scheduler, binding:** records the assignment by setting `spec.nodeName` through the API. Choosing a node is not starting it.
+- **kubelet and container runtime on the chosen node:** start the containers. The final button simulates this separate actor; it does not invoke a real kubelet.
 
-`nodeSelector` is a map of exact key/value matches. If it contains several entries, a node must match all of them. Here it contains either `disk: ssd`, `disk: hdd`, or no selector.
+## How it works
 
-`requiredDuringSchedulingIgnoredDuringExecution` is another hard constraint. Within a `nodeSelectorTerm`, the illustrated `matchExpressions` are **AND** conditions. Across terms, they are **OR** alternatives. The richer language also supports operators such as `NotIn`, `Exists`, `DoesNotExist`, `Gt` and `Lt`; this fixture deliberately uses only `In`.
+1. **Created, unassigned.** The Pod has no `spec.nodeName`. Nothing has been filtered, so no feeler is lifted and no score exists.
+2. **Evaluate node requirements (filter).** For each node, three independent hard checks run:
+   - `nodeSelector`: every key in the map must match exactly.
+   - Required affinity: its `nodeSelectorTerms` are **ORed**. Inside one term, the `matchExpressions` are **ANDed**. A term passes only if all its expressions pass.
+   - Request capacity: the node has enough free allocatable resources. This check is separate from every label check.
 
-The combined hard predicate is:
+   A node that fails any check is excluded and keeps its reason. If no node survives, the Pod is unscheduled and no score is ever computed.
+3. **Score eligible nodes.** Each satisfied preferred rule adds its `weight` (1 to 100) to the node's sum. An eligible node with no preference match scores zero. That means eligible, not rejected.
+4. **Record assignment.** The highest eligible score wins in this fixture, with alphabetical order breaking ties. The binding writes `spec.nodeName`. The Pod is **Assigned**, not Running.
+5. **Simulate container startup.** The fixture moves the Pod to Running on the chosen node. A real Running Pod is still not proof of readiness.
+6. **Change running-node labels.** The running Pod stays where it is. `IgnoredDuringExecution` means a later label change does not evict it. A new Pod is checked against the current rules, so the bound node's card shows what a new placement would face.
+
+The combined hard predicate for a candidate node is:
 
 ```text
-request capacity passes
-AND nodeSelector passes
-AND at least one required-affinity term passes
+nodeSelector passes
+AND required affinity passes (at least one term, all of whose expressions pass)
+AND request capacity passes
 ```
 
-An absent required affinity imposes no affinity filter. The control labelled **None** means the required section is omitted, not a required section containing an empty term. The page does not model malformed specifications.
+Preferences run only after this predicate is true for the node.
 
-For the default `(east AND ssd) OR west` rule, the original required section is:
+## YAML example
+
+This is the default Pod spec the figure generates. It is an illustrative fragment, not something this page submits. The comments mark the fields that drive the behaviour above.
 
 ```yaml
-# Fragment of a Pod spec; illustrative, not submitted by this page.
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: zone
-              operator: In
-              values: [east]
-            - key: disk
-              operator: In
-              values: [ssd]
-        - matchExpressions:
-            - key: zone
-              operator: In
-              values: [west]
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sorter-1
+spec:
+  nodeSelector:
+    disk: ssd
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:   # term 1: its expressions are ANDed
+              - key: zone
+                operator: In
+                values: [east]
+              - key: disk
+                operator: In
+                values: [ssd]
+          - matchExpressions:   # term 2: ORed with term 1
+              - key: zone
+                operator: In
+                values: [west]
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 60   # 1-100, added when a node matches
+          preference:
+            matchExpressions:
+              - key: zone
+                operator: In
+                values: [west]
+  containers:
+    - name: sorter
+      image: registry.example.com/sorter:1.0
+      resources:
+        requests:
+          cpu: 500m   # the node must have this much free CPU
 ```
 
-The second term does not cancel the Pod's separate `nodeSelector`. If the selector needs SSD, a west-labelled HDD node still fails that selector.
+- `nodeSelector` is an exact-match filter, and it must hold alongside the affinity rule. Removing it is a different Pod.
+- The two `nodeSelectorTerms` entries are alternatives. The first is an AND of `zone=east` and `disk=ssd`. The second is `zone=west` alone.
+- `weight` is a preference, not a permission. It only ranks nodes that passed every filter.
+- `cpu` is what the capacity check reads. Only node-c's capacity is switchable in the fixture; the other nodes always have it.
+- `zone` and `disk` are fixture keys. Real zone labels use the well-known key `topology.kubernetes.io/zone`.
 
-`preferredDuringSchedulingIgnoredDuringExecution` adds preference, not permission. For each matching preferred rule, the scheduler's node-affinity scoring process accumulates its weight (1–100). Actual scheduling also involves score normalization, configured plugin weights, other scoring plugins, and other constraints. The sorter shows **only a raw preferred-rule contribution**. It assumes all other score contributions are equal and picks the alphabetically first node on a tie. Neither its score values nor tie rule are a prediction of a real cluster's final decision.
+## Try these changes
 
-## Controls and causal transitions
+1. **Default rules.** Press Evaluate node requirements. node-a and node-b become eligible, and node-c is rejected because its selector and both affinity terms fail. Scores are still hidden until you press Score eligible nodes.
+2. **Contradictory hard rules.** Set nodeSelector to `hdd` and required affinity to `east AND ssd`, then evaluate. No node passes, so the Pod is unscheduled at the filter step. Raise the weight to 100 and evaluate again: the result does not change.
+3. **Eligible with no preference.** Set nodeSelector to `hdd`, required affinity to none, and preferred zone to west. node-c is eligible with score 0 (eligible, no preference match). Turn off node-c's request capacity: node-c is rejected by capacity alone. Its selector feeler stays lifted because the label check passes. Its middle capacity feeler stays down because capacity fails, and its required-affinity feeler stays down because that check does not apply.
+4. **Running, then labels change.** Assign and simulate start. Press Change running-node labels: node-b reports that the existing Pod is still Running there, and the new placement under current rules is rejected. The cartridge stays on node-b.
+5. **Weight slider.** Drag the slider or press arrow keys. The number shows your draft; the rule commits on release or after each key press, not on every pixel. The slider stays usable while the carriage settles, and each committed value restarts evaluation for the same Pod.
 
-The initial Pod is created but unassigned. Candidate cards preview the current hard predicates and preferred contributions; the mechanism has not performed its stepped pass yet.
+## Misconceptions
 
-| Control | What changes |
-| --- | --- |
-| nodeSelector: disk | Exact-match hard constraint, combined with required affinity |
-| Required affinity | No required rule, one AND term, or two OR alternatives |
-| Preferred zone and weight | Raw score contribution for eligible nodes only |
-| C has request capacity | A separate feasibility condition; affinity cannot override it |
-| Step placement | Filter, then score, then assign; zero eligible nodes remain unscheduled |
-| Simulate kubelet start | Advances an assigned Pod to the fixture's running state |
-| Change running-node labels | Changes its node to `disk=archive`, `zone=retired`; preserves the running assignment |
-| Replay same rules / Reset | Returns the fixture to an unassigned Pod with the current rules / default rules |
+- **"A preference can make an ineligible node win."** Filters run first. Preferences only rank nodes that passed every hard check, so raising the weight to 100 cannot rescue a failed selector or affinity.
+- **"nodeSelector and required affinity are alternatives."** Both must hold. A Pod with `disk: ssd` and a west-only affinity term still cannot land on a west HDD node.
+- **"Two required terms are ANDed."** Terms are ORed; expressions inside one term are ANDed. An east HDD node fails the `east AND ssd` term on `disk` alone.
+- **"A score of 0 means rejected."** A zero score means the node is eligible with no preference match. Eligibility is decided by the filter, not by the score.
+- **"Assigned means Running."** Assignment writes `spec.nodeName`. The Pod can stay Pending until its containers start, and Running is still not Ready.
+- **"Changing a node's label moves the Pod."** `IgnoredDuringExecution` means the Pod keeps running. Only future scheduling attempts use the new labels.
+- **"disk=ssd proves the hardware."** A label is metadata. Trust depends on who can set it, which is an operations decision.
 
-During apparatus travel, actions are disabled to avoid overlapping transitions. The cartridge lifts clear of the label cards, crosses the rail, then settles over its chosen bed. Hard-check feelers lift for matching constraints with capacity; preference plungers rise only after the scoring step. The live readout reports a transition until the physical parts settle. Reduced motion moves directly to the stable target. Replay represents a fresh scheduling exercise, **not rescheduling the same running Pod**.
+## Safe read-only observation
 
-## Three useful experiments
-
-1. **Default rules:** A has `disk=ssd, zone=east`; B has `disk=ssd, zone=west`; C has `disk=hdd, zone=east`. A and B pass. B gets the west preference and is assigned. The next step simulates node-side start.
-2. **Contradictory hard rules:** Select `hdd`, require `east AND ssd`, and keep any preference at any weight. C passes the selector but fails required affinity; A passes affinity but fails the selector; B fails both. No candidate remains, so no score or assignment can rescue the Pod.
-3. **Preference without a match:** Select `hdd`, choose no required affinity, and prefer west. With capacity available, C is eligible with zero preferred contribution and can still be assigned. Switch off C's request capacity: C is rejected too. Preferences do not override resource feasibility.
-
-## The execution boundary: labels change, assignment stays
-
-After the default Pod is running on B, press **Change running-node labels**. B no longer matches the selector or required terms. Its current candidate card reports rejection for a hypothetical new scheduling attempt, but the cartridge and running readout stay on B.
-
-`IgnoredDuringExecution` means node-label changes do not themselves evict an already scheduled Pod under these affinity rules. It does not promise eternal availability, prevent deletion, or disable other eviction mechanisms. The scheduler does not continuously migrate running Pods to the currently best-labelled node. A future replacement Pod must satisfy the current hard constraints in its own scheduling attempt.
-
-## Practical observation, without changing a cluster
-
-If you have authorized read access, inspect node labels and an existing Pod:
+If you have read access to a cluster, these commands only read:
 
 ```sh
 kubectl get nodes -L disk,zone
@@ -91,27 +115,38 @@ kubectl get pod POD_NAME -n NAMESPACE -o yaml
 kubectl describe pod POD_NAME -n NAMESPACE
 ```
 
-Compare the Pod's `spec.nodeSelector`, `spec.affinity.nodeAffinity`, `spec.nodeName`, `PodScheduled` condition, and scheduling events. An empty `nodeName` with scheduling failures points to an assignment problem; an assigned Pod can still be Pending for node-side reasons. Labels are current snapshots, not a record of the labels used at an earlier assignment. Events may expire and do not expose every plugin score. A Running phase alone is not proof of application readiness. These commands are suggestions only; the page never executes them.
+- `kubectl get nodes -L disk,zone` shows the current label values. It does not show the labels that were in place when the Pod was assigned.
+- `kubectl get pod ... -o yaml` shows `spec.nodeSelector`, `spec.affinity.nodeAffinity`, `spec.nodeName`, and `status.phase`. It does not show which plugin rejected a node.
+- `kubectl describe pod ...` shows conditions and scheduling events. Events expire, and they do not expose every plugin score.
 
-**Tip:** Write every hard predicate before considering any preference. For production label keys, establish an administrator-owned naming convention and the trust boundary for who can alter labels; do not treat an arbitrary `disk=ssd` label as verified hardware or a security guarantee.
+An empty `nodeName` with scheduling failures points to a placement problem. An assigned Pod that is still Pending points to a node-side problem, such as image pulls. A Running phase is not proof of application readiness.
 
 ## Predict and transfer
 
-A fourth node D has `disk=hdd, zone=west` and sufficient request capacity. Keep `nodeSelector: disk=ssd`, required `(east AND ssd) OR west`, and preferred west weight 100. Is D eligible? Would increasing its preference make it eligible?
+A fourth node D has `disk=hdd`, `zone=west`, and enough capacity. Keep `nodeSelector: disk=ssd`, required `(east AND ssd) OR west`, and preferred west with weight 100. Is D eligible? If you remove the nodeSelector, does D become eligible?
 
 <details>
 <summary>Reveal the reasoning</summary>
 
-No. D matches the west required term and the preferred zone, but fails the separate SSD selector. It is excluded before scoring. Raising a preference cannot fix a failed hard condition. If you remove the selector, D becomes feasible under the stated capacity and rule assumptions; it then competes with other feasible nodes rather than gaining guaranteed placement.
+No, D is not eligible while the selector stays. It matches the west term and the preferred zone, but it fails the separate `disk=ssd` selector, so it is excluded before scoring. Raising the preference cannot fix that. If you remove the selector, D passes the west term and capacity, so it becomes eligible and competes with node-b, which has the same west preference. The fixture then breaks the tie alphabetically, which is a fixture rule, not a cluster guarantee.
 
 </details>
 
-## Canonical learning links and public references
+## Assumptions and limits
 
-This page supports [Kubernetes scheduling and placement constraints](/learn/kubernetes-scheduling-placement/): objectives `fpp:kubernetes-scheduling-placement/feasibility` and `fpp:kubernetes-scheduling-placement/policy`. It records no completion, mastery, or retention evidence.
+- The fixture has three nodes and one Pod at a time. Node labels use the keys `disk` and `zone`; production zone labels use `topology.kubernetes.io/zone`.
+- Request capacity is switchable only on node-c. A real NodeResourcesFit check compares each requested resource.
+- Scores are raw preferred-rule weights. A real scheduler normalizes scores and adds other score plugins, so the fixture's winner is not a prediction of a real cluster's decision.
+- Replay and Reset restore the fixture's node labels. A real cluster keeps a label change until someone reverts it.
+- Taints, topology spread, inter-pod affinity and other scheduling plugins are not modelled.
+- Running is simulated. Readiness probes, Service endpoints and traffic are not modelled.
+- This page was reviewed against kubernetes.io documentation on 2026-10-12. That is a documentation review, not a live cluster test.
 
-Public semantic review: 2026-10-11. This date records documentation review, not a live cluster test.
+## Authoritative sources
 
-- [Kubernetes — Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/): selector/affinity combination, AND/OR semantics, preference weights, and IgnoredDuringExecution.
-- [Kubernetes — Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/): label metadata and matching semantics.
-- [Kubernetes — Scheduling Framework](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/): filtering, scoring, normalization, and binding boundaries.
+- [Kubernetes: Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/): nodeSelector and nodeAffinity together, ORed terms, ANDed expressions, weights from 1 to 100, and IgnoredDuringExecution.
+- [Kubernetes: Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/): label metadata and matching semantics.
+- [Kubernetes: Scheduling Framework](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/): filter, score and binding stages.
+- [Kubernetes: Scheduler Configuration](https://kubernetes.io/docs/reference/scheduling/config/): the NodeAffinity and NodeResourcesFit plugins.
+
+This page supports [Kubernetes scheduling and placement constraints](/learn/kubernetes-scheduling-placement/), objectives `fpp:kubernetes-scheduling-placement/feasibility` and `fpp:kubernetes-scheduling-placement/policy`. It records no completion, mastery, or retention evidence.

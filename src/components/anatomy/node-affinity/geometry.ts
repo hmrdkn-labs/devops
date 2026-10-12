@@ -2,18 +2,20 @@ import * as k from '@/lib/anatomy/vendor/iso-kit';
 
 /**
  * Concept → mechanism, designed before geometry:
- * Node labels are keyed cards held in three reader beds. Two feeler combs
- * represent independent hard checks; both retract only for feasible candidates.
- * A graduated score plunger rises only on eligible beds. The lit Pod carriage
- * travels along the selector rail, then seats in the chosen bed. A retained
- * carriage after a card change represents IgnoredDuringExecution, not migration.
- * This is a bench analogy, not literal scheduler hardware or measured timing.
+ * Node labels are keyed cards held in three reader beds, engraved node-a, node-b and
+ * node-c from left to right. Each bed has three feeler combs: left for the nodeSelector
+ * label check, right for the required-affinity label check, and middle for request
+ * capacity, a separate predicate. A feeler lifts only after evaluation, when its own
+ * check applies and passes. A graduated score plunger rises only on eligible beds.
+ * The lit Pod carriage travels along the selector rail, then seats over the chosen bed.
+ * A retained carriage after a label change represents IgnoredDuringExecution, not
+ * migration. This is a bench analogy, not literal scheduler hardware or measured timing.
  * Purposeful parts inventory (over 80 solids, plus fasteners/face details):
  * base: four feet, four foot pads, base casting, service lid, maker plate (11);
  * gantry: four pedestal shoes, four posts, rear crossbeam, two guide rails,
  * four rail end stops, scale strip (16); each of three reader beds: tray floor,
  * left/right tray walls, rear stop, two travel rails, two card sockets, two label cards,
- * two comb mounts, two sliding feeler combs, score housing, score plunger (48);
+ * three comb mounts, three sliding feeler combs, score housing, score plunger (50);
  * carriage: deck, two bearing shoes, Pod cartridge, lid, two latch tabs,
  * handle stems and handle bridge (10). Fasteners seat on real top faces;
  * closed card grooves and score scales attach to their hosts, never float.
@@ -21,6 +23,8 @@ import * as k from '@/lib/anatomy/vendor/iso-kit';
 const base: k.Plan = { x: -166, y: -76, w: 332, d: 192, r: 9 };
 export const projection = k.fitProjection(k.boxCorners(base, -12, 92), 720, 420, { pad: 28, elevation: 36, azimuth: 38 });
 export const laneX = [-106, 0, 106];
+/** Feeler x positions per bed: nodeSelector (left), request capacity (middle), required affinity (right). */
+const combX = (x: number) => [x - 33, x - 5, x + 22];
 const parts: string[] = [];
 function box(x: number, y: number, w: number, d: number, z: number, h: number, tone: k.Tone = 'mid', lit = false) {
   const plan = { x, y, w, d, r: Math.min(2, w / 4, d / 4) };
@@ -53,19 +57,22 @@ export const beds = laneX.map(x => {
     art.push(box(cx, 15, 14, 32, 7, 2), box(cx + 2, 17, 10, 28, 9, 2, 'hi'));
     art.push(k.lineSvg(k.planOutline({ x: cx + 4, y: 21, w: 6, d: 19, r: 1 }, 11, projection), { tone: 'faint' }));
   }
-  for (const cx of [x - 33, x + 22]) art.push(box(cx, -8, 11, 12, 4, 20));
+  for (const cx of combX(x)) art.push(box(cx, -8, 11, 12, 4, 20));
   art.push(box(x + 25, 70, 10, 12, 7, 8));
   return art.join('');
 });
-export const combs = laneX.map(x => [x - 33, x + 22].map(cx => {
+/** Engraved identity on each bed's tray floor, matching the node cards' names. */
+export const bedNames = laneX.map((x, index) =>
+  k.faceTextSvg(k.topMatrix([x - 12, 92], 7, projection), `node-${'abc'[index]}`, { size: 4 }));
+export const combs = laneX.map(x => combX(x).map(cx => {
   let art = box(cx + 4, -5, 3, 6, 4, 20) + box(cx, -8, 11, 12, 24, 3, 'hi');
   // Feeler teeth leave the reader housing into the card bed; raising the comb
-  // visibly releases the label check, rather than depicting a taint barrier.
+  // visibly releases that check, rather than depicting a taint barrier.
   for (let tooth = 0; tooth < 3; tooth++) art += box(cx + 1 + tooth * 3, 4, 2, 12, 24, 3, 'hi');
   return art;
 }));
 // Stationary visible-region clips hide each telescoping stem inside its sleeve.
-export const combClips = laneX.map(x => [x - 33, x + 22].map(cx =>
+export const combClips = laneX.map(x => combX(x).map(cx =>
   k.slabOf({ x: cx, y: -8, w: 11, d: 24, r: 0 }, 24, 20, projection, 2).fill));
 export const scoreClips = laneX.map(x =>
   k.slabOf({ x: x + 26, y: 72, w: 8, d: 8, r: 0 }, 15, 25, projection, 2).fill);
