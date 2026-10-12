@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import Figure from '@/components/anatomy/resource-limits-qos/Figure';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import explanation from '../../../content/anatomy/resource-limits-qos.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('resource-limits-qos');
+if (!entry) throw new Error('Missing resource-limits-qos Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

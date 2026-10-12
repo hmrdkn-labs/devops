@@ -1,0 +1,51 @@
+.rl-figure .anatomy-figure-header { flex-wrap: wrap; }
+.rl-purpose { margin: .8rem 0 0; font-size: .92rem; overflow-wrap: anywhere; }
+.rl-phone-only { display: none; }
+.rl-stage { position: relative; min-width: 0; }
+.rl-tag {
+  position: absolute; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap;
+  padding: .1rem .5rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface);
+  color: var(--ink); font: .72rem var(--mono); line-height: 1.5;
+}
+.rl-tag.rl-pod { transform: translate(-50%, -100%); border-color: var(--accent); background: var(--accent-soft); }
+.rl-tag.rl-object { color: var(--muted); }
+.rl-blade[data-off] { display: none; }
+.rl-figure .anatomy-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem .75rem; align-items: end; }
+.rl-figure .anatomy-controls label, .rl-figure .anatomy-controls button { min-width: 0; max-width: 100%; }
+.rl-figure .anatomy-controls .rl-wide { grid-column: 1 / -1; }
+.rl-figure .anatomy-controls select { width: 100%; min-width: 0; }
+.rl-figure .anatomy-controls label:has(> input[type='checkbox']) { flex-wrap: nowrap; }
+.rl-figure .anatomy-controls input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; min-height: 0; padding: 0; flex-shrink: 0; }
+.rl-figure .anatomy-controls :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.rl-cards { display: grid; gap: .6rem; margin-top: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.rl-card { min-width: 0; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+.rl-card p { margin: .2rem 0; overflow-wrap: anywhere; }
+.rl-fact { font-size: .85rem; color: var(--muted); }
+.rl-badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+.rl-ledger-scroll { margin-top: 1rem; overflow-x: auto; max-width: 100%; }
+.rl-ledger { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.rl-ledger caption { text-align: left; font: .8rem var(--mono); color: var(--muted); padding-bottom: .3rem; }
+.rl-ledger th, .rl-ledger td { padding: .35rem .5rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.rl-ledger th[scope='row'], .rl-ledger td:nth-child(2) { white-space: nowrap; }
+.rl-facts { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.rl-caption { font-size: .9rem; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  /* Phone order: controls, then the ChangeReport, then the candidate card, then the object and the ledgers. */
+  .rl-figure { display: flex; flex-direction: column; gap: .5rem; }
+  .rl-figure > .anatomy-figure-header { order: 0; }
+  .rl-purpose { order: 1; margin: 0; font-size: .88rem; }
+  .rl-phone-only { display: inline; }
+  .rl-stage svg { height: 280px; }
+  .rl-figure .anatomy-controls label:not(.rl-wide) { font-size: .82rem; }
+  .rl-figure > .anatomy-controls { order: 2; gap: .45rem .6rem; }
+  .rl-figure > .anatomy-change { order: 3; margin: 0; }
+  .rl-cards { order: 4; display: flex; flex-direction: column; gap: .5rem; margin: 0; }
+  .rl-card[data-object='pod'] { order: -1; }
+  .rl-stage { order: 5; }
+  .rl-ledger-scroll { order: 6; margin: 0; }
+  .rl-details { order: 7; }
+  .rl-tag.rl-object { display: none; }
+  .rl-tag { font-size: .65rem; }
+  .rl-ledger { font-size: .78rem; }
+  .rl-ledger th, .rl-ledger td { padding: .3rem .35rem; }
+}
