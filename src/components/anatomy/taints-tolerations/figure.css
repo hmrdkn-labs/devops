@@ -1,11 +1,35 @@
 .tt-figure .anatomy-figure-header { flex-wrap: wrap; }
+.tt-purpose { margin: .8rem 0 0; font-size: .92rem; overflow-wrap: anywhere; }
+.tt-stage { position: relative; min-width: 0; }
+.tt-tag {
+  position: absolute; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap;
+  padding: .1rem .5rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface);
+  color: var(--ink); font: .72rem var(--mono); line-height: 1.5;
+}
+.tt-tag.tt-pod { transform: translate(-50%, -100%); border-color: var(--accent); background: var(--accent-soft); }
+.tt-tag.tt-node[data-absent] { color: var(--muted); border-style: dashed; }
 .tt-figure .anatomy-controls label { min-width: 0; max-width: 100%; }
-.tt-figure .anatomy-controls select { width: 100%; max-width: 22rem; }
+.tt-figure .anatomy-controls select { width: 100%; max-width: 24rem; }
 .tt-figure .anatomy-controls input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.tt-figure .anatomy-controls label:has(> input[type='checkbox']) { flex-wrap: nowrap; }
 .tt-figure .anatomy-controls :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.tt-figure .anatomy-readout, .tt-facts { overflow-wrap: anywhere; }
-.tt-facts { font-size: .85rem; color: var(--muted); }
-.tt-facts p { margin-block: .6rem; }
-.tt-caption { font-size: .9rem; }
-.tt-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-@media (max-width: 480px) { .tt-figure .anatomy-controls label { width: 100%; } }
+.tt-cards { display: grid; gap: .6rem; margin-top: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.tt-card { min-width: 0; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+.tt-card p { margin: .2rem 0; overflow-wrap: anywhere; }
+.tt-card[data-absent] { opacity: .65; }
+.tt-fact { font-size: .85rem; color: var(--muted); }
+.tt-badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+.tt-ledger { margin-top: 1rem; min-width: 0; }
+.tt-match-scroll { margin-top: 1rem; overflow-x: auto; max-width: 100%; }
+.tt-match { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.tt-match caption { text-align: left; font: .8rem var(--mono); color: var(--muted); padding-bottom: .3rem; }
+.tt-match th, .tt-match td { padding: .35rem .5rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.tt-match th[scope='row'], .tt-match td:nth-child(3) { white-space: nowrap; }
+.tt-facts { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.tt-caption { font-size: .9rem; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .tt-figure .anatomy-controls label { width: 100%; }
+  .tt-match { font-size: .78rem; }
+  .tt-match th, .tt-match td { padding: .3rem .35rem; }
+  .tt-tag { font-size: .65rem; }
+}
