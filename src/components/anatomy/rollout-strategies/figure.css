@@ -38,6 +38,16 @@
 .release-ledger li { display: grid; gap: .3rem; border: 1px solid var(--line); border-radius: 8px; padding: .6rem .7rem; font: .8rem var(--mono); overflow-wrap: anywhere; }
 .release-badges { display: flex; flex-wrap: wrap; gap: .3rem; }
 .release-retired { margin: .6rem 0 0; font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (min-width: 1100px) {
+  /* Workbench: the key sits under the object; the status block packs tighter beside it. */
+  .release-figure .anatomy-bench-object .release-key { margin-top: .6rem; }
+  .release-figure .anatomy-bench-panel .release-status { margin-top: .6rem; }
+  .release-figure .anatomy-bench-panel .release-traffic { margin-top: .5rem; }
+  .release-figure .anatomy-bench-panel .release-beds { margin-top: .6rem; }
+  .release-figure .anatomy-bench-panel .release-bed { padding: .6rem .75rem; }
+  .release-figure .anatomy-bench-panel .release-counts { margin-bottom: .5rem; }
+  .release-figure .anatomy-bench-panel .release-slots li { min-height: 1.7rem; }
+}
 @media (max-width: 480px) {
   /* Controls form two columns: the two selects share the first row, buttons pair up after them. */
   .release-figure .anatomy-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .4rem; margin-top: .6rem; }
