@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import Figure from '@/components/anatomy/persistent-storage/Figure';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import explanation from '../../../content/anatomy/persistent-storage.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('persistent-storage');
+if (!entry) throw new Error('Missing persistent-storage Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

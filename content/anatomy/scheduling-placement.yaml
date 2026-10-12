@@ -1,12 +1,12 @@
 schema_version: 1
 slug: scheduling-placement
 title: "Scheduling placement: requests before ranking"
-summary: Operate a capacity comparator bench to filter CPU and memory budgets, score feasible nodes,
-  and separate assignment from node execution.
+summary: "A Pod's CPU and memory requests must fit a node's unrequested budget. Filter both budgets, score only feasible nodes, and keep binding separate from node execution."
 module: Scheduling
-order: 3
-revision: 1
-verified_at: 2026-10-11
+section: scheduling
+order: 1
+revision: 2
+verified_at: 2026-10-12
 unit_ids:
   - fpp:kubernetes-scheduling-placement
   - fpp:scheduling-resources-health
@@ -16,7 +16,13 @@ objective_ids:
 sources:
   - title: Kubernetes Scheduler
     url: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/
+  - title: Scheduler Configuration
+    url: https://kubernetes.io/docs/reference/scheduling/config/
   - title: Resource Management for Pods and Containers
     url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   - title: Reserve Compute Resources for System Daemons
     url: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+  - title: Pod Lifecycle
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: Pod Conditions
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-condition/

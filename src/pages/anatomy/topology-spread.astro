@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import Figure from '@/components/anatomy/topology-spread/Figure';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import explanation from '../../../content/anatomy/topology-spread.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('topology-spread');
+if (!entry) throw new Error('Missing topology-spread Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

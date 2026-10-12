@@ -1,0 +1,71 @@
+.ladder-figure .anatomy-figure-header { flex-wrap: wrap; }
+.ladder-figure :is(button, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ladder-figure select { max-width: 100%; }
+.ladder-figure .ladder-lamp-ring { fill: var(--surface); stroke: var(--anatomy-lo); stroke-width: .6; }
+.ladder-figure .ladder-lamp-fill { fill: var(--anatomy-hi); stroke: none; }
+.ladder-figure .ladder-ready { fill: var(--accent); stroke: var(--accent); stroke-width: .6; }
+.ladder-figure .ladder-leader { fill: none; stroke: var(--anatomy-mid); stroke-width: .8; stroke-linecap: round; }
+.ladder-purpose { margin: .8rem 0 0; font-size: .95rem; overflow-wrap: anywhere; }
+
+/* The stage is a container, so labels switch to their short text on narrow stages (phones). */
+.ladder-stage { position: relative; min-width: 0; container-type: inline-size; }
+.ladder-figure .ladder-stage svg { max-height: none; }
+.ladder-tag {
+  position: absolute; pointer-events: none; white-space: nowrap;
+  padding: .05rem .4rem; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface);
+  color: var(--ink); font: .68rem/1.4 var(--mono);
+}
+.ladder-tag > span, .ladder-long > span { display: block; }
+.ladder-tag.ladder-rung { transform: translate(calc(-100% - 8px), -50%); border-radius: 999px; color: var(--muted); }
+.ladder-tag.ladder-rung[data-read='true'] { color: var(--ink); border-color: var(--anatomy-hi); }
+.ladder-tag.ladder-pod { transform: translate(8px, -50%); border-color: var(--accent); background: var(--accent-soft); }
+.ladder-tag.ladder-container { transform: translate(-50%, 6px); }
+.ladder-tag.ladder-node { transform: translate(calc(-100% - 6px), -50%); }
+.ladder-tag.ladder-service { transform: translate(8px, -50%); }
+.ladder-tag > .ladder-short { display: none; }
+@container (max-width: 560px) {
+  .ladder-tag > .ladder-long { display: none; }
+  .ladder-tag > .ladder-short { display: block; }
+  .ladder-tag.ladder-rung { padding: 0 .2rem 0 0; border: 0; background: none; font-size: .62rem; line-height: 1; }
+}
+.ladder-legend { margin-top: .6rem; }
+.ladder-picker { margin-top: .9rem; }
+.ladder-picker label { min-width: 0; }
+.ladder-rungs { min-width: 0; margin: .9rem 0 0; padding: .6rem .7rem; border: 1px solid var(--line); border-radius: 10px; }
+.ladder-rungs legend { padding: 0 .3rem; font: .8rem var(--mono); color: var(--muted); }
+/* One column on phones so every rung name is complete; three columns on wider screens. */
+.ladder-rungs ol { display: grid; grid-template-columns: minmax(0, 1fr); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+@media (min-width: 640px) { .ladder-rungs ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem .5rem; } }
+.ladder-rungs li { display: flex; align-items: center; flex-wrap: nowrap; gap: .4rem; min-width: 0; }
+.ladder-rungs button { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: .4rem .6rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); color: var(--ink); font-size: .92rem; text-align: left; white-space: normal; overflow-wrap: anywhere; cursor: pointer; }
+.ladder-rungs button:disabled { cursor: default; opacity: .6; }
+.ladder-rungs .anatomy-badge { flex: 0 0 auto; font-size: .72rem; }
+.ladder-status { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; margin-top: .9rem; font: .85rem var(--mono); color: var(--muted); }
+.ladder-status p { margin: 0; overflow-wrap: anywhere; }
+.ladder-actions { display: grid; gap: .7rem; margin-top: .9rem; min-width: 0; }
+.ladder-action { display: grid; gap: .3rem; min-width: 0; }
+.ladder-action button, .ladder-actions > button { min-height: 44px; padding: .5rem .8rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); color: var(--ink); cursor: pointer; text-align: left; }
+.ladder-action button:disabled { cursor: default; opacity: .6; }
+.ladder-note { margin: 0; font-size: .82rem; color: var(--muted); overflow-wrap: anywhere; }
+.ladder-lock { margin: 0; font-size: .86rem; color: var(--muted); overflow-wrap: anywhere; }
+.ladder-grid { display: grid; gap: 1rem; margin-top: 1.2rem; min-width: 0; }
+@media (min-width: 900px) { .ladder-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+.ladder-objects { display: grid; gap: .6rem; min-width: 0; }
+.ladder-object { min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; background: var(--surface-subtle); }
+.ladder-object h3 { font-size: .95rem; margin: 0 0 .5rem; overflow-wrap: anywhere; }
+.ladder-object code { font: .82rem var(--mono); }
+.ladder-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; margin: 0; }
+.ladder-counts > div { display: grid; gap: .1rem; min-width: 0; }
+.ladder-counts dt { font: .72rem var(--mono); color: var(--muted); }
+.ladder-counts dd { margin: 0; font: .95rem var(--mono); overflow-wrap: anywhere; }
+.ladder-retired { margin: .6rem 0 0; font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.ladder-owners { margin: 0; padding: 0; list-style: none; display: grid; gap: .3rem; font: .8rem var(--mono); overflow-wrap: anywhere; }
+.ladder-ledger { margin-top: 1.2rem; min-width: 0; }
+.ladder-ledger h3 { font-size: 1rem; margin-bottom: .6rem; }
+.ladder-ledger ol { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.ladder-ledger li { display: grid; gap: .3rem; border: 1px solid var(--line); border-radius: 8px; padding: .6rem .7rem; font: .8rem var(--mono); min-width: 0; overflow-wrap: anywhere; }
+.ladder-ledger li ul { margin: 0; padding: 0 0 0 .9rem; list-style: disc; }
+.ladder-hint { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .ladder-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

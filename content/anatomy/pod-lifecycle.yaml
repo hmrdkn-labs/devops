@@ -1,0 +1,25 @@
+schema_version: 1
+slug: pod-lifecycle
+title: "Pod lifecycle and health probes: Running is not Ready"
+summary: Follow one Pod through binding, container start, startup, liveness and readiness probes, and restartPolicy, and see which signal restarts a container, which removes a Pod from Service endpoints, and which replaces the Pod object.
+module: Kubernetes Resources
+section: workloads
+order: 1
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-pod-model
+  - fpp:scheduling-resources-health
+objective_ids:
+  - fpp:kubernetes-pod-model/lifecycle
+  - fpp:kubernetes-pod-model/ownership
+  - fpp:scheduling-resources-health/probe-semantics
+sources:
+  - title: "Kubernetes: Pod Lifecycle"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: "Kubernetes: Liveness, Readiness, and Startup Probes"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/probes/
+  - title: "Kubernetes: Configure Liveness, Readiness and Startup Probes"
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  - title: "Kubernetes: Pods (Pod update and replacement)"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/

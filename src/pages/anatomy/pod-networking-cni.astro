@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import Figure from '@/components/anatomy/pod-networking-cni/Figure';
+import explanation from '../../../content/anatomy/pod-networking-cni.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('pod-networking-cni');
+if (!entry) throw new Error('Missing pod-networking-cni Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

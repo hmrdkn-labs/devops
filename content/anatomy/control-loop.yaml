@@ -1,0 +1,27 @@
+schema_version: 1
+slug: control-loop
+title: "The control loop: desired state, observed state and writes through the API"
+summary: A controller compares a stored spec with the Pods it observes, makes one API write toward agreement and reports status. Drift is repaired by the next pass, not by replaying events.
+module: Kubernetes Fundamentals
+section: big-picture
+order: 4
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-control-loop
+objective_ids:
+  - fpp:kubernetes-control-loop/reconciliation
+  - fpp:kubernetes-control-loop/api-state
+sources:
+  - title: "Kubernetes: Controllers"
+    url: https://kubernetes.io/docs/concepts/architecture/controller/
+  - title: "Kubernetes: Objects in Kubernetes (spec and status)"
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/
+  - title: "Kubernetes: API concepts (list, watch and 410 Gone)"
+    url: https://kubernetes.io/docs/reference/using-api/api-concepts/
+  - title: "Kubernetes: ReplicaSet API reference (status fields)"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/apps/replica-set-v1/
+  - title: "Kubernetes: ObjectMeta reference (generation, generateName, ownerReferences)"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/definitions/object-meta-v1-meta/
+  - title: "Kubernetes: Cluster architecture (kubelet and kube-controller-manager)"
+    url: https://kubernetes.io/docs/concepts/architecture/

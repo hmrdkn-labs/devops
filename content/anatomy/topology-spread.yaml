@@ -1,0 +1,23 @@
+schema_version: 1
+slug: topology-spread
+title: "Topology spread: count per domain, then compare"
+summary: "Spread one workload's Pods across zones or nodes by counting matching Pods per domain. DoNotSchedule filters on maxSkew; ScheduleAnyway only ranks. The rule applies when a Pod is placed, never afterwards."
+module: Scheduling
+section: scheduling
+order: 5
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-scheduling-placement
+  - fpp:kcna-scheduling-review
+objective_ids:
+  - fpp:kubernetes-scheduling-placement/feasibility
+  - fpp:kubernetes-scheduling-placement/policy
+  - fpp:kcna-scheduling-review/placement-policy
+sources:
+  - title: "Kubernetes: Pod Topology Spread Constraints"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+  - title: "Kubernetes: Kubernetes Scheduler"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/
+  - title: "Kubernetes: Well-Known Labels, Annotations and Taints"
+    url: https://kubernetes.io/docs/reference/labels-annotations-taints/

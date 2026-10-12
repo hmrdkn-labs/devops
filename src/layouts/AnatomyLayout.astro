@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import type { AnatomyPage } from '@/lib/anatomy/types';
+import { anatomyPages, anatomySections } from '@/lib/anatomy/catalog';
 import { unitsById } from '@/lib/content/catalog';
 import '../styles/anatomy.css';
 
@@ -15,12 +16,17 @@ const objectives = new Set(units.flatMap((unit) => unit.metadata.objectives.map(
 for (const id of entry.objectiveIds) {
   if (!objectives.has(id)) throw new Error(`Anatomy page ${entry.slug} references unknown objective ${id}`);
 }
+const section = anatomySections.find((candidate) => candidate.id === entry.section)!;
+const position = anatomyPages.findIndex((page) => page.slug === entry.slug);
+const previous = position > 0 ? anatomyPages[position - 1] : undefined;
+const next = position >= 0 && position < anatomyPages.length - 1 ? anatomyPages[position + 1] : undefined;
+const sectionTitle = (page: AnatomyPage) => anatomySections.find((candidate) => candidate.id === page.section)!.title;
 ---
 <BaseLayout title={entry.title} description={entry.summary} canonicalPath={'/anatomy/' + entry.slug + '/'} activeSection="practice">
   <article class="shell anatomy-page" data-anatomy-page={entry.slug}>
     <header class="anatomy-page-heading">
       <a class="anatomy-back" href="/anatomy/">← All Anatomy explainers</a>
-      <p class="eyebrow">KCNA · {entry.module} · Anatomy</p>
+      <p class="eyebrow">Kubernetes map · {section.title} · {position + 1} of {anatomyPages.length}</p>
       <h1>{entry.title}</h1>
       <p class="lede">{entry.summary}</p>
     </header>
@@ -29,6 +35,10 @@ for (const id of entry.objectiveIds) {
       <p class="anatomy-fixture-note">An original teaching model, not a live cluster. Exploring it does not record mastery or change your progress.</p>
     </section>
     <section class="anatomy-explanation" aria-label="Explanation below the object"><slot /></section>
+    <nav class="anatomy-sequence" aria-label="Kubernetes map reading order">
+      {previous ? <a rel="prev" href={'/anatomy/' + previous.slug + '/'}><span>← Previous · {sectionTitle(previous)}</span><strong>{previous.title}</strong></a> : <span />}
+      {next && <a rel="next" href={'/anatomy/' + next.slug + '/'}><span>Next · {sectionTitle(next)} →</span><strong>{next.title}</strong></a>}
+    </nav>
     <footer class="anatomy-learning-links">
       <h2>Keep learning</h2>
       <ul>{units.map((unit) => <li><a href={'/learn/' + unit.metadata.slug + '?mode=reference'}>{unit.metadata.title}</a></li>)}</ul>

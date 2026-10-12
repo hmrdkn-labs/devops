@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import Figure from '@/components/anatomy/dns-ingress/Figure';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import explanation from '../../../content/anatomy/dns-ingress.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('dns-ingress');
+if (!entry) throw new Error('Missing dns-ingress Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

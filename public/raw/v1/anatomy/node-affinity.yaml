@@ -4,9 +4,10 @@ title: "Node affinity: filter before preference"
 summary: Read a label sorter to combine nodeSelector and required affinity, score only feasible
   nodes, and preserve a running assignment after labels change.
 module: Scheduling
-order: 5
-revision: 1
-verified_at: 2026-10-11
+section: scheduling
+order: 3
+revision: 2
+verified_at: 2026-10-12
 unit_ids:
   - fpp:kubernetes-scheduling-placement
 objective_ids:
@@ -19,3 +20,5 @@ sources:
     url: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   - title: "Kubernetes: Scheduling Framework"
     url: https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/
+  - title: "Kubernetes: Scheduler Configuration"
+    url: https://kubernetes.io/docs/reference/scheduling/config/

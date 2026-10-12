@@ -1,0 +1,45 @@
+.api-figure .anatomy-figure-header { flex-wrap: wrap; }
+.api-stage { position: relative; max-width: 760px; margin-inline: auto; }
+.api-labels { position: absolute; inset: 0; pointer-events: none; }
+.api-label {
+  position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; padding: .15rem .35rem; border-radius: 5px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--ink); line-height: 1.2; white-space: nowrap;
+  font-size: .72rem;
+}
+.api-label b { font-family: var(--mono); font-weight: 600; }
+.api-label i { font-style: normal; font-family: var(--mono); color: var(--muted); }
+.api-label-gate { border: 1px solid var(--line-strong); }
+.api-sockets i { letter-spacing: .04em; color: var(--ink); }
+.api-lamp { fill: var(--surface); stroke: var(--anatomy-lo); stroke-width: .8; }
+.api-lamp[data-state='pass'] { fill: var(--success); stroke: var(--success); }
+.api-lamp[data-state='fail'] { fill: var(--danger); stroke: var(--danger); }
+.api-figure .api-controls { display: grid; gap: .75rem; margin-top: .6rem; }
+.api-selects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+.api-selects label { display: grid; gap: .25rem; min-width: 0; font-size: .86rem; }
+.api-selects select { width: 100%; min-width: 0; min-height: 44px; }
+.api-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+.api-actions button { min-width: 0; width: 100%; min-height: 44px; padding: .5rem .6rem; font-size: .9rem; overflow-wrap: anywhere; }
+.api-actions button:last-child { grid-column: 1 / -1; }
+.api-figure :is(button, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.api-status { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.api-figure .anatomy-badge { white-space: normal; text-align: left; line-height: 1.35; }
+.api-figure .anatomy-change { margin-top: .6rem; }
+.api-ledger { margin-top: .9rem; min-width: 0; }
+.api-ledger h3 { font-size: 1rem; margin-bottom: .25rem; }
+.api-owner { font-size: .9rem; margin: 0 0 .5rem; overflow-wrap: anywhere; }
+.api-ledger ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.api-ledger li { display: flex; flex-wrap: wrap; gap: .15rem .8rem; font-size: .88rem; min-width: 0; }
+.api-ledger li strong { flex-basis: 100%; font-family: var(--mono); overflow-wrap: anywhere; }
+.api-ledger p:last-child, .api-hint { font-size: .85rem; color: var(--muted); }
+@media (min-width: 720px) {
+  .api-selects { grid-template-columns: repeat(2, minmax(0, 15rem)); justify-content: start; }
+  .api-actions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .api-actions button:last-child { grid-column: auto; }
+  .api-ledger li strong { flex: 0 0 22ch; white-space: nowrap; }
+}
+@media (max-width: 719px) {
+  .api-figure .anatomy-change dl { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .api-figure .anatomy-change dl > div { display: grid; gap: 0; }
+  .api-figure .anatomy-change dt { font-size: .8rem; }
+  .api-figure .anatomy-badge { font-size: .76rem; }
+}

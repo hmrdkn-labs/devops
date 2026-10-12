@@ -1,0 +1,28 @@
+schema_version: 1
+slug: autoscaling
+title: "Autoscaling: the HPA writes a number, it does not place Pods"
+summary: Measure CPU against requests, watch the HPA write spec.replicas, then see why new Pods can still wait for a node that another controller must add.
+module: Scaling
+section: security-scaling
+order: 2
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:cloud-native-architecture-principles
+  - fpp:scheduling-resources-health
+objective_ids:
+  - fpp:cloud-native-architecture-principles/scale
+  - fpp:scheduling-resources-health/requests-limits
+sources:
+  - title: "Kubernetes: Horizontal Pod Autoscaling"
+    url: https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/
+  - title: "Kubernetes: Autoscaling Workloads"
+    url: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+  - title: "Kubernetes: Vertical Pod Autoscaling"
+    url: https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/
+  - title: "Kubernetes: ReplicaSet"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+  - title: "Kubernetes: Node Autoscaling"
+    url: https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/
+  - title: "Kubernetes: HorizontalPodAutoscaler Walkthrough"
+    url: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/

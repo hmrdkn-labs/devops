@@ -1,0 +1,43 @@
+.pl-figure .anatomy-figure-header { flex-wrap: wrap; }
+.pl-figure .anatomy-controls label { min-width: 0; max-width: 100%; }
+.pl-figure .anatomy-controls select { max-width: 100%; }
+.pl-figure .anatomy-controls input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.pl-figure :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Chips sit in the empty margins either side of the object, never on it. They wrap rather than clip. */
+.pl-stage { position: relative; container-type: inline-size; }
+.pl-chips { position: absolute; inset: 0; pointer-events: none; }
+.pl-chip {
+  position: absolute;
+  transform: translateY(-50%);
+  max-width: 20%;
+  padding: .1rem .35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: clamp(.5rem, 1.1cqi, .7rem);
+  line-height: 1.35;
+}
+.pl-chip-line { display: block; white-space: nowrap; }
+.pl-chip[data-chip='pod'] { left: 1.5%; top: 17%; }
+.pl-chip[data-chip='cell'] { left: 1.5%; top: 40%; }
+.pl-chip[data-chip='probes'] { left: 1.5%; top: 50%; }
+.pl-chip[data-chip='endpoint'] { left: 79%; top: 66%; }
+
+/* Phone: the chips would pile up over a small drawing, so the same identity reads as one line above it. */
+.pl-identity { display: none; margin: .6rem 0 0; font: .8rem/1.4 var(--mono); color: var(--ink); overflow-wrap: anywhere; }
+
+.pl-fieldset { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; min-width: 0; margin: 0; padding: .5rem .7rem; border: 1px solid var(--line); border-radius: 10px; }
+.pl-fieldset legend { padding: 0 .3rem; font: .75rem var(--mono); color: var(--muted); }
+.pl-actions { display: flex; flex-wrap: wrap; gap: .5rem; width: 100%; }
+.pl-ledger { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: .4rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.pl-ledger li { min-width: 0; }
+
+@media (max-width: 640px) {
+  .pl-chips { display: none; }
+  .pl-identity { display: block; }
+  .pl-figure .anatomy-controls label { width: 100%; }
+  .pl-fieldset { width: 100%; }
+}

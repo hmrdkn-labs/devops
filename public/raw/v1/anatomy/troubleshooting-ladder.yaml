@@ -1,0 +1,37 @@
+schema_version: 1
+slug: troubleshooting-ladder
+title: "Troubleshooting from symptom to cause: read before you change"
+summary: Localize a failing Pod or Service with an evidence ladder of read-only observations, from the status word down to the owner that wrote the fact, before you change the one object that owns the fault.
+module: Operations
+section: operations
+order: 2
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:troubleshoot-process-to-pod
+  - fpp:cloud-native-release-debugging
+objective_ids:
+  - fpp:troubleshoot-process-to-pod/evidence-ladder
+  - fpp:troubleshoot-process-to-pod/cross-layer
+  - fpp:cloud-native-release-debugging/evidence
+sources:
+  - title: "Kubernetes: Debug Pods"
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/
+  - title: "Kubernetes: Debug Running Pods"
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/
+  - title: "Kubernetes: Debug Services"
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/
+  - title: "Kubernetes: Determine the Reason for Pod Failure"
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/
+  - title: "Kubernetes: Pod Lifecycle"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: "Kubernetes: Images (ImagePullBackOff and imagePullSecrets)"
+    url: https://kubernetes.io/docs/concepts/containers/images/
+  - title: "Kubernetes: Assign Memory Resources to Containers and Pods"
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/
+  - title: "Kubernetes: Persistent Volumes"
+    url: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+  - title: "Kubernetes: Deployments (rolling update surge and unavailability)"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - title: "Kubernetes: Service"
+    url: https://kubernetes.io/docs/concepts/services-networking/service/

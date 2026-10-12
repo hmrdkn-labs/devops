@@ -4,9 +4,10 @@ title: "Replica reconciliation: replace an instance, preserve intent"
 summary: A cartridge bench separates Pod replacement, replica-count scaling and template rollouts.
   Follow the Deployment–ReplicaSet–Pod ownership boundary one event at a time.
 module: Kubernetes Resources
-order: 2
-revision: 1
-verified_at: 2026-10-11
+section: workloads
+order: 3
+revision: 2
+verified_at: 2026-10-12
 unit_ids:
   - fpp:kubernetes-labels-replicasets
   - fpp:kubernetes-deployments-rollouts

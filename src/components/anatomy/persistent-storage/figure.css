@@ -1,0 +1,49 @@
+.pv-figure .anatomy-figure-header { flex-wrap: wrap; }
+.pv-figure .pv-purpose { font-size: .92rem; color: var(--muted); overflow-wrap: anywhere; margin-block: .5rem; }
+
+/* The stage is capped in width so its aspect, and therefore the tag percentages, match the SVG box exactly. */
+.pv-stage { position: relative; max-width: 42rem; margin-inline: auto; }
+.pv-stage svg { max-height: none; }
+.pv-tags { position: absolute; inset: 0; pointer-events: none; }
+.pv-tag {
+  position: absolute; white-space: pre-line; padding: .15rem .45rem; border-radius: 4px; line-height: 1.25;
+  font: 600 .72rem/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: currentColor; background: var(--surface); border: 1px solid var(--border);
+}
+.pv-tag[data-align='start'] { transform: translate(0, -50%); }
+.pv-tag[data-align='center'] { transform: translate(-50%, -50%); }
+.pv-tag[data-align='end'] { transform: translate(-100%, -50%); }
+
+/* Screen readers always get the identities; sighted users get them as tags above 720px and as a strip below. */
+.pv-identity {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .pv-tags { display: none; }
+  .pv-identity {
+    position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal;
+    display: flex; flex-wrap: wrap; gap: .2rem .7rem; margin: .4rem 0 0; padding: 0; list-style: none;
+    font: .78rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted);
+  }
+}
+
+.pv-key { margin-block: .5rem; font-size: .85rem; color: var(--muted); }
+.pv-key summary { cursor: pointer; }
+.pv-key .anatomy-legend { margin-top: .4rem; }
+
+.pv-settings { display: grid; gap: .6rem 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); margin-top: .75rem; }
+.pv-settings label { min-width: 0; display: grid; gap: .25rem; font-size: .9rem; }
+.pv-settings select { width: 100%; max-width: 100%; min-width: 0; }
+.pv-figure .anatomy-controls :is(button, select, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 480px) {
+  .pv-settings { grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .pv-settings label { font-size: .8rem; }
+  .pv-settings select { font-size: .8rem; }
+}
+
+.pv-objects { list-style: none; margin: .75rem 0; padding: 0; display: grid; gap: .45rem; }
+.pv-objects li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .6rem; min-width: 0; }
+.pv-objects code { overflow-wrap: anywhere; }
+.pv-ledger, .pv-caption { font-size: .9rem; color: var(--muted); overflow-wrap: anywhere; }
+.pv-figure .anatomy-readout { overflow-wrap: anywhere; }

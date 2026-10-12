@@ -1,0 +1,27 @@
+schema_version: 1
+slug: service-endpoints
+title: "Services and endpoints: a stable name over changing Pods"
+summary: Keep one Service address while Pods come and go, and see why only Ready Pods matching the selector receive traffic.
+module: Networking
+section: networking
+order: 1
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:services-dns-ingress
+  - fpp:kubernetes-networking-request-path
+objective_ids:
+  - fpp:services-dns-ingress/service-endpoints
+  - fpp:services-dns-ingress/external-routing
+  - fpp:kubernetes-networking-request-path/service-path
+sources:
+  - title: "Kubernetes: Service"
+    url: https://kubernetes.io/docs/concepts/services-networking/service/
+  - title: "Kubernetes: EndpointSlices"
+    url: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/
+  - title: "Kubernetes: Virtual IPs and Service Proxies"
+    url: https://kubernetes.io/docs/reference/networking/virtual-ips/
+  - title: "Kubernetes: Pod Lifecycle (readiness)"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: "Kubernetes: ReplicaSet (isolating Pods from a ReplicaSet)"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/

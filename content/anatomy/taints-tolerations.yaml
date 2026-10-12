@@ -1,12 +1,13 @@
 schema_version: 1
 slug: taints-tolerations
 title: "Taints and tolerations: permission is not placement"
-summary: Lift a NoSchedule inspection gate with a matching toleration, then discover why resource
-  feasibility and another eligible node still matter.
+summary: Keep ordinary Pods off a batch-reserved node. A NoSchedule taint restricts, a toleration only
+  permits, and free CPU and other candidates are still checked separately.
 module: Scheduling
-order: 4
-revision: 1
-verified_at: 2026-10-11
+section: scheduling
+order: 2
+revision: 2
+verified_at: 2026-10-12
 unit_ids:
   - fpp:kubernetes-scheduling-placement
   - fpp:kcna-scheduling-review
@@ -17,5 +18,7 @@ objective_ids:
 sources:
   - title: "Kubernetes: Taints and Tolerations"
     url: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+  - title: "Kubernetes: Kubernetes Scheduler"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/
   - title: "Kubernetes: Resource Management for Pods and Containers"
     url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/

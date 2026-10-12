@@ -70,13 +70,18 @@ reviews plus the next unfinished unit, exposes module state, separates the four
 readiness evidence dimensions, and surfaces weak objectives without introducing
 a second content tree.
 
-`/anatomy/` adds original animated-object companions for Kubernetes component
-responsibilities, replica reconciliation, scheduling requests, taints/tolerations,
-and node selectors/affinity. Each object sits above a standalone explanation,
-misconception, practical observation, and transfer exercise. Explore them from
-KCNA, Practice, mental models, or related unit pages; unit links open a new tab
-so the current learning draft stays intact. These fixtures never contact a
-cluster or write learning progress.
+`/anatomy/` is a 25-page Kubernetes teaching map, read high level → detailed in
+seven sections: big picture and the API, workloads, scheduling, networking,
+configuration and storage, security and scaling, and operating/troubleshooting.
+Each page puts an original animated object above a standalone explanation with
+an original YAML example, misconceptions, read-only `kubectl` observations, and a
+transfer exercise. Every interaction reports what changed, who caused it, why,
+and what has not happened yet; identities and per-object state sit next to the
+object, and a live manifest panel highlights the YAML fields the last
+interaction depended on. Pages show their place in the map with previous/next
+links. Explore them from KCNA, Practice, mental models, or related unit pages;
+unit links open a new tab so the current learning draft stays intact. These
+fixtures never contact a cluster or write learning progress.
 
 Anatomy explanations and metadata are portable Markdown/YAML under
 `content/anatomy/`, included in raw content and the ZIP. Geometry and interaction

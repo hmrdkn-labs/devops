@@ -1,106 +1,125 @@
-## The problem: allowed is not selected
+## The big picture
 
-A node can have spare resources yet be inappropriate for a particular workload. A **taint** places a restriction on a node. A **toleration**, stored in a Pod specification, lets that Pod tolerate a matching restriction. It does not reserve resources, attract the Pod to that node, or guarantee assignment.
+Ordinary Pods must stay off **node-a**, the node reserved for batch work, even when node-a has spare CPU. An administrator puts a **taint** on the Node: `dedicated=batch:NoSchedule`. A workload author gives the batch Pod a **toleration** in its Pod spec that matches that taint. The scheduler then decides with three independent questions: does the Pod tolerate node-a's taint, does node-a have enough free CPU for the request, and is node-a the best of the eligible candidates?
 
-The apparatus above is an original teaching fixture, not a recording of a cluster. Its two inspection lanes stand for two candidate nodes. The first lifting blade represents the taint filter; the second is an independent resource filter. The highlighted cartridge is one newly created, unassigned Pod. Changing any condition starts a fresh placement scenario, not a migration of an already assigned Pod.
+A toleration only **permits** a node. It does not attract the Pod to that node, reserve capacity on it, or guarantee assignment. Assignment is still not Running. Attraction by labels is a separate mechanism, covered in [Node affinity](/anatomy/node-affinity/), and resource feasibility is a separate filter, covered in [Scheduling and placement](/anatomy/scheduling-placement/).
 
-## Actors and ownership
+The apparatus above is an original teaching fixture, not a recording of a cluster. Its two inspection lanes are two candidate nodes, **node-a** (rear, batch-reserved) and **node-b** (front, alternate). The highlighted cartridge is one unassigned Pod, `report-batch-N`. A change made before any run edits that pending Pod in place. After a run, the next change creates a new unassigned Pod with the next name. A bound Pod is never migrated.
 
-- A cluster administrator or a Kubernetes component may set taints on a Node object. Workload authors specify tolerations in their Pod specifications, often through a controller's Pod template.
-- The scheduler evaluates unassigned Pods against candidate nodes. Hard filters determine eligibility; scoring influences choice among eligible nodes; binding records the assignment.
-- The node's kubelet and runtime handle container setup and execution after assignment. The scheduler does not start containers. **Created, assigned, and Running are different boundaries.**
+## Who owns what
 
-The gate order makes the two conditions easy to inspect. It is not a claim about plugin execution order, nor a physical model of Kubernetes internals.
+- **Cluster administrator** (or a tool acting for one) sets taints on the Node object. The taint restricts every Pod that would be placed on that node.
+- **Workload author** writes tolerations in the Pod spec, often through a controller's Pod template. The toleration grants permission for one taint; it does not choose a node.
+- **kube-scheduler** watches for unassigned Pods, filters candidate nodes against hard requirements (taints and resource requests here), scores the survivors, and binds the winner by recording the decision with the API server. It does not start containers.
+- **kubelet and container runtime** on the chosen node start the containers. Running and Ready come from that node's work, not from the scheduler.
 
-## Control-to-state map
+## How it works
 
-Node A has the optional taint `dedicated=batch:NoSchedule`. The Pod requests **600m CPU** and **256Mi memory**. Available capacity here means allocatable capacity minus already committed requests, not current utilization.
+1. **Pod created, unassigned.** `spec.nodeName` is unset. The Pod requests 600m CPU and 256Mi memory. The scheduler reads node taints and Pod tolerations only when it filters.
+2. **Taint filter on node-a.** The toleration is compared with the taint field by field. `key` must equal `dedicated`, or be empty (only with `Exists`). With `Equal`, `value` must equal `batch`; with `Exists`, the value is not compared. `effect` must equal `NoSchedule`, or be empty to match any effect. The taint is tolerated only when no field mismatches. An untainted node passes without any toleration.
+3. **Capacity filter on node-a, independent of step 2.** The request is compared with free allocatable CPU: 800m when enough, 400m when not. The fixture computes this verdict even when the taint blocks, so the two outcomes are separate. Requests, not live usage, drive the decision.
+4. **Node-b, if present.** It is untainted with 1000m free, so it is eligible. Among eligible nodes the fixture's fixed score picks node-b (20 against node-a's 10). No toleration adds score.
+5. **Binding or no placement.** A winner is bound by writing `spec.nodeName`. If no node is eligible, the Pod stays Pending; the scheduler does not force it onto a rejected node.
+6. **Not yet.** Assigned is not Running. The kubelet on node-a would start the container after binding. The fixture never shows container startup.
 
-| Control | What changes | Consequence |
-| --- | --- | --- |
-| Toleration profile | The Pod's one toleration, or its absence | A matching toleration removes this taint's objection; a wrong key, value, or effect does not |
-| Node A: NoSchedule taint | Whether that one node taint exists | Removing it removes this taint filter's rejection, but does not change capacity |
-| Node A: enough CPU | Available CPU for requests: 800m or 400m | 600m fits 800m, not 400m, regardless of toleration |
-| Node B: available | Whether the untainted alternate candidate participates | B fits the requests and has the higher illustrative score |
-| Attempt / Replay placement | Moves the Pod cartridge through the evaluated gates | Rejected candidates do not receive an assignment; selected candidates do |
-| Reset | Restores absent toleration, tainted A, enough CPU, and unavailable B | The initial Pod is created but unassigned |
+The cartridge stops at the first closed gate for node-a, which is a teaching shortcut. The check order is not plugin order.
 
-Controls temporarily disable while a finite movement settles. There are no timers racing a second placement attempt, and no automatic tour. Reduced motion reaches the same final state immediately.
+## YAML example
 
-### What counts as a match?
-
-With `Equal`, the key and value must match. With `Exists`, the key must match but the value is not tested; do not supply a value for this operator. The effect must match unless the toleration's effect is empty, which matches all effects for the matching key/value condition. An empty key with `Exists` matches all keys and values, still subject to the effect condition.
-
-For this fixture, the matching `Equal` profile is:
+The fixture renders these two manifests from its state. This is the matching configuration: node-a tainted, the Pod's toleration `Equal`, and 800m free. The Node block is read back from the API, not something you apply; `status` is written by the cluster. The Pod block is a valid manifest.
 
 ```yaml
-tolerations:
-  - key: dedicated
-    operator: Equal
-    value: batch
-    effect: NoSchedule
+apiVersion: v1
+kind: Node
+metadata:
+  name: node-a
+spec:
+  taints:
+  - key: dedicated       # field 1 the taint filter compares
+    value: batch         # field 2; compared only for Equal tolerations
+    effect: NoSchedule   # field 3; NoSchedule is the only effect modelled
+status:
+  allocatable:
+    cpu: 2000m
+  # fixture only: other Pods request 1200m of the 2000m, so 800m is free
 ```
 
-The wrong-effect profile is deliberately `NoExecute`: it does **not** match a `NoSchedule` taint. A similarly spelled key is not a match either. The fixture exposes `Equal`, `Exists`, and their empty-key/effect cases; feature-gated numeric operators are outside its scope.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: report-batch-1
+spec:
+  tolerations:           # permission only; never a placement instruction
+  - key: dedicated       # must equal the taint key, or be empty with Exists
+    operator: Equal      # Equal compares value; Exists must omit value
+    value: batch
+    effect: NoSchedule   # must equal the taint effect, or be empty
+  containers:
+  - name: report
+    image: registry.example.com/report:1.4
+    resources:
+      requests:
+        cpu: 600m        # compared with free CPU by the capacity filter
+        memory: 256Mi
+```
 
-If a real node has several taints, a toleration for one does not erase the others. Any remaining untolerated `NoSchedule` taint still excludes the node from ordinary scheduler placement.
+The fields that drive the figure are the taint's `key`, `value` and `effect`; the toleration's `key`, `operator`, `value` and `effect`; and `requests.cpu` on the Pod, compared with the free CPU in the Node's status. The fixture's comment stands in for the sum of other Pods' requests. After a run, the Pod panel adds `#` comments with each field's verdict and highlights the fields of each failed check; when every check passes, it highlights every compared field.
 
-## Try three causal changes
+## Try these changes
 
-1. Start with the absent toleration and attempt placement. Node A's first blade stays down, node B is unavailable, and the Pod remains **unscheduled**.
-2. Choose **Matching Equal**, keep enough CPU enabled, and attempt again. Node A becomes eligible and is assigned. This means placement only, not proof that any container is Running.
-3. Disable **enough CPU** with the matching toleration still present. The first blade opens, but the capacity blade closes. Without B, the Pod remains unscheduled. Now enable B: it can be assigned there instead.
+1. **No toleration, then Run placement.** The taint row fails with "no toleration", the CPU check still passes, and node-a is not chosen. Expected: the Pod remains unassigned (Pending). Expected change report: taint rejects, capacity fits.
+2. **Equal, then Run placement.** Every field row matches and the Pod is bound to node-a. Expected: `spec.nodeName` is node-a, and the badge says assigned but not Running.
+3. **Wrong effect: NoExecute, then Run placement.** The key and value match but the effect differs. Expected change report: "effect: Pod tolerates NoExecute, node-a taint is NoSchedule", and the Pod stays unscheduled.
+4. **Equal, then uncheck "enough free CPU", then Run placement.** The taint check passes, and the capacity check fails separately. Expected: the Pod stays unscheduled, and the change report says the taint permits and CPU is short.
+5. **Equal, then check "node-b present", then Run placement.** Both nodes are eligible and node-b wins the fixed score. Expected: `report-batch-N` is bound to node-b, and node-a's taint check still shows as passing. The toleration gave node-a no bonus.
 
-Finally make both nodes eligible. B still wins the fixture's fixed score of 20 over A's 10. The toleration gives A no bonus. These scores are intentionally illustrative, not Kubernetes defaults or a prediction of a real scheduler's scoring plugins.
+## Misconceptions
 
-## Three effects, three different consequences
-
-| Taint effect | Untolerated consequence | Existing Pods |
-| --- | --- | --- |
-| `NoSchedule` | Excludes the node from new ordinary scheduler placements | Does not itself evict Pods already there |
-| `PreferNoSchedule` | A soft preference to avoid the node, not a hard prohibition | Does not itself evict Pods |
-| `NoExecute` | Prevents new placement and also affects Pods already bound there | Untolerating Pods are evicted; matching tolerations can allow staying indefinitely or for `tolerationSeconds` |
-
-The animation models **NoSchedule only**. It does not simulate eviction or a soft preference. For `NoExecute`, a matching toleration with no `tolerationSeconds` allows staying indefinitely with respect to that taint; a specified duration limits how long the Pod tolerates it. Removing the taint before that duration expires prevents eviction due to that taint. Other reasons for Pod termination still exist.
-
-## Assumptions and analogy limits
-
-Both candidate nodes are otherwise ready and schedulable. There is one optional taint on A, none on B, and no label, affinity, storage, topology, admission, priority, or preemption constraint. Memory always fits: 1024Mi available versus 256Mi requested. A's CPU availability is the independent variable; B, when enabled, has 1000m CPU available. The Pod has one simple container, without init-container accounting or Pod overhead.
-
-B's unavailable switch is a fixture condition, not an invented Kubernetes taint. The model does not run cluster commands, persist learner data, or claim live verification. A cartridge arriving in a tray illustrates assignment; it does not show container startup or a running workload moving from one node to another. Directly setting `.spec.nodeName` bypasses the scheduler and is outside this fixture, so do not treat the NoSchedule blade as a universal execution firewall.
-
-## Misconception and practical tip
-
-**Misconception:** “I added the toleration, so this Pod must land on the dedicated node.”
-
-**Correction:** The node can now survive that taint filter; it can still fail another hard condition or lose to another eligible candidate. For a dedicated-node policy, taints restrict who may enter while a selector or required node affinity can constrain where the intended workload may go. They answer different questions; neither manufactures CPU or memory capacity. Broad empty-key or empty-effect tolerations permit more than a narrowly scoped one, so use them deliberately.
+- **Wrong:** "I added the toleration, so this Pod lands on the dedicated node." **Correct:** the toleration removes only that taint's objection. The capacity filter, other candidates and scoring still decide, so a tolerated node can still lose.
+- **Wrong:** "A toleration attracts the Pod or reserves the node." **Correct:** a toleration permits. Attraction is a separate concern, expressed with node labels and affinity.
+- **Wrong:** "`NoSchedule` evicts Pods already running on the node." **Correct:** NoSchedule affects new placements only. Eviction is the `NoExecute` effect, which this fixture does not model.
+- **Wrong:** "An empty key or effect is harmless shorthand." **Correct:** an empty effect matches any effect for that key, and an empty key with `Exists` matches every key. These are advanced, broad permissions and should be used deliberately.
+- **Wrong:** "Assigned means Running." **Correct:** binding sets `spec.nodeName`. The kubelet must still start the containers, and the Pod must become Ready.
 
 ## Safe read-only observation
 
-Against a cluster you are authorized to inspect, these commands read state only:
+Run these only against a cluster you are authorized to inspect. They read state and change nothing:
 
 ```sh
-kubectl get node NODE_NAME -o jsonpath='{.spec.taints}'
-kubectl get pod POD_NAME -n NAMESPACE -o jsonpath='{.spec.tolerations}{"\n"}{.spec.nodeName}{"\n"}'
-kubectl describe pod POD_NAME -n NAMESPACE
-kubectl describe node NODE_NAME
+kubectl get node node-a -o jsonpath='{.spec.taints}{"\n"}'
+kubectl get pod report-batch-1 -n NAMESPACE -o jsonpath='{.spec.tolerations}{"\n"}{.spec.nodeName}{"\n"}'
+kubectl describe pod report-batch-1 -n NAMESPACE
+kubectl describe node node-a
 ```
 
-Replace the names with real objects. Compare the complete taint and toleration fields. Pod events can report untolerated taints or insufficient resources; node description can show allocatable resources and allocated requests. A missing `.spec.nodeName` supports “not assigned”; a present value supports assignment, not Running. `Pending` alone does not distinguish unscheduled from assigned-but-waiting.
+Compare the taint's and the toleration's `key`, `value` and `effect` field by field. The Pod's events can report an untolerated taint or insufficient CPU. The node description shows allocatable resources and requests already allocated. An empty `.spec.nodeName` supports "not assigned". A set value supports "assigned", not Running. `Pending` alone does not say which filter failed.
 
-**Limit:** These are snapshots and events can expire. A toleration match alone cannot establish that every other filter passed. Node allocation summaries and separate API reads are not an atomic scheduler snapshot; they cannot prove why a candidate lost scoring. This page has not executed these commands against a live cluster.
+**Limit:** these are snapshots, and events expire. A matching toleration does not prove the other filters passed. Node summaries and separate API reads are not one atomic scheduler snapshot, and they cannot explain why a candidate lost the score.
 
 ## Predict and transfer
 
-A has `dedicated=batch:NoSchedule` and only 400m CPU available. A new Pod requests 600m and has `key: dedicated`, `operator: Exists`, `effect: NoSchedule`. B is untainted and has 1000m available. Which nodes remain eligible, and does the toleration prefer A?
+Node-a has `dedicated=batch:NoSchedule` and only 400m CPU free. The new Pod requests 600m and has `key: dedicated`, `operator: Exists`, `effect: NoSchedule`. Node-b is untainted with 1000m free.
 
-**Prediction:** A passes the taint check but fails CPU feasibility. B remains eligible. The toleration does not prefer A. If B is unavailable, the Pod remains unscheduled rather than being forced onto A. Now imagine adding the `NoSchedule` taint after an unrelated Pod is already running on A: that effect alone does not evict the existing Pod. Changing it to `NoExecute` would require a separate eviction analysis.
+**Prediction:** node-a passes the taint filter, because `Exists` does not test the value and the key and effect match. Node-a fails the CPU filter, which is independent of the toleration. Node-b remains eligible. The toleration does not prefer node-a. If node-b were absent, the Pod would remain unscheduled rather than being forced onto node-a.
 
 Continue with [Kubernetes scheduling and placement constraints](/learn/kubernetes-scheduling-placement?mode=reference) and [the Scheduling quiz companion](/learn/kcna-scheduling-review?mode=reference). This explanation supports their existing feasibility and placement-policy objectives; exploring the object does not record mastery.
 
+## Assumptions and limits
+
+- **Scope is NoSchedule only.** The fixture does not model `NoExecute` (which evicts Pods already bound to a node: untolerated Pods are evicted, tolerated Pods stay, and `tolerationSeconds` bounds how long a tolerated Pod stays). It does not model `PreferNoSchedule`, which is a soft preference the scheduler tries to honour rather than a hard filter. It does not model the numeric `Gt` and `Lt` operators, which sit behind a feature gate.
+- **One taint on node-a.** Real nodes can carry several taints, and any untolerated `NoSchedule` taint still excludes the node.
+- **Fixture numbers.** Node-a has 2000m allocatable; other Pods request 1200m (800m free) or 1600m (400m free). Node-b is untainted with 1000m free. Memory fits on both nodes (1024Mi free, 256Mi requested). The Pod has one container and no overhead or init containers. There are no labels, affinity, topology, priority or preemption constraints.
+- **Node names are shared across the scheduling section** (node-a, node-b), but the numbers here belong only to this fixture. [Scheduling and placement](/anatomy/scheduling-placement/) uses its own.
+- **Score is illustrative.** The fixed score (20 against 10) is not a Kubernetes default or a prediction of real scoring plugins. Real plugin scores and tie handling are not modelled; the scheduler documentation describes choosing the highest-scoring feasible node.
+- **Pod identity.** A change before any run edits the pending Pod and keeps its name. After a run, each change creates a new unassigned Pod with the next name. The fixture does not model editing or moving a bound Pod.
+- **Scheduler bypass is out of scope.** Setting `.spec.nodeName` directly bypasses the scheduler, so NoSchedule is not a universal execution firewall.
+- The model does not run cluster commands, persist learner data, or claim live verification.
+
 ## Authoritative sources
 
-Public claim review: **2026-10-11**. This date records documentation review, not cluster observation.
+Public documentation review: **2026-10-12**. This date records documentation review, not cluster observation.
 
-- [Kubernetes: Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) — matching rules, effects, multiple taints, and the direct-node-assignment boundary.
-- [Kubernetes: Resource Management for Pods and Containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — resource requests versus runtime usage and limits.
+- [Kubernetes: Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) — matching rules, empty key and effect, NoSchedule, NoExecute, PreferNoSchedule, multiple taints, and the direct `nodeName` boundary.
+- [Kubernetes: Kubernetes Scheduler](https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/) — filtering, scoring and binding.
+- [Kubernetes: Resource Management for Pods and Containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — requests drive scheduling, while limits are enforced later by the kubelet.

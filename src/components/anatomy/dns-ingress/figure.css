@@ -1,0 +1,53 @@
+.nw-figure .anatomy-figure-header { flex-wrap: wrap; }
+.nw-figure .nw-controls { display: grid; gap: .8rem; margin-top: 1rem; }
+.nw-figure .nw-group { display: grid; gap: .5rem; min-width: 0; margin: 0; padding: .7rem .9rem; border: 1px solid var(--line); border-radius: 10px; }
+.nw-figure .nw-group legend { padding: 0 .3rem; font: .8rem var(--mono); color: var(--muted); }
+.nw-figure .nw-group label { min-width: 0; max-width: 100%; }
+.nw-figure .nw-group select { width: 100%; max-width: 30rem; min-height: 44px; }
+.nw-figure .nw-group input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.nw-figure .nw-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.nw-figure .anatomy-controls button, .nw-figure .nw-group select, .nw-figure .nw-group input:focus-visible { outline-offset: 3px; }
+.nw-figure :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.nw-figure .anatomy-readout { overflow-wrap: anywhere; }
+.nw-legend { margin-top: .6rem; }
+.nw-legend li { min-width: 0; overflow-wrap: anywhere; }
+
+/* Identity labels sit in clear space on the drawing. Below 640px the SVG renders them under 9px, so they hide and the status cards carry the same names. */
+.nw-figure .nw-label { font-family: var(--mono); font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+@media (max-width: 639px) { .nw-figure .nw-label { display: none; } }
+
+/* Lamps: on is a filled success disc with a halo; off is a dark ring on the paper. Distinct in both themes, and the title states the state in words. */
+.nw-figure .nw-lamp .nw-halo { fill: none; }
+.nw-figure .nw-lamp .nw-core { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
+.nw-figure .nw-lamp[data-on='on'] .nw-halo { fill: var(--success); opacity: .28; }
+.nw-figure .nw-lamp[data-on='on'] .nw-core { fill: var(--success); stroke: var(--success); }
+
+/* Cords the request card has passed, in accent. */
+.nw-figure .nw-seg { opacity: 0; transition: opacity .2s ease; }
+.nw-figure .nw-seg[data-passed='true'] { opacity: 1; }
+.nw-figure .nw-seg .iso-line { stroke: var(--accent); stroke-width: 2.4; }
+.nw-figure .nw-seg .iso-wire-end { fill: var(--accent); stroke: var(--accent); }
+
+/* The request card: a solid accent cartridge, distinct from every other part. */
+.nw-figure .nw-token .iso-solid[data-lit] > .iso-top { fill: var(--accent); }
+.nw-figure .nw-token .iso-solid[data-lit] > .iso-shade { fill: color-mix(in srgb, var(--accent) 70%, var(--ink)); }
+
+/* Where a stopped run rests: a ✕ in danger colour, with a word in the status and ledger. */
+.nw-figure .nw-stop path { fill: none; stroke: var(--danger); stroke-width: 2.6; stroke-linecap: round; }
+
+.nw-figure .nw-status { display: grid; gap: .7rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+@media (min-width: 720px) { .nw-figure .nw-status { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.nw-card { display: grid; gap: .3rem; align-content: start; min-width: 0; padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+.nw-card strong { overflow-wrap: anywhere; font-family: var(--mono); font-size: .88rem; font-weight: 600; }
+.nw-fact { font-size: .84rem; color: var(--muted); overflow-wrap: anywhere; }
+.nw-card-edge { grid-column: 1 / -1; }
+.nw-edge-facts { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.nw-edge-facts li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; font-size: .88rem; }
+.nw-ledger { margin-top: 1rem; font-size: .9rem; }
+.nw-ledger h3 { margin: 1rem 0 .4rem; font-size: .95rem; }
+.nw-steps { display: grid; gap: .35rem; margin: 0; padding-left: 1.4rem; }
+.nw-steps li { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .7rem; min-width: 0; }
+.nw-steps code { overflow-wrap: anywhere; font-size: .82rem; }
+.nw-steps li > span { overflow-wrap: anywhere; min-width: 0; }
+.nw-caption { margin-top: 1rem; font-size: .86rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (max-width: 480px) { .nw-figure .nw-actions button { flex-grow: 1; } }

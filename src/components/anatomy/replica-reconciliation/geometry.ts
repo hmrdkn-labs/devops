@@ -58,7 +58,8 @@ export const chassis = [
 ].join('');
 export const templateKey = box({ x: -147, y: -52, w: 16, d: 23, r: 2 }, 56, 3, 'hi') + box({ x: -143, y: -47, w: 8, d: 13, r: 2 }, 59, 4, 'mid');
 
-export const banks = ([-75, 30] as const).map((y) => {
+export const bedY = [-75, 30] as const;
+export const banks = bedY.map((y) => {
   const bed: k.Plan = { x: -83, y, w: 232, d: 72, r: 4 };
   const supports = [-76, 133].map((x) => box({ x, y: y + 6, w: 10, d: 60, r: 2 }, 0, 3, 'lo')).join('');
   const floor = supports + box(bed, 3, 4, 'lo') + bolts(bed, 7, 5) +
@@ -86,6 +87,12 @@ export const banks = ([-75, 30] as const).map((y) => {
   // Low front sill cannot intersect cartridges: its top is 8, their bottom is 9.
   return { floor, slots, front: box({ x: -82, y: y + 67, w: 230, d: 5, r: 1 }, 7, 1, 'mid') };
 });
+/** Cartridge lid anchor in screen space; the pin and identity label sit on it and move with the cartridge. */
+const lidAnchors = bedY.flatMap((y) => [0, 1, 2, 3].map((slot) => k.iso([-70 + slot * 53 + 17.5, y + 36.5, 46], projection)));
+/** Selected-Pod pin: a diamond above each lid, drawn inside its cartridge so it moves with it. */
+export const selectionPin = lidAnchors.map(([cx, cy]) => `M${cx} ${cy - 7}L${cx + 6} ${cy}L${cx} ${cy + 7}L${cx - 6} ${cy}Z`);
+/** Pod identity anchor above the pin; the figure fills in the Pod UID stand-in when a Pod occupies the slot. */
+export const identityAnchor = lidAnchors.map(([cx, cy]) => ({ x: cx, y: cy - 14 }));
 const ruler: k.Plan = { x: -77, y: 136, w: 223, d: 13, r: 2 };
 const ticks = k.topTicks(-68, 144.1, 10.6, 5, 137, 5, [3, 7], projection);
 export const rulerArt = box(ruler, 0, 4, 'mid') + box(k.insetPlan(ruler, 1), 4, 1, 'lo') +

@@ -1,13 +1,20 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { anatomyPages } from '@/lib/anatomy/catalog';
+import { anatomyPages, anatomySections } from '@/lib/anatomy/catalog';
 import '../../styles/anatomy.css';
 export const prerender = true;
 ---
-<BaseLayout title="KCNA Anatomy" description="Explore original animated objects that make Kubernetes responsibilities and placement rules visible." activeSection="practice">
-  <header class="page-hero shell"><p class="eyebrow">KCNA · Anatomy</p><h1>Make the mechanism visible</h1><p class="lede">Change one condition, watch the object respond, then read the explanation below it. These original teaching models help you reason about Kubernetes—not memorize a picture.</p></header>
-  <div class="shell library-grid anatomy-catalog">
-    {anatomyPages.map((page) => <a class="library-card" href={'/anatomy/' + page.slug + '/'}><span>{page.module} · Interactive object</span><h2>{page.title}</h2><p>{page.summary}</p></a>)}
+<BaseLayout title="Kubernetes Anatomy" description="Explore original animated objects that make Kubernetes components, workloads, scheduling, networking, configuration, storage, and security visible." activeSection="practice">
+  <header class="page-hero shell"><p class="eyebrow">KCNA · Anatomy</p><h1>Make Kubernetes visible</h1><p class="lede">Start with the big picture, then open each mechanism. Change one condition, watch the object respond, read what changed, who caused it, why—and what has not happened yet. Every page ends with a real YAML example.</p></header>
+  <div class="shell anatomy-catalog">
+    {anatomySections.map((section) => {
+      const pages = anatomyPages.filter((page) => page.section === section.id);
+      return pages.length > 0 && <section class="anatomy-catalog-section" aria-labelledby={'anatomy-section-' + section.id}>
+        <h2 id={'anatomy-section-' + section.id}>{section.title}</h2>
+        <p>{section.summary}</p>
+        <div class="library-grid">{pages.map((page) => <a class="library-card" href={'/anatomy/' + page.slug + '/'}><span>{page.module} · Interactive object</span><h3>{page.title}</h3><p>{page.summary}</p></a>)}</div>
+      </section>;
+    })}
   </div>
   <section class="shell narrow"><p>Explorations are untracked. They do not change saved answers, mastery, or review schedules.</p><p><a href="/kcna/">Continue the KCNA learning path</a> · <a href="/models/">Other guided mental models</a></p></section>
 </BaseLayout>

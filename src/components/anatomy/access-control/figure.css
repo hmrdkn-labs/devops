@@ -1,0 +1,32 @@
+.ac-figure .anatomy-figure-header { flex-wrap: wrap; }
+.ac-figure .ac-machine { max-width: 100%; }
+.ac-figure .ac-hint, .ac-figure .ac-caption { font-size: .9rem; color: var(--muted); }
+.ac-figure .ac-gate[data-gate-state='pass'] .iso-top { fill: color-mix(in srgb, var(--accent) 38%, var(--surface)); }
+.ac-figure .ac-gate[data-gate-state='off'] .iso-top { fill: var(--surface-subtle); }
+.ac-figure .ac-gate[data-gate-state='off'] .iso-edge { stroke-dasharray: 2 2; }
+.ac-figure .ac-gate[data-gate-state='fail'] .iso-top { fill: color-mix(in srgb, var(--danger) 40%, var(--surface)); }
+.ac-figure .ac-gate[data-gate-state='unreached'] { opacity: .4; }
+.ac-figure .ac-lamp[data-on='true'] .lamp-off,
+.ac-figure .ac-lamp[data-on='false'] .lamp-on { display: none; }
+.ac-figure .ac-controls { align-items: stretch; }
+.ac-figure .ac-controls label { min-width: 0; max-width: 100%; }
+.ac-figure .ac-controls select { width: 100%; max-width: 24rem; }
+.ac-figure .ac-controls input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.ac-figure .ac-controls :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ac-figure .ac-actions { display: flex; flex-wrap: wrap; gap: .5rem; width: 100%; }
+.ac-figure .ac-actions button { flex: 1 1 8rem; }
+.ac-stages { display: grid; gap: .4rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .9rem; }
+.ac-stages li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .35rem .7rem; padding: .4rem .6rem; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.ac-marker { display: inline-grid; place-items: center; min-width: 2rem; height: 1.6rem; padding: 0 .35rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .8rem; font-weight: 700; }
+.ac-stage-name { font-weight: 700; flex: 1 1 auto; min-width: 0; }
+.ac-stages .anatomy-badge { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.ac-objects { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .4rem .6rem; margin: 1rem 0 0; font-size: .85rem; }
+.ac-objects > div { min-width: 0; padding: .4rem .55rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
+.ac-objects dt { font-weight: 700; color: var(--muted); font-size: .78rem; }
+.ac-objects dd { margin: .2rem 0 0; overflow-wrap: anywhere; }
+.ac-manifests { margin-top: 1rem; }
+.ac-figure .anatomy-manifest pre { white-space: pre; }
+@media (max-width: 480px) {
+  .ac-figure .ac-controls label { width: 100%; }
+  .ac-figure .ac-actions button { width: auto; }
+}
