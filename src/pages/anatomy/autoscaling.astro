@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import Figure from '@/components/anatomy/autoscaling/Figure';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import explanation from '../../../content/anatomy/autoscaling.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('autoscaling');
+if (!entry) throw new Error('Missing autoscaling Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>

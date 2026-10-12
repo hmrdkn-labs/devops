@@ -1,0 +1,29 @@
+.as-figure .anatomy-figure-header { flex-wrap: wrap; }
+.as-figure .as-lamp { fill: var(--anatomy-faint); stroke: var(--anatomy-lo); stroke-width: .4; }
+.as-figure .as-lamp[data-ready='true'] { fill: var(--accent); stroke: var(--accent); }
+.as-figure .iso-line[data-tone='lit'] { stroke-width: .9; }
+.as-figure .as-controls, .as-figure .as-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .6rem; margin-top: .8rem; }
+.as-figure .as-field { display: grid; gap: .3rem; min-width: 0; font-size: .9rem; }
+.as-figure .as-field select { min-height: 44px; width: 100%; padding: .4rem .6rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); color: var(--ink); }
+.as-figure .as-check { display: flex; flex-wrap: nowrap; align-items: center; gap: .5rem; min-width: 0; font-size: .9rem; grid-column: 1 / -1; }
+.as-figure .as-check span { min-width: 0; overflow-wrap: anywhere; }
+.as-figure .as-check input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+.as-figure .as-actions button { min-height: 44px; }
+.as-figure :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.as-figure .anatomy-readout { overflow-wrap: anywhere; }
+.as-ledger { display: grid; gap: .45rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .9rem; overflow-wrap: anywhere; }
+.as-ledger li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; min-width: 0; }
+.as-name { font-family: var(--mono); font-weight: 700; }
+.as-caption { margin: .8rem 0 0; font-size: .85rem; color: var(--muted); }
+.as-figure .as-long { display: inline; }
+.as-figure .as-short { display: none; }
+@media (max-width: 999px) { .as-figure .as-long { display: none; } .as-figure .as-short { display: inline; } }
+@media (max-width: 699px) { .as-figure .as-short text { font-size: 12px; } }
+@media (max-width: 480px) { .as-figure .as-short text { font-size: 13.5px; } }
+@media (max-width: 480px) {
+  .as-figure .as-controls { grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .as-figure .as-actions { grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .as-figure .as-field { font-size: .82rem; }
+  .as-figure .as-field select { font-size: .85rem; }
+  .as-figure .as-actions button { font-size: .85rem; padding-inline: .5rem; }
+}
