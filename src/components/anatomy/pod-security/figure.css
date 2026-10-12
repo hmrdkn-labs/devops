@@ -1,0 +1,78 @@
+/* The figure holds a sticky dock, so it must not clip its children. */
+.ps-figure { overflow: visible; }
+.ps-figure :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ps-figure select { max-width: 100%; }
+.ps-figure .anatomy-figure-header { flex-wrap: wrap; }
+/* Captions and labels are 15 user units: at a 520px-wide SVG (viewBox 760) they render at 10px or more. */
+.ps-figure .ps-zone { font: 600 15px var(--mono); fill: var(--muted); stroke: var(--surface-subtle); stroke-width: 3px; paint-order: stroke; }
+.ps-figure .ps-id { font: 700 15px var(--mono); fill: var(--ink); stroke: var(--surface-subtle); stroke-width: 3px; paint-order: stroke; text-anchor: middle; }
+.ps-figure .ps-knob { font: 700 15px var(--mono); fill: var(--ink); stroke: var(--surface-subtle); stroke-width: 3px; paint-order: stroke; }
+.ps-figure .ps-knob-level { font-weight: 400; fill: var(--muted); }
+.ps-figure .ps-draft { opacity: .85; }
+.ps-figure .ps-draft .iso-edge { stroke-dasharray: 4 3; }
+.ps-figure .ps-stage svg { max-height: 360px; }
+
+.ps-figure .ps-layout { display: grid; gap: 1.2rem; margin-top: .9rem; min-width: 0; }
+.ps-figure .ps-controls { display: grid; gap: .9rem; align-content: start; min-width: 0; }
+.ps-figure .ps-object { display: grid; gap: .6rem; align-content: start; min-width: 0; }
+.ps-figure .ps-dock { display: grid; gap: .5rem; min-width: 0; }
+.ps-figure .ps-dock .anatomy-change { margin: 0; padding: .6rem .8rem; }
+.ps-figure .ps-stage { display: grid; gap: .5rem; min-width: 0; }
+
+.ps-figure .ps-group { min-width: 0; margin: 0; padding: .6rem .8rem; border: 1px solid var(--line); border-radius: 10px; }
+.ps-figure .ps-group legend { padding: 0 .3rem; font: .8rem var(--mono); color: var(--muted); }
+.ps-figure .ps-label-grid { display: grid; gap: .4rem; }
+.ps-figure .ps-label-grid label { display: flex; align-items: center; justify-content: space-between; gap: .5rem; min-height: 40px; min-width: 0; }
+.ps-figure .ps-draft-grid { display: grid; gap: .25rem .8rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+.ps-figure .ps-draft-grid label { display: flex; align-items: center; justify-content: space-between; gap: .5rem; min-height: 40px; min-width: 0; font-size: .9rem; }
+.ps-figure .ps-draft-grid select { max-width: 11rem; min-height: 36px; }
+.ps-figure .ps-draft-grid label.ps-check { justify-content: flex-start; }
+.ps-figure .ps-check input { flex: none; width: 1.1rem; height: 1.1rem; margin: 0; accent-color: var(--accent); }
+.ps-figure .ps-actions { margin-top: 0; }
+
+.ps-figure .ps-status { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; font: .85rem var(--mono); color: var(--muted); }
+.ps-figure .ps-phase { margin: 0; overflow-wrap: anywhere; }
+.ps-figure .ps-badges { display: flex; flex-wrap: wrap; gap: .3rem; margin: 0; padding: 0; list-style: none; }
+
+.ps-figure .ps-legend-wrap { font-size: .8rem; color: var(--muted); }
+.ps-figure .ps-legend-wrap summary { cursor: pointer; min-height: 36px; display: flex; align-items: center; }
+.ps-figure .ps-legend { margin: .3rem 0 0; }
+
+.ps-figure .ps-readout h3 { font-size: .95rem; margin: 0 0 .3rem; }
+.ps-figure .ps-readout dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .8rem; margin: 0; }
+.ps-figure .ps-readout dl > div { display: grid; gap: .15rem; min-width: 0; }
+.ps-figure .ps-readout dt { font: .78rem var(--mono); color: var(--muted); white-space: nowrap; }
+.ps-figure .ps-readout dd { margin: 0; min-width: 0; }
+.ps-figure .ps-part { margin-left: .3rem; font-size: .72rem; color: var(--muted); }
+
+.ps-figure .ps-ledger { min-width: 0; }
+.ps-figure .ps-ledger h3 { font-size: 1rem; margin-bottom: .6rem; }
+.ps-figure .ps-ledger ul { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.ps-figure .ps-ledger li { display: grid; gap: .3rem; border: 1px solid var(--line); border-radius: 8px; padding: .6rem .7rem; font: .8rem var(--mono); min-width: 0; }
+.ps-figure .ps-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .15rem .8rem; margin: 0; }
+.ps-figure .ps-facts > div { display: contents; }
+.ps-figure .ps-facts dt { white-space: nowrap; color: var(--muted); }
+.ps-figure .ps-facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.ps-figure .ps-note, .ps-figure .ps-hint { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+
+@media (min-width: 900px) {
+  /* The object column gets 1.25 of 2 shares, so the SVG is at least 520px wide at 1440. */
+  .ps-figure .ps-layout { grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); align-items: start; }
+  /* Sticky, and short enough (about 780px) to stay on screen beside the controls in a 900px window. */
+  .ps-figure .ps-object { position: sticky; top: 1rem; }
+}
+
+@media (max-width: 899px) {
+  /* One column: the report and pipeline stay pinned at the top while the form is edited. */
+  .ps-figure .ps-layout { display: flex; flex-direction: column; }
+  .ps-figure .ps-object { display: contents; }
+  .ps-figure .ps-dock { position: sticky; top: 0; z-index: 3; order: 0; padding-block: .4rem; background: var(--surface); }
+  .ps-figure .ps-stage { order: 1; }
+  .ps-figure .ps-controls { order: 2; }
+  .ps-figure .ps-readout dl { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .ps-figure .anatomy-controls label { width: 100%; }
+  .ps-figure .anatomy-controls button { flex-basis: 100%; }
+}

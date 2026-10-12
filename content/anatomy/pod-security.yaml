@@ -1,0 +1,31 @@
+schema_version: 1
+slug: pod-security
+title: "Pod security: what a container may do, and who checks it"
+summary: Set one Pod's securityContext against a namespace's Pod Security level, then start it. See which check refuses it, which runtime check refuses it, and what a relabel does to Pods that already run.
+module: Security
+section: security-scaling
+order: 3
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-security-access
+objective_ids:
+  - fpp:kubernetes-security-access/artifact-execution
+  - fpp:kubernetes-security-access/workload
+sources:
+  - title: "Kubernetes: Pod Security Admission"
+    url: https://kubernetes.io/docs/concepts/security/pod-security-admission/
+  - title: "Kubernetes: Pod Security Standards"
+    url: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+  - title: "Kubernetes: Enforce Pod Security Standards with Namespace Labels"
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/
+  - title: "Kubernetes: Configure a Security Context for a Pod or Container"
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  - title: "Kubernetes: Restrict a Container's Syscalls with seccomp"
+    url: https://kubernetes.io/docs/tutorials/security/seccomp/
+  - title: "Kubernetes: Images"
+    url: https://kubernetes.io/docs/concepts/containers/images/
+  - title: "Kubernetes API: Pod (securityContext.runAsNonRoot)"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/
+  - title: "Kubernetes: Pods (fields that may change after creation)"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/
