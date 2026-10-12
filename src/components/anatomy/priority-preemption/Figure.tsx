@@ -495,6 +495,8 @@ export default function Figure() {
   return <div ref={root} class="anatomy-figure pp-figure" aria-label="Pod priority and preemption inspection" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig 05 · Scheduling</span><span>Priority orders the queue; preemption makes room</span></div>
     <p class="pp-purpose"><strong>Goal:</strong> api-pod needs 600m and no node has it. Its priority decides where it sits in the queue and whether it may evict lower-priority Pods. The scheduler picks victims and nominates a node, but binds the Pod only after the victims are gone, and only if nothing better takes the room.</p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="pp-stage">
       <svg class="iso-svg" viewBox={viewBox} role="img" aria-labelledby="pp-title pp-desc">
         <title id="pp-title">Two-rack priority and preemption apparatus</title>
@@ -518,12 +520,6 @@ export default function Figure() {
       <span class="pp-tag pp-fixed pp-queue" style={screenAt(-100, 94, 0)}>queue, head first</span>
       <span class="pp-tag pp-fixed pp-bin" style={screenAt(104, 84, 0)}>removed</span>
     </div>
-    <div class="anatomy-controls pp-actions">
-      <button type="button" disabled={!ready() || !canRun(cluster())} onClick={run}>Run scheduling pass</button>
-      <button type="button" disabled={!ready() || !canFinish(cluster())} onClick={finish}>End grace period</button>
-      <button type="button" disabled={!ready()} onClick={() => configure({ ...initialConfig }, 'reset')}>Reset fixture</button>
-    </div>
-    <ChangeReport change={change()} busy={busy()} />
     <fieldset class="pp-config" disabled={!ready()}>
       <legend>Configure api-pod</legend>
       <label>priority class
@@ -541,7 +537,15 @@ export default function Figure() {
       <label><input type="checkbox" checked={config().pdbReports} onChange={(e) => configure({ ...config(), pdbReports: e.currentTarget.checked }, 'pdbReports')} />PodDisruptionBudget: reports-1 allows no disruption</label>
       <label><input type="checkbox" checked={config().rival} onChange={(e) => configure({ ...config(), rival: e.currentTarget.checked }, 'rival')} />incident-high (1000000) arrives when the grace period ends</label>
     </fieldset>
-    <div class="pp-cards">
+    </div>
+    <div class="anatomy-bench-panel">
+    <div class="anatomy-controls pp-actions">
+      <button type="button" data-anatomy-primary disabled={!ready() || !canRun(cluster())} onClick={run}>Run scheduling pass</button>
+      <button type="button" disabled={!ready() || !canFinish(cluster())} onClick={finish}>End grace period</button>
+      <button type="button" disabled={!ready()} onClick={() => configure({ ...initialConfig }, 'reset')}>Reset fixture</button>
+    </div>
+    <ChangeReport change={change()} busy={busy()} />
+    <div class="pp-cards" data-anatomy-status>
       <section class="pp-card" data-object="node-a">
         <p><strong>node-a</strong> · allocatable {allocatableM}m</p>
         <div class="pp-badges"><For each={nodeBadges('node-a')}>{(b) => <StateBadge tone={b.tone} label={b.label} />}</For></div>
@@ -556,6 +560,8 @@ export default function Figure() {
         <p><strong>api-pod</strong> · 600m · priority {valueOf(config().cls)}</p>
         <div class="pp-badges"><StateBadge tone={apiBadge().tone} label={apiBadge().label} /></div>
       </section>
+    </div>
+    </div>
     </div>
     <div class="pp-match-scroll">
       <table class="pp-ledger">
