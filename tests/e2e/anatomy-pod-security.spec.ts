@@ -162,11 +162,11 @@ test.describe('desktop width', () => {
     const figure = await open(page, 'pod-security');
     await action(figure, 'Apply Pod').click();
     await action(figure, 'Start container').click();
-    // The user's view after pressing Start: the object column is sticky, so both parts stay in the same window.
+    // The user's view after pressing Start: the panel is sticky and the object sits beside it, so both parts stay in the same window.
     const [svg, changed, column] = await Promise.all([
       figure.locator('.ps-stage svg').boundingBox(),
       report(figure).boundingBox(),
-      figure.locator('.ps-object').boundingBox(),
+      figure.locator('.anatomy-bench-panel').boundingBox(),
     ]);
     expect(svg).not.toBeNull();
     expect(changed).not.toBeNull();
