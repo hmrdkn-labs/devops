@@ -1,0 +1,32 @@
+schema_version: 1
+slug: pod-networking-cni
+title: "Pod networking underneath: the CNI plugin gives each Pod its address"
+summary: Follow two Pods across two nodes from sandbox to address to Ready. The CNI plugin wires and addresses each Pod, kube-proxy forwards Service addresses only, and a NetworkPolicy changes traffic only where the installed CNI enforces it.
+module: Kubernetes Networking
+section: networking
+order: 4
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-networking-request-path
+  - fpp:container-network-storage
+objective_ids:
+  - fpp:kubernetes-networking-request-path/boundaries
+  - fpp:container-network-storage/network-boundary
+sources:
+  - title: "Kubernetes: Services, Load Balancing, and Networking"
+    url: https://kubernetes.io/docs/concepts/services-networking/
+  - title: "Kubernetes: Cluster Networking"
+    url: https://kubernetes.io/docs/concepts/cluster-administration/networking/
+  - title: "Kubernetes: Network Plugins"
+    url: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/
+  - title: "Kubernetes: Pod Lifecycle"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: "Kubernetes: Pod API reference"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/core/pod-v1/
+  - title: "Kubernetes: kube-proxy"
+    url: https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/
+  - title: "Kubernetes: EndpointSlices"
+    url: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/
+  - title: "Kubernetes: Network Policies"
+    url: https://kubernetes.io/docs/concepts/services-networking/network-policies/
