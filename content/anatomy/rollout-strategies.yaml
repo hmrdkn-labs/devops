@@ -1,0 +1,24 @@
+schema_version: 1
+slug: rollout-strategies
+title: "Rollouts, rollback, and release strategies: who gets the new Pods"
+summary: "Undo returns to a kept ReplicaSet as a new revision, a stalled rollout is reported but not rolled back, and a release strategy decides which Pods the Service sends requests to."
+module: Workloads
+section: workloads
+order: 5
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-deployments-rollouts
+  - fpp:cloud-native-release-debugging
+objective_ids:
+  - fpp:kubernetes-deployments-rollouts/revision
+  - fpp:cloud-native-release-debugging/strategy
+sources:
+  - title: "Kubernetes: Deployments (rollback, revision history, progress deadline, canary)"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - title: "Kubernetes: Managing Workloads (canary deployments with a track label)"
+    url: https://kubernetes.io/docs/concepts/workloads/management/
+  - title: "Kubernetes: Deploy a Release Using a Canary Deployment"
+    url: https://kubernetes.io/docs/tutorials/stateless-application/canary-deployment/
+  - title: "Kubernetes: Service (selectors and ready endpoints)"
+    url: https://kubernetes.io/docs/concepts/services-networking/service/

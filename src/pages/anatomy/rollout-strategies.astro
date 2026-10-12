@@ -1,0 +1,15 @@
+---
+import AnatomyLayout from '@/layouts/AnatomyLayout.astro';
+import { anatomyPagesBySlug } from '@/lib/anatomy/catalog';
+import Figure from '@/components/anatomy/rollout-strategies/Figure';
+import explanation from '../../../content/anatomy/rollout-strategies.md?raw';
+import { renderMarkdown } from '@/lib/content/render';
+
+export const prerender = true;
+const entry = anatomyPagesBySlug.get('rollout-strategies');
+if (!entry) throw new Error('Missing rollout-strategies Anatomy metadata');
+---
+<AnatomyLayout entry={entry}>
+  <Figure slot="figure" client:load />
+  <div set:html={renderMarkdown(explanation, { scrollContainers: true })} />
+</AnatomyLayout>
