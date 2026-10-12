@@ -10,14 +10,29 @@
 .affinity-sorter .anatomy-readout { margin: 0; overflow-wrap: anywhere; }
 .affinity-candidates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-top: 1rem; }
 .affinity-node { border: 1px solid var(--line); border-radius: 10px; padding: .7rem; min-width: 0; }
-.affinity-node h3 { font: .95rem var(--mono); margin: 0 0 .4rem; }
+.affinity-node-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .6rem; }
+.affinity-node h3 { font: .95rem var(--mono); margin: 0; }
+.affinity-node .affinity-labels { margin: 0; }
 .affinity-node p { font-size: .82rem; margin: .4rem 0; overflow-wrap: anywhere; }
 .affinity-labels code, .affinity-count { font-size: .8rem; }
 .affinity-checks { margin: .5rem 0; padding: 0; list-style: none; font-size: .82rem; }
-.affinity-checks li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .3rem .5rem; padding: .3rem 0; border-top: 1px solid var(--line); }
-.affinity-checks li > span { min-width: 0; overflow-wrap: anywhere; }
-.affinity-verdict { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; font-weight: 600; }
+/* Text and its badge share one inline flow, so the badge sits on the text's last line when it fits. */
+.affinity-checks li { padding: .3rem 0; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+.affinity-checks li > .anatomy-badge { margin-left: .2rem; vertical-align: baseline; }
+.affinity-verdict { font-weight: 600; }
+.affinity-verdict > .anatomy-badge { margin-left: .2rem; font-weight: 400; }
 .affinity-reasons { color: var(--muted); }
+/* Workbench: the Pod row is one line and each node column reads top to bottom without spare padding. */
+@media (min-width: 1100px) {
+  .affinity-sorter .affinity-status { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: .6rem; }
+  .affinity-sorter .affinity-status .anatomy-readout { padding: .3rem .55rem; font-size: .8rem; }
+  .affinity-candidates { gap: .4rem; margin-top: .6rem; }
+  .affinity-node { padding: .4rem; }
+  .affinity-node-head { gap: .1rem .4rem; }
+  .affinity-node p { margin: .2rem 0; line-height: 1.35; }
+  .affinity-checks { margin: .25rem 0; line-height: 1.35; }
+  .affinity-checks li { padding: .2rem 0; }
+}
 @media (max-width: 560px) {
   .affinity-sorter .affinity-purpose { font-size: .85rem; margin-top: .6rem; }
   .affinity-sorter .anatomy-legend { gap: .2rem .8rem; font-size: .78rem; }
@@ -29,8 +44,10 @@
   .affinity-sorter .affinity-rules .affinity-wide { grid-column: 1 / -1; }
   .affinity-sorter .affinity-rules .affinity-pref { grid-row: 1; grid-column: 2; }
   .affinity-sorter .affinity-rules .affinity-check { flex-direction: row; align-items: center; }
+  .affinity-sorter .affinity-rules .affinity-reset { grid-column: 1 / -1; }
   .affinity-sorter .affinity-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .affinity-sorter .affinity-steps button { width: 100%; }
+  .affinity-sorter .affinity-steps button:first-child { grid-column: 1 / -1; }
   .affinity-status { margin-top: .6rem; gap: .4rem; }
   .affinity-candidates { grid-template-columns: 1fr; margin-top: .6rem; }
 }

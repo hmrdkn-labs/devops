@@ -118,6 +118,8 @@ export default function Figure() {
   return <div class="anatomy-figure affinity-sorter" ref={root} aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>FIG 05 · LABEL SORTER</span><span>Filter first. Rank second.</span></div>
     <p class="affinity-purpose">A Pod states hard rules (nodeSelector, required affinity, resource requests) and a soft preference. Filters remove nodes that break a hard rule; only survivors are scored. You write the Pod's rules; administrators write node labels.</p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <svg class="iso-svg" viewBox="0 0 720 420" role="img" aria-labelledby="affinity-svg-title affinity-svg-desc">
       <title id="affinity-svg-title">A three-bed label-reading placement sorter</title>
       <desc id="affinity-svg-desc">Beds engraved node-a, node-b and node-c from left to right. Each bed has three feelers: left for nodeSelector, middle for request capacity, right for required affinity. A feeler lifts only when its own check passed after evaluation. Eligible beds raise a score plunger. The accent cartridge is the Pod; it seats over its assigned node, and changing that node's labels leaves it in place.</desc>
@@ -155,12 +157,14 @@ export default function Figure() {
       <label class="affinity-pref">Preferred zone <select disabled={locked()} value={state().settings.preferredZone} onChange={e => commit('preferredZone', e.currentTarget.value as Settings['preferredZone'])}><option value="east" selected={state().settings.preferredZone === 'east'}>east</option><option value="west" selected={state().settings.preferredZone === 'west'}>west</option></select></label>
       <label>Preference weight <input type="range" min={WEIGHT_MIN} max={WEIGHT_MAX} step="1" disabled={locked()} value={draftWeight()} onInput={e => setDraftWeight(Number(e.currentTarget.value))} onChange={e => commit('weight', Number(e.currentTarget.value))} /><span>{draftWeight()}</span></label>
       <label class="affinity-check"><input type="checkbox" disabled={locked()} checked={state().settings.capacityC} onChange={e => commit('capacityC', e.currentTarget.checked)} /> node-c has request capacity</label>
+      <button type="button" class="affinity-reset" disabled={!hydrated() || moving()} onClick={() => act({ kind: 'reset' })}>Reset fixture</button>
     </div>
+    </div>
+    <div class="anatomy-bench-panel">
     <div class="anatomy-controls affinity-steps" aria-label="Scheduling steps">
-      <button type="button" disabled={!hydrated() || moving() || ['running', 'unscheduled'].includes(state().phase)} onClick={() => act({ kind: 'step' })}>{stepLabels[state().phase] ?? 'Placement finished'}</button>
+      <button type="button" data-anatomy-primary disabled={!hydrated() || moving() || ['running', 'unscheduled'].includes(state().phase)} onClick={() => act({ kind: 'step' })}>{stepLabels[state().phase] ?? 'Placement finished'}</button>
       <button type="button" disabled={!hydrated() || moving() || state().phase !== 'running' || state().relabeled} onClick={() => act({ kind: 'labels' })}>Change running-node labels</button>
       <button type="button" disabled={!hydrated() || moving()} onClick={() => act({ kind: 'replay' })}>Replay same rules</button>
-      <button type="button" disabled={!hydrated() || moving()} onClick={() => act({ kind: 'reset' })}>Reset fixture</button>
     </div>
     <div class="affinity-status">
       <ul class="affinity-lifecycle" aria-label="Pod lifecycle">
@@ -171,10 +175,9 @@ export default function Figure() {
       <p class="anatomy-readout">{readout(state())}</p>
     </div>
     <ChangeReport change={report()} busy={moving()} />
-    <div class="affinity-candidates" aria-label="Node labels and checks">
+    <div class="affinity-candidates" aria-label="Node labels and checks" data-anatomy-status>
       <For each={rows()}>{row => <section class="affinity-node" data-node={row.node.id}>
-        <h3>{row.node.id}</h3>
-        <p class="affinity-labels"><code>disk={row.node.disk}</code> <code>zone={row.node.zone}</code></p>
+        <header class="affinity-node-head"><h3>{row.node.id}</h3><p class="affinity-labels"><code>disk={row.node.disk}</code> <code>zone={row.node.zone}</code></p></header>
         <Show when={state().bound === row.node.id}>
           <p><StateBadge tone={state().phase === 'assigned' ? 'selected' : state().relabeled ? 'info' : 'pass'} label={podHereLabel()} /></p>
         </Show>
@@ -190,6 +193,8 @@ export default function Figure() {
         <p class="affinity-verdict">New placement under current rules: {!evaluated() ? <StateBadge tone="wait" label="not evaluated" /> : row.eligible ? <StateBadge tone="pass" label="Eligible" /> : <StateBadge tone="fail" label="Rejected" />}</p>
         <Show when={evaluated() && !row.eligible}><p class="affinity-reasons">{row.reasons.join('; ')}</p></Show>
       </section>}</For>
+    </div>
+    </div>
     </div>
     <ManifestPanel title={`Pod spec · ${pod()}`} lines={manifest(state())} note="Highlighted lines are the fields the last interaction read or changed." />
     <p class="anatomy-fixture-note">Fixture: three nodes, one Pod at a time. Scores are raw preferred-rule weights; other score plugins and normalization are equal and ties go to the alphabetically first node. Ready, Services, eviction and real kubelet behaviour are not modelled. No live cluster is contacted.</p>
