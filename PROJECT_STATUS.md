@@ -5,7 +5,7 @@
 
 ## Read this first
 
-**Current phase: the 25-page Kubernetes Anatomy map is integrated and locally accepted; PR, protected release and live verification are next.**
+**Current phase: the 25-page Kubernetes Anatomy map is live and verified; all build agents, worktrees and preview servers are cleaned up.**
 
 `/anatomy/` grew from five companions into a high-level → detailed Kubernetes
 teaching map in seven sections: big picture and the API (4), workloads (5),
@@ -42,7 +42,30 @@ re-enabled after motion and 0px horizontal overflow. Known polish items:
 topology-spread and service-endpoints objects are functional but sparse; small
 SVG labels on phones are duplicated in adjacent HTML ledgers.
 
-The previous five-page release record follows and remains historical.
+GitHub CI first failed two phone-fit budgets (`rollout-strategies`,
+`resource-limits-qos`) that had passed on macOS: the Linux runner's DejaVu
+fallback fonts render wider text, much like Android. Forcing Verdana/Courier New
+locally reproduced the exact CI measurements (831.11px, 784.52px); a shared phone
+rule now compacts the change report and controls (14px text, 44px tap targets
+kept), and the whole Anatomy phone suite passed under the wide fonts (208 / 1
+skip / 0 failures) before the budgets were met in CI without loosening them.
+
+Released through [PR #24](https://github.com/hmrdkn-labs/devops/pull/24), merged
+with one commit per page as `a7cd5d299ef20c5d34fee37df3b9c78fd06c8052`. Main CI
+[38199552647](https://github.com/hmrdkn-labs/devops/actions/runs/38199552647)
+passed, and the protected owner-mode
+[`deploy-devops-learning` run 38200201431](https://github.com/hamardikan/hamardikan-infra/actions/runs/38200201431)
+succeeded for that exact source. Live checks on `https://devops.hamardikan.com`:
+all 25 pages in 7 sections return the object, explanation, change report, YAML
+example and map navigation; all 50 raw Markdown/YAML exports match canonical
+content byte for byte; the ZIP matches; health reports `ok`, D1 `ready` and the
+expected content manifest. The read-only Anatomy Playwright suite against
+production passes **413 / 5 intentional skips / 0 failures** on desktop 1440 and
+phone 390, including delayed-hydration inertness on the deployed bundles.
+
+Agent operation lesson (OOM on the first parallel launch, solved by rationing
+Node/Chrome processes rather than agents) is recorded in
+`~/universe/kb/herdr.md`. The previous five-page release record follows and remains historical.
 
 **Five KCNA Anatomy companions are live and verified; owned worker cleanup is complete (2026-10-11).**
 
