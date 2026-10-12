@@ -94,6 +94,32 @@
 .anatomy-manifest mark { background: color-mix(in srgb, var(--accent) 35%, transparent); color: inherit; border-radius: 3px; }
 .anatomy-manifest-note { margin: .3rem 0 0; font-size: .82rem; color: var(--muted); }
 .anatomy-yaml-figure-grid { display: grid; gap: 1rem; }
+/* Workbench: on wide screens the object stays in view on the left while the panel
+   (controls, change report, per-object status) sits beside it, so one interaction and
+   all its evidence fit one screen. Pages opt in with .anatomy-bench / -object / -panel. */
+.anatomy-bench { display: grid; gap: 1rem; }
+.anatomy-bench-object, .anatomy-bench-panel { min-width: 0; }
+.anatomy-bench-panel > :first-child { margin-top: 0; }
+.anatomy-status-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .3rem; }
+.anatomy-status-list > li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .1rem .6rem; padding: .35rem .6rem; border: 1px solid var(--line); border-radius: 8px; min-width: 0; font-size: .85rem; }
+.anatomy-status-list .anatomy-status-detail { grid-column: 1 / -1; color: var(--muted); font-size: .78rem; overflow-wrap: anywhere; }
+.anatomy-panel-heading { margin: .9rem 0 .4rem; font-size: .85rem; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); }
+@media (min-width: 1100px) {
+  .anatomy-stage-section { width: min(1320px, calc(100vw - 3rem)); margin-inline: calc((100% - min(1320px, calc(100vw - 3rem))) / 2); }
+  .anatomy-bench { grid-template-columns: minmax(0, .85fr) minmax(420px, 1.15fr); align-items: start; gap: 1.5rem; }
+  .anatomy-bench-object { position: sticky; top: 4.5rem; }
+  .anatomy-bench-panel .anatomy-change { margin-top: .6rem; }
+  .anatomy-bench-panel .anatomy-controls { margin-top: 0; }
+  /* Status regions with two lists (e.g. objects | owners) sit side by side. */
+  .anatomy-bench-panel .anatomy-status-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 .8rem; align-items: start; }
+  .anatomy-bench-panel .anatomy-change { padding: .6rem .85rem; }
+  .anatomy-bench-panel .anatomy-change dl { margin-top: .3rem; font-size: .875rem; line-height: 1.4; }
+  .anatomy-bench-panel .anatomy-panel-heading { margin: .6rem 0 .3rem; }
+  .anatomy-bench-panel .anatomy-status-list { gap: .25rem; }
+  .anatomy-bench-panel .anatomy-status-list > li { padding: .25rem .5rem; line-height: 1.35; }
+  .anatomy-bench-panel .anatomy-status-list .anatomy-badge { line-height: 1.35; }
+  .anatomy-bench-panel .anatomy-status-detail { line-height: 1.3; }
+}
 @media (min-width: 900px) { .anatomy-yaml-figure-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 @media (max-width: 480px) {
   .anatomy-page { width: calc(100% - 1.5rem); }
