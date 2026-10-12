@@ -58,7 +58,8 @@
   .nw-figure .nw-group select { width: auto; max-width: 100%; }
   /* The panel holds two status columns of named rows, so it takes more of the width than the default bench. */
   .nw-figure .anatomy-bench { grid-template-columns: minmax(0, .72fr) minmax(420px, 1.28fr); }
-  .nw-figure .nw-actions { gap: .45rem; }
-  .nw-figure .nw-actions button { padding: .4rem .65rem; font-size: .92rem; }
+  /* Four actions on one row; long labels wrap inside their own button instead of pushing Reset to a second row. */
+  .nw-figure .nw-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: .45rem; }
+  .nw-figure .nw-actions button { padding: .35rem .6rem; font-size: .88rem; line-height: 1.25; }
 }
 @media (max-width: 480px) { .nw-figure .nw-actions button { flex-grow: 1; } }

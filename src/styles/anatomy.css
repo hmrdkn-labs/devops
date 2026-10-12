@@ -110,6 +110,7 @@
   .anatomy-bench-object { position: sticky; top: 4.5rem; }
   .anatomy-bench-panel .anatomy-change { margin-top: .6rem; }
   .anatomy-bench-panel .anatomy-controls { margin-top: 0; }
+  .anatomy-bench-panel .anatomy-controls button { min-height: 40px; padding: .4rem .7rem; font-size: .92rem; }
   /* Status regions with two lists (e.g. objects | owners) sit side by side. */
   .anatomy-bench-panel .anatomy-status-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 .8rem; align-items: start; }
   .anatomy-bench-panel .anatomy-change { padding: .6rem .85rem; }

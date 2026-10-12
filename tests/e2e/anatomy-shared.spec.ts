@@ -13,8 +13,9 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 800
       await page.setViewportSize(viewport);
       await page.emulateMedia({ reducedMotion: 'reduce' });
       const figure = await open(page, slug);
-      test.skip(await figure.locator('.anatomy-bench').count() === 0, 'page not yet on the workbench layout');
-      const primary = figure.locator('[data-anatomy-primary]').first();
+      await expect(figure.locator('[data-anatomy-primary]')).toHaveCount(1);
+      await expect(figure.locator('[data-anatomy-status]')).toHaveCount(1);
+      const primary = figure.locator('[data-anatomy-primary]');
       await primary.click();
       await expect(figure.locator('.anatomy-change')).toHaveAttribute('aria-busy', 'false');
       await figure.locator('.anatomy-bench').evaluate((bench) => {

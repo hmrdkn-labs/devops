@@ -47,6 +47,11 @@
   .release-figure .anatomy-bench-panel .release-bed { padding: .6rem .75rem; }
   .release-figure .anatomy-bench-panel .release-counts { margin-bottom: .5rem; }
   .release-figure .anatomy-bench-panel .release-slots li { min-height: 1.7rem; }
+  /* Selects share the first row; actions run three to a row beneath them. */
+  .release-figure .anatomy-bench-panel .anatomy-controls { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .4rem; }
+  .release-figure .anatomy-bench-panel .anatomy-controls label { grid-column: span 3; display: grid; gap: .2rem; font-size: .85rem; }
+  .release-figure .anatomy-bench-panel .anatomy-controls button { grid-column: span 2; }
+  .release-figure .anatomy-bench-panel .anatomy-controls :is(button, select) { width: 100%; min-width: 0; min-height: 40px; font-size: .85rem; padding: .35rem .5rem; }
 }
 @media (max-width: 480px) {
   /* Controls form two columns: the two selects share the first row, buttons pair up after them. */

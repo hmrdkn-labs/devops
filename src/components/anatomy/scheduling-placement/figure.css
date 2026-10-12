@@ -24,6 +24,10 @@
 .capacity-node dd { margin: 0; font-family: var(--mono); white-space: nowrap; }
 @media (min-width: 1100px) {
   .capacity-bench .anatomy-bench-panel .anatomy-readout { margin-top: .6rem; padding: .45rem .8rem; }
+  /* Keep each dock's budget on one line beside the readout, even with wider fallback fonts. */
+  .capacity-bench .anatomy-bench-panel .capacity-node { padding: .3rem .6rem; }
+  .capacity-bench .anatomy-bench-panel .capacity-checks { gap: .1rem; }
+  .capacity-bench .anatomy-bench-panel .capacity-node dl { gap: 0 .7rem; font-size: .78rem; }
 }
 @media (max-width: 600px) {
   .capacity-results { grid-template-columns: 1fr; }
