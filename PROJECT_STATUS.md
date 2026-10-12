@@ -1,11 +1,50 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-10-11 · This is the canonical running log. Update it
+> **Last updated:** 2026-10-12 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
 
-**Current phase: five KCNA Anatomy companions are live and verified; owned worker cleanup is complete.**
+**Current phase: the 25-page Kubernetes Anatomy map is integrated and locally accepted; PR, protected release and live verification are next.**
+
+`/anatomy/` grew from five companions into a high-level → detailed Kubernetes
+teaching map in seven sections: big picture and the API (4), workloads (5),
+scheduling (5), networking (4), configuration and storage (2), security and
+scaling (3), operating and troubleshooting (2). The five original pages were
+reworked from the learner review: per-ReplicaSet Desired/Current/Ready/Not Ready
+counts and Pod identity bound to each cartridge; taints/tolerations opens with
+its purpose and compares toleration and taint field by field; node affinity no
+longer lowers label-check indicators on a capacity failure; scheduling scores
+appear only after the scoring step; cluster responsibilities separates the
+Deployment and ReplicaSet controller actions. Twenty new pages cover API objects,
+namespaces, the control loop, Pod lifecycle and probes, workload controllers,
+requests/limits/QoS, rollouts and release strategies, priority and preemption,
+topology spread, Services and endpoints, DNS and ingress, NetworkPolicy, CNI Pod
+networking, ConfigMaps and Secrets, persistent volumes, authentication/RBAC/
+admission, autoscaling, Pod security, observability signals, and troubleshooting.
+
+Every interaction answers one acceptance question through the shared
+`ChangeReport`: what changed, who caused it, why, and what has not happened yet.
+`StateBadge` carries per-object state (text plus symbol) next to the object, and
+`ManifestPanel` renders the YAML from model state, highlighting the fields the
+interaction depended on; each explanation's YAML example matches it. Pages show
+their place in the map and link to the previous and next page.
+
+Built by six wave-1 and three wave-2 Sonnet 5.5 group leads reviewing one Haiku
+5.5 worker per page (1–6 review rounds per page; no Sonnet upgrades were needed),
+integrated one commit per page. Local acceptance on the integrated branch:
+`npm run ci` passes **825 Vitest tests**, zero Astro diagnostics across 280
+files, D1 checks and the production build; the Anatomy Playwright suite passes
+**417 / 5 intentional skips / 0 failures** on desktop 1440 and phone 390 against
+the built Worker. A one-interaction capture of six flagged pages (phone and
+desktop, light/dark) showed all four answers in the change report, controls
+re-enabled after motion and 0px horizontal overflow. Known polish items:
+topology-spread and service-endpoints objects are functional but sparse; small
+SVG labels on phones are duplicated in adjacent HTML ledgers.
+
+The previous five-page release record follows and remains historical.
+
+**Five KCNA Anatomy companions are live and verified; owned worker cleanup is complete (2026-10-11).**
 
 The new `/anatomy/` collection has five original animated-object pages:
 cluster responsibilities, replica reconciliation, scheduling placement,
