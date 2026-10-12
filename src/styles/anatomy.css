@@ -70,6 +70,11 @@
 .anatomy-learning-links { max-width: 76ch; margin: 2.5rem auto 0; border-top: 1px solid var(--line); padding-top: 1rem; }
 .anatomy-catalog { padding-bottom: 3rem; }
 .anatomy-catalog .library-card { text-decoration: none; }
+.anatomy-sequence { max-width: 76ch; margin: 2.5rem auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.anatomy-sequence a { display: grid; gap: .25rem; padding: .8rem 1rem; border: 1px solid var(--line-strong); border-radius: 12px; text-decoration: none; color: var(--ink); min-width: 0; }
+.anatomy-sequence a span { font-size: .8rem; color: var(--muted); }
+.anatomy-sequence a[rel='next'] { text-align: right; grid-column: 2; }
+@media (max-width: 480px) { .anatomy-sequence { grid-template-columns: 1fr; } .anatomy-sequence a[rel='next'] { grid-column: 1; } .anatomy-sequence > span { display: none; } }
 .anatomy-catalog-section { margin-block: 2rem 0; }
 .anatomy-catalog-section > p { max-width: 70ch; color: var(--muted); }
 .anatomy-change { margin: 1rem 0 0; padding: .8rem 1rem; border: 1px solid var(--line-strong); border-left: 3px solid var(--accent); border-radius: 10px; background: var(--surface-subtle); }
