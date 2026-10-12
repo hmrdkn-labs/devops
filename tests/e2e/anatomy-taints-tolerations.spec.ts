@@ -116,7 +116,7 @@ test('controls stay inert until hydration, while the object and explanation stay
   let release!: () => void;
   const pending = new Promise<void>((resolve) => { release = resolve; });
   let held = false;
-  await page.route(/\/_astro\/Figure\.[^/]+\.js$/, async (route) => {
+  await page.route(/(\/_astro\/Figure\.[^/]+\.js|\/anatomy\/taints-tolerations\/Figure(\.tsx)?)(\?.*)?$/, async (route) => {
     held = true;
     await pending;
     await route.continue();
