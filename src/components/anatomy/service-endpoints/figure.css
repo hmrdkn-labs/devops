@@ -34,7 +34,7 @@
 }
 .sv-slice-row[data-reading='outside'] { border-style: dashed; color: var(--muted); }
 .sv-slice-name, .sv-slice-reading { font-family: var(--mono); overflow-wrap: anywhere; }
-.sv-rows { display: grid; gap: .6rem; margin-top: 1rem; }
+.sv-rows { display: grid; gap: .6rem; }
 .sv-row {
   padding: .6rem .7rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle);
   min-width: 0;
@@ -54,6 +54,20 @@
 .sv-figure .sv-row-controls :is(button, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .sv-figure .anatomy-readout { overflow-wrap: anywhere; }
 .sv-caption { font-size: .9rem; color: var(--muted); }
+/* Workbench: the three booths sit side by side under the change report, each a narrow column. */
+@media (min-width: 1100px) {
+  .sv-figure .anatomy-controls label { flex-wrap: nowrap; }
+  .sv-figure .anatomy-controls select { width: auto; }
+  .sv-figure .anatomy-readout { margin-top: .6rem; padding: .5rem .75rem; font-size: .85rem; }
+  .sv-slice-block { margin-top: .6rem; }
+  .sv-rows { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  .sv-row { padding: .4rem .5rem; }
+  .sv-row-head { font-size: .82rem; }
+  .sv-badges { flex-direction: column; align-items: flex-start; gap: .25rem; margin: .35rem 0; }
+  .sv-row-controls { flex-direction: column; align-items: stretch; gap: 0; font-size: .85rem; }
+  .sv-row-controls label { min-height: 36px; }
+  .sv-row-controls button { min-height: 36px; }
+}
 @media (max-width: 480px) {
   .sv-figure .anatomy-controls label { width: 100%; }
   .sv-figure .anatomy-controls select { width: 100%; }
