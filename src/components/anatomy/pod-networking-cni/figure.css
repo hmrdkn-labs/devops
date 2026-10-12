@@ -22,7 +22,8 @@
 .netpod-legend { margin: .6rem 0 0; font-size: .82rem; color: var(--muted); overflow-wrap: anywhere; }
 .netpod-figure .anatomy-controls { align-items: stretch; }
 .netpod-group { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-width: 0; }
-.netpod-status { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: .9rem; }
+.netpod-pod-block { margin-top: .4rem; min-width: 0; }
+.netpod-status { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .netpod-track { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; padding: 0; list-style: none; min-width: 0; }
 .netpod-track li { min-width: 0; }
 .netpod-nodes { display: grid; gap: .75rem; margin-top: .9rem; grid-template-columns: minmax(0, 1fr); }
@@ -34,24 +35,32 @@
 .netpod-node dt { color: var(--muted); }
 .netpod-node dd { margin: 0; min-width: 0; }
 .netpod-pod-line { display: block; font: .8rem var(--mono); overflow-wrap: anywhere; }
-.netpod-empty { font: .8rem var(--mono); color: var(--muted); }
-.netpod-hop-block { margin-top: 1rem; min-width: 0; }
-.netpod-hop-block h3 { font-size: 1rem; margin: 0 0 .4rem; }
-.netpod-probe-head { margin: 0 0 .5rem; font: .85rem var(--mono); color: var(--muted); overflow-wrap: anywhere; }
-.netpod-hops { display: grid; gap: .45rem; margin: 0; padding: 0; list-style: none; }
-.netpod-hops li { display: grid; gap: .2rem; min-width: 0; padding: .5rem .65rem; border: 1px solid var(--line); border-radius: 8px; font-size: .85rem; }
-.netpod-hops li[data-verdict='stop'] { border-color: var(--danger); }
-.netpod-hops li[data-verdict='skip'] { opacity: .7; }
-.netpod-owner, .netpod-hop-detail { color: var(--muted); overflow-wrap: anywhere; }
-.netpod-grid { display: grid; gap: 1rem; margin-top: 1.2rem; min-width: 0; }
-@media (min-width: 900px) { .netpod-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
-.netpod-ledger { min-width: 0; }
-.netpod-ledger h3 { font-size: 1rem; margin: 0 0 .5rem; }
-.netpod-note { font: .8rem var(--mono); font-weight: 400; color: var(--muted); }
-.netpod-ledger ul { display: grid; gap: .45rem; margin: 0; padding: 0; list-style: none; }
-.netpod-ledger li { display: flex; flex-wrap: wrap; gap: .3rem .5rem; align-items: center; min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: .5rem .6rem; font: .8rem var(--mono); overflow-wrap: anywhere; }
+.netpod-empty { margin: 0; font: .8rem var(--mono); color: var(--muted); }
+.netpod-hop-block { min-width: 0; }
+.netpod-probe-head { margin: 0 0 .4rem; font: .85rem var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.netpod-hops > li[data-verdict='stop'] { border-color: var(--danger); }
+.netpod-hops > li[data-verdict='skip'] { opacity: .7; }
+.netpod-owner { color: var(--muted); overflow-wrap: anywhere; }
+.netpod-note { font: .78rem var(--mono); font-weight: 400; color: var(--muted); text-transform: none; letter-spacing: 0; }
+.netpod-ledger li { font: .8rem var(--mono); overflow-wrap: anywhere; }
 .netpod-ledger li[data-retired='true'] { color: var(--muted); border-style: dashed; }
+.netpod-badges { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .3rem; }
 .netpod-hint { margin: .9rem 0 0; font-size: .82rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (min-width: 1100px) {
+  /* In the narrower bench column the node and state tags collide; as on phones, the node cards right under
+     the drawing carry them. The gate state has no card, so its tag sits under the drawing instead. */
+  .netpod-tag.netpod-node, .netpod-tag.netpod-state:not(.netpod-gate-tag) { display: none; }
+  .netpod-tag.netpod-gate-tag { position: static; display: inline-block; transform: none; margin-top: .2rem; }
+  .netpod-figure .netpod-node-controls { margin-top: .7rem; }
+  .netpod-figure .netpod-node-controls button { padding: .45rem .7rem; font-size: .9rem; }
+  .netpod-figure .netpod-node-controls label { flex-wrap: nowrap; }
+  .netpod-figure .netpod-node-controls select { width: auto; }
+  .netpod-nodes { gap: .5rem; margin-top: .6rem; }
+  .netpod-node { padding: .45rem .6rem; }
+  .netpod-node h3 { margin-bottom: .3rem; }
+  .netpod-node dl { gap: .2rem; }
+  .netpod-node dl > div { grid-template-columns: minmax(0, 5.5rem) minmax(0, 1fr); }
+}
 @media (max-width: 480px) {
   .netpod-figure .anatomy-controls label { width: 100%; justify-content: space-between; }
   .netpod-figure .anatomy-controls button { flex-basis: 100%; }
