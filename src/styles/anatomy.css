@@ -16,7 +16,7 @@
   --anatomy-shade-2: color-mix(in srgb, var(--ink) 15%, var(--surface));
   --anatomy-shade-3: color-mix(in srgb, var(--ink) 20%, var(--surface));
   border: 1px solid var(--line); border-radius: var(--radius-surface); background: var(--surface);
-  padding: clamp(.8rem, 2vw, 1.5rem); overflow: hidden;
+  padding: clamp(.8rem, 2vw, 1.5rem); overflow: clip;
 }
 .anatomy-figure svg { display: block; width: 100%; height: auto; max-height: 600px; overflow: visible; }
 .anatomy-figure .iso-fill { fill: var(--anatomy-paper); }
