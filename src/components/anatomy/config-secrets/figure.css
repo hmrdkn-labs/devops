@@ -39,9 +39,8 @@
 .cs-change { margin-top: .5rem; }
 .cs-figure .anatomy-change { margin-top: 0; }
 
-.cs-status { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
-.cs-card { display: grid; gap: .3rem; min-width: 0; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); font-size: .86rem; overflow-wrap: anywhere; }
-.cs-card strong { font-family: var(--mono); font-size: .84rem; }
+.cs-status { margin-top: .6rem; }
+.cs-card strong { font-family: var(--mono); font-size: .84rem; overflow-wrap: anywhere; }
 .cs-card .anatomy-badge { max-width: 100%; white-space: normal; }
 
 .cs-choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
@@ -53,6 +52,14 @@
 .cs-caption { font-size: .9rem; }
 
 .cs-figure .anatomy-yaml-figure-grid { margin-top: 1rem; }
+
+/* Workbench: the panel reads actions, report, then per-object status; the staged template follows. On phones
+   the DOM order keeps the report directly above the staged group, so a staging toggle shows its report. */
+@media (min-width: 1100px) {
+  .cs-figure .anatomy-bench-panel { display: flex; flex-direction: column; }
+  .cs-figure .anatomy-bench-panel .cs-status { order: 1; }
+  .cs-figure .anatomy-bench-panel .cs-staged { order: 2; margin-top: .6rem; }
+}
 
 @media (max-width: 720px) {
   .cs-tags { display: none; }
