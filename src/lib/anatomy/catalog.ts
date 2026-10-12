@@ -10,6 +10,7 @@ export const anatomySections = [
   { id: 'networking', title: 'Networking', summary: 'How traffic finds changing Pods: Services, endpoints, DNS, ingress, and policy.' },
   { id: 'config-storage', title: 'Configuration and storage', summary: 'How Pods receive settings, secrets, and durable data without baking them into images.' },
   { id: 'security-scaling', title: 'Security and scaling', summary: 'Who may change what, and how the cluster adjusts capacity to load.' },
+  { id: 'operations', title: 'Operating and troubleshooting', summary: 'How you observe a running cluster, localize a failure, and restrict what workloads may do.' },
 ] as const;
 export type AnatomySectionId = (typeof anatomySections)[number]['id'];
 
