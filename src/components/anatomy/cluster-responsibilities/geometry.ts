@@ -1,5 +1,5 @@
 import * as k from '@/lib/anatomy/vendor/iso-kit';
-import type { ActorId } from './model';
+import { witnesses, type ActorId, type WitnessId } from './model';
 
 /**
  * Concept → mechanism (written before geometry):
@@ -9,7 +9,7 @@ import type { ActorId } from './model';
  * Node assignment → scheduler selector dial; execution → separate node cartridge.
  * Inspection → a drawer pulls along its own retained rails, without changing API state.
  * Checkpoint → an ordinal carriage on a console ruler, NOT a network packet.
- * Completion → each actor's mechanical witness latch shifts; runtime cartridge seats.
+ * Completion → each owner's witness latch shifts; the controller tray carries two latches; runtime cartridge seats.
  * Analogy limit: real actors coordinate asynchronously through the API, not a serial bus.
  *
  * Purposeful parts inventory (families instantiated below, 40+ actual parts):
@@ -63,7 +63,7 @@ export const foundation = [
   vents(47, -24, 55, 76),
 ].join('');
 
-export interface Assembly { id: ActorId; shelf: string; tray: string; latch: string; }
+export interface Assembly { id: ActorId; shelf: string; tray: string; latches: Array<{ id: WitnessId; svg: string }>; }
 function drawer(id: ActorId, x: number, y: number, width: number, z: number, depth: number): Assembly {
   const floor: k.Plan = { x: x + 7, y: y + 6, w: width - 14, d: depth - 10, r: 2 };
   const board: k.Plan = { x: floor.x + 5, y: floor.y + 4, w: floor.w - 10, d: floor.d - 12, r: 1 };
@@ -92,7 +92,8 @@ function drawer(id: ActorId, x: number, y: number, width: number, z: number, dep
       slab(cartridge, z + 5, 7, 'hi') + slab(k.insetPlan(cartridge, 2), z + 12, 1, 'lo') +
       screws(cartridge, z + 13, 5) + vents(cartridge.x + 12, cartridge.y + 5, 18, z + 13) + '</g>';
   }
-  const guide = { x: floor.x + floor.w - 15, y: frontY - 6, w: 11, d: 4, r: 1 };
+  const owners = witnesses.filter((witness) => witness.drawer === id);
+  const guides = owners.map((_, i) => ({ x: floor.x + floor.w - 15 - i * 14, y: frontY - 6, w: 11, d: 4, r: 1 }));
   const tray = slab(floor, z, 2, 'mid') +
     [board.x + 3, board.x + board.w - 6].map((sx) => box(sx, board.y + 2, 3, board.d - 4, z + 2, 2, 'lo')).join('') +
     slab(board, z + 4, 1, 'lo') + electronics + screws(board, z + 5, 3) +
@@ -100,9 +101,9 @@ function drawer(id: ActorId, x: number, y: number, width: number, z: number, dep
     box(floor.x + 15, frontY + 3, 3, 4, z + 4, 3) +
     box(floor.x + 42, frontY + 3, 3, 4, z + 4, 3) +
     box(floor.x + 15, frontY + 7, 30, 3, z + 4, 3, 'hi') +
-    slab(guide, z + 2, 1, 'lo');
-  const latch = box(guide.x, guide.y, 4, 4, z + 3, 3, 'hi');
-  return { id, shelf, tray, latch };
+    guides.map((guide) => slab(guide, z + 2, 1, 'lo')).join('');
+  const latches = owners.map((owner, i) => ({ id: owner.id, svg: box(guides[i]!.x, guides[i]!.y, 4, 4, z + 3, 3, 'hi') }));
+  return { id, shelf, tray, latches };
 }
 export const assemblies: Assembly[] = [
   drawer('scheduler', -113, -39, 114, 12, 56),

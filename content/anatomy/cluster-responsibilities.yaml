@@ -1,13 +1,12 @@
 schema_version: 1
 slug: cluster-responsibilities
 title: Who turns Kubernetes intent into running containers?
-summary: Inspect a cluster control console and trace one Deployment from an API request to durable
-  state, controller-created objects, node assignment and node-side execution.
+summary: Inspect a cluster control console and trace one Deployment from an accepted API request to stored intent, controller-created objects, node assignment and node-side execution.
 module: Kubernetes Fundamentals
 section: big-picture
 order: 1
-revision: 1
-verified_at: 2026-10-11
+revision: 2
+verified_at: 2026-10-12
 unit_ids:
   - fpp:kubernetes-architecture-components
 objective_ids:
@@ -18,5 +17,13 @@ sources:
     url: https://kubernetes.io/docs/concepts/overview/components/
   - title: Controllers
     url: https://kubernetes.io/docs/concepts/architecture/controller/
+  - title: Deployments
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - title: ReplicaSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+  - title: Pod Lifecycle
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: Controlling Access to the Kubernetes API
+    url: https://kubernetes.io/docs/concepts/security/controlling-access/
   - title: Container Runtimes
     url: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
