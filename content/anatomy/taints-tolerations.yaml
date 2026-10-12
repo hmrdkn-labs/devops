@@ -4,7 +4,8 @@ title: "Taints and tolerations: permission is not placement"
 summary: Lift a NoSchedule inspection gate with a matching toleration, then discover why resource
   feasibility and another eligible node still matter.
 module: Scheduling
-order: 4
+section: scheduling
+order: 2
 revision: 1
 verified_at: 2026-10-11
 unit_ids:

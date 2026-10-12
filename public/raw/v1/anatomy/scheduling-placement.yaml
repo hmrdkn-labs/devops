@@ -4,7 +4,8 @@ title: "Scheduling placement: requests before ranking"
 summary: Operate a capacity comparator bench to filter CPU and memory budgets, score feasible nodes,
   and separate assignment from node execution.
 module: Scheduling
-order: 3
+section: scheduling
+order: 1
 revision: 1
 verified_at: 2026-10-11
 unit_ids:

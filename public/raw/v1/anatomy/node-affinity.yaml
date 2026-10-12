@@ -4,7 +4,8 @@ title: "Node affinity: filter before preference"
 summary: Read a label sorter to combine nodeSelector and required affinity, score only feasible
   nodes, and preserve a running assignment after labels change.
 module: Scheduling
-order: 5
+section: scheduling
+order: 3
 revision: 1
 verified_at: 2026-10-11
 unit_ids:

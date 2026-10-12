@@ -4,6 +4,7 @@ title: Who turns Kubernetes intent into running containers?
 summary: Inspect a cluster control console and trace one Deployment from an API request to durable
   state, controller-created objects, node assignment and node-side execution.
 module: Kubernetes Fundamentals
+section: big-picture
 order: 1
 revision: 1
 verified_at: 2026-10-11

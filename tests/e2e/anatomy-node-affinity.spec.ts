@@ -1,0 +1,32 @@
+import { test, expect } from '@playwright/test';
+import { open } from './anatomy/helpers';
+
+test('affinity preferences cannot rescue hard failures and running label changes do not evict', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const figure = await open(page, 'node-affinity');
+  const selects = figure.getByRole('combobox');
+  const readChoices = async () => Promise.all((await selects.all()).map((select) => select.inputValue()));
+  const initialChoices = await readChoices();
+  await selects.nth(0).selectOption('ssd');
+  await selects.nth(1).selectOption('east-ssd');
+  await selects.nth(2).selectOption('west');
+  const weight = figure.getByRole('slider');
+  await weight.focus();
+  await weight.press('End');
+  const step = () => figure.getByRole('button', { name: /^(Step placement|Simulate kubelet start)$/ });
+  for (let i = 0; i < 3; i++) await step().click();
+  await expect(figure.locator('.anatomy-readout')).toContainText('Assigned to node-a');
+  await expect(figure.locator('.anatomy-readout')).toContainText('containers have not started');
+  await step().click();
+  await figure.getByRole('button', { name: 'Change running-node labels', exact: true }).click();
+  await expect(figure.locator('.anatomy-readout')).toContainText('Still running on node-a');
+  await expect(figure.locator('.anatomy-readout')).toContainText('no eviction');
+  await figure.getByRole('button', { name: 'Reset', exact: true }).click();
+  expect(await readChoices()).toEqual(initialChoices);
+  await selects.nth(0).selectOption('hdd');
+  await selects.nth(1).selectOption('east-ssd');
+  for (let i = 0; i < 2; i++) await step().click();
+  await expect(figure.locator('.anatomy-readout')).toContainText('Unscheduled');
+  await expect(figure.locator('.anatomy-readout')).toContainText('zero eligible nodes');
+  await expect(step()).toBeDisabled();
+});
