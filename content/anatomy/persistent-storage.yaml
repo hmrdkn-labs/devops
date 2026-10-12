@@ -1,0 +1,22 @@
+schema_version: 1
+slug: persistent-storage
+title: "Persistent volumes and claims: the claim asks, the volume outlives the Pod"
+summary: Create a claim, watch a StorageClass decide where its volume lives, then see why one Pod is unschedulable, why data survives Pod replacement, and what the reclaim policy does when the claim goes.
+module: Configuration and storage
+section: config-storage
+order: 2
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-storage-lifecycle
+  - fpp:config-secrets-storage
+objective_ids:
+  - fpp:kubernetes-storage-lifecycle/persistence
+  - fpp:kubernetes-storage-lifecycle/claim
+  - fpp:kubernetes-storage-lifecycle/failure-domain
+  - fpp:config-secrets-storage/pv-topology
+sources:
+  - title: "Kubernetes: Persistent Volumes"
+    url: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+  - title: "Kubernetes: Storage Classes"
+    url: https://kubernetes.io/docs/concepts/storage/storage-classes/
