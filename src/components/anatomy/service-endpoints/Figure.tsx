@@ -368,6 +368,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure sv-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>Fig · Networking</span><span>Stable name, changing backends</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <div class="sv-stage">
         <svg class="iso-svg" viewBox="0 0 720 430" role="img" aria-labelledby="sv-title sv-desc">
           <title id="sv-title">Service web in front of three Pod booths</title>
@@ -398,6 +400,7 @@ export default function Figure() {
           data-listed={evaluation().roles[slot] === 'ready' ? 'true' : 'false'}
           style={{ left: podTags[slot]!.left, top: podTags[slot]!.top }}>{podSuffix(state().pods[slot]!.name)}</span>}</For>
       </div>
+      <p class="anatomy-readout" data-readout>{readout()}</p>
       <div class="sv-slice-block">
         <p class="sv-slice-head">EndpointSlice: {evaluation().listed.length} ready endpoints · desk ClusterIP {SERVICE.clusterIP} · {exposureText[state().exposure]}</p>
         <ol class="sv-slice" aria-label="EndpointSlice rows, one per roster slot">
@@ -416,13 +419,11 @@ export default function Figure() {
         <li>Slat up = ready endpoint (receives traffic)</li>
         <li>Dial = kube-proxy rule; client sends requests</li>
       </ul>
-      <p class="anatomy-readout" data-readout>{readout()}</p>
-      <div class="sv-rows" role="group" aria-label="Pods behind the Service">
-        <For each={SLOTS}>{(slot) => <PodRow pod={state().pods[slot]!} slot={slot} selector={state().selector}
-          role={evaluation().roles[slot]!} focused={focus() === slot} disabled={!hydrated()}
-          onReady={(ready) => onReady(slot, ready)} onLabel={(app) => onLabel(slot, app)} onDelete={() => onDelete(slot)} />}</For>
       </div>
+      <div class="anatomy-bench-panel">
       <div class="anatomy-controls">
+        <button type="button" data-anatomy-primary disabled={!hydrated()} onClick={onRequest}>Send request to web:{SERVICE.port}</button>
+        <button type="button" disabled={!hydrated()} onClick={onReset}>Reset fixture</button>
         <label>Service selector
           <select value={state().selector} disabled={!hydrated()} onChange={(event) => onSelector(event.currentTarget.value as Selector)}>
             <For each={SELECTORS}>{(value) => <option value={value}>app={value}</option>}</For>
@@ -433,10 +434,18 @@ export default function Figure() {
             <For each={EXPOSURES}>{(value) => <option value={value}>{value}</option>}</For>
           </select>
         </label>
-        <button type="button" disabled={!hydrated()} onClick={onRequest}>Send request to web:{SERVICE.port}</button>
-        <button type="button" disabled={!hydrated()} onClick={onReset}>Reset fixture</button>
       </div>
       <ChangeReport change={report()} busy={!hydrated()} />
+      <section class="sv-pods" data-anatomy-status>
+        <h3 class="anatomy-panel-heading">Pods behind the Service</h3>
+        <div class="sv-rows" role="group" aria-label="Pods behind the Service">
+          <For each={SLOTS}>{(slot) => <PodRow pod={state().pods[slot]!} slot={slot} selector={state().selector}
+            role={evaluation().roles[slot]!} focused={focus() === slot} disabled={!hydrated()}
+            onReady={(ready) => onReady(slot, ready)} onLabel={(app) => onLabel(slot, app)} onDelete={() => onDelete(slot)} />}</For>
+        </div>
+      </section>
+      </div>
+      </div>
       <ManifestPanel title="shop/web Service and focused Pod (rendered from fixture state)" lines={manifest()}
         note="The status block is written by the cluster; you never apply it." />
       <p class="sv-caption">The desk number never changes when Pods change. Only Pods that match the selector and are Ready are endpoints, and a request reaches only a ready endpoint.</p>

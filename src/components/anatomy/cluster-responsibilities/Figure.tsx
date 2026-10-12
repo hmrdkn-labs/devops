@@ -111,6 +111,8 @@ export default function Figure() {
     <div class="anatomy-figure cluster-console" ref={root} aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG 01 · RESPONSIBILITY CONSOLE</span><span>One Deployment · one replica · node-a</span></div>
       <p class="cc-purpose">A declared Deployment becomes running containers only through a chain of owners. Each checkpoint names who acted, what they wrote and what has not happened yet.</p>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <svg class="iso-svg" viewBox="0 0 760 490" role="img" aria-labelledby="cluster-console-title cluster-console-desc">
         <title id="cluster-console-title">Kubernetes cluster responsibility console</title>
         <desc id="cluster-console-desc">An open four-drawer control-plane rack beside a two-tray node chassis. The tinted drawer is the checkpoint actor and a heavier outline marks the inspected actor. Each owner has its own witness latch: a latch shifts when that owner has acted, and the Deployment and ReplicaSet controllers have separate latches on one tray. The ruler carriage shows the checkpoint index. The drawing is an analogy, not the real software topology.</desc>
@@ -130,36 +132,6 @@ export default function Figure() {
         <g innerHTML={consoleFront} />
         <g ref={shoe} innerHTML={indexShoe} />
       </svg>
-      <p class="cc-hint">Next checkpoint advances one step and waits for you. Inspection pulls one drawer for reading only.</p>
-      <div class="anatomy-controls">
-        <button type="button" onClick={next} disabled={!hydrated() || moving() || stage() === stages.length - 1}>Next checkpoint</button>
-        <button type="button" onClick={reset} disabled={!hydrated()}>Reset to draft</button>
-      </div>
-      <ChangeReport change={report()} busy={moving()} />
-      <div class="cc-now">
-        <p><strong>Settled checkpoint {stage()} of {stages.length - 1}</strong> · checkpoint actor: <strong>{actorNames(stage())}</strong></p>
-        <p>Inspected actor: <strong>{inspected().name}</strong> <span class="cc-muted">(view only, not the checkpoint actor)</span></p>
-      </div>
-      <section class="cc-objects" aria-label="API objects and their state at this checkpoint">
-        <h3>Objects</h3>
-        <ul>
-          <For each={[...objectIds]}>{(id) => <li data-object={id}>
-            <span class="cc-identity">{objectRow(stage(), id).identity}</span>
-            <StateBadge tone={objectRow(stage(), id).tone} label={objectRow(stage(), id).label} />
-          </li>}</For>
-        </ul>
-      </section>
-      <section class="cc-owners-section" aria-label="Owners, what each acted on and how many it has done">
-        <h3>Owners</h3>
-        <ul class="cc-owners">
-          <For each={witnesses.map((witness) => witness.id)}>{(id) => <li data-witness={id} data-state={witnessState(stage(), id)}>
-            <strong>{ownerRow(stage(), id).name}</strong>
-            <StateBadge tone={ownerRow(stage(), id).tone} label={ownerRow(stage(), id).label} />
-            <span class="cc-identity">acts on {ownerRow(stage(), id).identity}</span>
-            <span class="cc-count">{ownerRow(stage(), id).countLabel}: <strong>{ownerRow(stage(), id).count}</strong></span>
-          </li>}</For>
-        </ul>
-      </section>
       <div class="anatomy-controls cc-inspect">
         <label for="cluster-actor">Inspect actor
           <select id="cluster-actor" value={selected()} disabled={!hydrated() || moving()} onChange={(event) => inspect(event.currentTarget.value as ActorId)}>
@@ -169,14 +141,9 @@ export default function Figure() {
         <button type="button" disabled={!hydrated() || moving()} onClick={toggleDrawer}>{open() ? 'Close inspection drawer' : 'Open inspection drawer'}</button>
       </div>
       <div class="cc-inspection">
-        <p><strong>{inspected().name}</strong> · {inspected().location}</p>
+        <p><strong>{inspected().name}</strong> · {inspected().location} · <span class="cc-muted">view only, not the checkpoint actor</span></p>
         <p>{inspected().role}</p>
       </div>
-      <ManifestPanel
-        title="Deployment demo and the objects it produced"
-        lines={manifest(stage())}
-        note="Highlighted lines are read or produced at the settled checkpoint. Lines starting with # are comments: fields not yet set, or objects not yet created."
-      />
       <ul class="anatomy-legend">
         <li>Tinted drawer: checkpoint actor (acting now)</li>
         <li>Accent latch: owner acting now</li>
@@ -184,6 +151,43 @@ export default function Figure() {
         <li>Heavy outline: inspected actor (view only)</li>
         <li>Ruler shoe: checkpoint index, not traffic</li>
       </ul>
+      </div>
+      <div class="anatomy-bench-panel">
+      <div class="anatomy-controls">
+        <button type="button" data-anatomy-primary onClick={next} disabled={!hydrated() || moving() || stage() === stages.length - 1}>Next checkpoint</button>
+        <button type="button" onClick={reset} disabled={!hydrated()}>Reset to draft</button>
+        <span class="cc-muted cc-progress">Checkpoint {stage()} of {stages.length - 1} · actor: <strong>{actorNames(stage())}</strong></span>
+      </div>
+      <ChangeReport change={report()} busy={moving()} />
+      <div class="anatomy-status-columns" data-anatomy-status>
+      <section class="cc-objects" aria-label="API objects and their state at this checkpoint">
+        <h3 class="anatomy-panel-heading">Objects</h3>
+        <ul class="anatomy-status-list">
+          <For each={[...objectIds]}>{(id) => <li data-object={id}>
+            <span class="cc-identity">{objectRow(stage(), id).identity}</span>
+            <StateBadge tone={objectRow(stage(), id).tone} label={objectRow(stage(), id).label} />
+          </li>}</For>
+        </ul>
+      </section>
+      <section class="cc-owners-section" aria-label="Owners, what each acted on and how many it has done">
+        <h3 class="anatomy-panel-heading">Owners</h3>
+        <ul class="anatomy-status-list cc-owners">
+          <For each={witnesses.map((witness) => witness.id)}>{(id) => <li data-witness={id} data-state={witnessState(stage(), id)}>
+            <strong>{ownerRow(stage(), id).name}</strong>
+            <StateBadge tone={ownerRow(stage(), id).tone} label={ownerRow(stage(), id).label} />
+            <span class="anatomy-status-detail">acts on <span class="cc-identity">{ownerRow(stage(), id).identity}</span> · {ownerRow(stage(), id).countLabel}: <strong>{ownerRow(stage(), id).count}</strong></span>
+          </li>}</For>
+        </ul>
+      </section>
+      </div>
+      </div>
+      </div>
+      <p class="cc-hint">Next checkpoint advances one step and waits for you. Inspection pulls one drawer for reading only.</p>
+      <ManifestPanel
+        title="Deployment demo and the objects it produced"
+        lines={manifest(stage())}
+        note="Highlighted lines are read or produced at the settled checkpoint. Lines starting with # are comments: fields not yet set, or objects not yet created."
+      />
       <p class="cc-caption">Fixture assumptions: an accepted request, one replica, node-a eligible, successful image, network and storage setup, and no retries, time scale or application-readiness check. Inspection and Reset change only this view.</p>
       <noscript><p>The object is visible without JavaScript. Enable JavaScript for drawer inspection and checkpoint controls; the complete responsibility trace is explained below.</p></noscript>
     </div>

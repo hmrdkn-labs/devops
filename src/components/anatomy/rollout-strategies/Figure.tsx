@@ -152,6 +152,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure release-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>RELEASE BENCH · FIXTURE</span><span>Traffic follows Ready Pods</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <svg class="iso-svg release-svg" viewBox="107 60 546 385" role="img" aria-labelledby="release-title release-description">
         <title id="release-title">A Service selector gate feeding two keyed beds of Pod cartridges</title>
         <desc id="release-description">A Service selector gate sits at the left. Its pointer covers both beds for app=web, or one bed for version=blue or version=green. The rear bed and the front bed hold Pod cartridges: a seated cartridge is Ready, a raised cartridge is Created but Not Ready, and an empty socket has no Pod. A rail is lit only while the Service routes to Ready Pods in that bed. Cartridges never move between beds; a rollback or a switch changes which bed the selector or template points at.</desc>
@@ -176,6 +178,20 @@ export default function Figure() {
         <For each={[0, 1] as Lane[]}>{(lane) => <path class="release-rail" d={railPaths[lane]}
           data-lit={routedTo(state().route, lane) && readyOf(state(), lane) > 0 ? 'true' : 'false'} />}</For>
       </svg>
+      <details class="release-key">
+        <summary>Key and reading guide</summary>
+        <ul class="anatomy-legend">
+          <li>Gate: Service selector pointer ({selectorText()})</li>
+          <li>Rear bed: {laneNames[state().strategy][0]} · app:v1</li>
+          <li>Front bed: {laneNames[state().strategy][1]} · app:v2</li>
+          <li>Seated cartridge: Pod Ready · raised: Created, not Ready</li>
+          <li>Lit rail: Service routes to Ready Pods in that bed</li>
+          <li>p-label: Pod identity (UID stand-in) · ✕: serves a build that returns errors</li>
+        </ul>
+        <p class="release-hint">{hints[state().strategy]}</p>
+      </details>
+      </div>
+      <div class="anatomy-bench-panel">
       <div class="anatomy-controls">
         <label for="release-strategy">Release strategy
           <select id="release-strategy" value={state().strategy} disabled={!live()}
@@ -194,7 +210,7 @@ export default function Figure() {
           </select>
         </label>
         <Show when={state().strategy === 'rolling'}>
-          <button type="button" disabled={!live() || state().template !== 0 || !isSettled()} onClick={() => apply(shipTemplate(state()))}>Update template to app:v2</button>
+          <button type="button" data-anatomy-primary disabled={!live() || state().template !== 0 || !isSettled()} onClick={() => apply(shipTemplate(state()))}>Update template to app:v2</button>
           <button type="button" disabled={!live() || state().template !== 1} onClick={() => apply(undoRollout(state()))}>Undo rollout</button>
           <button type="button" disabled={!live() || !waiting() || state().sinceProgress >= DEADLINE} onClick={() => apply(deadlinePasses(state()))}>Let progress deadline pass ({DEADLINE} s)</button>
         </Show>
@@ -218,6 +234,7 @@ export default function Figure() {
         <button type="button" disabled={!live()} onClick={() => apply(resetState(state()))}>Reset / replay</button>
       </div>
       <ChangeReport busy={moving()} change={state().change} />
+      <div class="release-state" data-anatomy-status>
       <div class="release-status">
         <StateBadge tone={statusBadge().tone} label={statusBadge().label} />
         <Show when={traffic().endpoints === 0}><StateBadge tone="fail" label="No endpoints: requests fail" /></Show>
@@ -253,6 +270,9 @@ export default function Figure() {
           </ol>
         </section>}</For>
       </div>
+      </div>
+      </div>
+      </div>
       <Show when={state().strategy === 'rolling'}>
         <p class="release-history">Revision history (ReplicaSets kept under revisionHistoryLimit 10): {historyText()}</p>
       </Show>
@@ -274,18 +294,6 @@ export default function Figure() {
         </section>
         <ManifestPanel title={manifestTitle()} lines={manifestLines()} note={manifestNote()} />
       </div>
-      <details class="release-key">
-        <summary>Key and reading guide</summary>
-        <ul class="anatomy-legend">
-          <li>Gate: Service selector pointer ({selectorText()})</li>
-          <li>Rear bed: {laneNames[state().strategy][0]} · app:v1</li>
-          <li>Front bed: {laneNames[state().strategy][1]} · app:v2</li>
-          <li>Seated cartridge: Pod Ready · raised: Created, not Ready</li>
-          <li>Lit rail: Service routes to Ready Pods in that bed</li>
-          <li>p-label: Pod identity (UID stand-in) · ✕: serves a build that returns errors</li>
-        </ul>
-        <p class="release-hint">{hints[state().strategy]}</p>
-      </details>
     </div>
   );
 }

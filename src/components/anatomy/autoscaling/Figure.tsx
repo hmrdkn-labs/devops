@@ -311,6 +311,8 @@ export default function Figure() {
 
   return <div ref={root} class="anatomy-figure as-figure" aria-label="Autoscaling bench controls" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Autoscaling · HPA</span><span>Metrics are not replicas</span></div>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <svg class="iso-svg" viewBox={VIEW_BOX} role="img" aria-labelledby="as-title as-desc">
       <title id="as-title">Autoscaling bench: HPA dial, replica rail, node racks and Pending tray</title>
       <desc id="as-desc">A dial reads live CPU use against a 50% target. A carriage on the replica rail is spec.replicas and a stop is maxReplicas. Node racks hold Pods in bays; Pods on the tray are Pending and unassigned; a lit lamp means Ready. The tube at the front right is traffic outside the cluster.</desc>
@@ -365,25 +367,39 @@ export default function Figure() {
       </label>
       <label class="as-check"><input type="checkbox" checked={cluster().autoscaler} disabled={!hydrated() || busy()} onChange={(e) => onAutoscaler(e.currentTarget.checked)} /><span>Cluster Autoscaler may add nodes</span></label>
     </div>
+    </div>
+    <div class="anatomy-bench-panel">
     <div class="anatomy-controls as-actions">
-      <button type="button" disabled={!hydrated() || busy()} onClick={onSync}>Run one HPA sync (15 s)</button>
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy()} onClick={onSync}>Run one HPA sync (15 s)</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={onStep}>Next controller step</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={onRun}>Run controllers to quiet</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={onReset}>Reset</button>
     </div>
     <p class="anatomy-readout" data-readout>{live()}</p>
     <ChangeReport change={report()} busy={busy()} />
-    <ul class="as-ledger" aria-label="Per-object status">
-      <li><span class="as-name">HPA web</span> <StateBadge tone={hpaTone[cluster().hpa.status]} label={`${cluster().hpa.status} at last sync`} /> <span>spec.replicas {cluster().replicas} · maxReplicas {cluster().maxReplicas}</span></li>
-      <For each={nodeRows()}>{(row) => <li>
-        <span class="as-name">node-{row.node}</span> {row.present
-          ? `${row.count} web Pod${row.count === 1 ? '' : 's'} · room for ${row.room} more`
-          : 'not provisioned'}
-      </li>}</For>
-      <For each={pods()}>{(pod) => <li>
-        <span class="as-name">web-{pod.id}</span> <StateBadge tone={stageTone[stageOf(pod)]} label={stageLabel[stageOf(pod)]} /> <span>{pod.node === null ? 'no node' : `node-${pod.node}`}</span>
-      </li>}</For>
-    </ul>
+    <div class="anatomy-status-columns as-ledger" data-anatomy-status role="group" aria-label="Per-object status">
+      <section>
+        <h3 class="anatomy-panel-heading">HPA and nodes</h3>
+        <ul class="anatomy-status-list">
+          <li><span class="as-name">HPA web</span> <StateBadge tone={hpaTone[cluster().hpa.status]} label={`${cluster().hpa.status} at last sync`} /> <span class="anatomy-status-detail">spec.replicas {cluster().replicas} · maxReplicas {cluster().maxReplicas}</span></li>
+          <For each={nodeRows()}>{(row) => <li>
+            <span class="as-name">node-{row.node}</span> <span class="as-room">{row.present
+              ? `${row.count} web Pod${row.count === 1 ? '' : 's'} · room for ${row.room} more`
+              : 'not provisioned'}</span>
+          </li>}</For>
+        </ul>
+      </section>
+      <section>
+        <h3 class="anatomy-panel-heading">web Pods</h3>
+        <ul class="anatomy-status-list">
+          <For each={pods()}>{(pod) => <li>
+            <span><span class="as-name">web-{pod.id}</span> · {pod.node === null ? 'no node' : `node-${pod.node}`}</span> <StateBadge tone={stageTone[stageOf(pod)]} label={stageLabel[stageOf(pod)]} />
+          </li>}</For>
+        </ul>
+      </section>
+    </div>
+    </div>
+    </div>
     <p class="as-caption">Fixture: one HPA sync per 15 s; Pods are removed at once; the stand-in scheduler picks the node with room and the fewest web Pods. The default scale-down window is 300 s; this page uses 0 or 45 s so the effect shows in a few syncs.</p>
     <ManifestPanel title="Live manifest from the model" lines={manifest()} note="Marked lines are what the last interaction read or changed. Traffic is not a manifest field." />
   </div>;

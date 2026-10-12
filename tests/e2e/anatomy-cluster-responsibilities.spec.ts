@@ -61,8 +61,8 @@ test('inspection changes the view but never the checkpoint actor or any object',
   await figure.getByLabel('Inspect actor').selectOption({ label: 'etcd' });
   await figure.getByRole('button', { name: 'Open inspection drawer', exact: true }).click();
   await expect(figure.getByRole('button', { name: 'Close inspection drawer', exact: true })).toBeEnabled();
-  await expect(figure.locator('.cc-now')).toContainText('ReplicaSet controller');
-  await expect(figure.locator('.cc-now')).toContainText('Inspected actor: etcd');
+  await expect(figure.locator('.cc-progress')).toContainText('ReplicaSet controller');
+  await expect(figure.locator('.cc-inspection')).toContainText('etcd');
   await expect(figure.locator('.cc-assembly[data-assembly="controllers"]')).toHaveAttribute('data-acting', 'true');
   await expect(figure.locator('.cc-assembly[data-assembly="store"]')).toHaveAttribute('data-inspected', 'true');
   await expect(figure.locator('.cc-assembly[data-assembly="store"]')).toHaveAttribute('data-acting', 'false');
@@ -81,7 +81,7 @@ test('inspection drawer moves by keyboard and the checkpoint stays put', async (
   await inspect.press('Enter');
   await expect(figure.getByRole('button', { name: 'Close inspection drawer', exact: true })).toBeEnabled();
   await expect.poll(async () => (await drawer.boundingBox())!.y).not.toBe(before!.y);
-  await expect(figure.locator('.cc-now')).toContainText('Settled checkpoint 0 of 7');
+  await expect(figure.locator('.cc-progress')).toContainText('Checkpoint 0 of 7');
 });
 
 test('motion is learner-paced: a step settles, then waits for the next press', async ({ page }) => {
@@ -90,10 +90,10 @@ test('motion is learner-paced: a step settles, then waits for the next press', a
   const next = figure.getByRole('button', { name: 'Next checkpoint', exact: true });
   await next.click();
   await expect(figure.locator('.anatomy-change')).toHaveAttribute('aria-busy', 'false');
-  await expect(figure.locator('.cc-now')).toContainText('Settled checkpoint 1 of 7');
+  await expect(figure.locator('.cc-progress')).toContainText('Checkpoint 1 of 7');
   await expect(next).toBeEnabled();
   await page.waitForTimeout(1200);
-  await expect(figure.locator('.cc-now')).toContainText('Settled checkpoint 1 of 7');
+  await expect(figure.locator('.cc-progress')).toContainText('Checkpoint 1 of 7');
 });
 
 test('phones keep controls, report and object status without horizontal overflow', async ({ page }) => {

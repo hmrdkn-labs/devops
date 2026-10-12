@@ -95,6 +95,8 @@ export default function Figure() {
         A Service call fails and the Pod list shows a status word. Each word is a summary written by one owner.
         Climb the ladder from the symptom to the owner that wrote the fact, then change only the object that owns the fault.
       </p>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <div ref={stage} class="ladder-stage">
         <svg class="iso-svg" viewBox={viewBox()} role="img" aria-labelledby="ladder-title ladder-description">
           <title id="ladder-title">Evidence ladder over a Pod housing, a gate and a Service tray</title>
@@ -131,14 +133,6 @@ export default function Figure() {
           <span class="ladder-short">{label.short}</span>
         </span>}</For>
       </div>
-      <ul class="anatomy-legend ladder-legend">
-        <li>Lamp on a rung: read on this object</li>
-        <li>Cell seated: container running. Raised: not running</li>
-        <li>Connector seated: spec.nodeName set</li>
-        <li>Lit lamp: Pod Ready, which is not the same as running</li>
-        <li>Gate blade up: the Service object selects the Pod labels</li>
-        <li>Puck in tray: EndpointSlice lists the Pod (controller has run, and the Pod is Ready)</li>
-      </ul>
       <div class="anatomy-controls ladder-picker">
         <label for="ladder-symptom">Symptom fixture
           <select id="ladder-symptom" value={state().scenario} disabled={!hydrated()}
@@ -147,16 +141,27 @@ export default function Figure() {
           </select>
         </label>
       </div>
+      <ul class="anatomy-legend ladder-legend">
+        <li>Lamp on a rung: read on this object</li>
+        <li>Cell seated: container running. Raised: not running</li>
+        <li>Connector seated: spec.nodeName set</li>
+        <li>Lit lamp: Pod Ready, which is not the same as running</li>
+        <li>Gate blade up: the Service object selects the Pod labels</li>
+        <li>Puck in tray: EndpointSlice lists the Pod (controller has run, and the Pod is Ready)</li>
+      </ul>
+      </div>
+      <div class="anatomy-bench-panel">
       <fieldset class="ladder-rungs">
         <legend>Read-only rungs in reading order · cause = this rung names the cause</legend>
         <ol>
           <For each={M.RUNGS}>{(rung, index) => <li>
-            <button type="button" disabled={!hydrated()} onClick={() => apply(M.readRung(state(), index()))}>{index() + 1} {rung.title}</button>
+            <button type="button" data-anatomy-primary={index() === 0 ? '' : undefined} disabled={!hydrated()} onClick={() => apply(M.readRung(state(), index()))}>{index() + 1} {rung.title}</button>
             {rungBadge(index())}
           </li>}</For>
         </ol>
       </fieldset>
       <ChangeReport busy={moving()} change={state().change} />
+      <div class="ladder-state" data-anatomy-status>
       <div class="ladder-status">
         <StateBadge tone={facts().ready ? 'pass' : 'wait'} label={facts().ready ? 'Ready' : 'Not Ready'} />
         <StateBadge tone={listed() ? 'pass' : 'wait'} label={listed() ? 'Listed in endpoints' : 'Not listed'} />
@@ -165,21 +170,6 @@ export default function Figure() {
         <Show when={moving()}><StateBadge tone="info" label="apparatus settling" /></Show>
         <p>STATUS {facts().status} · phase {facts().phase} · RESTARTS {facts().restarts} · node {facts().node ?? '<none>'}</p>
       </div>
-      <div class="ladder-actions">
-        <div class="ladder-action">
-          <button type="button" disabled={!hydrated() || !fix().ok} aria-describedby="ladder-fix-desc" onClick={() => apply(M.applyFix(state()))}>Apply fix</button>
-          <p id="ladder-fix-desc" class="ladder-note">{scenario().fix.label}</p>
-        </div>
-        <div class="ladder-action">
-          <button type="button" disabled={!hydrated()} aria-describedby="ladder-delete-desc" onClick={() => apply(M.deletePod(state()))}>Delete Pod</button>
-          <p id="ladder-delete-desc" class="ladder-note">Destroys this Pod’s events, logs and last container state; the replacement keeps the same spec.</p>
-        </div>
-        <div class="ladder-action">
-          <button type="button" disabled={!hydrated()} onClick={() => apply(M.reconcile(state()))}>Let owners reconcile once</button>
-        </div>
-        <p class="ladder-lock">{fix().reason} Reading never changes the object; deleting and applying a fix do.</p>
-      </div>
-      <div class="ladder-grid">
         <section class="ladder-objects" aria-label="Pod and Service objects">
           <article class="ladder-object" aria-label="Pod">
             <h3>Pod <code>{podLabel()}</code></h3>
@@ -207,9 +197,25 @@ export default function Figure() {
             </ul>
           </article>
         </section>
-        <ManifestPanel title="Pod and Service YAML (fixture)" lines={manifestLines()}
-          note="Highlighted fields are the ones the last action read or changed. Status fields are written by the kubelet and scheduler, not by you." />
       </div>
+      <div class="ladder-actions">
+        <div class="ladder-action">
+          <button type="button" disabled={!hydrated() || !fix().ok} aria-describedby="ladder-fix-desc" onClick={() => apply(M.applyFix(state()))}>Apply fix</button>
+          <p id="ladder-fix-desc" class="ladder-note">{scenario().fix.label}</p>
+        </div>
+        <div class="ladder-action">
+          <button type="button" disabled={!hydrated()} aria-describedby="ladder-delete-desc" onClick={() => apply(M.deletePod(state()))}>Delete Pod</button>
+          <p id="ladder-delete-desc" class="ladder-note">Destroys this Pod’s events, logs and last container state; the replacement keeps the same spec.</p>
+        </div>
+        <div class="ladder-action">
+          <button type="button" disabled={!hydrated()} onClick={() => apply(M.reconcile(state()))}>Let owners reconcile once</button>
+        </div>
+        <p class="ladder-lock">{fix().reason} Reading never changes the object; deleting and applying a fix do.</p>
+      </div>
+      </div>
+      </div>
+      <ManifestPanel title="Pod and Service YAML (fixture)" lines={manifestLines()}
+        note="Highlighted fields are the ones the last action read or changed. Status fields are written by the kubelet and scheduler, not by you." />
       <section class="ladder-ledger" aria-label="Evidence ledger">
         <h3>Evidence ledger <span class="ladder-note">snapshots taken when each rung was read</span></h3>
         <ol>

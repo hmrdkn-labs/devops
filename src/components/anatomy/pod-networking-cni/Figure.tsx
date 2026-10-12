@@ -148,6 +148,8 @@ export default function Figure() {
   return <div ref={root} class="anatomy-figure netpod-figure" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig 05 · Pod networking</span><span>Pod IP ≠ Service address</span></div>
     <p class="netpod-purpose"><strong>Goal:</strong> each Pod gets its own IP from the node's CNI plugin, not from the kubelet or kube-proxy. Replace the api Pod, send requests, stop kube-proxy and create a NetworkPolicy to see which owner each hop belongs to.</p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="netpod-stage">
       <svg class="iso-svg" viewBox="0 0 640 400" role="img" aria-labelledby="netpod-title netpod-desc">
         <title id="netpod-title">Two-node Pod networking yard</title>
@@ -193,55 +195,6 @@ export default function Figure() {
       <span class="netpod-tag netpod-gate-tag netpod-state" data-gate={gateKind(state())} style={screenAt([10, 34, 58])}>{gateText()}</span>
     </div>
     <p class="netpod-legend">Lit bar: one network namespace shared by the Pod's containers. Spool: the node's CNI plugin. Cable: veth from the Pod to its node switch. Rail and gate: the path between nodes. Board: kube-proxy Service rules.</p>
-    <div class="anatomy-controls">
-      <div class="netpod-group" role="group" aria-label="Pod lifecycle">
-        <button type="button" disabled={!canAct() || state().api?.stage !== 'ready'} onClick={() => apply(deleteApi(state()))}>Delete api Pod</button>
-        <button type="button" disabled={!canAct() || !needsSteps(state())} onClick={() => apply(advance(state()))}>Step pod setup</button>
-      </div>
-      <div class="netpod-group" role="group" aria-label="Node pieces">
-        <button type="button" disabled={!canAct()} onClick={() => apply(setPlugin(state(), 'node-b', !state().nodes['node-b'].plugin))}>
-          {state().nodes['node-b'].plugin ? 'Remove CNI plugin from node-b' : 'Install CNI plugin on node-b'}
-        </button>
-        <button type="button" disabled={!canAct()} onClick={() => apply(setKubeProxy(state(), !state().nodes['node-a'].kubeProxy))}>
-          {state().nodes['node-a'].kubeProxy ? 'Stop kube-proxy on node-a' : 'Start kube-proxy on node-a'}
-        </button>
-      </div>
-      <div class="netpod-group" role="group" aria-label="Traffic">
-        <button type="button" disabled={!canAct()} onClick={() => apply(probe(state(), 'direct'))}>Send request to api Pod IP</button>
-        <button type="button" disabled={!canAct()} onClick={() => apply(probe(state(), 'service'))}>{`Send request to api Service ${VIP}`}</button>
-      </div>
-      <div class="netpod-group" role="group" aria-label="Policy">
-        <button type="button" disabled={!canAct()} onClick={() => apply(setPolicy(state(), !state().policy))}>
-          {state().policy ? `Delete ${POLICY_NAME} policy` : `Create ${POLICY_NAME} policy`}
-        </button>
-        <label>Installed CNI
-          <select aria-label="Installed CNI" value={state().enforcing ? 'yes' : 'no'} disabled={!canAct()} onChange={(event) => apply(setEnforcing(state(), event.currentTarget.value === 'yes'))}>
-            <option value="yes">Enforces NetworkPolicy</option>
-            <option value="no">Does not enforce NetworkPolicy</option>
-          </select>
-        </label>
-      </div>
-      <button type="button" disabled={!canAct()} onClick={() => apply(initialState())}>Reset / replay</button>
-    </div>
-    <ChangeReport busy={moving()} change={state().change} />
-    <div class="netpod-status">
-      <ol class="netpod-track" aria-label="api Pod setup stages">
-        <Show when={state().api} fallback={<li><StateBadge tone="info" label="No api Pod: replacement not created" /></li>}>
-          {(pod) => <For each={stages}>{(stage) => <li data-stage={stage} data-state={trackIndex(stage) < trackIndex(pod().stage) ? 'done' : stage === pod().stage ? 'current' : 'todo'}>
-            <StateBadge
-              tone={trackIndex(stage) < trackIndex(pod().stage) ? 'pass' : stage === pod().stage ? 'selected' : 'wait'}
-              label={stageLabel[stage]}
-            />
-          </li>}</For>}
-        </Show>
-      </ol>
-      <Show when={state().api?.stage === 'sandbox' && !state().nodes['node-b'].plugin}>
-        <StateBadge tone="fail" label="Next step blocked: CNI plugin missing on node-b" />
-      </Show>
-      <Show when={state().api?.stage === 'ready'}>
-        <StateBadge tone="pass" label="api is Ready and a ready endpoint" />
-      </Show>
-    </div>
     <div class="netpod-nodes">
       <For each={['node-a', 'node-b'] as NodeId[]}>{(node) => <section class="netpod-node" aria-label={`${node} status`}>
         <h3>{node} · {state().nodes[node].cidr}</h3>
@@ -254,43 +207,99 @@ export default function Figure() {
         </dl>
       </section>}</For>
     </div>
-    <section class="netpod-hop-block" aria-labelledby="netpod-hop-title">
-      <h3 id="netpod-hop-title">Last request path</h3>
+    <div class="anatomy-controls netpod-node-controls">
+      <div class="netpod-group" role="group" aria-label="Node pieces">
+        <button type="button" disabled={!canAct()} onClick={() => apply(setPlugin(state(), 'node-b', !state().nodes['node-b'].plugin))}>
+          {state().nodes['node-b'].plugin ? 'Remove CNI plugin from node-b' : 'Install CNI plugin on node-b'}
+        </button>
+        <button type="button" disabled={!canAct()} onClick={() => apply(setKubeProxy(state(), !state().nodes['node-a'].kubeProxy))}>
+          {state().nodes['node-a'].kubeProxy ? 'Stop kube-proxy on node-a' : 'Start kube-proxy on node-a'}
+        </button>
+      </div>
+      <div class="netpod-group" role="group" aria-label="Policy">
+        <button type="button" disabled={!canAct()} onClick={() => apply(setPolicy(state(), !state().policy))}>
+          {state().policy ? `Delete ${POLICY_NAME} policy` : `Create ${POLICY_NAME} policy`}
+        </button>
+        <label>Installed CNI
+          <select aria-label="Installed CNI" value={state().enforcing ? 'yes' : 'no'} disabled={!canAct()} onChange={(event) => apply(setEnforcing(state(), event.currentTarget.value === 'yes'))}>
+            <option value="yes">Enforces NetworkPolicy</option>
+            <option value="no">Does not enforce NetworkPolicy</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    </div>
+    <div class="anatomy-bench-panel">
+    <div class="anatomy-controls">
+      <div class="netpod-group" role="group" aria-label="Traffic">
+        <button type="button" data-anatomy-primary disabled={!canAct()} onClick={() => apply(probe(state(), 'direct'))}>Send request to api Pod IP</button>
+        <button type="button" disabled={!canAct()} onClick={() => apply(probe(state(), 'service'))}>{`Send request to api Service ${VIP}`}</button>
+      </div>
+      <div class="netpod-group" role="group" aria-label="Pod lifecycle">
+        <button type="button" disabled={!canAct() || state().api?.stage !== 'ready'} onClick={() => apply(deleteApi(state()))}>Delete api Pod</button>
+        <button type="button" disabled={!canAct() || !needsSteps(state())} onClick={() => apply(advance(state()))}>Step pod setup</button>
+      </div>
+      <button type="button" disabled={!canAct()} onClick={() => apply(initialState())}>Reset / replay</button>
+    </div>
+    <ChangeReport busy={moving()} change={state().change} />
+    <section class="netpod-hop-block" data-anatomy-status aria-labelledby="netpod-hop-title">
+      <h3 id="netpod-hop-title" class="anatomy-panel-heading">Last request path</h3>
       <Show when={state().probe} fallback={<p class="netpod-empty">No request sent yet. A request is a fixture check: it changes no cluster state.</p>}>
         {(current) => <>
           <p class="netpod-probe-head">{current().route === 'direct' ? `Direct to Pod IP ${current().target}` : `Service ${current().target}, then the Pod path`}</p>
-          <ol class="netpod-hops">
+          <ol class="anatomy-status-list netpod-hops">
             <For each={current().hops}>{(hop, index) => <li data-verdict={hop.verdict}>
-              <strong>{index() + 1}. {hop.label}</strong>
-              <span class="netpod-owner">{hop.owner}</span>
+              <span><strong>{index() + 1}. {hop.label}</strong> <span class="netpod-owner">· {hop.owner}</span></span>
               <StateBadge tone={hopTone[hop.verdict].tone} label={hopTone[hop.verdict].label} />
-              <span class="netpod-hop-detail">{hop.detail}</span>
+              <span class="anatomy-status-detail netpod-hop-detail">{hop.detail}</span>
             </li>}</For>
           </ol>
         </>}
       </Show>
     </section>
-    <div class="netpod-grid">
+    <section class="netpod-pod-block" aria-label="api Pod setup and identities">
+      <h3 class="anatomy-panel-heading">api Pod setup</h3>
+      <div class="netpod-status">
+        <ol class="netpod-track" aria-label="api Pod setup stages">
+          <Show when={state().api} fallback={<li><StateBadge tone="info" label="No api Pod: replacement not created" /></li>}>
+            {(pod) => <For each={stages}>{(stage) => <li data-stage={stage} data-state={trackIndex(stage) < trackIndex(pod().stage) ? 'done' : stage === pod().stage ? 'current' : 'todo'}>
+              <StateBadge
+                tone={trackIndex(stage) < trackIndex(pod().stage) ? 'pass' : stage === pod().stage ? 'selected' : 'wait'}
+                label={stageLabel[stage]}
+              />
+            </li>}</For>}
+          </Show>
+        </ol>
+        <Show when={state().api?.stage === 'sandbox' && !state().nodes['node-b'].plugin}>
+          <StateBadge tone="fail" label="Next step blocked: CNI plugin missing on node-b" />
+        </Show>
+        <Show when={state().api?.stage === 'ready'}>
+          <StateBadge tone="pass" label="api is Ready and a ready endpoint" />
+        </Show>
+      </div>
       <section class="netpod-ledger" aria-label="Pod identity ledger">
-        <h3>Pod identity ledger <span class="netpod-note">IPs and UIDs are fixture stand-ins</span></h3>
-        <ul>
-          <li><strong>client u1</strong> <span>node-a · 10.244.1.4</span> <StateBadge tone="pass" label="Ready" /></li>
-          <Show when={state().api} fallback={<li><strong>api</strong> <span>no Pod object</span> <StateBadge tone="wait" label="replacement pending" /></li>}>
+        <h3 class="anatomy-panel-heading">Pod identity ledger <span class="netpod-note">IPs and UIDs are fixture stand-ins</span></h3>
+        <ul class="anatomy-status-list">
+          <li><span><strong>client u1</strong> <span>node-a · 10.244.1.4</span></span> <StateBadge tone="pass" label="Ready" /></li>
+          <Show when={state().api} fallback={<li><span><strong>api</strong> <span>no Pod object</span></span> <StateBadge tone="wait" label="replacement pending" /></li>}>
             {(pod) => <li data-selected="false">
-              <strong>api u{pod().uid}</strong>
-              <span>{pod().node ?? 'unbound'} · {pod().ip ?? 'no IP yet'}</span>
-              <StateBadge tone={pod().stage === 'ready' ? 'pass' : 'wait'} label={stageLabel[pod().stage]} />
-              <Show when={state().fresh === pod().uid}><StateBadge tone="info" label="new UID" /></Show>
+              <span><strong>api u{pod().uid}</strong> <span>{pod().node ?? 'unbound'} · {pod().ip ?? 'no IP yet'}</span></span>
+              <span class="netpod-badges">
+                <StateBadge tone={pod().stage === 'ready' ? 'pass' : 'wait'} label={stageLabel[pod().stage]} />
+                <Show when={state().fresh === pod().uid}><StateBadge tone="info" label="new UID" /></Show>
+              </span>
             </li>}
           </Show>
           <For each={state().released}>{(gone) => <li data-retired="true">
-            <strong>u{gone.uid}</strong> <span>retired · released {gone.ip} from {gone.node}</span>
+            <span><strong>u{gone.uid}</strong> <span>retired · released {gone.ip} from {gone.node}</span></span>
           </li>}</For>
         </ul>
       </section>
-      <ManifestPanel title="Pod and NetworkPolicy (fixture)" lines={manifestLines()}
-        note="Highlighted lines are the fields the last interaction read or changed. The Pod is shown as the API returns it; the policy document appears once created." />
+    </section>
     </div>
+    </div>
+    <ManifestPanel title="Pod and NetworkPolicy (fixture)" lines={manifestLines()}
+      note="Highlighted lines are the fields the last interaction read or changed. The Pod is shown as the API returns it; the policy document appears once created." />
     <p class="netpod-hint">Fixture: node ranges, the Service address {VIP} and one endpoint are illustrative. The packet dot shows the checked path, not a trace of real forwarding.</p>
   </div>;
 }

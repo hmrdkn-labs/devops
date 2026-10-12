@@ -146,39 +146,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure wc-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG 02 · CONTROLLER BENCH</span><span>Kind chooses the owner</span></div>
-
-      <div class="anatomy-controls wc-primary">
-        <label for="wc-kind">Workload kind
-          <select id="wc-kind" value={state().kind} disabled={!hydrated() || state().applied} onChange={(event) => commit(chooseKind(state(), event.currentTarget.value as Kind))}>
-            <For each={kinds}>{(kind) => <option value={kind} selected={state().kind === kind}>{needLabels[kind]}</option>}</For>
-          </select>
-        </label>
-        <Show when={usesReplicas()}>
-          <label for="wc-replicas">Desired replicas
-            <select id="wc-replicas" value={String(state().replicas)} disabled={!hydrated() || !state().applied} onChange={(event) => commit(setReplicas(state(), Number(event.currentTarget.value)))}>
-              <For each={replicaChoices}>{(count) => <option value={count} selected={state().replicas === count}>{count}</option>}</For>
-            </select>
-          </label>
-        </Show>
-        <button type="button" disabled={!hydrated() || state().applied} onClick={() => commit(apply(state()))}>Apply manifest</button>
-        <button type="button" class="wc-run" disabled={!hydrated() || !pending()} onClick={() => commit(step(state()))}>{pending() ? 'Run next event' : 'No event pending'}</button>
-        <Show when={usesJobRun()}>
-          <button type="button" disabled={!hydrated() || !jobPod()} onClick={() => commit(finish(state()))}>Pod exits 0 (Succeeded)</button>
-          <button type="button" disabled={!hydrated() || !jobPod()} onClick={() => commit(fail(state()))}>Pod exits non-zero (Failed)</button>
-        </Show>
-        <Show when={state().kind === 'CronJob'}>
-          <button type="button" disabled={!hydrated() || !state().applied} onClick={() => commit(tick(state()))}>Schedule fires</button>
-        </Show>
-        <button type="button" disabled={!hydrated()} onClick={() => commit(initialState(state().kind), true)}>Reset to draft</button>
-      </div>
-
-      <ChangeReport change={state().event} />
-
-      <section class="wc-status" aria-label="Owner status">
-        <p class="wc-owner"><strong>{controllerOf[state().kind]}</strong></p>
-        <ul class="wc-badges"><For each={ownerBadges(state())}>{(badge) => <li><StateBadge tone={badge.tone} label={badge.label} /></li>}</For></ul>
-      </section>
-
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <svg class="iso-svg" viewBox="0 0 760 470" role="img" aria-labelledby="wc-title wc-description">
         <title id="wc-title">Controller bench with node bays, a Pod tray, a finished shelf and claim drawers</title>
         <desc id="wc-description">The console knob points at the controller that owns the applied kind. Cartridges are Pod objects: unassigned ones wait in the tray, bound ones sit in node sockets (partly inserted when Assigned, seated when Running), and terminal ones move to the shelf. A lit lamp means Ready. A claim block in a drawer is a PVC that outlives its Pod.</desc>
@@ -207,26 +176,6 @@ export default function Figure() {
         <li>Dimmed bay: node absent</li>
         <li>Knob pointer: owning controller</li>
       </ul>
-
-      <div class="wc-bench">
-        <For each={nodeIds}>{(node) => <section class="wc-card" data-present={state().nodes[node] ? 'true' : 'false'} aria-label={node}>
-          <h4>{node}</h4>
-          <p>{state().nodes[node] ? 'present' : 'absent'} · bound {boundOn(state(), node)} of {SOCKETS} sockets</p>
-          <ul class="wc-chips"><For each={boundPods(state(), node)}>{(pod) => <PodChip pod={pod} selected={selected() === pod.uid} />}</For></ul>
-        </section>}</For>
-        <section class="wc-card" aria-label="Tray">
-          <h4>Tray</h4>
-          <p>{unassignedPods().length} Unassigned · no node</p>
-          <ul class="wc-chips"><For each={unassignedPods()}>{(pod) => <PodChip pod={pod} selected={selected() === pod.uid} />}</For></ul>
-        </section>
-        <section class="wc-card" aria-label="Shelf">
-          <h4>Shelf</h4>
-          <p>{terminalPods().length} Succeeded or Failed</p>
-          <ul class="wc-chips"><For each={terminalPods()}>{(pod) => <PodChip pod={pod} selected={selected() === pod.uid} />}</For></ul>
-        </section>
-      </div>
-      <p class="wc-counts">Claims retained: {state().claims.length ? state().claims.map((ordinal) => `data-web-${ordinal}`).join(', ') : 'none'}</p>
-
       <fieldset class="wc-secondary">
         <legend>Nodes and Pods</legend>
         <div class="anatomy-controls">
@@ -248,6 +197,60 @@ export default function Figure() {
           </Show>
         </div>
       </fieldset>
+      </div>
+      <div class="anatomy-bench-panel">
+      <div class="anatomy-controls wc-primary">
+        <label for="wc-kind">Workload kind
+          <select id="wc-kind" value={state().kind} disabled={!hydrated() || state().applied} onChange={(event) => commit(chooseKind(state(), event.currentTarget.value as Kind))}>
+            <For each={kinds}>{(kind) => <option value={kind} selected={state().kind === kind}>{needLabels[kind]}</option>}</For>
+          </select>
+        </label>
+        <Show when={usesReplicas()}>
+          <label for="wc-replicas">Desired replicas
+            <select id="wc-replicas" value={String(state().replicas)} disabled={!hydrated() || !state().applied} onChange={(event) => commit(setReplicas(state(), Number(event.currentTarget.value)))}>
+              <For each={replicaChoices}>{(count) => <option value={count} selected={state().replicas === count}>{count}</option>}</For>
+            </select>
+          </label>
+        </Show>
+        <button type="button" data-anatomy-primary disabled={!hydrated() || state().applied} onClick={() => commit(apply(state()))}>Apply manifest</button>
+        <button type="button" class="wc-run" disabled={!hydrated() || !pending()} onClick={() => commit(step(state()))}>{pending() ? 'Run next event' : 'No event pending'}</button>
+        <Show when={usesJobRun()}>
+          <button type="button" disabled={!hydrated() || !jobPod()} onClick={() => commit(finish(state()))}>Pod exits 0 (Succeeded)</button>
+          <button type="button" disabled={!hydrated() || !jobPod()} onClick={() => commit(fail(state()))}>Pod exits non-zero (Failed)</button>
+        </Show>
+        <Show when={state().kind === 'CronJob'}>
+          <button type="button" disabled={!hydrated() || !state().applied} onClick={() => commit(tick(state()))}>Schedule fires</button>
+        </Show>
+        <button type="button" disabled={!hydrated()} onClick={() => commit(initialState(state().kind), true)}>Reset to draft</button>
+      </div>
+
+      <ChangeReport change={state().event} />
+      <div class="wc-state" data-anatomy-status>
+      <section class="wc-status" aria-label="Owner status">
+        <p class="wc-owner"><strong>{controllerOf[state().kind]}</strong></p>
+        <ul class="wc-badges"><For each={ownerBadges(state())}>{(badge) => <li><StateBadge tone={badge.tone} label={badge.label} /></li>}</For></ul>
+      </section>
+      <div class="wc-bench">
+        <For each={nodeIds}>{(node) => <section class="wc-card" data-present={state().nodes[node] ? 'true' : 'false'} aria-label={node}>
+          <h4>{node}</h4>
+          <p>{state().nodes[node] ? 'present' : 'absent'} · bound {boundOn(state(), node)} of {SOCKETS} sockets</p>
+          <ul class="wc-chips"><For each={boundPods(state(), node)}>{(pod) => <PodChip pod={pod} selected={selected() === pod.uid} />}</For></ul>
+        </section>}</For>
+        <section class="wc-card" aria-label="Tray">
+          <h4>Tray</h4>
+          <p>{unassignedPods().length} Unassigned · no node</p>
+          <ul class="wc-chips"><For each={unassignedPods()}>{(pod) => <PodChip pod={pod} selected={selected() === pod.uid} />}</For></ul>
+        </section>
+        <section class="wc-card" aria-label="Shelf">
+          <h4>Shelf</h4>
+          <p>{terminalPods().length} Succeeded or Failed</p>
+          <ul class="wc-chips"><For each={terminalPods()}>{(pod) => <PodChip pod={pod} selected={selected() === pod.uid} />}</For></ul>
+        </section>
+      </div>
+      <p class="wc-counts">Claims retained: {state().claims.length ? state().claims.map((ordinal) => `data-web-${ordinal}`).join(', ') : 'none'}</p>
+      </div>
+      </div>
+      </div>
 
       <ManifestPanel title={`Manifest · ${state().kind} (model state)`} lines={manifest()} note={manifestNote()} />
 

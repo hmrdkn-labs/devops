@@ -144,6 +144,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure loop-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG 04 · CONTROL LOOP BALANCE</span><span>Compare, then act through the API</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <svg class="iso-svg loop-svg" viewBox={`0 0 760 ${VIEW_H}`} role="img" aria-labelledby="loop-title loop-description">
         <title id="loop-title">A balance comparing desired and observed Pods, an API desk, and a sealed node enclosure</title>
         <desc id="loop-description">A controller balance compares the spec count on the left pan with observed Pod objects on the right. The beam tilts toward the heavier side. The controller writes Pod objects to the API desk through an outbox. Containers sit in numbered node sockets behind glass that the controller cannot reach. A level beam means nothing is left for the loop to write.</desc>
@@ -194,6 +196,47 @@ export default function Figure() {
         <g innerHTML={glassArt} />
       </svg>
 
+      <details class="loop-key" ref={keyEl}>
+        <summary>Key</summary>
+        <ul class="anatomy-legend">
+          <li>Left pan: spec.replicas, the desired count (flat accent discs)</li>
+          <li>Right pan: observed Pod objects (tall green Ready, short amber Created)</li>
+          <li>Numerals: the same slot on the API tray and in the node sockets</li>
+          <li>Cartridge behind glass: container seated and Ready on node-b</li>
+          <li>Bell lamps: pending watch hints (up to two shown). Outbox lamp: the last pass sent a request. Status lamp: stored status matches live state.</li>
+        </ul>
+        <p class="loop-hint">Only a pass writes, one step at a time. Only the node side makes a Pod Ready.</p>
+      </details>
+      </div>
+      <div class="anatomy-bench-panel">
+      <div class="anatomy-controls loop-controls">
+        <label for="loop-desired">Desired replicas
+          <select id="loop-desired" value={state().desired} disabled={!hydrated()} onChange={(event) => apply(editReplicas(state(), Number(event.currentTarget.value)))}>
+            <For each={[0, 1, 2, 3, 4]}>{(count) => <option value={count} selected={state().desired === count}>{count}</option>}</For>
+          </select>
+        </label>
+        <label for="loop-victim">Pod to delete
+          <select id="loop-victim" value={selectedId() ?? ''} disabled={!hydrated() || state().pods.length === 0} onChange={(event) => setVictim(event.currentTarget.value === '' ? null : Number(event.currentTarget.value))}>
+            <option value="" selected={selectedId() === null}>None selected</option>
+            <For each={ordered()}>{(pod) => <option value={pod.id} selected={selectedId() === pod.id}>{pod.name}</option>}</For>
+          </select>
+        </label>
+        <button type="button" class="loop-primary" data-anatomy-primary disabled={!hydrated()} onClick={() => apply(pass(state()))}>Run controller pass</button>
+        <button type="button" disabled={!hydrated() || !pending()} onClick={() => apply(reportReady(state()))}>Node reports one Pod Ready</button>
+        <button type="button" disabled={!hydrated() || selectedId() === null} onClick={deleteSelected}>Delete Pod object</button>
+        <button type="button" disabled={!hydrated() || state().hints === 0} onClick={() => apply(dropHints(state()))}>Drop pending hints</button>
+        <button type="button" class="loop-wide" disabled={!hydrated()} onClick={() => { setVictim(null); apply(initialState()); }}>Reset / replay</button>
+      </div>
+
+      <ChangeReport busy={moving()} change={state().change} />
+      <div class="loop-state" data-anatomy-status>
+      <div class="loop-status">
+        <StateBadge tone={countMatches(state()) ? 'pass' : 'wait'} label={countMatches(state()) ? 'Count matches spec' : 'Count differs from spec'} />
+        <StateBadge tone={readyMatches(state()) ? 'pass' : 'wait'} label={readyMatches(state()) ? 'Ready matches spec' : 'Ready differs from spec'} />
+        <StateBadge tone={statusCurrent(state()) ? 'pass' : 'wait'} label={statusCurrent(state()) ? 'Stored status current' : 'Stored status stale'} />
+        <StateBadge tone={converged(state()) ? 'pass' : 'wait'} label={converged(state()) ? 'Converged' : 'Reconciling'} />
+        <Show when={moving()}><StateBadge tone="info" label="apparatus settling" /></Show>
+      </div>
       <section class="loop-pods-wrap" aria-label="Pod objects">
         <Show when={ordered().length} fallback={<p class="loop-empty">No Pod objects.</p>}>
           <ul class="loop-pods">
@@ -208,46 +251,6 @@ export default function Figure() {
         <p class="loop-retired">Retired names are not reused until Reset / replay: {state().retired.length ? state().retired.join(', ') : 'none'}</p>
       </section>
 
-      <details class="loop-key" ref={keyEl}>
-        <summary>Key</summary>
-        <ul class="anatomy-legend">
-          <li>Left pan: spec.replicas, the desired count (flat accent discs)</li>
-          <li>Right pan: observed Pod objects (tall green Ready, short amber Created)</li>
-          <li>Numerals: the same slot on the API tray and in the node sockets</li>
-          <li>Cartridge behind glass: container seated and Ready on node-b</li>
-          <li>Bell lamps: pending watch hints (up to two shown). Outbox lamp: the last pass sent a request. Status lamp: stored status matches live state.</li>
-        </ul>
-        <p class="loop-hint">Only a pass writes, one step at a time. Only the node side makes a Pod Ready.</p>
-      </details>
-
-      <div class="anatomy-controls loop-controls">
-        <label for="loop-desired">Desired replicas
-          <select id="loop-desired" value={state().desired} disabled={!hydrated()} onChange={(event) => apply(editReplicas(state(), Number(event.currentTarget.value)))}>
-            <For each={[0, 1, 2, 3, 4]}>{(count) => <option value={count} selected={state().desired === count}>{count}</option>}</For>
-          </select>
-        </label>
-        <label for="loop-victim">Pod to delete
-          <select id="loop-victim" value={selectedId() ?? ''} disabled={!hydrated() || state().pods.length === 0} onChange={(event) => setVictim(event.currentTarget.value === '' ? null : Number(event.currentTarget.value))}>
-            <option value="" selected={selectedId() === null}>None selected</option>
-            <For each={ordered()}>{(pod) => <option value={pod.id} selected={selectedId() === pod.id}>{pod.name}</option>}</For>
-          </select>
-        </label>
-        <button type="button" class="loop-primary" disabled={!hydrated()} onClick={() => apply(pass(state()))}>Run controller pass</button>
-        <button type="button" disabled={!hydrated() || !pending()} onClick={() => apply(reportReady(state()))}>Node reports one Pod Ready</button>
-        <button type="button" disabled={!hydrated() || selectedId() === null} onClick={deleteSelected}>Delete Pod object</button>
-        <button type="button" disabled={!hydrated() || state().hints === 0} onClick={() => apply(dropHints(state()))}>Drop pending hints</button>
-        <button type="button" class="loop-wide" disabled={!hydrated()} onClick={() => { setVictim(null); apply(initialState()); }}>Reset / replay</button>
-      </div>
-
-      <ChangeReport busy={moving()} change={state().change} />
-
-      <div class="loop-status">
-        <StateBadge tone={countMatches(state()) ? 'pass' : 'wait'} label={countMatches(state()) ? 'Count matches spec' : 'Count differs from spec'} />
-        <StateBadge tone={readyMatches(state()) ? 'pass' : 'wait'} label={readyMatches(state()) ? 'Ready matches spec' : 'Ready differs from spec'} />
-        <StateBadge tone={statusCurrent(state()) ? 'pass' : 'wait'} label={statusCurrent(state()) ? 'Stored status current' : 'Stored status stale'} />
-        <StateBadge tone={converged(state()) ? 'pass' : 'wait'} label={converged(state()) ? 'Converged' : 'Reconciling'} />
-        <Show when={moving()}><StateBadge tone="info" label="apparatus settling" /></Show>
-      </div>
       <dl class="loop-compare" aria-label="Live state and stored status">
         <div data-field="live-pods"><dt>Live Pods</dt><dd>{state().pods.length}</dd></div>
         <div data-field="live-ready"><dt>Live Ready</dt><dd>{readyOf(state())}</dd></div>
@@ -258,6 +261,9 @@ export default function Figure() {
         <div data-field="hints"><dt>Hints pending</dt><dd>{state().hints}</dd></div>
         <div data-field="last-pass"><dt>Last pass sent</dt><dd>{lastLabel[state().lastRequest]}</dd></div>
       </dl>
+      </div>
+      </div>
+      </div>
 
       <div class="loop-manifest">
         <ManifestPanel title="ReplicaSet web (fixture object)" lines={manifestLines()}

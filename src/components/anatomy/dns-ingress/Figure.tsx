@@ -157,14 +157,17 @@ export default function Figure() {
     const checks = edge()?.checks ?? [];
     return CHECK_ORDER.map((id) => {
       const check = checks.find((item) => item.id === id);
-      if (!check) return { id, label: CHECK_LABEL[id], tone: 'info' as BadgeTone, text: 'not run yet' };
-      if (check.state === 'not-run') return { id, label: check.label, tone: 'info' as BadgeTone, text: 'not reached' };
-      return { id, label: check.label, tone: (check.state === 'pass' ? 'pass' : 'fail') as BadgeTone, text: check.detail };
+      if (!check) return { id, label: CHECK_LABEL[id], tone: 'info' as BadgeTone, state: 'not run yet', detail: '' };
+      if (check.state === 'not-run') return { id, label: check.label, tone: 'info' as BadgeTone, state: 'not reached', detail: '' };
+      const pass = check.state === 'pass';
+      return { id, label: check.label, tone: (pass ? 'pass' : 'fail') as BadgeTone, state: pass ? 'passed' : 'failed', detail: check.detail };
     });
   };
 
   return <div ref={root} class="anatomy-figure nw-figure" aria-label="Name lookup, Service endpoints and edge routing controls" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Networking · DNS and ingress</span><span>A name is not a Ready Pod</span></div>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <svg class="iso-svg nw-svg" viewBox={`0 0 ${G.WIDTH} ${G.HEIGHT}`} role="img" aria-labelledby="nw-title nw-desc" data-run-outcome={outcome()} data-run-stop={run()?.stations.at(-1) ?? 'none'}>
       <title id="nw-title">Switchboard for names, Services and an edge gate</title>
       <desc id="nw-desc">A drawer of four name candidates at the rear left, Service web and the billing Service in the centre, a bin per Pod at the right and an edge gate at the front. Lamps are lit for present or Ready state. The request card rests where its run stopped; cords it passed are lit.</desc>
@@ -192,14 +195,13 @@ export default function Figure() {
       <For each={G.CAPTIONS}>{(caption) => <Label at={caption.at} text={caption.text} anchor={caption.anchor} size={caption.size} />}</For>
       <For each={G.NUMBERS}>{(number) => <Label at={number.at} text={number.text} anchor={number.anchor} size={number.size} />}</For>
     </svg>
-    <ul class="anatomy-legend nw-legend">
-      <li>Rear left: resolver drawer; notches 1–4 are the candidates in the order tried; lit = the one that answered</li>
-      <li>Centre: Service web (jacks: lit = Ready) and the billing Service for ledger</li>
-      <li>Right: one bin per Pod; lit lamp = Ready</li>
-      <li>Front: edge gate with three lamps: controller · rule (an Ingress rule exists for the requested host) · TLS (Secret shop-tls present)</li>
-      <li>Accent card: the request; lit cords are the links it passed; ✕ = where it stopped</li>
-    </ul>
-
+    <p class="anatomy-readout" data-readout>{stateSummary(config())}</p>
+    <section class="nw-candidates" aria-label="Client lookup candidates from the last lookup">
+      <h3 class="anatomy-panel-heading">Client lookup candidates (drawer notches)</h3>
+      <ol class="anatomy-status-list nw-steps">
+        <For each={dnsRows()}>{(row) => <li><code>{row.name}</code><StateBadge tone={row.tone} label={row.label} /></li>}</For>
+      </ol>
+    </section>
     <div class="anatomy-controls nw-controls">
       <fieldset class="nw-group">
         <legend>Name lookup from the client Pod in shop</legend>
@@ -226,60 +228,73 @@ export default function Figure() {
         <label><input type="checkbox" checked={config().ingress} disabled={!hydrated() || busy()} onChange={(e) => change({ ...config(), ingress: e.currentTarget.checked }, 'ingress')} />Ingress shop applied (shop.example.com / to web:80)</label>
         <label><input type="checkbox" checked={config().tlsSecret} disabled={!hydrated() || busy()} onChange={(e) => change({ ...config(), tlsSecret: e.currentTarget.checked }, 'tlsSecret')} />Secret shop-tls present</label>
       </fieldset>
-      <div class="nw-actions">
-        <button type="button" disabled={!hydrated() || busy()} onClick={() => press('resolve')}>Resolve name from client Pod</button>
-        <button type="button" disabled={!hydrated() || busy()} onClick={() => press('in-cluster')}>Send in-cluster request</button>
-        <button type="button" disabled={!hydrated() || busy()} onClick={() => press('external')}>Send external HTTP request</button>
-        <button type="button" disabled={!hydrated() || busy()} onClick={reset}>Reset</button>
-      </div>
+    </div>
+    </div>
+
+    <div class="anatomy-bench-panel">
+    <div class="anatomy-controls nw-actions">
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy()} onClick={() => press('resolve')}>Resolve name from client Pod</button>
+      <button type="button" disabled={!hydrated() || busy()} onClick={() => press('in-cluster')}>Send in-cluster request</button>
+      <button type="button" disabled={!hydrated() || busy()} onClick={() => press('external')}>Send external HTTP request</button>
+      <button type="button" disabled={!hydrated() || busy()} onClick={reset}>Reset</button>
     </div>
 
     <ChangeReport change={run()?.report ?? note() ?? startReport()} busy={busy()} />
-    <p class="anatomy-readout" data-readout>{stateSummary(config())}</p>
 
-    <ul class="nw-status" aria-label="Per-object state">
-      <li class="nw-card" data-object="client-resolver">
-        <strong>Client Pod resolver · shop</strong>
-        <span class="nw-fact">search {SEARCH.join(' ')} · ndots:{NDOTS}</span>
-        <StateBadge tone={dnsTone().tone} label={dnsTone().label} />
-      </li>
-      <li class="nw-card" data-object="service-web">
-        <strong>Service web · shop</strong>
-        <span class="nw-fact">ClusterIP {CLUSTER_IP.web}:80 → targetPort 8080 · ready endpoints {webEndpoints(config()).length} of {PODS.length}</span>
-        <StateBadge tone={config().webService ? 'pass' : 'fail'} label={config().webService ? 'Service exists' : 'Service absent'} />
-      </li>
-      <For each={PODS}>{(pod) => <li class="nw-card" data-object={pod}>
-        <strong>{pod}</strong>
-        <span class="nw-fact">{POD_IP[pod]} · app: web</span>
-        <StateBadge tone={config().ready[pod] ? 'pass' : 'wait'} label={config().ready[pod] ? 'Ready' : 'Not Ready: no traffic'} />
-      </li>}</For>
-      <li class="nw-card" data-object="service-ledger">
-        <strong>Service ledger · billing</strong>
-        <span class="nw-fact">ClusterIP {CLUSTER_IP.ledger}:80 · no Pods drawn</span>
-        <StateBadge tone="info" label="Name only" />
-      </li>
-      <li class="nw-card nw-card-edge" data-object="edge">
-        <strong>Edge · edge-proxy class</strong>
-        <ul class="nw-edge-facts">
-          <li><span>Public DNS</span><StateBadge tone={config().publicDns ? 'pass' : 'fail'} label={config().publicDns ? 'Record' : 'No record'} /></li>
-          <li><span>Controller</span><StateBadge tone={config().controller ? 'pass' : 'fail'} label={config().controller ? 'Running' : 'Not running'} /></li>
-          <li><span>Ingress shop</span><StateBadge tone={config().ingress ? 'pass' : 'fail'} label={config().ingress ? 'Applied' : 'Absent'} /></li>
-          <li><span>Secret shop-tls</span><StateBadge tone={config().tlsSecret ? 'pass' : 'fail'} label={config().tlsSecret ? 'Present' : 'Absent'} /></li>
+    <div class="anatomy-status-columns nw-status-columns" data-anatomy-status>
+      <section>
+        <h3 class="anatomy-panel-heading">Objects</h3>
+        <ul class="anatomy-status-list nw-status" aria-label="Per-object state">
+          <li data-object="client-resolver">
+            <strong>Client Pod resolver · shop</strong>
+            <StateBadge tone={dnsTone().tone} label={dnsTone().label} />
+            <span class="anatomy-status-detail">search {SEARCH.join(' ')} · ndots:{NDOTS}</span>
+          </li>
+          <li data-object="service-web">
+            <strong>Service web · shop</strong>
+            <StateBadge tone={config().webService ? 'pass' : 'fail'} label={config().webService ? 'Service exists' : 'Service absent'} />
+            <span class="anatomy-status-detail">ClusterIP {CLUSTER_IP.web}:80 → targetPort 8080 · ready endpoints {webEndpoints(config()).length} of {PODS.length}</span>
+          </li>
+          <For each={PODS}>{(pod) => <li data-object={pod}>
+            <strong>{pod}</strong>
+            <StateBadge tone={config().ready[pod] ? 'pass' : 'wait'} label={config().ready[pod] ? 'Ready' : 'Not Ready: no traffic'} />
+            <span class="anatomy-status-detail">{POD_IP[pod]} · app: web</span>
+          </li>}</For>
+          <li data-object="service-ledger">
+            <strong>Service ledger · billing</strong>
+            <StateBadge tone="info" label="Name only" />
+            <span class="anatomy-status-detail">ClusterIP {CLUSTER_IP.ledger}:80 · no Pods drawn</span>
+          </li>
+          <li data-object="edge">
+            <strong>Edge · edge-proxy class</strong>
+            <ul class="nw-edge-facts">
+              <li><span>Public DNS</span><StateBadge tone={config().publicDns ? 'pass' : 'fail'} label={config().publicDns ? 'Record' : 'No record'} /></li>
+              <li><span>Controller</span><StateBadge tone={config().controller ? 'pass' : 'fail'} label={config().controller ? 'Running' : 'Not running'} /></li>
+              <li><span>Ingress shop</span><StateBadge tone={config().ingress ? 'pass' : 'fail'} label={config().ingress ? 'Applied' : 'Absent'} /></li>
+              <li><span>Secret shop-tls</span><StateBadge tone={config().tlsSecret ? 'pass' : 'fail'} label={config().tlsSecret ? 'Present' : 'Absent'} /></li>
+            </ul>
+          </li>
         </ul>
-      </li>
+      </section>
+
+      <section class="nw-ledger" aria-label="Checks from the last runs">
+        <h3 class="anatomy-panel-heading">Edge request checks</h3>
+        <ol class="anatomy-status-list nw-steps">
+          <For each={edgeRows()}>{(row) => <li><span>{row.label}</span><StateBadge tone={row.tone} label={row.state} />
+            <Show when={row.detail}><span class="anatomy-status-detail">{row.detail}</span></Show></li>}</For>
+        </ol>
+      </section>
+    </div>
+    </div>
+    </div>
+
+    <ul class="anatomy-legend nw-legend">
+      <li>Rear left: resolver drawer; notches 1–4 are the candidates in the order tried; lit = the one that answered</li>
+      <li>Centre: Service web (jacks: lit = Ready) and the billing Service for ledger</li>
+      <li>Right: one bin per Pod; lit lamp = Ready</li>
+      <li>Front: edge gate with three lamps: controller · rule (an Ingress rule exists for the requested host) · TLS (Secret shop-tls present)</li>
+      <li>Accent card: the request; lit cords are the links it passed; ✕ = where it stopped</li>
     </ul>
-
-    <section class="nw-ledger" aria-label="Checks from the last runs">
-      <h3>Client lookup candidates</h3>
-      <ol class="nw-steps">
-        <For each={dnsRows()}>{(row) => <li><code>{row.name}</code><StateBadge tone={row.tone} label={row.label} /></li>}</For>
-      </ol>
-      <h3>Edge request checks</h3>
-      <ol class="nw-steps">
-        <For each={edgeRows()}>{(row) => <li><span>{row.label}</span><StateBadge tone={row.tone} label={row.text} /></li>}</For>
-      </ol>
-    </section>
-
     <ManifestPanel title="Service and Ingress YAML the figure reads" lines={MANIFEST.map((line) => ({ text: line.text, highlight: line.key !== undefined && focus().includes(line.key) }))} note="Highlighted fields are the ones the last run or setting depends on." />
     <p class="nw-caption">Fixture: an original teaching model, not a live cluster. Stations are teaching positions, not network hops; each run moves the card only as far as its checks allowed. {EDGE_ADDRESS} and the 10.x addresses are fixture values.</p>
   </div>;

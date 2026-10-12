@@ -42,6 +42,20 @@
 .pp-ledger-wrap { margin-top: 1rem; min-width: 0; }
 .pp-facts { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
 .pp-caption { font-size: .9rem; overflow-wrap: anywhere; }
+@media (min-width: 1100px) {
+  /* Workbench: the configuration sits under the object; the panel holds the actions, report and status. */
+  .pp-figure .anatomy-bench-object .pp-config { margin-top: .6rem; }
+  .pp-figure .anatomy-bench-panel .pp-cards { margin-top: .6rem; }
+}
+@media (max-width: 1099px) {
+  /* One column keeps today's order: object, actions, report, then the configuration and the cards. */
+  .pp-figure .anatomy-bench { gap: 0; }
+  .pp-figure .anatomy-bench-object, .pp-figure .anatomy-bench-panel { display: contents; }
+  .pp-figure .anatomy-bench-panel > .pp-actions { order: 1; margin-top: .9rem; }
+  .pp-figure .anatomy-change { order: 2; }
+  .pp-figure .pp-config { order: 3; }
+  .pp-figure .pp-cards { order: 4; }
+}
 @media (max-width: 480px) {
   /* On a phone the object's labels would pile up, so the cards carry the identities instead. */
   .pp-tag { display: none; }

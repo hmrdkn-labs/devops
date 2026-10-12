@@ -19,6 +19,8 @@ const START = -108;
 const STOP = { taint: -68, capacity: 8, end: 96 } as const;
 const OPEN = 38;
 const CART_Z = 44;
+// The Pod label floats above the cartridge so it clears the lane's node label at narrow widths.
+const POD_TAG_Z = CART_Z + 34;
 
 type Result = Evaluation;
 type Edit = 'create' | 'profile' | 'taint' | 'cpu' | 'nodeB' | 'reset';
@@ -151,7 +153,7 @@ export default function Figure() {
 
   function placePodTag() {
     if (!podTag) return;
-    const [sx, sy] = k.iso([carX, laneY[config().nodeB ? 1 : 0]!, CART_Z], P);
+    const [sx, sy] = k.iso([carX, laneY[config().nodeB ? 1 : 0]!, POD_TAG_Z], P);
     podTag.style.left = `${sx / 7.2}%`;
     podTag.style.top = `${sy / 4.3}%`;
   }
@@ -224,6 +226,8 @@ export default function Figure() {
   return <div ref={root} class="anatomy-figure tt-figure" aria-label="Taint and toleration placement inspection" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig 04 · Scheduling</span><span>Permission is not attraction</span></div>
     <p class="tt-purpose"><strong>Goal:</strong> keep ordinary Pods off node-a, the node reserved for batch work. The administrator taints node-a; the workload author adds a toleration to the Pod; the scheduler checks both, plus capacity.</p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="tt-stage">
       <svg class="iso-svg" viewBox="0 0 720 430" role="img" aria-labelledby="tt-title tt-desc">
         <title id="tt-title">Two-lane placement inspection apparatus</title>
@@ -245,7 +249,7 @@ export default function Figure() {
       <span class="tt-tag tt-node" style={screenAt(-118, 66, 14)} data-object="node-b" data-absent={config().nodeB ? undefined : ''}>{config().nodeB ? 'node-b · alternate' : 'node-b · not in fixture'}</span>
       <span ref={podTag} class="tt-tag tt-pod" data-object="pod">{podName(serial())}</span>
     </div>
-    <div class="anatomy-controls">
+    <div class="anatomy-controls tt-config">
       <label>Pod toleration
         <select value={config().profile} disabled={!hydrated() || busy()} onChange={(e) => configure({ ...config(), profile: e.currentTarget.value as Profile }, 'profile')}>
           <For each={groups}>{([group, title]) => <optgroup label={title}>
@@ -256,11 +260,15 @@ export default function Figure() {
       <label><input type="checkbox" checked={config().tainted} disabled={!hydrated() || busy()} onChange={(e) => configure({ ...config(), tainted: e.currentTarget.checked }, 'taint')} />node-a taint: dedicated=batch:NoSchedule</label>
       <label><input type="checkbox" checked={config().cpuFits} disabled={!hydrated() || busy()} onChange={(e) => configure({ ...config(), cpuFits: e.currentTarget.checked }, 'cpu')} />node-a: enough free CPU (800m, not 400m)</label>
       <label><input type="checkbox" checked={config().nodeB} disabled={!hydrated() || busy()} onChange={(e) => configure({ ...config(), nodeB: e.currentTarget.checked }, 'nodeB')} />node-b present (untainted, 1000m free)</label>
-      <button type="button" disabled={!hydrated() || busy()} onClick={run}>{ran() ? 'Replay placement' : 'Run placement'}</button>
+    </div>
+    </div>
+    <div class="anatomy-bench-panel">
+    <div class="anatomy-controls">
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy()} onClick={run}>{ran() ? 'Replay placement' : 'Run placement'}</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={() => configure({ ...initialConfig }, 'reset')}>Reset</button>
     </div>
     <ChangeReport change={change()} busy={busy()} />
-    <div class="tt-cards">
+    <div class="tt-cards" data-anatomy-status>
       <section class="tt-card" data-object="node-a">
         <p><strong>node-a</strong> · batch-reserved</p>
         <p class="tt-fact">Taint: {config().tainted ? 'dedicated=batch:NoSchedule' : 'none'}</p>
@@ -280,6 +288,8 @@ export default function Figure() {
         <p class="tt-fact">Toleration: {profiles[config().profile].label} · nodeName: {ran() ? (result().selected ?? 'unset') : 'unset'}</p>
         <div class="tt-badges"><StateBadge tone={podBadge().tone} label={podBadge().label} /></div>
       </section>
+    </div>
+    </div>
     </div>
     <div class="tt-match-scroll">
         <table class="tt-match">

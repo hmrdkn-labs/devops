@@ -160,6 +160,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure pl-figure" role="group" aria-label="Pod lifecycle and probe apparatus" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>Fig 01 · Workloads</span><span>Running is not Ready</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <p class="pl-identity">{chips().pod} · {chips().cell} · {chips().endpoint}</p>
       <div class="pl-stage">
         <svg class="iso-svg" viewBox="0 0 720 430" role="img" aria-labelledby="pl-title pl-desc">
@@ -194,6 +196,8 @@ export default function Figure() {
         </div>
       </div>
       <ul class="anatomy-legend"><li>Housing = Pod identity</li><li>Cell = container app</li><li>Shutter = startup gate</li><li>Left tally = liveness</li><li>Right tally = readiness</li><li>Gate + puck = endpoint</li></ul>
+      </div>
+      <div class="anatomy-bench-panel">
       <div class="anatomy-controls pl-controls">
         <fieldset class="pl-fieldset">
           <legend>Pod spec (a change creates a new Pod)</legend>
@@ -211,16 +215,18 @@ export default function Figure() {
           </select></label>
         </fieldset>
         <div class="pl-actions">
-          <button type="button" disabled={disabled() || pod().scheduled || pod().phase !== 'Pending'} onClick={bindPod}>Bind to node</button>
+          <button type="button" data-anatomy-primary disabled={disabled() || pod().scheduled || pod().phase !== 'Pending'} onClick={bindPod}>Bind to node</button>
           <button type="button" disabled={disabled() || !pod().scheduled || pod().container.state !== 'none'} onClick={startPod}>Start containers</button>
           <button type="button" disabled={disabled() || !pod().scheduled || pod().container.state === 'none' || m.isTerminal(pod().phase)} onClick={nextPeriod}>Next probe period</button>
           <button type="button" disabled={disabled()} onClick={reset}>Reset to a new Pod</button>
         </div>
       </div>
       <ChangeReport busy={busy()} change={report()} />
-      <ul class="pl-ledger" aria-label="Per-object state">
+      <ul class="pl-ledger" aria-label="Per-object state" data-anatomy-status>
         <For each={ledger()}>{(item) => <li><StateBadge tone={item.tone} label={item.label} /></li>}</For>
       </ul>
+      </div>
+      </div>
       <ManifestPanel
         title="Pod object from the current state"
         lines={m.manifestOf(fixture(), pod()).map((line) => ({ text: line.text, highlight: Boolean(line.key && report().touched.includes(line.key)) }))}

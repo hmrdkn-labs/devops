@@ -192,6 +192,8 @@ export default function Figure() {
     data-volume={volumeState()} data-subpath={subpathState()} data-env={envState()}
     data-active-drawer={pod().spec.source} data-staged-drawer={shown().spec.source}>
     <div class="anatomy-figure-header"><span>Fig 01 · Configuration</span><span>Same image, settings from outside</span></div>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="cs-stage">
       <svg class="iso-svg" viewBox={viewBox} role="img" aria-labelledby="cs-title cs-desc">
         <title id="cs-title">Settings delivery apparatus</title>
@@ -221,6 +223,9 @@ export default function Figure() {
       <li>{appView(pod())}</li>
       <Show when={blockedCandidate()}>{(candidate) => <li class="cs-identity-blocked">not started: {candidate().name}</li>}</Show>
     </ul>
+    <p class="anatomy-readout cs-readout" data-readout>
+      {`Active ${pod().name} · ${appView(pod())}`}{pendingSpec() ? ' · staged template not rolled out' : ''}
+    </p>
     <details class="cs-legend" open={legendOpen()}>
       <summary>Key to the apparatus</summary>
       <ul class="anatomy-legend">
@@ -230,13 +235,12 @@ export default function Figure() {
         <li>Stamp = container start; lit only while env is read here</li>
       </ul>
     </details>
-    <p class="anatomy-readout cs-readout" data-readout>
-      {`Active ${pod().name} · ${appView(pod())}`}{pendingSpec() ? ' · staged template not rolled out' : ''}
-    </p>
+    </div>
+    <div class="anatomy-bench-panel">
     <fieldset class="cs-group cs-actions" disabled={!hydrated() || busy()}>
       <legend>Stored data (API write) and cluster actions</legend>
       <div class="cs-grid">
-        <button type="button" onClick={() => editStored('configmap')}>{shown().stored.configmap === 0 ? `Update ConfigMap value to ${valueOf('configmap', 1)}` : `Restore ConfigMap value to ${valueOf('configmap', 0)}`}</button>
+        <button type="button" data-anatomy-primary onClick={() => editStored('configmap')}>{shown().stored.configmap === 0 ? `Update ConfigMap value to ${valueOf('configmap', 1)}` : `Restore ConfigMap value to ${valueOf('configmap', 0)}`}</button>
         <button type="button" onClick={() => editStored('secret')}>{shown().stored.secret === 0 ? `Update Secret value to ${valueOf('secret', 1)}` : `Restore Secret value to ${valueOf('secret', 0)}`}</button>
         <button type="button" onClick={sync}>Kubelet sync (mounted files only)</button>
         <button type="button" onClick={rollout}>Roll out template (new Pod)</button>
@@ -262,28 +266,30 @@ export default function Figure() {
         <label><input type="radio" name="cs-delivery" checked={shown().spec.delivery === 'subpath'} onChange={() => stageWith({ delivery: 'subpath' })} />subPath mount</label>
       </div>
     </fieldset>
-    <ul class="cs-status" aria-label="Per-object state">
+    <ul class="anatomy-status-list cs-status" data-anatomy-status aria-label="Per-object state">
       <li class="cs-card" data-object="configmap">
-        <StateBadge tone={tone(activeCount('configmap'))} label={activeCount('configmap') ? 'referenced by active Pod' : 'not referenced by active Pod'} />
         <strong>ConfigMap {objects.configmap.name}</strong>
-        <span>{objects.configmap.key} = {configValue()} · referenced by active Pod {activeCount('configmap')} · staged template {stagedCount('configmap')}</span>
+        <StateBadge tone={tone(activeCount('configmap'))} label={activeCount('configmap') ? 'referenced by active Pod' : 'not referenced by active Pod'} />
+        <span class="anatomy-status-detail">{objects.configmap.key} = {configValue()} · referenced by active Pod {activeCount('configmap')} · staged template {stagedCount('configmap')}</span>
       </li>
       <li class="cs-card" data-object="secret">
-        <StateBadge tone={tone(activeCount('secret'))} label={activeCount('secret') ? 'referenced by active Pod' : 'not referenced by active Pod'} />
         <strong>Secret {objects.secret.name}</strong>
-        <span>{objects.secret.key} stored as base64 {btoa(secretValue())} · an encoding, not encryption · referenced by active Pod {activeCount('secret')} · staged template {stagedCount('secret')}</span>
+        <StateBadge tone={tone(activeCount('secret'))} label={activeCount('secret') ? 'referenced by active Pod' : 'not referenced by active Pod'} />
+        <span class="anatomy-status-detail">{objects.secret.key} stored as base64 {btoa(secretValue())} · an encoding, not encryption · referenced by active Pod {activeCount('secret')} · staged template {stagedCount('secret')}</span>
       </li>
       <li class="cs-card" data-object="pod">
-        <StateBadge tone="pass" label="Running" />
         <strong>Active Pod {pod().name}</strong>
-        <span>{describeSpec(pod().spec)} · {appView(pod())} · container started; Ready not modelled</span>
+        <StateBadge tone="pass" label="Running" />
+        <span class="anatomy-status-detail">{describeSpec(pod().spec)} · {appView(pod())} · container started; Ready not modelled</span>
       </li>
       <Show when={blockedCandidate()}>{(candidate) => <li class="cs-card" data-object="blocked">
-        <StateBadge tone="fail" label="Not started" />
         <strong>Replacement {candidate().name}</strong>
-        <span>{describeSpec(candidate().spec)} · the active Pod keeps running</span>
+        <StateBadge tone="fail" label="Not started" />
+        <span class="anatomy-status-detail">{describeSpec(candidate().spec)} · the active Pod keeps running</span>
       </li>}</Show>
     </ul>
+    </div>
+    </div>
     <div class="anatomy-yaml-figure-grid">
       <ManifestPanel title="Deployment template (staged)" lines={templateView()} note={pendingSpec() ? `Running ${pod().name} still has: ${describeSpec(pod().spec)}.` : 'Matches the running Pod.'} />
       <ManifestPanel title="Stored objects" lines={storeView()} note="Secret data is base64: an encoding anyone who can read the object can decode, not encryption." />

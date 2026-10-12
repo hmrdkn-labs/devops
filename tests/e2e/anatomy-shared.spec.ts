@@ -4,6 +4,40 @@ import { open } from './anatomy/helpers';
 
 const slugs = readdirSync('content/anatomy').filter((file) => file.endsWith('.yaml')).map((file) => file.slice(0, -5));
 
+// One screen on desktop: after the page's primary interaction, the object, the primary control,
+// the change report and the per-object status region are all visible below the sticky header.
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 800 }]) {
+  for (const slug of slugs) {
+    test(`${slug}: one ${viewport.width}x${viewport.height} screen shows object, action, change report and status`, async ({ page }, info) => {
+      test.skip(info.project.name !== 'desktop', 'desktop workbench layout');
+      await page.setViewportSize(viewport);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      const figure = await open(page, slug);
+      await expect(figure.locator('[data-anatomy-primary]')).toHaveCount(1);
+      await expect(figure.locator('[data-anatomy-status]')).toHaveCount(1);
+      const primary = figure.locator('[data-anatomy-primary]');
+      await primary.click();
+      await expect(figure.locator('.anatomy-change')).toHaveAttribute('aria-busy', 'false');
+      await figure.locator('.anatomy-bench').evaluate((bench) => {
+        const header = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
+        window.scrollBy(0, bench.getBoundingClientRect().top - header - 8);
+      });
+      const header = await page.evaluate(() => document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0);
+      for (const [name, locator] of [
+        ['object', figure.locator('.anatomy-bench-object svg.iso-svg').first()],
+        ['primary control', primary],
+        ['change report', figure.locator('.anatomy-change')],
+        ['status', figure.locator('[data-anatomy-status]').first()],
+      ] as const) {
+        const box = await locator.boundingBox();
+        expect(box, `${name} is rendered`).not.toBeNull();
+        expect(box!.y, `${name} top is below the header`).toBeGreaterThanOrEqual(header - 1);
+        expect(box!.y + box!.height, `${name} bottom fits the ${viewport.height}px screen`).toBeLessThanOrEqual(viewport.height + 1);
+      }
+    });
+  }
+}
+
 test('delayed hydration keeps the original object readable and controls inert', async ({ page }) => {
   let release!: () => void;
   const pending = new Promise<void>((resolve) => { release = resolve; });

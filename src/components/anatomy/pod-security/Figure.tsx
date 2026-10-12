@@ -109,8 +109,35 @@ export default function Figure() {
     <div ref={root} class="anatomy-figure ps-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG · POD SECURITY BENCH</span><span>Admission checks the spec; the kubelet checks the UID</span></div>
 
-      <div class="ps-layout">
-        <div class="ps-controls">
+      <div class="anatomy-bench">
+        <div class="anatomy-bench-object">
+          <div class="ps-stage">
+            <svg class="iso-svg" viewBox="0 0 760 400" role="img" aria-labelledby="ps-title ps-description">
+              <title id="ps-title">Admission tollgate, a registry with a key socket, and a node with two Pod cartridges</title>
+              <desc id="ps-description">Three labelled knobs on the tollgate show the level set for enforce, audit and warn; a tall knob is a stricter level. The latch rises only when a Pod was admitted. The request cartridge is dashed while it is only a draft. Tiles on a cartridge light only when the runtime has applied that setting. The image block moves to the tray only after the image is pulled.</desc>
+              <g innerHTML={chassis} />
+              <g innerHTML={gateArt(state().ns)} />
+              <g innerHTML={latchArt(agent() !== undefined)} />
+              <g innerHTML={registryArt(shown().pullSecret)} />
+              <g ref={(element) => { image.el = element; }} innerHTML={imageArt(shown().imageUser)} />
+              <g innerHTML={legacyArt()} />
+              <g ref={(element) => { request.el = element; }} class={agent() ? 'ps-pod' : 'ps-draft'} innerHTML={requestArt()} />
+              <g innerHTML={zoneLabels} />
+            </svg>
+
+            <details class="ps-legend-wrap">
+              <summary>Legend: what each part means</summary>
+              <ul class="anatomy-legend ps-legend">
+                <li>dial = Effective UID</li>
+                <li>lock = no_new_privs</li>
+                <li>tile (left) = seccomp · tile (right) = privileged</li>
+                <li>3 tiles = Capabilities</li>
+                <li>shutter = Root filesystem</li>
+                <li>Tall knob = stricter level · raised latch = admitted · dashed = draft · lit = applied</li>
+              </ul>
+            </details>
+          </div>
+          <div class="ps-controls">
           <fieldset class="ps-group">
             <legend>Namespace sandbox labels</legend>
             <div class="anatomy-controls ps-label-grid">
@@ -170,33 +197,15 @@ export default function Figure() {
               <label class="ps-check"><input type="checkbox" id="ps-pullsecret" checked={state().draft.pullSecret} disabled={!hydrated()} onChange={(event) => commit(editDraft(state(), { pullSecret: event.currentTarget.checked }, 'imagePullSecrets', `imagePullSecret registry-creds ${event.currentTarget.checked ? 'is attached' : 'is removed'} in the draft`))} /><span>imagePullSecret registry-creds</span></label>
             </div>
           </fieldset>
-
+          </div>
+        </div>
+        <div class="anatomy-bench-panel">
           <div class="anatomy-controls ps-actions">
-            <button type="button" disabled={!hydrated() || agent() !== undefined} onClick={() => commit(apply(state()))}>Apply Pod</button>
+            <button type="button" data-anatomy-primary disabled={!hydrated() || agent() !== undefined} onClick={() => commit(apply(state()))}>Apply Pod</button>
             <button type="button" disabled={!hydrated() || agent()?.pull !== 'pending'} onClick={() => commit(startAgent(state()))}>Start container</button>
             <button type="button" disabled={!hydrated() || agent()?.container !== 'running'} onClick={() => commit(probeCache(state()))}>Write to /app/cache</button>
             <button type="button" disabled={!hydrated() || !agent()} onClick={() => commit(removeAgent(state()), true)}>Delete agent Pod</button>
           </div>
-
-          <ManifestPanel title="Manifest · namespace and Pod draft (model state)" lines={manifest()} note="Highlighted lines are the fields the last interaction read or changed. Settings left out of the Pod appear as comments with the same field." />
-
-          <section class="ps-ledger" aria-label="Pods in namespace sandbox">
-            <h3>Pods in namespace sandbox</h3>
-            <ul>
-              <For each={state().pods}>{(pod) => <li>
-                <strong>{pod.name} #{pod.uid}</strong>
-                <span>{pod.name === 'legacy-agent' ? 'created before the labels' : 'created by Apply'} · node-a</span>
-                <dl class="ps-facts"><For each={specFacts(pod.spec)}>{(fact) => <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>}</For></dl>
-                <StateBadge tone={containerBadge(pod).tone} label={containerBadge(pod).label} />
-                <Show when={retestOf(state(), pod.uid)}>{(note) => <p class="ps-note">Warned at enforce {note().level} ({note().fields.join(', ')}); warnings do not evict, so it is {pod.container === 'running' ? 'still Running' : 'not Running'}.</p>}</Show>
-              </li>}</For>
-            </ul>
-            <Show when={agent()}>{(pod) => <p class="ps-note">A changed spec needs a new Pod: delete agent #{pod().uid} and Apply again to get a new UID.</p>}</Show>
-          </section>
-          <p class="ps-hint">Admission checks the fields a namespace level names. The kubelet checks the UID the container would run as, which depends on the image. Pod names are fixture UIDs: a replacement gets a new one.</p>
-        </div>
-
-        <div class="ps-object">
           <div class="ps-dock">
             <ChangeReport change={state().change} />
             <section class="ps-status" aria-label="Agent Pod pipeline">
@@ -205,34 +214,9 @@ export default function Figure() {
             </section>
           </div>
 
-          <div class="ps-stage">
-            <svg class="iso-svg" viewBox="0 0 760 400" role="img" aria-labelledby="ps-title ps-description">
-              <title id="ps-title">Admission tollgate, a registry with a key socket, and a node with two Pod cartridges</title>
-              <desc id="ps-description">Three labelled knobs on the tollgate show the level set for enforce, audit and warn; a tall knob is a stricter level. The latch rises only when a Pod was admitted. The request cartridge is dashed while it is only a draft. Tiles on a cartridge light only when the runtime has applied that setting. The image block moves to the tray only after the image is pulled.</desc>
-              <g innerHTML={chassis} />
-              <g innerHTML={gateArt(state().ns)} />
-              <g innerHTML={latchArt(agent() !== undefined)} />
-              <g innerHTML={registryArt(shown().pullSecret)} />
-              <g ref={(element) => { image.el = element; }} innerHTML={imageArt(shown().imageUser)} />
-              <g innerHTML={legacyArt()} />
-              <g ref={(element) => { request.el = element; }} class={agent() ? 'ps-pod' : 'ps-draft'} innerHTML={requestArt()} />
-              <g innerHTML={zoneLabels} />
-            </svg>
-
-            <details class="ps-legend-wrap">
-              <summary>Legend: what each part means</summary>
-              <ul class="anatomy-legend ps-legend">
-                <li>dial = Effective UID</li>
-                <li>lock = no_new_privs</li>
-                <li>tile (left) = seccomp · tile (right) = privileged</li>
-                <li>3 tiles = Capabilities</li>
-                <li>shutter = Root filesystem</li>
-                <li>Tall knob = stricter level · raised latch = admitted · dashed = draft · lit = applied</li>
-              </ul>
-            </details>
-
+          <div class="anatomy-status-columns ps-objects" data-anatomy-status>
             <section class="ps-readout" aria-label="Runtime applied to the agent Pod">
-              <h3>Runtime applied to agent</h3>
+              <h3 class="anatomy-panel-heading">Runtime applied to agent</h3>
               <dl>
                 <For each={readout()}>{(row) => <div>
                   <dt>{row.label} <span class="ps-part">{partOf[row.label] ?? ''}</span></dt>
@@ -240,9 +224,24 @@ export default function Figure() {
                 </div>}</For>
               </dl>
             </section>
+            <section class="ps-ledger" aria-label="Pods in namespace sandbox">
+              <h3 class="anatomy-panel-heading">Pods in namespace sandbox</h3>
+              <ul>
+                <For each={state().pods}>{(pod) => <li>
+                  <strong>{pod.name} #{pod.uid}</strong>
+                  <span>{pod.name === 'legacy-agent' ? 'created before the labels' : 'created by Apply'} · node-a</span>
+                  <dl class="ps-facts"><For each={specFacts(pod.spec)}>{(fact) => <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>}</For></dl>
+                  <StateBadge tone={containerBadge(pod).tone} label={containerBadge(pod).label} />
+                  <Show when={retestOf(state(), pod.uid)}>{(note) => <p class="ps-note">Warned at enforce {note().level} ({note().fields.join(', ')}); warnings do not evict, so it is {pod.container === 'running' ? 'still Running' : 'not Running'}.</p>}</Show>
+                </li>}</For>
+              </ul>
+              <Show when={agent()}>{(pod) => <p class="ps-note">A changed spec needs a new Pod: delete agent #{pod().uid} and Apply again to get a new UID.</p>}</Show>
+            </section>
           </div>
         </div>
       </div>
+      <p class="ps-hint">Admission checks the fields a namespace level names. The kubelet checks the UID the container would run as, which depends on the image. Pod names are fixture UIDs: a replacement gets a new one.</p>
+      <ManifestPanel title="Manifest · namespace and Pod draft (model state)" lines={manifest()} note="Highlighted lines are the fields the last interaction read or changed. Settings left out of the Pod appear as comments with the same field." />
     </div>
   );
 }

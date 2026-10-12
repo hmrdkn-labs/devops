@@ -94,6 +94,8 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure replica-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>FIG 02 · REPLICA BENCH</span><span>Intent ≠ instance</span></div>
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
       <svg class="iso-svg" viewBox="0 0 760 470" role="img" aria-labelledby="replica-title replica-description">
         <title id="replica-title">A keyed, two-bed replica cartridge apparatus</title>
         <desc id="replica-description">The left console holds the Deployment template key. The rear bed represents RS-v1 and the front bed RS-v2. Cartridges are Pod identities: a raised cartridge is Created, not Ready; a seated one is Ready. A diamond pin marks the selected Pod. The accent stop on the ruler represents the Deployment desired count. Removed cartridges leave; they do not migrate.</desc>
@@ -129,7 +131,9 @@ export default function Figure() {
         <li>Accent stop: Deployment desired count</li>
       </ul>
       <p class="replica-hint">Select a Pod, then Delete it. The ReplicaSet creates a replacement with a new UID in the reused slot; the deleted UID never returns. Intents wait until the state converges; each Step reveals one owner's action.</p>
-      <div class="anatomy-controls">
+      </div>
+      <div class="anatomy-bench-panel">
+      <div class="anatomy-controls replica-controls">
         <label for="replica-desired">Desired replicas
           <select id="replica-desired" value={state().desired} disabled={!editable()} onChange={(event) => apply(scale(state(), Number(event.currentTarget.value)))}>
             <For each={[0, 1, 2, 3, 4]}>{(count) => <option value={count} selected={state().desired === count}>{count}</option>}</For>
@@ -146,11 +150,12 @@ export default function Figure() {
           const current = state();
           if (current.selected !== null) apply(deletePod(current, current.selected));
         }}>Delete selected Pod</button>
-        <button type="button" disabled={!editable() || state().revision === 2} onClick={() => apply(changeTemplate(state()))}>Change template to app:v2</button>
+        <button type="button" data-anatomy-primary disabled={!editable() || state().revision === 2} onClick={() => apply(changeTemplate(state()))}>Change template to app:v2</button>
         <button type="button" disabled={!hydrated() || moving() || converged(state())} onClick={() => apply(advance(state()))}>Step reconciliation</button>
         <button type="button" disabled={!hydrated() || moving()} onClick={() => apply(initialState())}>Reset / replay</button>
       </div>
       <ChangeReport busy={moving()} change={state().change} />
+      <div class="replica-state" data-anatomy-status>
       <div class="replica-status">
         <StateBadge tone={converged(state()) ? 'pass' : 'wait'} label={converged(state()) ? 'Converged' : 'Reconciling'} />
         <Show when={moving()}><StateBadge tone="info" label="apparatus settling" /></Show>
@@ -179,6 +184,9 @@ export default function Figure() {
             </ol>
           </Show>
         </section>}</For>
+      </div>
+      </div>
+      </div>
       </div>
       <div class="replica-grid">
         <section class="replica-ledger" aria-label="Pod identity ledger">

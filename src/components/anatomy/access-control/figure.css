@@ -13,20 +13,34 @@
 .ac-figure .ac-controls select { width: 100%; max-width: 24rem; }
 .ac-figure .ac-controls input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
 .ac-figure .ac-controls :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.ac-figure .ac-actions { display: flex; flex-wrap: wrap; gap: .5rem; width: 100%; }
-.ac-figure .ac-actions button { flex: 1 1 8rem; }
-.ac-stages { display: grid; gap: .4rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .9rem; }
+.ac-stages { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
 .ac-stages li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .35rem .7rem; padding: .4rem .6rem; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
 .ac-marker { display: inline-grid; place-items: center; min-width: 2rem; height: 1.6rem; padding: 0 .35rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .8rem; font-weight: 700; }
 .ac-stage-name { font-weight: 700; flex: 1 1 auto; min-width: 0; }
 .ac-stages .anatomy-badge { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
-.ac-objects { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .4rem .6rem; margin: 1rem 0 0; font-size: .85rem; }
+.ac-objects { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .4rem .6rem; margin: 0; font-size: .85rem; }
 .ac-objects > div { min-width: 0; padding: .4rem .55rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
 .ac-objects dt { font-weight: 700; color: var(--muted); font-size: .78rem; }
 .ac-objects dd { margin: .2rem 0 0; overflow-wrap: anywhere; }
 .ac-manifests { margin-top: 1rem; }
 .ac-figure .anatomy-manifest pre { white-space: pre; }
+.ac-hint { margin-block: .6rem 0; }
+.ac-figure > .anatomy-legend { margin-top: 1rem; }
 @media (max-width: 480px) {
   .ac-figure .ac-controls label { width: 100%; }
-  .ac-figure .ac-actions button { width: auto; }
+}
+@media (min-width: 1100px) {
+  /* Scenario settings sit under the machine: caller across, request and securityContext side by side, then the toggles.
+     The machine is capped so those settings stay on the same screen as the panel. */
+  .ac-figure .anatomy-bench-object .ac-machine { max-height: 21rem; }
+  .ac-figure .anatomy-bench-object .ac-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .5rem .8rem; margin-top: .6rem; }
+  .ac-figure .anatomy-bench-object .ac-controls label { display: grid; gap: .25rem; font-size: .9rem; }
+  .ac-figure .anatomy-bench-object .ac-controls label:first-child { grid-column: 1 / -1; }
+  .ac-figure .anatomy-bench-object .ac-controls label:has(> input[type='checkbox']) { grid-column: 1 / -1; display: flex; }
+  .ac-figure .anatomy-bench-object .ac-controls select { max-width: none; }
+  .ac-figure .ac-stages { gap: .25rem; font-size: .875rem; }
+  .ac-figure .ac-stages li { padding: .2rem .5rem; gap: .2rem .6rem; }
+  .ac-figure .ac-marker { height: 1.35rem; }
+  .ac-figure .ac-objects { gap: .3rem .5rem; }
+  .ac-figure .ac-objects > div { padding: .3rem .5rem; }
 }

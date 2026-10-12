@@ -253,6 +253,8 @@ export default function Figure() {
   return <div ref={root} class="anatomy-figure pv-figure" aria-label="Claim-backed storage bench" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig 01 · Claim bench</span><span>The claim asks. The volume outlives the Pod.</span></div>
     <p class="pv-purpose">A workload asks for storage with a claim. The StorageClass and its provisioner decide where the volume is created. The Pod only mounts the volume its claim is bound to.</p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="pv-stage">
       <svg class="iso-svg" viewBox={viewBox} role="img" aria-labelledby="pv-title pv-desc">
         <title id="pv-title">Claim bench: a PVC slip, a provisioner over two zone bays, and a writer Pod</title>
@@ -298,15 +300,28 @@ export default function Figure() {
         <li>Cable = volume mounted on that node</li>
       </ul>
     </details>
-    <ChangeReport change={report()} busy={busy()} />
+    </div>
+    <div class="anatomy-bench-panel">
     <div class="anatomy-controls">
-      <button type="button" disabled={idle()} onClick={() => act({ type: 'submit' })}>Create claim</button>
+      <button type="button" data-anatomy-primary disabled={idle()} onClick={() => act({ type: 'submit' })}>Create claim</button>
       <button type="button" disabled={idle()} onClick={() => act({ type: 'start' })}>Create writer Pod</button>
       <button type="button" disabled={idle() || !scene().pod?.mounted} onClick={() => act({ type: 'append' })}>Writer appends a row</button>
       <button type="button" disabled={idle()} onClick={() => act({ type: 'deletePod' })}>Delete writer Pod</button>
       <button type="button" disabled={idle()} onClick={() => act({ type: 'deleteClaim' })}>Delete claim</button>
       <button type="button" disabled={idle()} onClick={() => act({ type: 'reset' })}>Reset fixture</button>
     </div>
+    <ChangeReport change={report()} busy={busy()} />
+    <section class="pv-status" data-anatomy-status>
+      <h3 class="anatomy-panel-heading">Objects</h3>
+      <ul class="anatomy-status-list pv-objects" aria-label="Object status">
+        <For each={rows()}>{(row) => <li>
+          <span>{row.kind} <code>{row.name}</code></span>
+          <StateBadge tone={row.tone} label={row.text} />
+        </li>}</For>
+      </ul>
+      <p class="pv-ledger">Volumes: {counts().bound} Bound · {counts().released} Released (data kept, not Available)</p>
+      <p class="anatomy-readout" data-readout>{readout()}</p>
+    </section>
     <div class="pv-settings">
       <label>Volume binding mode
         <select value={state().config.binding} disabled={idle()} onChange={(e) => act({ type: 'setConfig', key: 'binding', value: e.currentTarget.value })}>
@@ -329,15 +344,9 @@ export default function Figure() {
         </select>
       </label>
     </div>
+    </div>
+    </div>
     <p class="pv-caption">Class settings start a fresh scenario. Appending a row is the application writing; Kubernetes never writes rows. The cart is a Pod assignment and mount, not a running container.</p>
-    <ul class="pv-objects" aria-label="Object status">
-      <For each={rows()}>{(row) => <li>
-        <span>{row.kind} <code>{row.name}</code></span>
-        <StateBadge tone={row.tone} label={row.text} />
-      </li>}</For>
-    </ul>
-    <p class="pv-ledger">Volumes: {counts().bound} Bound · {counts().released} Released (data kept, not Available)</p>
-    <p class="anatomy-readout" data-readout>{readout()}</p>
     <ManifestPanel title="Live manifests from the fixture state" lines={manifest()} note="Highlighted lines were read or changed by the last interaction. Application rows are data on the volume, not manifest fields." />
   </div>;
 }

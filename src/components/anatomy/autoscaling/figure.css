@@ -11,8 +11,7 @@
 .as-figure .as-actions button { min-height: 44px; }
 .as-figure :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .as-figure .anatomy-readout { overflow-wrap: anywhere; }
-.as-ledger { display: grid; gap: .45rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .9rem; overflow-wrap: anywhere; }
-.as-ledger li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; min-width: 0; }
+.as-room { color: var(--muted); text-align: right; }
 .as-name { font-family: var(--mono); font-weight: 700; }
 .as-caption { margin: .8rem 0 0; font-size: .85rem; color: var(--muted); }
 .as-figure .as-long { display: inline; }
@@ -26,4 +25,13 @@
   .as-figure .as-field { font-size: .82rem; }
   .as-figure .as-field select { font-size: .85rem; }
   .as-figure .as-actions button { font-size: .85rem; padding-inline: .5rem; }
+}
+.as-figure .anatomy-bench-panel .as-actions { margin-top: 0; }
+@media (min-width: 1100px) {
+  /* In the workbench the stage is about as wide as a large phone, so it uses the short, larger stage labels. */
+  .as-figure .anatomy-bench-object .as-long { display: none; }
+  .as-figure .anatomy-bench-object .as-short { display: inline; }
+  .as-figure .anatomy-bench-object .as-short text { font-size: 12px; }
+  .as-figure .anatomy-bench-panel .as-actions { display: flex; }
+  .as-figure .anatomy-bench-panel .anatomy-readout { margin-top: .6rem; padding: .5rem .8rem; font-size: .85rem; }
 }

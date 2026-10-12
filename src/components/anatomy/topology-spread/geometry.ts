@@ -15,7 +15,8 @@ import * as k from '@/lib/anatomy/vendor/iso-kit';
  * 75–82 cartridge bodies (drawn per slot); 83–86 cartridge lids; 87–90 lid screws; 91–94 handles;
  * 95 pending wireframe (dashed); 96–97 tray rails along the trays' inner edges.
  */
-export const VIEW = { width: 760, height: 360 } as const;
+/** Height-limited frame: the width only leaves room for the tray tags beside the platform, so the drawing fills narrow columns. */
+export const VIEW = { width: 560, height: 360 } as const;
 const baseRect: k.Plan = { x: -172, y: -120, w: 344, d: 274, r: 10 };
 /** Frames the platform and up to four stacked cartridges; a fourth cartridge may run slightly past the top edge. */
 export const P = k.fitProjection(k.boxCorners(baseRect, -14, 96), VIEW.width, VIEW.height, { pad: 14, azimuth: 35, elevation: 32 });

@@ -140,7 +140,40 @@ export default function Figure() {
   return (
     <div ref={root} class="anatomy-figure ns-figure" aria-busy={!hydrated()}>
       <div class="anatomy-figure-header"><span>Fig 03 · Namespaces</span><span>Identity = kind + namespace + name</span></div>
-
+      <div class="anatomy-bench">
+      <div class="anatomy-bench-object">
+      <svg class="iso-svg" viewBox="0 0 760 440" role="img" aria-labelledby="ns-title ns-desc">
+        <title id="ns-title">Namespace drawer chest beside a cluster-scoped tower</title>
+        <desc id="ns-desc">A low chest with two pull-out drawers, team-a and team-b, each holding namespaced index cards. Its back is open. A separate tower on the right holds cluster-scoped ClusterRole cards that belong to no drawer. A cable on the front rail links team-a's socket to team-b's; a lid covers team-b's socket while a deny-ingress NetworkPolicy exists there. The selected drawer slides out; a Terminating drawer is dimmed; an absent drawer is hidden. The names are in the status panels.</desc>
+        <g innerHTML={g.chestBase} />
+        <g innerHTML={g.bayRunners} />
+        <g innerHTML={g.divider} />
+        <For each={namespaceNames}>{(ns) => <g ref={(element) => register(`drawer:${ns}`, element)}>
+          <g innerHTML={g.drawers[ns].tray} />
+          <For each={g.cardKeys}>{(key) => <g ref={(element) => register(`card:${ns}:${key}`, element)} innerHTML={g.drawers[ns].cards[key]} />}</For>
+          <g innerHTML={g.drawers[ns].front} />
+        </g>}</For>
+        <g innerHTML={g.chestRight} />
+        <g innerHTML={g.frontRail} />
+        <g innerHTML={g.socketA} />
+        <g innerHTML={g.socketB} />
+        <g innerHTML={g.cable} />
+        <g ref={(element) => register('lid', element)} innerHTML={g.lid} />
+        <g innerHTML={g.towerBase} />
+        <For each={clusterNames}>{(name) => <g ref={(element) => register(`card:tower:${name}`, element)} innerHTML={g.towerCards[name]} />}</For>
+        <g innerHTML={g.towerRightSide} />
+      </svg>
+        <section class="ns-reach" aria-label="Path from team-a to team-b">
+          <h3>team-a → team-b</h3>
+          <p><code>web.team-b.svc.cluster.local</code></p>
+          <ul>
+            <li><StateBadge tone={dnsRow().tone} label={dnsRow().label} /></li>
+            <li><StateBadge tone={ingressRow().tone} label={ingressRow().label} /></li>
+          </ul>
+        </section>
+      </div>
+      <div class="anatomy-bench-panel">
+      <div class="anatomy-controls ns-controls">
       <div class="ns-selects">
         <label>Namespace
           <select disabled={!hydrated() || busy()} onChange={(event) => choose({ namespace: event.currentTarget.value as NamespaceName })}>
@@ -159,14 +192,14 @@ export default function Figure() {
         </label>
       </div>
       <div class="ns-actions">
-        <button type="button" disabled={!hydrated() || busy()} onClick={create}>Create {targetText()}</button>
+        <button type="button" data-anatomy-primary disabled={!hydrated() || busy()} onClick={create}>Create {targetText()}</button>
         <button type="button" disabled={!hydrated() || busy()} onClick={remove}>Delete {targetText()}</button>
         <button type="button" disabled={!hydrated() || busy()} onClick={namespaceStep}>
           {nsPhase() === 'Active' ? `Delete namespace ${selection().namespace}` : nsPhase() === 'Terminating' ? `Complete cleanup of ${selection().namespace}` : `Create namespace ${selection().namespace}`}
         </button>
         <button type="button" disabled={!hydrated() || busy()} onClick={reset}>Reset fixture</button>
       </div>
-      <p class="ns-hint">Namespace actions use the selected namespace. A ClusterRole ignores the namespace field: its identity is kind + name only.</p>
+      </div>
 
       <ul class="ns-strip" aria-label="Scopes at a glance">
         <For each={namespaceNames}>{(ns) => <li class="ns-strip-item" aria-current={!onTower() && selection().namespace === ns ? 'true' : undefined}>
@@ -181,7 +214,7 @@ export default function Figure() {
 
       <ChangeReport change={change()} busy={busy()} />
 
-      <div class="ns-tabs">
+      <div class="ns-tabs" data-anatomy-status>
         <For each={namespaceNames}>{(ns) => <section class="ns-tab" data-ns={ns} aria-label={`${ns} status`}
           data-target={!onTower() && selection().namespace === ns ? 'true' : 'false'}>
           <h3>{ns} <StateBadge tone={phaseTone[world().phases[ns]]} label={world().phases[ns]} /></h3>
@@ -202,44 +235,15 @@ export default function Figure() {
           </ul>
         </section>
       </div>
-
-      <svg class="iso-svg" viewBox="0 0 760 440" role="img" aria-labelledby="ns-title ns-desc">
-        <title id="ns-title">Namespace drawer chest beside a cluster-scoped tower</title>
-        <desc id="ns-desc">A low chest with two pull-out drawers, team-a and team-b, each holding namespaced index cards. Its back is open. A separate tower on the right holds cluster-scoped ClusterRole cards that belong to no drawer. A cable on the front rail links team-a's socket to team-b's; a lid covers team-b's socket while a deny-ingress NetworkPolicy exists there. The selected drawer slides out; a Terminating drawer is dimmed; an absent drawer is hidden. The names are in the status panels above.</desc>
-        <g innerHTML={g.chestBase} />
-        <g innerHTML={g.bayRunners} />
-        <g innerHTML={g.divider} />
-        <For each={namespaceNames}>{(ns) => <g ref={(element) => register(`drawer:${ns}`, element)}>
-          <g innerHTML={g.drawers[ns].tray} />
-          <For each={g.cardKeys}>{(key) => <g ref={(element) => register(`card:${ns}:${key}`, element)} innerHTML={g.drawers[ns].cards[key]} />}</For>
-          <g innerHTML={g.drawers[ns].front} />
-        </g>}</For>
-        <g innerHTML={g.chestRight} />
-        <g innerHTML={g.frontRail} />
-        <g innerHTML={g.socketA} />
-        <g innerHTML={g.socketB} />
-        <g innerHTML={g.cable} />
-        <g ref={(element) => register('lid', element)} innerHTML={g.lid} />
-        <g innerHTML={g.towerBase} />
-        <For each={clusterNames}>{(name) => <g ref={(element) => register(`card:tower:${name}`, element)} innerHTML={g.towerCards[name]} />}</For>
-        <g innerHTML={g.towerRightSide} />
-      </svg>
-
-      <div class="anatomy-yaml-figure-grid ns-status">
-        <section class="ns-reach" aria-label="Path from team-a to team-b">
-          <h3>team-a → team-b</h3>
-          <p><code>web.team-b.svc.cluster.local</code></p>
-          <ul>
-            <li><StateBadge tone={dnsRow().tone} label={dnsRow().label} /></li>
-            <li><StateBadge tone={ingressRow().tone} label={ingressRow().label} /></li>
-          </ul>
-        </section>
-        <ManifestPanel
-          title={`Manifest · ${target().kind} ${target().name}`}
-          lines={manifest().lines.map((line) => ({ text: line.text, highlight: read() && line.identity }))}
-          note={manifest().note}
-        />
       </div>
+      </div>
+
+      <p class="ns-hint">Namespace actions use the selected namespace. A ClusterRole ignores the namespace field: its identity is kind + name only.</p>
+      <ManifestPanel
+        title={`Manifest · ${target().kind} ${target().name}`}
+        lines={manifest().lines.map((line) => ({ text: line.text, highlight: read() && line.identity }))}
+        note={manifest().note}
+      />
       <p class="ns-caption">Fixture only: a teaching model, not a cluster. Actions change this fixture's state, never a live API. Each chip is one identity; the cable and lid are the team-a → team-b path. Scope, not a wall: a namespace never restricts traffic, RBAC or quota by itself.</p>
     </div>
   );

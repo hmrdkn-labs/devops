@@ -466,6 +466,8 @@ export default function Figure() {
   return <div ref={root} class="anatomy-figure rl-figure" aria-label="Requests, limits and QoS inspection" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig 07 · Workloads</span><span>Requests reserve; limits enforce</span></div>
     <p class="rl-purpose"><strong>Goal:</strong> a container has a request, which the scheduler reserves, and a limit, which the kernel enforces. Admission checks both in the namespace; the scheduler fits requests; the kubelet throttles CPU and OOM-kills memory at the limit; under node memory pressure the kubelet ranks Pods by usage above request. <span class="rl-phone-only">On a phone, the machine sits below the status cards.</span></p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="rl-stage">
       <svg class="iso-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="rl-title rl-desc">
         <title id="rl-title">Admission lane, node platform and memory tank</title>
@@ -491,7 +493,7 @@ export default function Figure() {
       <span class="rl-tag rl-object rl-tray" style={screenAt(-82, 58, 8)} data-object="tray">Failed</span>
       <For each={CART_IDS}>{(id) => <span ref={(el) => { tags[id] = el; }} class={`rl-tag rl-pod${id === 'candidate' ? '' : ' rl-object'}`} data-object="pod" data-cart={id}>{tagText(id)}</span>}</For>
     </div>
-    <div class="anatomy-controls">
+    <div class="anatomy-controls rl-config">
       <label class="rl-wide">Draft Pod resources
         <select value={config().profile} disabled={!hydrated() || busy() || podExists()} onChange={(e) => changeConfig({ ...config(), profile: e.currentTarget.value as Profile }, 'profile')}>
           <For each={groups}>{([group, title]) => <optgroup label={title}>
@@ -514,13 +516,17 @@ export default function Figure() {
           <option value="spike">spike</option>
         </select>
       </label>
-      <button type="button" disabled={!hydrated() || busy() || podExists()} onClick={submitPod}>Submit Pod</button>
+    </div>
+    </div>
+    <div class="anatomy-bench-panel">
+    <div class="anatomy-controls rl-actions">
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy() || podExists()} onClick={submitPod}>Submit Pod</button>
       <button type="button" disabled={!hydrated() || busy() || !candidateRunning()} onClick={runCandidate}>Run load</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={checkPressure}>Apply node memory pressure</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={resetAll}>Reset</button>
     </div>
     <ChangeReport change={change()} busy={busy()} />
-    <div class="rl-cards">
+    <div class="rl-cards" data-anatomy-status>
       <section class="rl-card" data-object="pod">
         <p><strong>{candidateName()}</strong> · candidate Pod</p>
         <p class="rl-fact">Spec req {quantityNote('cpu', profiles[config().profile].spec.requests.cpu)}/{quantityNote('memory', profiles[config().profile].spec.requests.memory)} · lim {quantityNote('cpu', profiles[config().profile].spec.limits.cpu)}/{quantityNote('memory', profiles[config().profile].spec.limits.memory)}</p>
@@ -538,6 +544,8 @@ export default function Figure() {
         <p class="rl-fact">Requests committed: {fmt('cpu', committed().cpu)} CPU, {fmt('memory', committed().memory)} memory · memory in use {usedMem()}Mi</p>
         <div class="rl-badges"><StateBadge tone={badges().fit.tone} label={badges().fit.label} /><StateBadge tone={badges().pressure.tone} label={badges().pressure.label} /></div>
       </section>
+    </div>
+    </div>
     </div>
     <div class="rl-ledger-scroll">
       <table class="rl-ledger">

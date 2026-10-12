@@ -18,31 +18,37 @@
 /* Identity text is decorative on phones: the per-Pod cards and the identity strip carry names below 640px. */
 @media (max-width: 640px) { .np-svg text, .np-svg .np-port-tag { display: none; } }
 
-.np-fields { display: grid; gap: .55rem; min-width: 0; margin: 0; padding: .7rem .8rem; border: 1px solid var(--line-strong); border-radius: 10px; }
+.np-figure .np-fields { display: grid; gap: .55rem; min-width: 0; padding: .7rem .8rem; border: 1px solid var(--line-strong); border-radius: 10px; }
 .np-fields:disabled { opacity: .7; }
 .np-fields legend { padding: 0 .3rem; font-size: .85rem; color: var(--muted); }
 .np-fields label { min-width: 0; max-width: 100%; font-size: .92rem; }
+.np-fields label:has(input[type='checkbox']) { flex-wrap: nowrap; }
 .np-fields input[type='checkbox'] { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
 .np-fields select, .np-probe-controls select { min-height: 44px; max-width: 100%; }
-.np-controls { flex-direction: column; align-items: stretch; }
-.np-probe-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
-.np-probe-controls label { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-width: 0; max-width: 100%; }
-.np-probe-controls select { min-width: 0; }
-.np-controls :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.np-probe-controls label { min-width: 0; max-width: 100%; }
+.np-probe-controls select { min-width: 0; width: auto; }
+.np-figure :is(.np-fields, .np-probe-controls) :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .np-hint { font-size: .85rem; color: var(--muted); margin: .6rem 0 0; overflow-wrap: anywhere; }
-.np-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; margin: 1rem 0 0; padding: 0; list-style: none; }
-.np-card { min-width: 0; padding: .6rem .7rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-subtle); font-size: .85rem; overflow-wrap: anywhere; }
-.np-card h4 { margin: 0 0 .25rem; font-size: .9rem; }
-.np-card p { margin: .35rem 0 0; }
+/* Pod rows: identity, then one badge per gate and the last probe, so each Pod reads across like the bench. */
+.np-figure .np-cards > li { grid-template-columns: minmax(0, 1fr); align-items: start; overflow-wrap: anywhere; }
+.np-pod { display: grid; gap: .05rem; min-width: 0; }
 .np-labels, .np-selected { color: var(--muted); font-family: var(--mono); font-size: .78rem; }
-.np-card .anatomy-badge { max-width: 100%; white-space: normal; text-align: left; }
-.np-ledger-wrap { margin-top: 1rem; }
-.np-ledger-wrap h4 { margin: 0 0 .4rem; font-size: .95rem; }
-.np-ledger { display: grid; gap: .4rem; margin: .5rem 0 0; padding: 0; list-style: none; font-size: .88rem; }
-.np-ledger li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .6rem; min-width: 0; padding: .45rem .6rem; border-radius: 8px; background: var(--surface-subtle); }
+.np-card .anatomy-badge { justify-self: start; max-width: 100%; white-space: normal; text-align: left; }
+.np-figure .np-ledger-wrap .np-hint { margin: 0 0 .35rem; }
+.np-figure .np-ledger > li { align-items: baseline; }
 .np-gate { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .np-muted { color: var(--muted); font-family: var(--mono); font-size: .8rem; overflow-wrap: anywhere; }
-@media (max-width: 720px) { .np-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 560px) {
+  .np-figure .np-cards > li { grid-template-columns: minmax(0, 1.25fr) repeat(3, minmax(0, 1fr)); gap: .2rem .5rem; }
+}
+@media (min-width: 1100px) {
+  /* Four badge columns per Pod need more width than the default bench panel. */
+  .np-figure .anatomy-bench { grid-template-columns: minmax(0, .72fr) minmax(420px, 1.28fr); }
+  .np-figure .np-fields { gap: .3rem; margin-top: .6rem; padding: .45rem .75rem .6rem; }
+  .np-figure .np-fields input[type='checkbox'] { min-height: 0; }
+  .np-figure .np-fields select { width: auto; }
+  .np-figure .np-hint { margin-top: .4rem; }
+}
 @media (max-width: 480px) {
   .np-fields label { width: 100%; }
   .np-probe-controls button { flex: 1 1 8rem; }

@@ -329,6 +329,8 @@ export default function Figure() {
   return <div ref={root} class="anatomy-figure spread-figure" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig 05 · Scheduling</span><span>Count per domain, then compare</span></div>
     <p class="spread-purpose"><strong>Goal:</strong> spread one workload’s replicas across zones or nodes. The workload author writes topologySpreadConstraints in the Pod template. When the scheduler places a new Pod, it counts matching Pods per domain and compares the skew with maxSkew. Running Pods are never moved.</p>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="spread-stage">
       <svg class="iso-svg" viewBox={`0 0 ${VIEW.width} ${VIEW.height}`} role="img" aria-labelledby="spread-title spread-desc">
         <title id="spread-title">Two-zone topology spread bench</title>
@@ -358,52 +360,78 @@ export default function Figure() {
         </span>
       </Show>
     </div>
+    <fieldset class="spread-constraint" disabled={!hydrated() || busy()}>
+      <legend>Spread constraint in the Pod template</legend>
+      <label>Spread topologyKey
+        <select value={state().constraint.topologyKey} onChange={(event) => edit({ topologyKey: event.currentTarget.value as TopologyKey }, 'topologyKey')}>
+          <option value="zone" selected={state().constraint.topologyKey === 'zone'}>{labelKeys.zone}</option>
+          <option value="hostname" selected={state().constraint.topologyKey === 'hostname'}>{labelKeys.hostname}</option>
+        </select>
+      </label>
+      <label>maxSkew
+        <select value={String(state().constraint.maxSkew)} onChange={(event) => edit({ maxSkew: Number(event.currentTarget.value) as 1 | 2 }, 'maxSkew')}>
+          <option value="1" selected={state().constraint.maxSkew === 1}>1</option>
+          <option value="2" selected={state().constraint.maxSkew === 2}>2</option>
+        </select>
+      </label>
+      <label>whenUnsatisfiable
+        <select value={state().constraint.whenUnsatisfiable} onChange={(event) => edit({ whenUnsatisfiable: event.currentTarget.value as Constraint['whenUnsatisfiable'] }, 'whenUnsatisfiable')}>
+          <option value="DoNotSchedule" selected={state().constraint.whenUnsatisfiable === 'DoNotSchedule'}>DoNotSchedule · filter</option>
+          <option value="ScheduleAnyway" selected={state().constraint.whenUnsatisfiable === 'ScheduleAnyway'}>ScheduleAnyway · score only</option>
+        </select>
+      </label>
+      <label><input type="checkbox" checked={state().constraint.minDomains} disabled={state().constraint.whenUnsatisfiable === 'ScheduleAnyway'} onChange={(event) => edit({ minDomains: event.currentTarget.checked }, 'minDomains')} />minDomains {MIN_DOMAINS} · DoNotSchedule only</label>
+    </fieldset>
     <ul class="anatomy-legend">
       <li>Tray: zone. Bay: Node; its tag gives the assigned web Pod count</li>
       <li>Stacked cartridge: assigned web Pod, labelled with its identity</li>
       <li>Cartridge on the queue pad: unassigned Pod. It moves into a bay only when bound</li>
       <li>Gate upright: not passed in the last run, or no run yet. Gate flat: the spread filter passed this Node in the last run. ScheduleAnyway has no filter, so every gate lies flat</li>
     </ul>
+    </div>
+    <div class="anatomy-bench-panel">
     <div class="anatomy-controls spread-controls">
-      <button type="button" disabled={!hydrated() || busy() || !pending()} onClick={run}>Run placement</button>
-      <label>Spread topologyKey
-        <select value={state().constraint.topologyKey} disabled={!hydrated() || busy()} onChange={(event) => edit({ topologyKey: event.currentTarget.value as TopologyKey }, 'topologyKey')}>
-          <option value="zone" selected={state().constraint.topologyKey === 'zone'}>{labelKeys.zone}</option>
-          <option value="hostname" selected={state().constraint.topologyKey === 'hostname'}>{labelKeys.hostname}</option>
-        </select>
-      </label>
-      <label>maxSkew
-        <select value={String(state().constraint.maxSkew)} disabled={!hydrated() || busy()} onChange={(event) => edit({ maxSkew: Number(event.currentTarget.value) as 1 | 2 }, 'maxSkew')}>
-          <option value="1" selected={state().constraint.maxSkew === 1}>1</option>
-          <option value="2" selected={state().constraint.maxSkew === 2}>2</option>
-        </select>
-      </label>
-      <label>whenUnsatisfiable
-        <select value={state().constraint.whenUnsatisfiable} disabled={!hydrated() || busy()} onChange={(event) => edit({ whenUnsatisfiable: event.currentTarget.value as Constraint['whenUnsatisfiable'] }, 'whenUnsatisfiable')}>
-          <option value="DoNotSchedule" selected={state().constraint.whenUnsatisfiable === 'DoNotSchedule'}>DoNotSchedule · filter</option>
-          <option value="ScheduleAnyway" selected={state().constraint.whenUnsatisfiable === 'ScheduleAnyway'}>ScheduleAnyway · score only</option>
-        </select>
-      </label>
-      <label><input type="checkbox" checked={state().constraint.minDomains} disabled={!hydrated() || busy() || state().constraint.whenUnsatisfiable === 'ScheduleAnyway'} onChange={(event) => edit({ minDomains: event.currentTarget.checked }, 'minDomains')} />minDomains {MIN_DOMAINS} · DoNotSchedule only</label>
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy() || !pending()} onClick={run}>Run placement</button>
       <button type="button" disabled={!hydrated() || busy() || pending() !== undefined} onClick={scale}>Scale up: create next web Pod</button>
       <button type="button" disabled={!hydrated() || busy() || counted().length === 0} onClick={remove}>Remove newest web Pod</button>
       <button type="button" disabled={!hydrated() || busy()} onClick={reset}>Reset</button>
     </div>
     <ChangeReport change={change()} busy={busy()} />
-    <div class="spread-status">
-      <StateBadge tone={podBadge().tone} label={podBadge().label} />
-      <StateBadge tone="info" label={`current skew ${current().currentSkew} (max − min) · maxSkew ${state().constraint.maxSkew}`} />
+    <div class="spread-status-block" data-anatomy-status>
+      <div class="spread-status">
+        <StateBadge tone={podBadge().tone} label={podBadge().label} />
+        <StateBadge tone="info" label={`current skew ${current().currentSkew} (max − min) · maxSkew ${state().constraint.maxSkew}`} />
+      </div>
+      <div class="anatomy-status-columns">
+        <section aria-label="Candidate nodes and the last run's result">
+          <h3 class="anatomy-panel-heading">Candidate nodes</h3>
+          <ul class="anatomy-status-list spread-cards">
+            <For each={nodes}>{(node, index) => <li class="spread-card" data-object={node.name}>
+              <span><strong>{node.name}</strong> · {node.zone}</span>
+              <Show when={outcomeFor(index())} fallback={<StateBadge tone="wait" label="not run" />}>
+                <StateBadge tone={outcomeBadge[outcomeFor(index())!].tone} label={outcomeBadge[outcomeFor(index())!].label} />
+              </Show>
+              <span class="anatomy-status-detail">Now: {current().rows[index()]!.matching} matching in {current().rows[index()]!.domain} · key {labelKeys[state().constraint.topologyKey]}</span>
+            </li>}</For>
+          </ul>
+        </section>
+        <section class="spread-ledger" aria-label="Pod identity ledger">
+          <h3 class="anatomy-panel-heading">Pod ledger</h3>
+          <ul class="anatomy-status-list">
+            <For each={state().pods}>{(pod) => <li data-object={podName(pod.id)}>
+              <span><strong>{podName(pod.id)}</strong> {pod.removed ? 'removed' : pod.node ? `on ${pod.node}` : 'no node yet'}</span>
+              <Show when={pod.removed}><StateBadge tone="info" label="removed · not reused" /></Show>
+              <Show when={!pod.removed && pod.node}><StateBadge tone="selected" label="assigned · not Running" /></Show>
+              <Show when={!pod.removed && !pod.node}>
+                <StateBadge tone={result() ? 'fail' : 'wait'} label={result() ? 'unscheduled · Pending' : 'pending · not run'} />
+              </Show>
+            </li>}</For>
+          </ul>
+          <p class="spread-note">Identities are fixture stand-ins; a removed id is never reused.</p>
+        </section>
+      </div>
     </div>
-    <div class="spread-cards">
-      <For each={nodes}>{(node, index) => <section class="spread-card" data-object={node.name}>
-        <p><strong>{node.name}</strong> · {node.zone}</p>
-        <p class="spread-fact">Now: {current().rows[index()]!.matching} matching in {current().rows[index()]!.domain} · key {labelKeys[state().constraint.topologyKey]}</p>
-        <div class="spread-badges">
-          <Show when={outcomeFor(index())} fallback={<StateBadge tone="wait" label="not run" />}>
-            <StateBadge tone={outcomeBadge[outcomeFor(index())!].tone} label={outcomeBadge[outcomeFor(index())!].label} />
-          </Show>
-        </div>
-      </section>}</For>
+    </div>
     </div>
     <p class="spread-min" id="spread-min">{result()
       ? `Global minimum used at run time: ${result()!.min} over ${result()!.domains} ${state().constraint.topologyKey === 'zone' ? 'zones' : 'nodes'}${result()!.minDomainsApplied ? ' · minDomains applied' : ''}.`
@@ -449,22 +477,6 @@ export default function Figure() {
       <ManifestPanel title={shownTitle()} lines={podLines()}
         note="Highlighted: the constraint fields and selector a run reads, spec.nodeName after a bind, or the field an edit changed. # notes give the minimum and the filter or score while the Pod stays pending." />
     </div>
-    <section class="spread-ledger" aria-label="Pod identity ledger">
-      <h3>Pod ledger <span class="spread-note">identities are fixture stand-ins; a removed id is never reused</span></h3>
-      <ul>
-        <For each={state().pods}>{(pod) => <li data-object={podName(pod.id)}>
-          <strong>{podName(pod.id)}</strong>
-          <span>{pod.removed ? 'removed' : pod.node ? `on ${pod.node}` : 'no node yet'}</span>
-          <span class="spread-badges">
-            <Show when={pod.removed}><StateBadge tone="info" label="removed · not reused" /></Show>
-            <Show when={!pod.removed && pod.node}><StateBadge tone="selected" label="assigned · not Running" /></Show>
-            <Show when={!pod.removed && !pod.node}>
-              <StateBadge tone={result() ? 'fail' : 'wait'} label={result() ? 'unscheduled · Pending' : 'pending · not run'} />
-            </Show>
-          </span>
-        </li>}</For>
-      </ul>
-    </section>
     <p class="spread-facts">Fixture facts: node-a1 and node-a2 are in zone-a; node-b1 and node-b2 are in zone-b. web-1 and web-2 are on node-a1 and web-3 is on node-b1. Only assigned Pods count, and the pending Pod adds itself once. There are no taints, affinity, resources or priority; ties go to the earlier node name.</p>
     <p class="spread-caption">Gates change only after a run. ScheduleAnyway filters nothing, so every gate lies flat and the score only chooses among bays. Cartridges are assignments: a bound Pod is not yet Running or Ready.</p>
   </div>;

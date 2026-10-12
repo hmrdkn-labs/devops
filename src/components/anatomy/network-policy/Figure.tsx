@@ -240,6 +240,8 @@ export default function Figure() {
 
   return <div ref={root} class="anatomy-figure np-figure" aria-busy={!hydrated()}>
     <div class="anatomy-figure-header"><span>Fig · Networking</span><span>Isolation is per direction</span></div>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <p class="np-identities">
       <span>Namespace <b>{NAMESPACE}</b></span>
       <span>Service <b>web</b> selects <b>app=web</b>, port 80 → targetPort 8080</span>
@@ -273,6 +275,21 @@ export default function Figure() {
         </g>
       </g>
     </svg>
+    <fieldset class="anatomy-controls np-fields" disabled={!hydrated() || busy()}>
+      <legend>Cluster and policy objects</legend>
+      <label><input type="checkbox" checked={config().enforcing} onChange={(e) => configure({ enforcing: e.currentTarget.checked })} />CNI enforces NetworkPolicy</label>
+      <label><input type="checkbox" checked={config().clientEgress} onChange={(e) => configure({ clientEgress: e.currentTarget.checked })} />Apply client-egress (selects role=frontend)</label>
+      <label><input type="checkbox" checked={config().dnsAllowed} disabled={!config().clientEgress} onChange={(e) => configure({ dnsAllowed: e.currentTarget.checked })} />client-egress allows DNS to kube-dns (UDP and TCP 53)</label>
+      <label><input type="checkbox" checked={config().webIngress} onChange={(e) => configure({ webIngress: e.currentTarget.checked })} />Apply web-ingress (selects app=web)</label>
+      <label>web-ingress port
+        <select value={String(config().webPort)} disabled={!config().webIngress} onChange={(e) => configure({ webPort: Number(e.currentTarget.value) as 80 | 8080 })}>
+          <option value="8080" selected={config().webPort === 8080}>8080 · Pod port</option>
+          <option value="80" selected={config().webPort === 80}>80 · Service port (mistake)</option>
+        </select>
+      </label>
+      <label><input type="checkbox" checked={config().dbIngress} onChange={(e) => configure({ dbIngress: e.currentTarget.checked })} />Apply db-ingress (selects app=db)</label>
+    </fieldset>
+    <p class="np-hint">The port and DNS controls edit a rule that exists only after its policy is applied. Stored objects stay in the API even when the plugin does not enforce them.</p>
     <ul class="anatomy-legend">
       <li>Pod cell = one Pod</li>
       <li>Accent-edged closed lid = applied policy checking traffic</li>
@@ -282,65 +299,56 @@ export default function Figure() {
       <li>Overhead cartridge = one probe</li>
       <li>Tower = Service web, port 80 to 8080</li>
     </ul>
-    <div class="anatomy-controls np-controls">
-      <fieldset class="np-fields" disabled={!hydrated() || busy()}>
-        <legend>Cluster and policy objects</legend>
-        <label><input type="checkbox" checked={config().enforcing} onChange={(e) => configure({ enforcing: e.currentTarget.checked })} />CNI enforces NetworkPolicy</label>
-        <label><input type="checkbox" checked={config().clientEgress} onChange={(e) => configure({ clientEgress: e.currentTarget.checked })} />Apply client-egress (selects role=frontend)</label>
-        <label><input type="checkbox" checked={config().dnsAllowed} disabled={!config().clientEgress} onChange={(e) => configure({ dnsAllowed: e.currentTarget.checked })} />client-egress allows DNS to kube-dns (UDP and TCP 53)</label>
-        <label><input type="checkbox" checked={config().webIngress} onChange={(e) => configure({ webIngress: e.currentTarget.checked })} />Apply web-ingress (selects app=web)</label>
-        <label>web-ingress port
-          <select value={String(config().webPort)} disabled={!config().webIngress} onChange={(e) => configure({ webPort: Number(e.currentTarget.value) as 80 | 8080 })}>
-            <option value="8080" selected={config().webPort === 8080}>8080 · Pod port</option>
-            <option value="80" selected={config().webPort === 80}>80 · Service port (mistake)</option>
-          </select>
-        </label>
-        <label><input type="checkbox" checked={config().dbIngress} onChange={(e) => configure({ dbIngress: e.currentTarget.checked })} />Apply db-ingress (selects app=db)</label>
-      </fieldset>
-      <div class="np-probe-controls">
-        <label>Probe
-          <select value={probe()} disabled={!hydrated() || busy()} onChange={(e) => selectProbe(e.currentTarget.value as Probe)}>
-            <For each={Object.keys(flows) as Probe[]}>{(p) => <option value={p} selected={probe() === p}>{`${probeName[p]} (port ${dialled[p]})`}</option>}</For>
-          </select>
-        </label>
-        <button type="button" disabled={!hydrated() || busy()} onClick={sendProbe}>Send probe</button>
-        <button type="button" disabled={!hydrated() || busy()} onClick={reset}>Reset fixture</button>
-      </div>
     </div>
-    <p class="np-hint">The port and DNS controls edit a rule that exists only after its policy is applied. Stored objects stay in the API even when the plugin does not enforce them.</p>
+    <div class="anatomy-bench-panel">
+    <div class="anatomy-controls np-probe-controls">
+      <label>Probe
+        <select value={probe()} disabled={!hydrated() || busy()} onChange={(e) => selectProbe(e.currentTarget.value as Probe)}>
+          <For each={Object.keys(flows) as Probe[]}>{(p) => <option value={p} selected={probe() === p}>{`${probeName[p]} (port ${dialled[p]})`}</option>}</For>
+        </select>
+      </label>
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy()} onClick={sendProbe}>Send probe</button>
+      <button type="button" disabled={!hydrated() || busy()} onClick={reset}>Reset fixture</button>
+    </div>
     <ChangeReport change={report()} busy={busy()} />
-    <ul class="np-cards">
-      <For each={PODS}>{(pod) => {
-        const out = hatchesOf[pod].out;
-        const inbound = hatchesOf[pod].in;
-        return <li class="np-card" data-pod={pod}>
-          <h4>{podTitle[pod]}</h4>
-          <p class="np-labels">{Object.entries(pods[pod].labels).map(([k, v]) => `${k}=${v}`).join(', ')}</p>
-          <p class="np-selected">Selected by: {policiesSelecting(pod, config()).join(', ') || 'no policy'}</p>
-          <p><StateBadge tone={postureBadge(postures()[out], 'egress').tone} label={postureBadge(postures()[out], 'egress').label} /></p>
-          <p><StateBadge tone={postureBadge(postures()[inbound], 'ingress').tone} label={postureBadge(postures()[inbound], 'ingress').label} /></p>
-          <Show when={verdict()}>
-            <p class="np-probe-line"><StateBadge tone={probeLine(pod, verdict()!).tone} label={probeLine(pod, verdict()!).label} /></p>
-          </Show>
-        </li>;
-      }}</For>
-    </ul>
-    <section class="np-ledger-wrap" aria-label="Gate ledger for the selected probe">
-      <h4>Gate ledger · {probeName[probe()]}</h4>
-      <Show when={verdict()} fallback={<p class="np-hint">Gates run in order when the probe is sent; a result appears only after the cartridge stops or is seated.</p>}>
-        <p class="np-hint">{verdict()!.delivered ? 'Every armed gate on this path admitted the probe.' : `Stopped at ${gateName[verdict()!.stopped!]}; later gates were not reached.`}</p>
-      </Show>
-      <ol class="np-ledger">
-        <For each={ledger()}>{(row) => {
-          const badge = () => checkBadge(row.gate, verdict()?.checks[row.gate] ?? null, config());
-          return <li>
-            <span class="np-gate">{gateName[row.gate]}</span>
-            <span class="np-muted">{gatePolicy[row.gate]}</span>
-            <StateBadge tone={badge().tone} label={badge().label} />
+    <div class="np-status" data-anatomy-status>
+      <h3 class="anatomy-panel-heading">Pods: egress gate · ingress gate · last probe</h3>
+      <ul class="anatomy-status-list np-cards">
+        <For each={PODS}>{(pod) => {
+          const out = hatchesOf[pod].out;
+          const inbound = hatchesOf[pod].in;
+          return <li class="np-card" data-pod={pod}>
+            <span class="np-pod">
+              <strong>{podTitle[pod]}</strong>
+              <span class="np-labels">{Object.entries(pods[pod].labels).map(([k, v]) => `${k}=${v}`).join(', ')}</span>
+              <span class="np-selected">Selected by: {policiesSelecting(pod, config()).join(', ') || 'no policy'}</span>
+            </span>
+            <StateBadge tone={postureBadge(postures()[out], 'egress').tone} label={postureBadge(postures()[out], 'egress').label} />
+            <StateBadge tone={postureBadge(postures()[inbound], 'ingress').tone} label={postureBadge(postures()[inbound], 'ingress').label} />
+            <Show when={verdict()}>
+              <StateBadge tone={probeLine(pod, verdict()!).tone} label={probeLine(pod, verdict()!).label} />
+            </Show>
           </li>;
         }}</For>
-      </ol>
-    </section>
+      </ul>
+      <section class="np-ledger-wrap" aria-label="Gate ledger for the selected probe">
+        <h3 class="anatomy-panel-heading">Gate ledger · {probeName[probe()]}</h3>
+        <Show when={verdict()} fallback={<p class="np-hint">Gates run in order when the probe is sent; a result appears only after the cartridge stops or is seated.</p>}>
+          <p class="np-hint">{verdict()!.delivered ? 'Every armed gate on this path admitted the probe.' : `Stopped at ${gateName[verdict()!.stopped!]}; later gates were not reached.`}</p>
+        </Show>
+        <ol class="anatomy-status-list np-ledger">
+          <For each={ledger()}>{(row) => {
+            const badge = () => checkBadge(row.gate, verdict()?.checks[row.gate] ?? null, config());
+            return <li>
+              <span><span class="np-gate">{gateName[row.gate]}</span> <span class="np-muted">{gatePolicy[row.gate]}</span></span>
+              <StateBadge tone={badge().tone} label={badge().label} />
+            </li>;
+          }}</For>
+        </ol>
+      </section>
+    </div>
+    </div>
+    </div>
     <ManifestPanel title={`Objects in namespace ${NAMESPACE}`} lines={manifest()} note="Highlighted lines are what the last change or probe read. Stored objects stay in the API even when the plugin does not enforce them." />
   </div>;
 }

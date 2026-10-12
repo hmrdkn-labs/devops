@@ -42,8 +42,17 @@
   .pv-settings select { font-size: .8rem; }
 }
 
-.pv-objects { list-style: none; margin: .75rem 0; padding: 0; display: grid; gap: .45rem; }
-.pv-objects li { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .6rem; min-width: 0; }
 .pv-objects code { overflow-wrap: anywhere; }
+/* Status labels are full sentences; let them wrap instead of pushing the row wider than a phone. */
+.pv-objects .anatomy-badge { white-space: normal; }
 .pv-ledger, .pv-caption { font-size: .9rem; color: var(--muted); overflow-wrap: anywhere; }
+.pv-ledger { margin: .5rem 0 0; }
 .pv-figure .anatomy-readout { overflow-wrap: anywhere; }
+.pv-status .anatomy-readout { margin-top: .5rem; padding: .5rem .8rem; font-size: .85rem; }
+/* Below the workbench breakpoint the report sits right under the stage, as before, so it stays in reach
+   after a button press; it is a live region, not a focus stop, so tab order is unchanged. */
+@media (max-width: 1099px) {
+  .pv-figure .anatomy-bench-panel { display: flex; flex-direction: column; }
+  .pv-figure .anatomy-bench-panel > .anatomy-change { order: -1; margin-top: 0; }
+  .pv-figure .anatomy-bench-panel > .anatomy-controls { margin-top: 1rem; }
+}
