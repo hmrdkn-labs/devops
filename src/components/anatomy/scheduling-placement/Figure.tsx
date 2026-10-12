@@ -108,6 +108,8 @@ export default function Figure() {
 
   return <div class="anatomy-figure capacity-bench" ref={root} aria-label="Resource capacity placement bench" aria-busy={!hydrated()}>
     <header class="anatomy-figure-header"><span>FIG 03 / SCHEDULING</span><span>Pod reports/report-worker</span></header>
+    <div class="anatomy-bench">
+    <div class="anatomy-bench-object">
     <div class="capacity-stage">
       <svg class="iso-svg" viewBox="0 0 760 440" role="img" aria-labelledby="capacity-title capacity-description">
         <title id="capacity-title">Three-dock resource comparator bench</title>
@@ -138,8 +140,10 @@ export default function Figure() {
       <label>Memory request <select aria-label="Memory request" value={state().request.memory} disabled={!hydrated() || busy()} onChange={(event) => move({ fixture: state().fixture, request: { cpu: state().request.cpu, memory: Number(event.currentTarget.value) }, phase: 'created', selected: null }, 'configure', event.currentTarget)}><For each={[512, 1024, 2048, 3072]}>{(value) => <option value={value} selected={state().request.memory === value}>{value}Mi</option>}</For></select></label>
       <label>Node budgets <select aria-label="Node budgets" value={state().fixture} disabled={!hydrated() || busy()} onChange={(event) => move({ fixture: event.currentTarget.value as Fixture, request: state().request, phase: 'created', selected: null }, 'configure', event.currentTarget)}><option value="mixed" selected={state().fixture === 'mixed'}>Mixed bottlenecks</option><option value="equal" selected={state().fixture === 'equal'}>Equal budgets / tie</option></select></label>
     </div>
+    </div>
+    <div class="anatomy-bench-panel">
     <div class="anatomy-controls capacity-steps">
-      <button type="button" disabled={!hydrated() || busy() || state().phase === 'running' || (state().phase === 'filtered' && !results().some((evaluation) => evaluation.eligible))} onClick={(event) => {
+      <button type="button" data-anatomy-primary disabled={!hydrated() || busy() || state().phase === 'running' || (state().phase === 'filtered' && !results().some((evaluation) => evaluation.eligible))} onClick={(event) => {
         const current = state();
         const next = advance(current);
         const kind = KIND[current.phase];
@@ -150,7 +154,7 @@ export default function Figure() {
     </div>
     <p class="anatomy-readout" data-phase={busy() ? 'transition' : state().phase}>{busy() ? report().title : describe(state())}</p>
     <ChangeReport change={report()} busy={busy()} />
-    <div class="capacity-results" aria-label="Node resource calculations">
+    <div class="capacity-results" aria-label="Node resource calculations" data-anatomy-status>
       <For each={statuses()}>{(status) => <section class="capacity-node" data-node={status.evaluation.node.id}>
         <header class="capacity-node-head"><h3>{status.evaluation.node.id}</h3><StateBadge tone={status.filter.tone} label={status.filter.label} />{status.placed && <StateBadge tone={status.placed.tone} label={status.placed.label} />}</header>
         <ul class="capacity-checks">
@@ -158,8 +162,10 @@ export default function Figure() {
           <li data-resource="memory"><span class="capacity-check-name">Memory</span><span class="capacity-check-numbers">{status.evaluation.memory.free}Mi free · {status.evaluation.memory.requested}Mi requested</span><StateBadge tone={status.memory.tone} label={status.memory.label} /></li>
         </ul>
         <p class="capacity-score">{status.score}</p>
-        <dl><dt>Allocatable</dt><dd>{status.evaluation.node.allocatable.cpu}m / {status.evaluation.node.allocatable.memory}Mi</dd><dt>Existing requests</dt><dd>{status.evaluation.node.existing.cpu}m / {status.evaluation.node.existing.memory}Mi</dd><dt>Available budget</dt><dd>{status.evaluation.available.cpu}m / {status.evaluation.available.memory}Mi</dd></dl>
+        <dl><div><dt>Allocatable</dt><dd>{status.evaluation.node.allocatable.cpu}m / {status.evaluation.node.allocatable.memory}Mi</dd></div><div><dt>Existing requests</dt><dd>{status.evaluation.node.existing.cpu}m / {status.evaluation.node.existing.memory}Mi</dd></div><div><dt>Available budget</dt><dd>{status.evaluation.available.cpu}m / {status.evaluation.available.memory}Mi</dd></div></dl>
       </section>}</For>
+    </div>
+    </div>
     </div>
     <ManifestPanel title="Pod manifest · reports/report-worker" lines={manifestLines(state(), last())} note="Highlighted lines are what the last committed action read or changed. status and conditions are written by the control plane." />
     <p class="anatomy-fixture-note">Score policy: average normalized slack after placement. Its arithmetic matches LeastAllocated with equal CPU and memory weight, but this bench shows that one term only. Exact ties choose node-a, then node-b, then node-c; kube-scheduler picks randomly among equal top scores. Changing a control creates a fresh fixture, never migrates a running Pod.</p>

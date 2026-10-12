@@ -8,20 +8,26 @@
 .capacity-dock b { padding: .1rem .35rem; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); font-weight: 700; }
 .capacity-dock i { font-style: normal; color: var(--muted); }
 .capacity-dock[data-placed] b { border-color: var(--accent); background: var(--accent-soft); }
-.capacity-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-top: 1rem; }
-.capacity-node { padding: .8rem; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
-.capacity-node-head { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+/* Each dock is one compact row: identity and verdict, one line per resource, then score and budget. */
+.capacity-results { display: grid; gap: .35rem; margin-top: .6rem; }
+.capacity-node { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .15rem .8rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.capacity-node-head { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; min-width: 0; }
 .capacity-node h3 { font-family: var(--mono); margin: 0; font-size: .95rem; }
-.capacity-checks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .5rem; font-size: .82rem; }
+.capacity-checks { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; gap: .2rem; font-size: .82rem; }
 .capacity-checks li { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; min-width: 0; }
 .capacity-check-name { color: var(--muted); min-width: 4.5rem; }
 .capacity-check-numbers { font-family: var(--mono); overflow-wrap: anywhere; min-width: 0; }
-.capacity-score { font-family: var(--mono); font-size: .82rem; margin: .6rem 0 0; overflow-wrap: anywhere; }
-.capacity-node dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .25rem .6rem; margin: .6rem 0 0; font-size: .8rem; }
+.capacity-score { grid-row: 1; grid-column: 2; font-family: var(--mono); font-size: .82rem; margin: 0; overflow-wrap: anywhere; text-align: right; }
+.capacity-node dl { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 1rem; margin: 0; font-size: .8rem; }
+.capacity-node dl > div { display: flex; flex-wrap: wrap; gap: 0 .4rem; min-width: 0; }
 .capacity-node dt { color: var(--muted); }
-.capacity-node dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+.capacity-node dd { margin: 0; font-family: var(--mono); white-space: nowrap; }
+@media (min-width: 1100px) {
+  .capacity-bench .anatomy-bench-panel .anatomy-readout { margin-top: .6rem; padding: .45rem .8rem; }
+}
 @media (max-width: 600px) {
   .capacity-results { grid-template-columns: 1fr; }
+  .capacity-score { grid-row: auto; grid-column: 1 / -1; text-align: left; }
   .capacity-bench .anatomy-legend { margin-top: .6rem; gap: .25rem .75rem; font-size: .78rem; }
   .capacity-bench .capacity-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .5rem; margin-top: .6rem; }
   .capacity-bench .capacity-inputs label { display: grid; gap: .15rem; font-size: .8rem; color: var(--muted); }
