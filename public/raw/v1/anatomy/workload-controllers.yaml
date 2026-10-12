@@ -1,0 +1,30 @@
+schema_version: 1
+slug: workload-controllers
+title: "Choosing a workload controller: the kind decides who owns Pods"
+summary: Apply one kind, then watch which controller creates, names, orders, pins and completes Pods, and what each one does not promise.
+module: Workloads
+section: workloads
+order: 2
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:pods-workloads
+  - fpp:kcna-scheduling-review
+objective_ids:
+  - fpp:pods-workloads/controller-choice
+  - fpp:kcna-scheduling-review/node-ownership
+sources:
+  - title: "Kubernetes: Deployments"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - title: "Kubernetes: ReplicaSet"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+  - title: "Kubernetes: StatefulSets"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+  - title: "Kubernetes: DaemonSet"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+  - title: "Kubernetes: Jobs"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/job/
+  - title: "Kubernetes: CronJob"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+  - title: "Kubernetes: Pod Lifecycle"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/

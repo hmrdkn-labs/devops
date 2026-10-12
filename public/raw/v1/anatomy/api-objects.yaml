@@ -1,0 +1,39 @@
+schema_version: 1
+slug: api-objects
+title: "From manifest to live object: accepted is not observed, and observed is not Ready"
+summary: Apply one Deployment manifest through a filing press, then watch the API server store
+  spec, a controller record status, and Pods become Ready on separate schedules.
+module: Kubernetes Fundamentals
+section: big-picture
+order: 2
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-manifests
+  - fpp:kubernetes-apply-live-state
+  - fpp:kubernetes-object-lexicon
+objective_ids:
+  - fpp:kubernetes-manifests/object-shape
+  - fpp:kubernetes-manifests/proof-boundary
+  - fpp:kubernetes-apply-live-state/declarative
+  - fpp:kubernetes-apply-live-state/live-state
+  - fpp:kubernetes-object-lexicon/scope-group
+sources:
+  - title: "Kubernetes: Objects In Kubernetes"
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/
+  - title: "Kubernetes: Kubernetes Object Management"
+    url: https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/
+  - title: "Kubernetes: Declarative Management of Kubernetes Objects Using Configuration Files"
+    url: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/
+  - title: "Kubernetes: Deployments"
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - title: "Kubernetes API reference: Deployment v1"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/apps/deployment-v1/
+  - title: "Kubernetes API reference: ObjectMeta"
+    url: https://kubernetes.io/docs/reference/kubernetes-api/definitions/object-meta-v1-meta/
+  - title: "Kubernetes: Pod Lifecycle"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+  - title: "Kubernetes: API Concepts"
+    url: https://kubernetes.io/docs/reference/using-api/api-concepts/
+  - title: "Kubernetes: Garbage Collection"
+    url: https://kubernetes.io/docs/concepts/architecture/garbage-collection/

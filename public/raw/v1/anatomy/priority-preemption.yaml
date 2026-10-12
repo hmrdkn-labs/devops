@@ -1,0 +1,20 @@
+schema_version: 1
+slug: priority-preemption
+title: "Priority and preemption: queue order is not a placement"
+summary: A higher PriorityClass moves a Pod ahead in the scheduling queue and may nominate a node by evicting lower-priority Pods. The Pod is bound only after the victims are gone, and only if nothing better takes the room.
+module: Scheduling
+section: scheduling
+order: 4
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kcna-scheduling-review
+objective_ids:
+  - fpp:kcna-scheduling-review/scheduler-extension
+sources:
+  - title: "Kubernetes: Pod Priority and Preemption"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+  - title: "Kubernetes: Disruptions"
+    url: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+  - title: "Kubernetes: Configure Multiple Schedulers"
+    url: https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/

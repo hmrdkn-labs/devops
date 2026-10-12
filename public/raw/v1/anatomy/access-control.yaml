@@ -1,0 +1,37 @@
+schema_version: 1
+slug: access-control
+title: "Authentication, RBAC, and admission: who asks, what they may do, what may persist"
+summary: Send one API request through the three checks that decide it. See which check stops it, which object caused the stop, and what has not happened yet.
+module: Security
+section: security-scaling
+order: 1
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:kubernetes-security-access
+objective_ids:
+  - fpp:kubernetes-security-access/request
+  - fpp:kubernetes-security-access/workload
+sources:
+  - title: "Kubernetes: Authenticating"
+    url: https://kubernetes.io/docs/reference/access-authn-authz/authentication/
+  - title: "Kubernetes: Authorization"
+    url: https://kubernetes.io/docs/reference/access-authn-authz/authorization/
+  - title: "Kubernetes: Using RBAC Authorization"
+    url: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  - title: "Kubernetes: Admission Control in Kubernetes"
+    url: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/
+  - title: "Kubernetes: Dynamic Admission Control"
+    url: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+  - title: "Kubernetes: Pod Security Admission"
+    url: https://kubernetes.io/docs/concepts/security/pod-security-admission/
+  - title: "Kubernetes: Pod Security Admission Controller in Stable"
+    url: https://kubernetes.io/blog/2022/08/25/pod-security-admission-stable/
+  - title: "Kubernetes: Apply Pod Security Standards at the Cluster Level"
+    url: https://kubernetes.io/docs/tutorials/security/cluster-level-pss/
+  - title: "Kubernetes: Pod Security Standards"
+    url: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+  - title: "Kubernetes: API Concepts"
+    url: https://kubernetes.io/docs/reference/using-api/api-concepts/
+  - title: "Kubernetes: Service Accounts"
+    url: https://kubernetes.io/docs/concepts/security/service-accounts/

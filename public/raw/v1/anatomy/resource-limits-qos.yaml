@@ -1,0 +1,26 @@
+schema_version: 1
+slug: resource-limits-qos
+title: "Requests, limits, and QoS: reserve, enforce, rank"
+summary: A request reserves space for scheduling, a limit is enforced by the kernel, and namespace policy checks both when a Pod is created. Eviction order follows usage above request, not the QoS label.
+module: Kubernetes Resources
+section: workloads
+order: 4
+revision: 1
+verified_at: 2026-10-12
+unit_ids:
+  - fpp:scheduling-resources-health
+  - fpp:kcna-scheduling-review
+objective_ids:
+  - fpp:scheduling-resources-health/requests-limits
+  - fpp:kcna-scheduling-review/resource-policy
+sources:
+  - title: "Kubernetes: Resource Management for Pods and Containers"
+    url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  - title: "Kubernetes: Configure Quality of Service for Pods"
+    url: https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/
+  - title: "Kubernetes: Node-pressure Eviction"
+    url: https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/
+  - title: "Kubernetes: Limit Ranges"
+    url: https://kubernetes.io/docs/concepts/policy/limit-range/
+  - title: "Kubernetes: Resource Quotas"
+    url: https://kubernetes.io/docs/concepts/policy/resource-quotas/

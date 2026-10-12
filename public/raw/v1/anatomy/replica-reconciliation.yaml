@@ -6,8 +6,8 @@ summary: A cartridge bench separates Pod replacement, replica-count scaling and 
 module: Kubernetes Resources
 section: workloads
 order: 3
-revision: 1
-verified_at: 2026-10-11
+revision: 2
+verified_at: 2026-10-12
 unit_ids:
   - fpp:kubernetes-labels-replicasets
   - fpp:kubernetes-deployments-rollouts
