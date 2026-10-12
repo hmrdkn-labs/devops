@@ -3,12 +3,33 @@
 .capacity-bench .anatomy-controls label { min-width: 0; max-width: 100%; }
 .capacity-bench select { max-width: 100%; }
 .capacity-bench button:focus-visible, .capacity-bench select:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.capacity-stage { position: relative; min-width: 0; }
+.capacity-dock { position: absolute; transform: translate(-50%, -100%); display: grid; justify-items: center; gap: .15rem; font-family: var(--mono); font-size: clamp(.62rem, 1.8vw, .8rem); line-height: 1.2; white-space: nowrap; pointer-events: none; }
+.capacity-dock b { padding: .1rem .35rem; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); font-weight: 700; }
+.capacity-dock i { font-style: normal; color: var(--muted); }
+.capacity-dock[data-placed] b { border-color: var(--accent); background: var(--accent-soft); }
 .capacity-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-top: 1rem; }
 .capacity-node { padding: .8rem; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
-.capacity-node h3 { font-family: var(--mono); margin: 0 0 .6rem; font-size: .95rem; }
-.capacity-node dl { margin: 0; font-size: .8rem; }
-.capacity-node dt { color: var(--muted); margin-top: .5rem; }
-.capacity-node dd { margin: .15rem 0 0; font-family: var(--mono); overflow-wrap: anywhere; }
-.capacity-node p { font-size: .82rem; margin-bottom: 0; overflow-wrap: anywhere; }
-.capacity-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-@media (max-width: 600px) { .capacity-results { grid-template-columns: 1fr; } .capacity-node dl { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; } .capacity-node dt { margin: 0; } .capacity-node dd { margin: 0; } }
+.capacity-node-head { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.capacity-node h3 { font-family: var(--mono); margin: 0; font-size: .95rem; }
+.capacity-checks { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .5rem; font-size: .82rem; }
+.capacity-checks li { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; min-width: 0; }
+.capacity-check-name { color: var(--muted); min-width: 4.5rem; }
+.capacity-check-numbers { font-family: var(--mono); overflow-wrap: anywhere; min-width: 0; }
+.capacity-score { font-family: var(--mono); font-size: .82rem; margin: .6rem 0 0; overflow-wrap: anywhere; }
+.capacity-node dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .25rem .6rem; margin: .6rem 0 0; font-size: .8rem; }
+.capacity-node dt { color: var(--muted); }
+.capacity-node dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .capacity-results { grid-template-columns: 1fr; }
+  .capacity-bench .anatomy-legend { margin-top: .6rem; gap: .25rem .75rem; font-size: .78rem; }
+  .capacity-bench .capacity-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .5rem; margin-top: .6rem; }
+  .capacity-bench .capacity-inputs label { display: grid; gap: .15rem; font-size: .8rem; color: var(--muted); }
+  .capacity-bench .capacity-inputs label:last-child { grid-column: 1 / -1; }
+  .capacity-bench .capacity-inputs select { width: 100%; min-width: 0; }
+  .capacity-bench .capacity-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem .5rem; margin-top: .6rem; }
+  .capacity-bench .capacity-steps button { min-width: 0; }
+  .capacity-bench .capacity-steps button:first-child { grid-column: 1 / -1; }
+  .capacity-bench .anatomy-readout { margin-top: .6rem; padding: .6rem .8rem; font-size: .8rem; }
+  .capacity-bench .anatomy-change { margin-top: .6rem; padding: .6rem .8rem; }
+}

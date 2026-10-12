@@ -30,6 +30,8 @@ export const P = k.fitProjection(k.boxCorners(base, -14, 50), 760, 440, { pad: 2
 export const CENTERS = [0, 88, 176];
 export const INITIAL_X = -36;
 export const TRACK_LENGTH = 62;
+/** Request jaw travel. Its near edge sits at (far end − request), so overlap with the occupied shoe means "does not fit". */
+export const jawOffset = (fraction: number) => TRACK_LENGTH * (1 - fraction) + 1;
 export const GAUGE_Y = [-83, -59];
 const items: { layer: number; depth: number; markup: string }[] = [];
 
