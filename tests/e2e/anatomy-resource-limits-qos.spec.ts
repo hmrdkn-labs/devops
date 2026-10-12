@@ -147,7 +147,7 @@ test('on a phone, after Submit Pod, controls, ChangeReport and the candidate car
   const figure = await open(page, slug);
   await button(figure, 'Submit Pod').click();
   await expect(reportTitle(figure)).toContainText('Running on node-a');
-  const controls = await figure.locator('.anatomy-controls').boundingBox();
+  const controls = await figure.locator('.anatomy-controls').first().boundingBox();
   const change = await report(figure).boundingBox();
   const candidate = await podCard(figure).boundingBox();
   const stage = await figure.locator('svg.iso-svg').boundingBox();
