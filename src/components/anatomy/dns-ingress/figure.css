@@ -35,19 +35,30 @@
 /* Where a stopped run rests: a ✕ in danger colour, with a word in the status and ledger. */
 .nw-figure .nw-stop path { fill: none; stroke: var(--danger); stroke-width: 2.6; stroke-linecap: round; }
 
-.nw-figure .nw-status { display: grid; gap: .7rem; margin: 1rem 0 0; padding: 0; list-style: none; }
-@media (min-width: 720px) { .nw-figure .nw-status { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.nw-card { display: grid; gap: .3rem; align-content: start; min-width: 0; padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle); }
-.nw-card strong { overflow-wrap: anywhere; font-family: var(--mono); font-size: .88rem; font-weight: 600; }
-.nw-fact { font-size: .84rem; color: var(--muted); overflow-wrap: anywhere; }
-.nw-card-edge { grid-column: 1 / -1; }
-.nw-edge-facts { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
-.nw-edge-facts li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; font-size: .88rem; }
-.nw-ledger { margin-top: 1rem; font-size: .9rem; }
-.nw-ledger h3 { margin: 1rem 0 .4rem; font-size: .95rem; }
-.nw-steps { display: grid; gap: .35rem; margin: 0; padding-left: 1.4rem; }
-.nw-steps li { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .7rem; min-width: 0; }
-.nw-steps code { overflow-wrap: anywhere; font-size: .82rem; }
-.nw-steps li > span { overflow-wrap: anywhere; min-width: 0; }
+.nw-figure .nw-status strong { overflow-wrap: anywhere; font-family: var(--mono); font-size: .82rem; font-weight: 600; }
+.nw-figure .nw-edge-facts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin: 0; padding: 0; list-style: none; }
+.nw-figure .nw-edge-facts li { display: flex; align-items: center; gap: .35rem; font-size: .8rem; color: var(--muted); }
+/* Check rows: numbered in the order tried (the notch numbers on the drawer). A long badge may wrap under
+   the label instead of squeezing it; a check's detail runs on its own line. */
+.nw-figure .nw-steps { counter-reset: nw-step; }
+.nw-figure .nw-steps > li { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .6rem; }
+.nw-figure .nw-steps > li::before { counter-increment: nw-step; content: counter(nw-step) '.'; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nw-figure .nw-steps > li > :first-child { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.nw-figure .nw-steps code { font-size: .8rem; }
+.nw-figure .nw-steps .anatomy-badge { max-width: 100%; white-space: normal; text-align: left; }
+.nw-figure .nw-steps .anatomy-status-detail { flex-basis: 100%; padding-left: 1.4em; }
 .nw-caption { margin-top: 1rem; font-size: .86rem; color: var(--muted); overflow-wrap: anywhere; }
+/* Workbench: settings sit under the switchboard; runs, report and status share the panel. */
+@media (min-width: 1100px) {
+  .nw-figure .anatomy-readout { margin-top: .5rem; padding: .45rem .75rem; font-size: .85rem; }
+  .nw-figure .nw-controls { gap: .5rem; margin-top: .6rem; }
+  .nw-figure .nw-group { gap: .3rem; padding: .4rem .7rem .55rem; }
+  .nw-figure .nw-group label { font-size: .9rem; min-height: 32px; }
+  .nw-figure .nw-group input[type='checkbox'] { min-height: 0; }
+  .nw-figure .nw-group select { width: auto; max-width: 100%; }
+  /* The panel holds two status columns of named rows, so it takes more of the width than the default bench. */
+  .nw-figure .anatomy-bench { grid-template-columns: minmax(0, .72fr) minmax(420px, 1.28fr); }
+  .nw-figure .nw-actions { gap: .45rem; }
+  .nw-figure .nw-actions button { padding: .4rem .65rem; font-size: .92rem; }
+}
 @media (max-width: 480px) { .nw-figure .nw-actions button { flex-grow: 1; } }
