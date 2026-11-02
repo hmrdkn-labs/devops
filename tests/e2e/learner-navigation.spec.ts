@@ -19,7 +19,7 @@ test('Learn starts a unit and each viewport exposes one primary navigation', asy
     await expect(navigation.locator('[aria-current="page"]')).toHaveText('Learn');
     await expect(page.getByRole('link', { name: 'Search', exact: true })).toBeVisible();
     await expect(page.locator('.mobile-nav')).toHaveCount(0);
-    const brand = page.getByRole('link', { name: 'DevOps by hmrdkn-labs home' });
+    const brand = page.getByRole('link', { name: 'DevOps hmrdkn-labs home' });
     const brandMark = brand.locator('img.brand-mark');
     await expect(brandMark).toBeVisible();
     await expect(brandMark).toHaveAttribute('alt', '');
