@@ -178,3 +178,13 @@ modules:
         title: Cloud Native Architecture practice questions
         kind: quiz
         unit_ids: []
+
+  - id: curriculum:kcna/mixed-practice
+    slug: mixed-practice
+    title: Mixed practice
+    summary: Run a full mixed practice session across all four domains after the domain checkpoints are complete.
+    steps:
+      - id: curriculum:kcna/mixed-practice/mock-exam
+        title: Mock practice
+        kind: mock-exam
+        unit_ids: [fpp:kcna-kubernetes-fundamentals-review, fpp:kcna-kubernetes-resources-review, fpp:kcna-scheduling-review]

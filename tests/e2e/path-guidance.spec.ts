@@ -7,8 +7,8 @@ test('guest starts a concrete unit and keeps the curriculum ahead of optional to
   await expect(page.locator('h1')).toHaveText('KCNA learning path');
   await expect(page.locator('[data-session-action]')).toContainText('Start learning');
   await expect(page.locator('[data-session-action]')).toHaveAttribute('href', /^\/learn\//);
-  await expect(page.locator('[data-checkpoint]')).toHaveCount(4);
-  await expect(page.locator('[data-course-step]')).toHaveCount(36);
+  await expect(page.locator('[data-checkpoint]')).toHaveCount(5);
+  await expect(page.locator('[data-course-step]')).toHaveCount(37);
   const uniqueUnits = await page.locator('[data-mapped-unit-id]').evaluateAll((elements) =>
     new Set(elements.map((element) => element.getAttribute('data-mapped-unit-id')).filter(Boolean)).size);
   expect(uniqueUnits).toBe(32);

@@ -10,8 +10,11 @@ if (!path) throw new Error('KCNA path is missing');
 const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-domains');
 if (!curriculum) throw new Error('KCNA domain curriculum is missing');
 const pathUnitIds = new Set(path.units.map((entry) => entry.unit_id));
+const seenUnits = new Set<string>();
 const clientUnits = curriculum.modules.flatMap((module) => {
-  const mappedIds = [...new Set(module.steps.flatMap((step) => step.unit_ids))].filter((id) => pathUnitIds.has(id));
+  const mappedIds = [...new Set(module.steps.flatMap((step) => step.unit_ids))]
+    .filter((id) => pathUnitIds.has(id) && !seenUnits.has(id));
+  mappedIds.forEach((id) => seenUnits.add(id));
   return mappedIds.flatMap((id) => {
     const unit = unitsById.get(id);
     return unit ? [{

@@ -97,4 +97,6 @@ test('domain quiz checkpoints link to the corresponding practice scope', async (
     }
     await expect(page.locator(`[data-course-step="${quiz.id}"]`).getByRole('link', { name: 'Practice questions' })).toHaveAttribute('href', `/practice/kcna?module=${module.slug}`);
   }
+  await page.locator('#mixed-practice summary').click();
+  await expect(page.getByRole('link', { name: 'Start mock practice' })).toHaveAttribute('href', '/practice/kcna?mode=all');
 });

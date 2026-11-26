@@ -109,7 +109,7 @@ const totalLearningSteps = modules.reduce((total, module) => total + module.lear
       <h1>KCNA learning path</h1>
       <p class="lede">Study KCNA by exam domain, using our own explanations, retrieval practice, and review.</p>
       <p class="kcna-course-source">
-        <strong>{modules.length} exam domains · {totalLearningSteps} learning and practice steps</strong>
+        <strong>{modules.filter((module) => module.exam_weight).length} exam domains · {totalLearningSteps} learning and practice steps</strong>
         <span>Domains and weights from the official exam page, checked {curriculum.verified_at}.</span>
         <a href={curriculum.reference.url} rel="noreferrer">Official KCNA domains ↗</a>
       </p>
@@ -134,7 +134,7 @@ const totalLearningSteps = modules.reduce((total, module) => total + module.lear
           <summary>
             <span>{String(moduleIndex + 1).padStart(2, '0')}</span>
             <div>
-              <p class="section-kicker">Domain {moduleIndex + 1}{module.exam_weight ? ` · ${module.exam_weight}% of the exam` : ''}</p>
+              <p class="section-kicker">{module.exam_weight ? `Domain ${moduleIndex + 1} · ${module.exam_weight}% of the exam` : 'After the domains'}</p>
               <h2>{module.title}</h2>
               <p>{module.summary}</p>
             </div>

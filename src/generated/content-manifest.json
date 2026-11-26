@@ -1662,6 +1662,24 @@
               "unit_ids": []
             }
           ]
+        },
+        {
+          "id": "curriculum:kcna/mixed-practice",
+          "slug": "mixed-practice",
+          "title": "Mixed practice",
+          "summary": "Run a full mixed practice session across all four domains after the domain checkpoints are complete.",
+          "steps": [
+            {
+              "id": "curriculum:kcna/mixed-practice/mock-exam",
+              "title": "Mock practice",
+              "kind": "mock-exam",
+              "unit_ids": [
+                "fpp:kcna-kubernetes-fundamentals-review",
+                "fpp:kcna-kubernetes-resources-review",
+                "fpp:kcna-scheduling-review"
+              ]
+            }
+          ]
         }
       ]
     }
@@ -5304,5 +5322,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "8148f9f797b1563e023d2b5ab895e464f496f7742e5fcb6767c26ea54fe57f56"
+  "manifest_sha256": "64f372c122715a8926dde06a2d2d2d23f4bb079fb80e602c006482a99a65f624"
 }
