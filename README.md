@@ -102,7 +102,7 @@ Current learner-workspace acceptance and future work are tracked in
 [`PROJECT_STATUS.md`](PROJECT_STATUS.md) and the
 [2026-09-21 learning-experience audit](docs/LEARNING-EXPERIENCE-AUDIT-2026-09-21.md).
 
-Requirements: Node.js 22+, npm 10+, and a Cloudflare account only when testing
+Requirements: Node.js 22.23.4+, npm 10+, and a Cloudflare account only when testing
 remote resources or deploying.
 
 ```bash
