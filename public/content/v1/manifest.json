@@ -376,8 +376,8 @@
       "slug": "kcna-kubernetes-fundamentals-review",
       "title": "KCNA Kubernetes Fundamentals quiz companion",
       "summary": "A fast review of containers, orchestration, Kubernetes architecture, CRI, and container runtimes for use beside the KCNA fundamentals quiz.",
-      "revision": 4,
-      "revision_impact": "mastery_affecting",
+      "revision": 5,
+      "revision_impact": "enrichment",
       "status": "published",
       "layer": "architecture",
       "prerequisites": [
@@ -403,8 +403,8 @@
       "slug": "kcna-kubernetes-resources-review",
       "title": "KCNA Kubernetes Resources quiz companion",
       "summary": "A compact review of Pods, YAML objects, ReplicaSets, Deployments, rollouts, apply, imperative versus declarative management, kubectl explain, and namespaces.",
-      "revision": 3,
-      "revision_impact": "mastery_affecting",
+      "revision": 4,
+      "revision_impact": "enrichment",
       "status": "published",
       "layer": "kubernetes",
       "prerequisites": [
@@ -433,8 +433,8 @@
       "slug": "kcna-scheduling-review",
       "title": "KCNA Scheduling quiz companion",
       "summary": "A first-principles review of Kubernetes scheduling, node-placement policy, resources, DaemonSets, static Pods, and scheduler customization for KCNA study.",
-      "revision": 2,
-      "revision_impact": "mastery_affecting",
+      "revision": 3,
+      "revision_impact": "enrichment",
       "status": "published",
       "layer": "kubernetes",
       "prerequisites": [
@@ -5322,5 +5322,5 @@
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "64f372c122715a8926dde06a2d2d2d23f4bb079fb80e602c006482a99a65f624"
+  "manifest_sha256": "608c271e9ca6e85ff96156897e1ac4a71e7c203d9f4f0a46d67b817a01ebb493"
 }

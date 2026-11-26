@@ -3,8 +3,8 @@ id: fpp:kcna-scheduling-review
 slug: kcna-scheduling-review
 title: KCNA Scheduling quiz companion
 summary: A first-principles review of Kubernetes scheduling, node-placement policy, resources, DaemonSets, static Pods, and scheduler customization for KCNA study.
-revision: 2
-revision_impact: mastery_affecting
+revision: 3
+revision_impact: enrichment
 status: published
 layer: kubernetes
 estimated_minutes: 32
