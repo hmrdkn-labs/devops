@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "content_version": "2026.08.1",
-  "generated_at": "2026-09-21T00:00:00.000Z",
+  "generated_at": "2026-11-26T00:00:00.000Z",
   "canonical_base_url": "https://devops.hamardikan.com",
   "licenses": {
     "prose_and_diagrams": "CC-BY-SA-4.0",
@@ -391,9 +391,9 @@
         "fpp:kcna-kubernetes-fundamentals-review/runtime": "1b4581e1eabc498acd795764709e944875bd2eb17abd1b283d163a158e4c0d6f"
       },
       "mastery_hash": "a919bd6a6338d504d17cea4cc5a346d1de653961964f343d69e9d587b9c2e816",
-      "enrichment_hash": "08b0416308a35839bb47da3d449ff821d0bc6adebcfc848a487550d3a7e2c494",
+      "enrichment_hash": "baa391c1f87c947461a121de4a43e67cc66c51b6d061c495ec8c6bf2e3e3ae06",
       "editorial_hash": "a831b22cc1848118b57b95ad53aecb4bd17955247e2ec3fff8e65ede74e02272",
-      "content_hash": "09279c6dee0f3187f4833d995fdad43821a5cd855ce508445457e82e0c83347c",
+      "content_hash": "d71be2e1072d0304b74bc2ecc4c27d7cff67197a7a279e65735aa40f686f0a39",
       "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-kubernetes-fundamentals-review/visuals.yaml",
       "visual_count": 2
@@ -421,9 +421,9 @@
         "fpp:kcna-kubernetes-resources-review/api-objects": "c328c6152b83440fc748c08966df15e9f78cfe18419edd0879a98cb3b5b45015"
       },
       "mastery_hash": "63154b8847df0007e73ac3ed3c7a4afd2432539bfcb2db1a26a4a63715d383a6",
-      "enrichment_hash": "df1626e1bbae07b1e6727af036b18462b39cae4bc1446497017cb896634f9409",
+      "enrichment_hash": "585497fa7aa47b362cd0a9b953c4d65bc8d8b2002335d08c8515d7f47fd03928",
       "editorial_hash": "a8901dbba6fbc97b64cf10efe72e27b33d8ca8f1a0fcec73b214efbe1c79879c",
-      "content_hash": "421dea4ecec57925ba9c29964708fcffa3a54c2ff193943128af8e92d2c31492",
+      "content_hash": "a1f6327914a5a0d2c753156abcdb43010beba89447926808c665da5c1150757e",
       "raw_markdown_url": "/raw/v1/units/kcna-kubernetes-resources-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-kubernetes-resources-review/visuals.yaml",
       "visual_count": 1
@@ -452,9 +452,9 @@
         "fpp:kcna-scheduling-review/scheduler-extension": "ea823abbc84bd4c250526e31db01cf3d42807779704f6e74d10052601c16df9e"
       },
       "mastery_hash": "270f209c06629cdaaa16124970088d82bdd2edc84a034b7a312226ad18e69cdd",
-      "enrichment_hash": "a8e21ed3879dbe04a23cf8b31a91782b5b76be42beba84e9b85da334e21d1fce",
+      "enrichment_hash": "45054e92e7f321756cb73ee3ff2456dae50af6e6e9381141ff42f934ce5d855e",
       "editorial_hash": "9dd97b284d97eb083f4236a025233b9373481469a37deca6d186d3d4eed244e5",
-      "content_hash": "09804181a4f4059c4f292b472632eada002b7aa84edbab54c5c6e7ac4f73449a",
+      "content_hash": "3730639bff1ccf001a20130c25360c265253da15713f13ead6189c1a460a6e37",
       "raw_markdown_url": "/raw/v1/units/kcna-scheduling-review/unit.md",
       "raw_visuals_url": "/raw/v1/units/kcna-scheduling-review/visuals.yaml",
       "visual_count": 5
@@ -1335,1432 +1335,245 @@
   "curricula": [
     {
       "schema_version": 1,
-      "id": "curriculum:kcna-kodekloud",
-      "slug": "kcna-kodekloud",
-      "title": "KCNA course sequence",
-      "summary": "A portable KCNA curriculum spine that follows KodeKloud's current module and lesson order while mapping every step to independently authored hmrdkn-labs learning material and practice.",
-      "revision": 3,
-      "verified_at": "2026-09-21",
+      "id": "curriculum:kcna-domains",
+      "slug": "kcna-domains",
+      "title": "KCNA exam domains",
+      "summary": "The four official KCNA exam domains and their weights, each mapped to independently authored hmrdkn-labs learning material and practice.",
+      "revision": 1,
+      "verified_at": "2026-11-26",
       "reference": {
-        "title": "Kubernetes & Cloud-native Associate (KCNA) Course",
-        "publisher": "KodeKloud",
-        "url": "https://kodekloud.com/courses/kubernetes-and-cloud-native-associate-kcna"
+        "title": "Kubernetes and Cloud Native Associate (KCNA) - Domains & Competencies",
+        "publisher": "The Linux Foundation",
+        "url": "https://training.linuxfoundation.org/certification/kubernetes-cloud-native-associate/"
       },
       "modules": [
-        {
-          "id": "curriculum:kcna/introduction",
-          "slug": "introduction",
-          "title": "Introduction",
-          "summary": "Establish the course scope and the mental map used throughout the KCNA path.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/introduction/course-introduction",
-              "title": "Course Introduction",
-              "kind": "lesson",
-              "duration": "01:58",
-              "unit_ids": [
-                "fpp:kcna-domain-map"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/introduction/community",
-              "title": "Join Our Community",
-              "kind": "community",
-              "unit_ids": []
-            }
-          ]
-        },
         {
           "id": "curriculum:kcna/kubernetes-fundamentals",
           "slug": "kubernetes-fundamentals",
           "title": "Kubernetes Fundamentals",
-          "summary": "Build the container, orchestration, runtime, and Kubernetes architecture model before moving into objects.",
+          "summary": "Core concepts, administration, scheduling, and containerization.",
+          "exam_weight": 44,
           "steps": [
             {
-              "id": "curriculum:kcna/kubernetes-fundamentals/what-are-containers",
-              "title": "What are Containers?",
+              "id": "curriculum:kcna/kubernetes-fundamentals/container-lifecycle",
+              "title": "Container runtime and lifecycle",
               "kind": "lesson",
-              "duration": "13:35",
               "unit_ids": [
                 "fpp:container-lifecycle"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-fundamentals/demo-docker",
-              "title": "Demo – Docker",
-              "kind": "demo",
-              "duration": "02:34",
-              "unit_ids": [
-                "fpp:container-lifecycle"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-fundamentals/container-orchestration",
-              "title": "Container Orchestration",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-control-loop",
+              "title": "Kubernetes API and control loops",
               "kind": "lesson",
-              "duration": "03:13",
               "unit_ids": [
-                "fpp:container-lifecycle",
                 "fpp:kubernetes-control-loop"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-architecture",
-              "title": "Kubernetes Architecture",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-architecture-components",
+              "title": "Kubernetes components and the API request path",
               "kind": "lesson",
-              "duration": "06:22",
               "unit_ids": [
                 "fpp:kubernetes-architecture-components"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-fundamentals/runtime-cri",
-              "title": "Runtime – CRI",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-manifests",
+              "title": "Kubernetes manifests and API objects",
               "kind": "lesson",
-              "duration": "03:02",
               "unit_ids": [
-                "fpp:container-lifecycle",
-                "fpp:kubernetes-architecture-components"
+                "fpp:kubernetes-manifests"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-fundamentals/docker-vs-containerd",
-              "title": "Docker vs ContainerD",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-pod-model",
+              "title": "Pod model, lifecycle, and ownership",
               "kind": "lesson",
-              "duration": "13:07",
-              "unit_ids": [
-                "fpp:container-lifecycle"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-fundamentals/quiz",
-              "title": "Quiz-Kubernetes Fundamentals",
-              "kind": "quiz",
-              "unit_ids": [
-                "fpp:kcna-kubernetes-fundamentals-review"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-fundamentals/feedback",
-              "title": "Feedback – KCNA – Kubernetes Fundamentals",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:kcna-kubernetes-fundamentals-review"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/kubernetes-resources",
-          "slug": "kubernetes-resources",
-          "title": "Kubernetes Resources",
-          "summary": "Learn Pods, controllers, YAML, rollouts, declarative state, and namespaces in the same progression as the course.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/kubernetes-resources/pods",
-              "title": "Pods",
-              "kind": "lesson",
-              "duration": "09:02",
               "unit_ids": [
                 "fpp:kubernetes-pod-model"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/demo-pods",
-              "title": "Demo – Pods",
-              "kind": "demo",
-              "duration": "04:22",
+              "id": "curriculum:kcna/kubernetes-fundamentals/pods-workloads",
+              "title": "Pods and workload controllers",
+              "kind": "lesson",
               "unit_ids": [
                 "fpp:pods-workloads"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/pods-with-yaml",
-              "title": "Pods with YAML",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-labels-replicasets",
+              "title": "Labels, selectors, and ReplicaSets",
               "kind": "lesson",
-              "duration": "06:47",
-              "unit_ids": [
-                "fpp:git-yaml-declarative",
-                "fpp:kubernetes-manifests"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/demo-pods-with-yaml",
-              "title": "Demo – Pods with YAML",
-              "kind": "demo",
-              "duration": "06:09",
-              "unit_ids": [
-                "fpp:kubernetes-manifests"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/replicasets",
-              "title": "ReplicaSets",
-              "kind": "lesson",
-              "duration": "15:37",
               "unit_ids": [
                 "fpp:kubernetes-labels-replicasets"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/demo-replicasets",
-              "title": "Demo – ReplicaSets",
-              "kind": "demo",
-              "duration": "13:44",
-              "unit_ids": [
-                "fpp:kubernetes-labels-replicasets"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/deployments",
-              "title": "Deployments",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-deployments-rollouts",
+              "title": "Deployments, rollouts, and rollbacks",
               "kind": "lesson",
-              "duration": "04:20",
               "unit_ids": [
                 "fpp:kubernetes-deployments-rollouts"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/demo-deployments",
-              "title": "Demo – Deployments",
-              "kind": "demo",
-              "duration": "04:26",
-              "unit_ids": [
-                "fpp:kubernetes-deployments-rollouts"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/rolling-updates-rollbacks",
-              "title": "Deployments – Rolling Updates and Rollbacks",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-apply-live-state",
+              "title": "kubectl apply and live state",
               "kind": "lesson",
-              "duration": "07:30",
-              "unit_ids": [
-                "fpp:kubernetes-deployments-rollouts"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/demo-rolling-updates-rollbacks",
-              "title": "Demo – Deployments – Rolling Updates and Rollbacks",
-              "kind": "demo",
-              "duration": "14:35",
-              "unit_ids": [
-                "fpp:kubernetes-deployments-rollouts"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/imperative-vs-declarative",
-              "title": "Imperative vs Declarative",
-              "kind": "lesson",
-              "duration": "13:00",
-              "unit_ids": [
-                "fpp:kubernetes-apply-live-state",
-                "fpp:kubernetes-resource-operations"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/kubernetes-resources/kubectl-apply",
-              "title": "Kubectl Apply Command",
-              "kind": "lesson",
-              "duration": "04:39",
               "unit_ids": [
                 "fpp:kubernetes-apply-live-state"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/namespaces",
-              "title": "Kubernetes Namespaces",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-namespaces-scope",
+              "title": "Kubernetes namespaces and API scope",
               "kind": "lesson",
-              "duration": "08:13",
               "unit_ids": [
-                "fpp:kubernetes-namespaces-scope",
+                "fpp:kubernetes-namespaces-scope"
+              ]
+            },
+            {
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-object-lexicon",
+              "title": "Kubernetes object lexicon",
+              "kind": "lesson",
+              "unit_ids": [
                 "fpp:kubernetes-object-lexicon"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/quiz",
-              "title": "Quiz-Kubernetes Resources",
-              "kind": "quiz",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-resource-operations",
+              "title": "Kubernetes resource operations and defaults",
+              "kind": "lesson",
               "unit_ids": [
-                "fpp:kcna-kubernetes-resources-review"
+                "fpp:kubernetes-resource-operations"
               ]
             },
             {
-              "id": "curriculum:kcna/kubernetes-resources/feedback",
-              "title": "Feedback – KCNA – Kubernetes Resources",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:kcna-kubernetes-resources-review"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/scheduling",
-          "slug": "scheduling",
-          "title": "Scheduling",
-          "summary": "Follow the placement decision from explicit assignment through selectors, taints, affinity, resources, and scheduler extensions.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/scheduling/manual-scheduling",
-              "title": "Manual Scheduling",
+              "id": "curriculum:kcna/kubernetes-fundamentals/scheduling-resources-health",
+              "title": "Scheduling, resources, and health probes",
               "kind": "lesson",
-              "duration": "02:24",
-              "unit_ids": [
-                "fpp:kubernetes-scheduling-placement",
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "2-direct-assignment-is-different-from-scheduler-policy",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/placement-policy"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/labels-selectors",
-              "title": "Labels and Selectors",
-              "kind": "lesson",
-              "duration": "05:30",
-              "unit_ids": [
-                "fpp:kubernetes-labels-replicasets",
-                "fpp:kubernetes-scheduling-placement"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-labels-replicasets",
-                "section": "selector-and-template-labels-must-agree",
-                "objective_ids": [
-                  "fpp:kubernetes-labels-replicasets/selection"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/taints-tolerations",
-              "title": "Taints and Tolerations",
-              "kind": "lesson",
-              "duration": "09:34",
-              "unit_ids": [
-                "fpp:kubernetes-scheduling-placement",
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "4-taints-and-tolerations-repel-versus-allow",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/placement-policy"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/node-selectors",
-              "title": "Node Selectors",
-              "kind": "lesson",
-              "duration": "03:19",
-              "unit_ids": [
-                "fpp:kubernetes-scheduling-placement",
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "3-labels-selectors-nodeselector-and-affinity",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/placement-policy"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/node-affinity",
-              "title": "Node Affinity",
-              "kind": "lesson",
-              "duration": "07:05",
-              "unit_ids": [
-                "fpp:kubernetes-scheduling-placement",
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "3-labels-selectors-nodeselector-and-affinity",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/placement-policy"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/taints-vs-affinity",
-              "title": "Taints and Tolerations vs Node Affinity",
-              "kind": "lesson",
-              "duration": "02:34",
-              "unit_ids": [
-                "fpp:kubernetes-scheduling-placement",
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "4-taints-and-tolerations-repel-versus-allow",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/placement-policy"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/resource-limits",
-              "title": "Resource Limits",
-              "kind": "lesson",
-              "duration": "05:49",
               "unit_ids": [
                 "fpp:scheduling-resources-health"
-              ],
-              "material": {
-                "unit_id": "fpp:scheduling-resources-health",
-                "section": "scheduling-resources-and-health-probes",
-                "objective_ids": [
-                  "fpp:scheduling-resources-health/requests-limits"
-                ]
-              }
+              ]
             },
             {
-              "id": "curriculum:kcna/scheduling/daemonsets",
-              "title": "DaemonSets",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kubernetes-scheduling-placement",
+              "title": "Kubernetes scheduling and placement constraints",
               "kind": "lesson",
-              "duration": "04:04",
               "unit_ids": [
-                "fpp:kcna-scheduling-review",
-                "fpp:kubernetes-resource-operations"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "6-daemonset-and-static-pod-are-different-ownership-models",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/node-ownership"
-                ]
-              }
+                "fpp:kubernetes-scheduling-placement"
+              ]
             },
             {
-              "id": "curriculum:kcna/scheduling/static-pods",
-              "title": "Static Pods",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kcna-kubernetes-fundamentals-review",
+              "title": "KCNA Kubernetes Fundamentals quiz companion",
               "kind": "lesson",
-              "duration": "08:42",
               "unit_ids": [
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "static-pod",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/node-ownership"
-                ]
-              }
+                "fpp:kcna-kubernetes-fundamentals-review"
+              ]
             },
             {
-              "id": "curriculum:kcna/scheduling/multiple-schedulers",
-              "title": "Multiple Schedulers",
+              "id": "curriculum:kcna/kubernetes-fundamentals/kcna-kubernetes-resources-review",
+              "title": "KCNA Kubernetes Resources quiz companion",
               "kind": "lesson",
-              "duration": "09:34",
+              "unit_ids": [
+                "fpp:kcna-kubernetes-resources-review"
+              ]
+            },
+            {
+              "id": "curriculum:kcna/kubernetes-fundamentals/kcna-scheduling-review",
+              "title": "KCNA Scheduling quiz companion",
+              "kind": "lesson",
               "unit_ids": [
                 "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "7-multiple-schedulers-and-scheduler-profiles",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/scheduler-extension"
-                ]
-              }
+              ]
             },
             {
-              "id": "curriculum:kcna/scheduling/scheduler-profiles",
-              "title": "Configuring Kubernetes Scheduler Profiles",
-              "kind": "lesson",
-              "duration": "09:52",
-              "unit_ids": [
-                "fpp:kcna-scheduling-review"
-              ],
-              "material": {
-                "unit_id": "fpp:kcna-scheduling-review",
-                "section": "7-multiple-schedulers-and-scheduler-profiles",
-                "objective_ids": [
-                  "fpp:kcna-scheduling-review/scheduler-extension"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/scheduling/quiz",
-              "title": "Quiz-Scheduling",
+              "id": "curriculum:kcna/kubernetes-fundamentals/quiz",
+              "title": "Kubernetes Fundamentals practice questions",
               "kind": "quiz",
-              "unit_ids": [
-                "fpp:kcna-scheduling-review"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/scheduling/feedback",
-              "title": "Feedback – KCNA – Scheduling",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:kcna-scheduling-review"
-              ]
+              "unit_ids": []
             }
           ]
         },
         {
-          "id": "curriculum:kcna/security",
-          "slug": "security",
-          "title": "Container Orchestration – Security",
-          "summary": "Trace identity, certificates, API groups, authorization, workload identity, image controls, pod security, and network policy.",
+          "id": "curriculum:kcna/container-orchestration",
+          "slug": "container-orchestration",
+          "title": "Container Orchestration",
+          "summary": "Networking, security, troubleshooting, and storage.",
+          "exam_weight": 28,
           "steps": [
             {
-              "id": "curriculum:kcna/security/security-primitives",
-              "title": "Security – Kubernetes Security Primitives",
+              "id": "curriculum:kcna/container-orchestration/ip-subnets",
+              "title": "IP addresses and subnets",
               "kind": "lesson",
               "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "api-request-path",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/request"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/authentication",
-              "title": "Authentication",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "api-request-path",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/request"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/tls-certificate-creation",
-              "title": "TLS in Kubernetes – Certificate Creation",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "tls-certificates-and-kubeconfig-come-before-api-permission",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/client-trust"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/kubeconfig",
-              "title": "KubeConfig",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "tls-certificates-and-kubeconfig-come-before-api-permission",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/client-trust"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/api-groups",
-              "title": "API Groups",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access",
-                "fpp:kubernetes-manifests"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "api-groups-connect-manifests-to-rbac-rules",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/client-trust",
-                  "fpp:kubernetes-security-access/request"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/authorization",
-              "title": "Authorization",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "api-request-path",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/request"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/rbac",
-              "title": "Role Based Access Controls",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "api-groups-connect-manifests-to-rbac-rules",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/request",
-                  "fpp:kubernetes-security-access/workload"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/cluster-roles",
-              "title": "Cluster Roles",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "api-groups-connect-manifests-to-rbac-rules",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/request",
-                  "fpp:kubernetes-security-access/workload"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/service-accounts",
-              "title": "Service Accounts",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "workload-identity-is-not-a-human-kubeconfig",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/workload"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/image-security",
-              "title": "Image Security",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access",
-                "fpp:container-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "image-security-and-process-security-are-separate",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/artifact-execution"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/security-contexts",
-              "title": "Security Contexts",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "image-security-and-process-security-are-separate",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/artifact-execution"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/network-policies",
-              "title": "Network Policies",
-              "kind": "lesson",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-security-access",
-                "section": "pod-and-network-controls-answer-different-questions",
-                "objective_ids": [
-                  "fpp:kubernetes-security-access/workload"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/security/quiz",
-              "title": "Quiz-Security",
-              "kind": "quiz",
-              "unit_ids": [
-                "fpp:kubernetes-security-access"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/networking",
-          "slug": "networking",
-          "title": "Container Orchestration – Networking",
-          "summary": "Move from node and Pod networking through CNI, DNS, Services, and ingress request paths.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/networking/cluster-networking",
-              "title": "Cluster Networking",
-              "kind": "lesson",
-              "duration": "02:11",
-              "unit_ids": [
-                "fpp:ip-subnets",
-                "fpp:kubernetes-networking-request-path"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-networking-request-path",
-                "section": "why-pod-ips-matter",
-                "objective_ids": [
-                  "fpp:kubernetes-networking-request-path/boundaries"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/networking/pod-networking",
-              "title": "Pod Networking",
-              "kind": "lesson",
-              "duration": "08:41",
-              "unit_ids": [
-                "fpp:kubernetes-networking-request-path"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-networking-request-path",
-                "section": "why-pod-ips-matter",
-                "objective_ids": [
-                  "fpp:kubernetes-networking-request-path/boundaries"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/networking/cni",
-              "title": "CNI in Kubernetes",
-              "kind": "lesson",
-              "duration": "02:48",
-              "unit_ids": [
-                "fpp:kubernetes-networking-request-path"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-networking-request-path",
-                "section": "cni-is-an-interface-the-installed-network-is-an-implementation",
-                "objective_ids": [
-                  "fpp:kubernetes-networking-request-path/boundaries"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/networking/cni-weave",
-              "title": "CNI weave",
-              "kind": "lesson",
-              "duration": "05:59",
-              "unit_ids": [
-                "fpp:kubernetes-networking-request-path"
+                "fpp:ip-subnets"
               ]
             },
             {
-              "id": "curriculum:kcna/networking/dns",
-              "title": "DNS in Kuberntes",
+              "id": "curriculum:kcna/container-orchestration/ports-sockets-dns",
+              "title": "Ports, sockets, and DNS",
               "kind": "lesson",
-              "duration": "05:41",
               "unit_ids": [
-                "fpp:ports-sockets-dns",
-                "fpp:services-dns-ingress"
-              ],
-              "material": {
-                "unit_id": "fpp:ports-sockets-dns",
-                "section": "dns-gives-records-not-reachability",
-                "objective_ids": [
-                  "fpp:ports-sockets-dns/dns-resolution"
-                ]
-              }
+                "fpp:ports-sockets-dns"
+              ]
             },
             {
-              "id": "curriculum:kcna/networking/ingress",
-              "title": "Ingress",
+              "id": "curriculum:kcna/container-orchestration/services-dns-ingress",
+              "title": "Services, cluster DNS, and ingress",
               "kind": "lesson",
-              "duration": "21:04",
               "unit_ids": [
-                "fpp:services-dns-ingress"
-              ],
-              "material": {
-                "unit_id": "fpp:services-dns-ingress",
-                "section": "ingress-a-gateway-and-a-service-mesh-are-different-boundaries",
-                "objective_ids": [
-                  "fpp:services-dns-ingress/external-routing"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/networking/quiz",
-              "title": "Quiz-Networking",
-              "kind": "quiz",
-              "unit_ids": [
-                "fpp:kubernetes-networking-request-path",
                 "fpp:services-dns-ingress"
               ]
             },
             {
-              "id": "curriculum:kcna/networking/feedback",
-              "title": "Feedback – KCNA – Container Orchestration – Networking",
-              "kind": "feedback",
+              "id": "curriculum:kcna/container-orchestration/kubernetes-networking-request-path",
+              "title": "Kubernetes networking request path",
+              "kind": "lesson",
               "unit_ids": [
                 "fpp:kubernetes-networking-request-path"
               ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/service-mesh",
-          "slug": "service-mesh",
-          "title": "Container Orchestration – Service Mesh",
-          "summary": "Connect sidecars and proxies to the service-mesh control and data planes, then place Istio in that model.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/service-mesh/sidecars",
-              "title": "Sidecars",
-              "kind": "lesson",
-              "duration": "01:38",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "service-mesh-adds-a-communication-operating-model",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/mesh"
-                ]
-              }
             },
             {
-              "id": "curriculum:kcna/service-mesh/envoy",
-              "title": "Envoy",
+              "id": "curriculum:kcna/container-orchestration/kubernetes-security-access",
+              "title": "Kubernetes identity, authorization, admission, and workload boundaries",
               "kind": "lesson",
-              "duration": "01:41",
               "unit_ids": [
-                "fpp:cloud-native-architecture-principles",
-                "fpp:services-dns-ingress"
-              ],
-              "material": {
-                "unit_id": "fpp:services-dns-ingress",
-                "section": "ingress-a-gateway-and-a-service-mesh-are-different-boundaries",
-                "objective_ids": [
-                  "fpp:services-dns-ingress/mesh-path"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/monoliths-microservices",
-              "title": "Monoliths & Microservices",
-              "kind": "lesson",
-              "duration": "07:55",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
+                "fpp:kubernetes-security-access"
               ]
             },
             {
-              "id": "curriculum:kcna/service-mesh/service-mesh",
-              "title": "Service Mesh",
+              "id": "curriculum:kcna/container-orchestration/config-secrets-storage",
+              "title": "Configuration, secrets, and persistent storage",
               "kind": "lesson",
-              "duration": "01:18",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "service-mesh-adds-a-communication-operating-model",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/mesh"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/istio",
-              "title": "Istio",
-              "kind": "lesson",
-              "duration": "01:18",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "understand-an-istio-installation-and-first-app-walkthrough",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/mesh"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/installing-istio",
-              "title": "Installing Istio",
-              "kind": "demo",
-              "duration": "01:24",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "understand-an-istio-installation-and-first-app-walkthrough",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/mesh"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/first-app-istio",
-              "title": "Deploying our First Application on Istio",
-              "kind": "demo",
-              "duration": "02:22",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "understand-an-istio-installation-and-first-app-walkthrough",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/mesh"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/continue-istio",
-              "title": "Continue Learning Istio",
-              "kind": "lesson",
-              "duration": "00:40",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "understand-an-istio-installation-and-first-app-walkthrough",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/mesh"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/quiz",
-              "title": "Quiz-ServiceMesh",
-              "kind": "quiz",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/service-mesh/feedback",
-              "title": "Feedback – KCNA – Container Orchestration – Service Mesh",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/storage",
-          "slug": "storage",
-          "title": "Container Orchestration – Storage",
-          "summary": "Move from container writable layers to volume plugins, CSI, PVs, PVCs, and StorageClasses.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/storage/storage",
-              "title": "Storage",
-              "kind": "lesson",
-              "duration": "00:48",
-              "unit_ids": [
-                "fpp:config-secrets-storage",
-                "fpp:kubernetes-storage-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-storage-lifecycle",
-                "section": "start-with-docker-storage-boundaries",
-                "objective_ids": [
-                  "fpp:kubernetes-storage-lifecycle/persistence"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/storage/docker-storage-intro",
-              "title": "Introduction to Docker Storage",
-              "kind": "lesson",
-              "duration": "00:56",
               "unit_ids": [
                 "fpp:config-secrets-storage"
               ]
             },
             {
-              "id": "curriculum:kcna/storage/storage-in-docker",
-              "title": "Storage in Docker",
+              "id": "curriculum:kcna/container-orchestration/kubernetes-storage-lifecycle",
+              "title": "Kubernetes persistent storage lifecycle",
               "kind": "lesson",
-              "duration": "12:21",
-              "unit_ids": [
-                "fpp:config-secrets-storage"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/storage/volume-driver-plugins",
-              "title": "Volume Driver Plugins in Docker",
-              "kind": "lesson",
-              "duration": "01:48",
-              "unit_ids": [
-                "fpp:config-secrets-storage"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/storage/csi",
-              "title": "Container Storage Interface",
-              "kind": "lesson",
-              "duration": "03:45",
-              "unit_ids": [
-                "fpp:kubernetes-storage-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-storage-lifecycle",
-                "section": "separate-request-policy-resource-and-executor",
-                "objective_ids": [
-                  "fpp:kubernetes-storage-lifecycle/claim"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/storage/volumes",
-              "title": "Volumes",
-              "kind": "lesson",
-              "duration": "04:25",
-              "unit_ids": [
-                "fpp:config-secrets-storage"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/storage/persistent-volumes",
-              "title": "Persistent Volumes",
-              "kind": "lesson",
-              "duration": "02:51",
-              "unit_ids": [
-                "fpp:kubernetes-storage-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-storage-lifecycle",
-                "section": "separate-request-policy-resource-and-executor",
-                "objective_ids": [
-                  "fpp:kubernetes-storage-lifecycle/claim"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/storage/persistent-volume-claims",
-              "title": "Persistent Volume Claims",
-              "kind": "lesson",
-              "duration": "03:53",
-              "unit_ids": [
-                "fpp:kubernetes-storage-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-storage-lifecycle",
-                "section": "separate-request-policy-resource-and-executor",
-                "objective_ids": [
-                  "fpp:kubernetes-storage-lifecycle/claim"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/storage/storage-class",
-              "title": "Storage Class",
-              "kind": "lesson",
-              "duration": "03:57",
-              "unit_ids": [
-                "fpp:kubernetes-storage-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:kubernetes-storage-lifecycle",
-                "section": "dynamic-provisioning",
-                "objective_ids": [
-                  "fpp:kubernetes-storage-lifecycle/claim"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/storage/quiz",
-              "title": "Quiz-Storage",
-              "kind": "quiz",
               "unit_ids": [
                 "fpp:kubernetes-storage-lifecycle"
               ]
             },
             {
-              "id": "curriculum:kcna/storage/feedback",
-              "title": "Feedback – KCNA – Container Orchestration – Storage",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:kubernetes-storage-lifecycle"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/cloud-native-architecture",
-          "slug": "cloud-native-architecture",
-          "title": "Cloud Native Architecture",
-          "summary": "Learn autoscaling, serverless, Kubernetes governance, SIGs, and open standards as architecture concepts.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/autoscaling",
-              "title": "Autoscaling",
+              "id": "curriculum:kcna/container-orchestration/troubleshoot-process-to-pod",
+              "title": "Troubleshoot from process to pod",
               "kind": "lesson",
-              "duration": "02:04",
               "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "replication-autoscaling-and-elasticity-are-different",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/scale"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/hpa",
-              "title": "Horizontal Pod Autoscaler",
-              "kind": "lesson",
-              "duration": "03:06",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "choose-the-autoscaler-by-the-resource-it-changes",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/scale"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/vpa",
-              "title": "Vertical Pod Autoscaler",
-              "kind": "lesson",
-              "duration": "08:24",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "choose-the-autoscaler-by-the-resource-it-changes",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/scale"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/cluster-autoscaler",
-              "title": "Cluster Autoscaler",
-              "kind": "lesson",
-              "duration": "01:42",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "choose-the-autoscaler-by-the-resource-it-changes",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/scale"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/serverless",
-              "title": "Serverless",
-              "kind": "lesson",
-              "duration": "04:51",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-architecture-principles",
-                "section": "serverless-is-delegated-infrastructure-not-absent-infrastructure",
-                "objective_ids": [
-                  "fpp:cloud-native-architecture-principles/scale"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/keps",
-              "title": "Kubernetes Enhancement Proposals (KEPs)",
-              "kind": "lesson",
-              "duration": "06:45",
-              "unit_ids": [
-                "fpp:cncf-ecosystem-community"
-              ],
-              "material": {
-                "unit_id": "fpp:cncf-ecosystem-community",
-                "section": "sigs-own-areas-keps-explain-proposed-changes",
-                "objective_ids": [
-                  "fpp:cncf-ecosystem-community/community"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/kubernetes-sig",
-              "title": "Kubernetes SIG",
-              "kind": "lesson",
-              "duration": "11:01",
-              "unit_ids": [
-                "fpp:cncf-ecosystem-community"
-              ],
-              "material": {
-                "unit_id": "fpp:cncf-ecosystem-community",
-                "section": "sigs-own-areas-keps-explain-proposed-changes",
-                "objective_ids": [
-                  "fpp:cncf-ecosystem-community/community"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/open-standards",
-              "title": "Open Standards",
-              "kind": "lesson",
-              "duration": "07:11",
-              "unit_ids": [
-                "fpp:cncf-ecosystem-community",
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cncf-ecosystem-community",
-                "section": "open-interfaces-reduce-hard-coupling",
-                "objective_ids": [
-                  "fpp:cncf-ecosystem-community/projects",
-                  "fpp:cncf-ecosystem-community/community"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/quiz",
-              "title": "Quiz-Cloud Native Architecture",
-              "kind": "quiz",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-architecture/feedback",
-              "title": "Feedback – KCNA – Cloud Native Architecture",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:cloud-native-architecture-principles"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/cloud-native-observability",
-          "slug": "cloud-native-observability",
-          "title": "Cloud Native Observability",
-          "summary": "Build the observability model from signals and SLOs through Prometheus architecture, targets, metrics, and Kubernetes monitoring.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/cloud-native-observability/fundamentals",
-              "title": "Observability Fundamentals",
-              "kind": "lesson",
-              "duration": "07:10",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals",
                 "fpp:troubleshoot-process-to-pod"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "metrics-answer-how-much-and-how-often",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/signals"
-                ]
-              }
+              ]
             },
             {
-              "id": "curriculum:kcna/cloud-native-observability/slo-sla-sli",
-              "title": "SLO/SLA/SLI",
-              "kind": "lesson",
-              "duration": "03:32",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "sli-slo-and-sla-start-with-the-user-outcome",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/reliability"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/prometheus-use-case",
-              "title": "Prometheus Use Case",
-              "kind": "lesson",
-              "duration": "02:19",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "prometheus-collection-storage-rules-and-notification",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/prometheus-basics",
-              "title": "Prometheus Basics",
-              "kind": "lesson",
-              "duration": "02:20",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "prometheus-collection-storage-rules-and-notification",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/prometheus-architecture",
-              "title": "Prometheus Architecture",
-              "kind": "lesson",
-              "duration": "08:30",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "prometheus-collection-storage-rules-and-notification",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/node-exporter",
-              "title": "Prometheus – Node Exporter",
-              "kind": "lesson",
-              "duration": "03:06",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "prometheus-collection-storage-rules-and-notification",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/configuration",
-              "title": "Prometheus Configuration",
-              "kind": "lesson",
-              "duration": "08:47",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "prometheus-collection-storage-rules-and-notification",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/metrics",
-              "title": "Prometheus – Metrics",
-              "kind": "lesson",
-              "duration": "14:35",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "metrics-types-and-labels",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/signals",
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/monitoring-containers",
-              "title": "Prometheus – Monitoring Containers",
-              "kind": "lesson",
-              "duration": "03:11",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "monitoring-kubernetes-requires-several-perspectives",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/signals",
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/monitoring-kubernetes",
-              "title": "Prometheus – Monitoring Kubernetes",
-              "kind": "lesson",
-              "duration": "09:52",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "monitoring-kubernetes-requires-several-perspectives",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/signals",
-                  "fpp:cloud-native-observability-signals/tools"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/cost-management",
-              "title": "Cost Management",
-              "kind": "lesson",
-              "duration": "05:45",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals",
-                "fpp:cloud-native-architecture-principles"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-observability-signals",
-                "section": "cost-monitoring-is-also-a-feedback-loop",
-                "objective_ids": [
-                  "fpp:cloud-native-observability-signals/reliability"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/quiz",
-              "title": "Quiz-Cloud Native Observability",
+              "id": "curriculum:kcna/container-orchestration/quiz",
+              "title": "Container Orchestration practice questions",
               "kind": "quiz",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ]
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-observability/feedback",
-              "title": "Feedback – KCNA – Cloud Native Observability",
-              "kind": "feedback",
-              "unit_ids": [
-                "fpp:cloud-native-observability-signals"
-              ]
+              "unit_ids": []
             }
           ]
         },
@@ -2768,199 +1581,85 @@
           "id": "curriculum:kcna/cloud-native-application-delivery",
           "slug": "cloud-native-application-delivery",
           "title": "Cloud Native Application Delivery",
-          "summary": "Follow the delivery path from CI/CD foundations through GitOps principles, pull reconciliation, Argo CD, and release evidence.",
+          "summary": "Application delivery and debugging.",
+          "exam_weight": 16,
           "steps": [
             {
-              "id": "curriculum:kcna/cloud-native-application-delivery/fundamentals",
-              "title": "Application Delivery Fundamentals",
+              "id": "curriculum:kcna/cloud-native-application-delivery/git-yaml-declarative",
+              "title": "Git, YAML, and declarative intent",
               "kind": "lesson",
-              "duration": "03:29",
               "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "ci-builds-evidence-and-artifacts",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/pipeline"
-                ]
-              }
+                "fpp:git-yaml-declarative"
+              ]
             },
             {
-              "id": "curriculum:kcna/cloud-native-application-delivery/what-is-gitops",
-              "title": "What is GitOps",
+              "id": "curriculum:kcna/cloud-native-application-delivery/cloud-native-delivery-gitops",
+              "title": "CI, CD, declarative delivery, and GitOps",
               "kind": "lesson",
-              "duration": "04:24",
               "unit_ids": [
                 "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "gitops-adds-a-reconciliation-contract",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/gitops"
-                ]
-              }
+              ]
             },
             {
-              "id": "curriculum:kcna/cloud-native-application-delivery/gitops-principles",
-              "title": "GitOps Principles",
+              "id": "curriculum:kcna/cloud-native-application-delivery/cloud-native-release-debugging",
+              "title": "Release strategies and application debugging",
               "kind": "lesson",
-              "duration": "03:44",
               "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "gitops-adds-a-reconciliation-contract",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/gitops"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-application-delivery/push-vs-pull",
-              "title": "Push vs Pull-based Deployments",
-              "kind": "lesson",
-              "duration": "01:50",
-              "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "push-deployment-and-pull-reconciliation",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/gitops"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-application-delivery/cicd-gitops",
-              "title": "CI/CD with GitOps",
-              "kind": "lesson",
-              "duration": "02:27",
-              "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "cd-changes-an-environment",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/pipeline",
-                  "fpp:cloud-native-delivery-gitops/gitops"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-application-delivery/repositories-dockerfile",
-              "title": "Git Repositories, Dockerfile and Application Walkthrough",
-              "kind": "demo",
-              "duration": "01:32",
-              "unit_ids": [
-                "fpp:cloud-native-delivery-gitops",
-                "fpp:container-lifecycle"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "ci-builds-evidence-and-artifacts",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/pipeline"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-application-delivery/argocd",
-              "title": "ArgoCD Walkthrough",
-              "kind": "demo",
-              "duration": "02:30",
-              "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "argo-cd-trace-one-application-change",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/gitops"
-                ]
-              }
-            },
-            {
-              "id": "curriculum:kcna/cloud-native-application-delivery/cicd-pipeline",
-              "title": "CICD Pipeline Demo",
-              "kind": "demo",
-              "duration": "02:16",
-              "unit_ids": [
-                "fpp:cloud-native-release-debugging",
-                "fpp:cloud-native-delivery-gitops"
-              ],
-              "material": {
-                "unit_id": "fpp:cloud-native-delivery-gitops",
-                "section": "what-to-prove-after-delivery",
-                "objective_ids": [
-                  "fpp:cloud-native-delivery-gitops/pipeline",
-                  "fpp:cloud-native-delivery-gitops/gitops"
-                ]
-              }
+                "fpp:cloud-native-release-debugging"
+              ]
             },
             {
               "id": "curriculum:kcna/cloud-native-application-delivery/quiz",
-              "title": "Quiz-Cloud Native Application Delivery",
+              "title": "Cloud Native Application Delivery practice questions",
               "kind": "quiz",
+              "unit_ids": []
+            }
+          ]
+        },
+        {
+          "id": "curriculum:kcna/cloud-native-architecture",
+          "slug": "cloud-native-architecture",
+          "title": "Cloud Native Architecture",
+          "summary": "Observability, the cloud native ecosystem and principles, and community and collaboration.",
+          "exam_weight": 12,
+          "steps": [
+            {
+              "id": "curriculum:kcna/cloud-native-architecture/cloud-native-observability-signals",
+              "title": "Metrics, logs, traces, events, and observability",
+              "kind": "lesson",
               "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
+                "fpp:cloud-native-observability-signals"
               ]
             },
             {
-              "id": "curriculum:kcna/cloud-native-application-delivery/feedback",
-              "title": "Feedback – KCNA – Cloud Native Application Delivery",
-              "kind": "feedback",
+              "id": "curriculum:kcna/cloud-native-architecture/cloud-native-architecture-principles",
+              "title": "Cloud-native architecture principles",
+              "kind": "lesson",
               "unit_ids": [
-                "fpp:cloud-native-delivery-gitops"
+                "fpp:cloud-native-architecture-principles"
               ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/mock-exams",
-          "slug": "mock-exams",
-          "title": "Mock Exams",
-          "summary": "Run a full mixed practice session after the module checkpoints are complete.",
-          "steps": [
+            },
             {
-              "id": "curriculum:kcna/mock-exams/mock-exam",
-              "title": "Mock Exam",
-              "kind": "mock-exam",
+              "id": "curriculum:kcna/cloud-native-architecture/cncf-ecosystem-community",
+              "title": "CNCF ecosystem, projects, standards, and community",
+              "kind": "lesson",
               "unit_ids": [
-                "fpp:kcna-kubernetes-fundamentals-review",
-                "fpp:kcna-kubernetes-resources-review",
-                "fpp:kcna-scheduling-review"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "curriculum:kcna/conclusion",
-          "slug": "conclusion",
-          "title": "Conclusion",
-          "summary": "Close the course by reviewing the domain map and the evidence still worth refreshing before the exam.",
-          "steps": [
-            {
-              "id": "curriculum:kcna/conclusion/conclusion",
-              "title": "Conclusion",
-              "kind": "conclusion",
-              "duration": "01:35",
-              "unit_ids": [
-                "fpp:kcna-domain-map",
                 "fpp:cncf-ecosystem-community"
               ]
             },
             {
-              "id": "curriculum:kcna/conclusion/feedback",
-              "title": "Feedback – Kubernetes and Cloud-Native Associate (KCNA)",
-              "kind": "feedback",
+              "id": "curriculum:kcna/cloud-native-architecture/kcna-domain-map",
+              "title": "KCNA domain map and reasoning strategy",
+              "kind": "lesson",
               "unit_ids": [
                 "fpp:kcna-domain-map"
               ]
+            },
+            {
+              "id": "curriculum:kcna/cloud-native-architecture/quiz",
+              "title": "Cloud Native Architecture practice questions",
+              "kind": "quiz",
+              "unit_ids": []
             }
           ]
         }
@@ -6601,9 +5300,9 @@
       "certification": "cncf:kcna",
       "verified_at": "2026-09-21",
       "question_count": 82,
-      "content_hash": "821eab81aa8392bfb5099c0485fea7f77753accd4585bdca4c53df9fd9b860bd",
+      "content_hash": "d9a7f91b5317d3fc4bb77f06b27787806a853d0d89092734d45b26bba28dbe69",
       "raw_url": "/raw/v1/practice/kcna-mcq.yaml"
     }
   ],
-  "manifest_sha256": "7b0b7ee64bc1aa27fc4d09e24630d96ee99973bb30882fd52347fcfb7e8f851f"
+  "manifest_sha256": "8148f9f797b1563e023d2b5ab895e464f496f7742e5fcb6767c26ea54fe57f56"
 }

@@ -4,7 +4,7 @@ import { parse } from 'yaml';
 import { curriculumSchema } from '../../src/lib/content/schema';
 import { kcnaAllQuestionsLabel } from './kcna-practice-content';
 
-const curriculum = curriculumSchema.parse(parse(readFileSync('content/curricula/kcna-kodekloud.yaml', 'utf8')));
+const curriculum = curriculumSchema.parse(parse(readFileSync('content/curricula/kcna-domains.yaml', 'utf8')));
 const quizModules = curriculum.modules.filter((module) => module.steps.some((step) => step.kind === 'quiz'));
 
 test('MCQ controls wait for island handlers before accepting an answer', async ({ page }) => {
@@ -27,7 +27,7 @@ test('MCQ controls wait for island handlers before accepting an answer', async (
     await expect(option).toBeDisabled();
     await expect(checkAnswer).toBeDisabled();
     await page.getByText('Session options', { exact: true }).click();
-    await expect(page.getByLabel('Course module')).toBeDisabled();
+    await expect(page.getByLabel('Exam domain')).toBeDisabled();
     await expect(page.getByRole('button', { name: kcnaAllQuestionsLabel, exact: true })).toBeDisabled();
     await option.evaluate((element) => (element as HTMLInputElement).click());
     await expect(option).not.toBeChecked();
@@ -45,7 +45,7 @@ for (const module of quizModules) {
   test(`${module.title} quiz opens a working module-only practice session`, async ({ page }) => {
     await page.goto(`/practice/kcna?module=${module.slug}&mode=all`);
     await page.getByText('Session options', { exact: true }).click();
-    const moduleSelect = page.getByLabel('Course module');
+    const moduleSelect = page.getByLabel('Exam domain');
     await expect(moduleSelect).toHaveValue(module.slug);
     const option = moduleSelect.locator(`option[value="${module.slug}"]`);
     await expect(option).toBeEnabled();
@@ -71,20 +71,20 @@ for (const module of quizModules) {
 test('unknown module links safely fall back and switching modules updates the shareable URL', async ({ page }) => {
   await page.goto('/practice/kcna?module=missing-course-module&mode=all');
   await page.getByText('Session options', { exact: true }).click();
-  const moduleSelect = page.getByLabel('Course module');
+  const moduleSelect = page.getByLabel('Exam domain');
   await expect(moduleSelect).toHaveValue('all');
   await expect(page.getByRole('button', { name: 'Check answer', exact: true })).toBeVisible();
-  await moduleSelect.selectOption('service-mesh');
-  await expect(page).toHaveURL(/mode=all.*module=service-mesh|module=service-mesh.*mode=all/);
-  await expect(page.locator('.mcq-question-meta')).toContainText('Service Mesh');
+  await moduleSelect.selectOption('container-orchestration');
+  await expect(page).toHaveURL(/mode=all.*module=container-orchestration|module=container-orchestration.*mode=all/);
+  await expect(page.locator('.mcq-question-meta')).toContainText('Container Orchestration');
   await page.getByRole('button', { name: /^Quick \d+$/ }).click();
-  await expect(page).toHaveURL(/module=service-mesh/);
+  await expect(page).toHaveURL(/module=container-orchestration/);
   expect(new URL(page.url()).searchParams.has('mode')).toBe(false);
   await moduleSelect.selectOption('all');
   expect(new URL(page.url()).searchParams.has('module')).toBe(false);
 });
 
-test('course quiz and mock checkpoints link to the corresponding practice scope', async ({ page }) => {
+test('domain quiz checkpoints link to the corresponding practice scope', async ({ page }) => {
   await page.route('**/api/progress', (route) => route.fulfill({ status: 401, json: {} }));
   await page.route('**/api/review?*', (route) => route.fulfill({ status: 401, json: {} }));
   await page.goto('/kcna');
@@ -97,6 +97,4 @@ test('course quiz and mock checkpoints link to the corresponding practice scope'
     }
     await expect(page.locator(`[data-course-step="${quiz.id}"]`).getByRole('link', { name: 'Practice questions' })).toHaveAttribute('href', `/practice/kcna?module=${module.slug}`);
   }
-  await page.locator('#mock-exams summary').click();
-  await expect(page.getByRole('link', { name: 'Start mock practice' })).toHaveAttribute('href', '/practice/kcna?mode=all');
 });

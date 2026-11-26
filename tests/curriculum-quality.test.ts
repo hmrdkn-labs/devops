@@ -35,11 +35,9 @@ describe('bespoke curriculum regression', () => {
 
   it('provides meaningful module-filtered practice for the audited thin and novice pilot areas', () => {
     const expectedMinimums = {
-      'kubernetes-fundamentals': 4,
-      'kubernetes-resources': 4,
-      security: 6,
-      storage: 6,
-      'service-mesh': 6,
+      'kubernetes-fundamentals': 8,
+      'container-orchestration': 12,
+      'cloud-native-architecture': 11,
     };
     for (const [module, minimum] of Object.entries(expectedMinimums)) {
       const questions = kcnaPractice.questions.filter((question) => question.course_module === module);

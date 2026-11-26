@@ -90,11 +90,15 @@ remain app-owned, using a project-local MIT-licensed core pinned to
 dependency. Controls stay disabled until hydration, motion stops when settled
 or offscreen, and reduced motion reaches the same stable outcomes.
 
-The private KodeKloud collection is not a dependency, submodule, build input,
-or deployment artifact. This repository contains independently written prose,
-diagrams, questions, and examples. External course titles and links may be
-cataloged as references, but mirrored lessons, images, code, and course
-structure do not belong here.
+No private or third-party course collection is a dependency, submodule, build
+input, or deployment artifact. This repository contains independently written
+prose, diagrams, questions, and examples. External links may be cataloged as
+references, but mirrored lessons, images, code, and course structure do not
+belong here. The KCNA path is organized by the four official exam domains and
+weights published on the
+[Linux Foundation KCNA page](https://training.linuxfoundation.org/certification/kubernetes-cloud-native-associate/)
+(Kubernetes Fundamentals 44%, Container Orchestration 28%, Cloud Native
+Application Delivery 16%, Cloud Native Architecture 12%).
 
 ## Run locally
 
@@ -108,12 +112,19 @@ remote resources or deploying.
 ```bash
 npm ci
 cp .dev.vars.example .dev.vars
-npm run dev
+npm run build && npx wrangler dev --config wrangler.e2e.jsonc --port 4321
 ```
 
-The default local URL is `http://localhost:4321`. Without OAuth credentials or
-a D1 binding, the full public guest experience still works and `/api/health`
-reports the database as unbound.
+The local URL is `http://localhost:4321`. This runs the built Worker, the same
+way the Playwright suite does. Without OAuth credentials or a D1 binding, the
+full public guest experience still works and `/api/health` reports the database
+as unbound.
+
+Do not use `npm run dev` to try the study pages. Under `astro dev`, the
+`StudyFlow` island fails to hydrate (`Hydration Mismatch. Unable to find DOM
+nodes for hydration key`, reproduced 2026-11-26), so learning pages stay on
+"Preparing workspace" with disabled controls. The built Worker is not affected.
+Rebuild after each change.
 
 Vite+ is available as an authoring convenience while it remains beta:
 
@@ -151,6 +162,11 @@ Copy `.dev.vars.example` and set the Google OAuth application plus:
 - `BETTER_AUTH_SECRET`: a random value of at least 32 characters;
 - `BETTER_AUTH_URL`: the deployment origin.
 
+Guests see no sign-in control in the header. The owner signs in at
+`/settings` (`https://devops.hamardikan.com/settings`), which shows the
+"Continue with Google" entry; once signed in, the header shows the Account menu
+on every page.
+
 Authorization never relies on an email address. The allowlisted Google account
 may create the single owner account; other Google identities are rejected.
 
@@ -177,5 +193,5 @@ Application code and original examples are MIT licensed. Original prose and
 diagrams are CC BY-SA 4.0. See `LICENSE`, `LICENSE-CONTENT.md`, and `NOTICE.md`.
 
 This is an independent learning project, not affiliated with or endorsed by
-CNCF, Linux Foundation, Kubernetes, Docker, AWS, or KodeKloud. Product and
+CNCF, Linux Foundation, Kubernetes, Docker, or AWS. Product and
 certification names are trademarks of their respective owners.

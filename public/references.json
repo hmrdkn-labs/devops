@@ -726,17 +726,6 @@
     "unit_slug": "kcna-kubernetes-fundamentals-review"
   },
   {
-    "id": "source:kcna-fundamentals-kodekloud-context",
-    "title": "KCNA Kubernetes Fundamentals module",
-    "url": "https://learn.kodekloud.com/learn/courses/kubernetes-and-cloud-native-associate-kcna/module/8403f56b-91f8-42f9-89e9-5c27a7438ef2/lesson/690c3950-12e6-4bbe-9b9b-10f512ec92a4",
-    "publisher": "KodeKloud",
-    "type": "reference",
-    "verified_at": "2026-09-10",
-    "note": "Study-context link for the owner's completed module; the learning content here is independently authored.",
-    "unit_id": "fpp:kcna-kubernetes-fundamentals-review",
-    "unit_slug": "kcna-kubernetes-fundamentals-review"
-  },
-  {
     "id": "source:kubernetes-component-ownership",
     "title": "Kubernetes Components",
     "url": "https://kubernetes.io/docs/concepts/overview/components/",
@@ -799,17 +788,6 @@
     "type": "reference",
     "verified_at": "2026-09-10",
     "note": "Official namespace scope reference.",
-    "unit_id": "fpp:kcna-kubernetes-resources-review",
-    "unit_slug": "kcna-kubernetes-resources-review"
-  },
-  {
-    "id": "source:kcna-resources-kodekloud-context",
-    "title": "KCNA Kubernetes Resources module",
-    "url": "https://learn.kodekloud.com/learn/courses/kubernetes-and-cloud-native-associate-kcna/module/509501a0-727a-41b9-b9a5-e022735c098e/lesson/faad5e02-0ff1-409c-ae1e-63441469657a",
-    "publisher": "KodeKloud",
-    "type": "reference",
-    "verified_at": "2026-09-10",
-    "note": "Study-context link for the owner's completed module; the learning content here is independently authored.",
     "unit_id": "fpp:kcna-kubernetes-resources-review",
     "unit_slug": "kcna-kubernetes-resources-review"
   },
@@ -942,39 +920,6 @@
     "type": "reference",
     "verified_at": "2026-09-17",
     "note": "Official PriorityClass, priorityClassName, pending-Pod ordering, and preemption semantics.",
-    "unit_id": "fpp:kcna-scheduling-review",
-    "unit_slug": "kcna-scheduling-review"
-  },
-  {
-    "id": "source:kcna-scheduling-kodekloud-context",
-    "title": "KCNA Scheduling module",
-    "url": "https://kodekloud.com/courses/kubernetes-and-cloud-native-associate-kcna",
-    "publisher": "KodeKloud",
-    "type": "reference",
-    "verified_at": "2026-09-17",
-    "note": "Coverage context for the owner's current study module; all public teaching text and questions here are independently authored.",
-    "unit_id": "fpp:kcna-scheduling-review",
-    "unit_slug": "kcna-scheduling-review"
-  },
-  {
-    "id": "source:kcna-scheduling-kodekloud-profiles",
-    "title": "KodeKloud KCNA — Configuring Kubernetes Scheduler Profiles",
-    "url": "https://notes.kodekloud.com/docs/Kubernetes-and-Cloud-Native-Associate-KCNA/Scheduling/Configuring-Kubernetes-Scheduler-Profiles/page",
-    "publisher": "KodeKloud",
-    "type": "reference",
-    "verified_at": "2026-09-17",
-    "note": "Coverage reference for scheduler profiles, PriorityClass queueing context, and scheduler plugins; public teaching content is independently authored and cross-checked against Kubernetes documentation.",
-    "unit_id": "fpp:kcna-scheduling-review",
-    "unit_slug": "kcna-scheduling-review"
-  },
-  {
-    "id": "source:kcna-scheduling-kodekloud-multiple-schedulers",
-    "title": "KodeKloud KCNA — Multiple Schedulers",
-    "url": "https://notes.kodekloud.com/docs/Kubernetes-and-Cloud-Native-Associate-KCNA/Scheduling/Multiple-Schedulers/page",
-    "publisher": "KodeKloud",
-    "type": "reference",
-    "verified_at": "2026-09-17",
-    "note": "Coverage reference for schedulerName, custom scheduler deployment, RBAC, and leader-election context; public teaching content is independently authored.",
     "unit_id": "fpp:kcna-scheduling-review",
     "unit_slug": "kcna-scheduling-review"
   },

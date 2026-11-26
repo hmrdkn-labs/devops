@@ -1,0 +1,180 @@
+schema_version: 1
+id: curriculum:kcna-domains
+slug: kcna-domains
+title: KCNA exam domains
+summary: The four official KCNA exam domains and their weights, each mapped to independently authored hmrdkn-labs learning material and practice.
+revision: 1
+verified_at: 2026-11-26
+reference:
+  title: Kubernetes and Cloud Native Associate (KCNA) - Domains & Competencies
+  publisher: The Linux Foundation
+  url: https://training.linuxfoundation.org/certification/kubernetes-cloud-native-associate/
+modules:
+  - id: curriculum:kcna/kubernetes-fundamentals
+    slug: kubernetes-fundamentals
+    title: Kubernetes Fundamentals
+    exam_weight: 44
+    summary: Core concepts, administration, scheduling, and containerization.
+    steps:
+      - id: curriculum:kcna/kubernetes-fundamentals/container-lifecycle
+        title: Container runtime and lifecycle
+        kind: lesson
+        unit_ids: [fpp:container-lifecycle]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-control-loop
+        title: Kubernetes API and control loops
+        kind: lesson
+        unit_ids: [fpp:kubernetes-control-loop]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-architecture-components
+        title: Kubernetes components and the API request path
+        kind: lesson
+        unit_ids: [fpp:kubernetes-architecture-components]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-manifests
+        title: Kubernetes manifests and API objects
+        kind: lesson
+        unit_ids: [fpp:kubernetes-manifests]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-pod-model
+        title: Pod model, lifecycle, and ownership
+        kind: lesson
+        unit_ids: [fpp:kubernetes-pod-model]
+      - id: curriculum:kcna/kubernetes-fundamentals/pods-workloads
+        title: Pods and workload controllers
+        kind: lesson
+        unit_ids: [fpp:pods-workloads]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-labels-replicasets
+        title: Labels, selectors, and ReplicaSets
+        kind: lesson
+        unit_ids: [fpp:kubernetes-labels-replicasets]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-deployments-rollouts
+        title: Deployments, rollouts, and rollbacks
+        kind: lesson
+        unit_ids: [fpp:kubernetes-deployments-rollouts]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-apply-live-state
+        title: kubectl apply and live state
+        kind: lesson
+        unit_ids: [fpp:kubernetes-apply-live-state]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-namespaces-scope
+        title: Kubernetes namespaces and API scope
+        kind: lesson
+        unit_ids: [fpp:kubernetes-namespaces-scope]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-object-lexicon
+        title: Kubernetes object lexicon
+        kind: lesson
+        unit_ids: [fpp:kubernetes-object-lexicon]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-resource-operations
+        title: Kubernetes resource operations and defaults
+        kind: lesson
+        unit_ids: [fpp:kubernetes-resource-operations]
+      - id: curriculum:kcna/kubernetes-fundamentals/scheduling-resources-health
+        title: Scheduling, resources, and health probes
+        kind: lesson
+        unit_ids: [fpp:scheduling-resources-health]
+      - id: curriculum:kcna/kubernetes-fundamentals/kubernetes-scheduling-placement
+        title: Kubernetes scheduling and placement constraints
+        kind: lesson
+        unit_ids: [fpp:kubernetes-scheduling-placement]
+      - id: curriculum:kcna/kubernetes-fundamentals/kcna-kubernetes-fundamentals-review
+        title: KCNA Kubernetes Fundamentals quiz companion
+        kind: lesson
+        unit_ids: [fpp:kcna-kubernetes-fundamentals-review]
+      - id: curriculum:kcna/kubernetes-fundamentals/kcna-kubernetes-resources-review
+        title: KCNA Kubernetes Resources quiz companion
+        kind: lesson
+        unit_ids: [fpp:kcna-kubernetes-resources-review]
+      - id: curriculum:kcna/kubernetes-fundamentals/kcna-scheduling-review
+        title: KCNA Scheduling quiz companion
+        kind: lesson
+        unit_ids: [fpp:kcna-scheduling-review]
+      - id: curriculum:kcna/kubernetes-fundamentals/quiz
+        title: Kubernetes Fundamentals practice questions
+        kind: quiz
+        unit_ids: []
+  - id: curriculum:kcna/container-orchestration
+    slug: container-orchestration
+    title: Container Orchestration
+    exam_weight: 28
+    summary: Networking, security, troubleshooting, and storage.
+    steps:
+      - id: curriculum:kcna/container-orchestration/ip-subnets
+        title: IP addresses and subnets
+        kind: lesson
+        unit_ids: [fpp:ip-subnets]
+      - id: curriculum:kcna/container-orchestration/ports-sockets-dns
+        title: Ports, sockets, and DNS
+        kind: lesson
+        unit_ids: [fpp:ports-sockets-dns]
+      - id: curriculum:kcna/container-orchestration/services-dns-ingress
+        title: Services, cluster DNS, and ingress
+        kind: lesson
+        unit_ids: [fpp:services-dns-ingress]
+      - id: curriculum:kcna/container-orchestration/kubernetes-networking-request-path
+        title: Kubernetes networking request path
+        kind: lesson
+        unit_ids: [fpp:kubernetes-networking-request-path]
+      - id: curriculum:kcna/container-orchestration/kubernetes-security-access
+        title: Kubernetes identity, authorization, admission, and workload boundaries
+        kind: lesson
+        unit_ids: [fpp:kubernetes-security-access]
+      - id: curriculum:kcna/container-orchestration/config-secrets-storage
+        title: Configuration, secrets, and persistent storage
+        kind: lesson
+        unit_ids: [fpp:config-secrets-storage]
+      - id: curriculum:kcna/container-orchestration/kubernetes-storage-lifecycle
+        title: Kubernetes persistent storage lifecycle
+        kind: lesson
+        unit_ids: [fpp:kubernetes-storage-lifecycle]
+      - id: curriculum:kcna/container-orchestration/troubleshoot-process-to-pod
+        title: Troubleshoot from process to pod
+        kind: lesson
+        unit_ids: [fpp:troubleshoot-process-to-pod]
+      - id: curriculum:kcna/container-orchestration/quiz
+        title: Container Orchestration practice questions
+        kind: quiz
+        unit_ids: []
+  - id: curriculum:kcna/cloud-native-application-delivery
+    slug: cloud-native-application-delivery
+    title: Cloud Native Application Delivery
+    exam_weight: 16
+    summary: Application delivery and debugging.
+    steps:
+      - id: curriculum:kcna/cloud-native-application-delivery/git-yaml-declarative
+        title: Git, YAML, and declarative intent
+        kind: lesson
+        unit_ids: [fpp:git-yaml-declarative]
+      - id: curriculum:kcna/cloud-native-application-delivery/cloud-native-delivery-gitops
+        title: CI, CD, declarative delivery, and GitOps
+        kind: lesson
+        unit_ids: [fpp:cloud-native-delivery-gitops]
+      - id: curriculum:kcna/cloud-native-application-delivery/cloud-native-release-debugging
+        title: Release strategies and application debugging
+        kind: lesson
+        unit_ids: [fpp:cloud-native-release-debugging]
+      - id: curriculum:kcna/cloud-native-application-delivery/quiz
+        title: Cloud Native Application Delivery practice questions
+        kind: quiz
+        unit_ids: []
+  - id: curriculum:kcna/cloud-native-architecture
+    slug: cloud-native-architecture
+    title: Cloud Native Architecture
+    exam_weight: 12
+    summary: Observability, the cloud native ecosystem and principles, and community and collaboration.
+    steps:
+      - id: curriculum:kcna/cloud-native-architecture/cloud-native-observability-signals
+        title: Metrics, logs, traces, events, and observability
+        kind: lesson
+        unit_ids: [fpp:cloud-native-observability-signals]
+      - id: curriculum:kcna/cloud-native-architecture/cloud-native-architecture-principles
+        title: Cloud-native architecture principles
+        kind: lesson
+        unit_ids: [fpp:cloud-native-architecture-principles]
+      - id: curriculum:kcna/cloud-native-architecture/cncf-ecosystem-community
+        title: CNCF ecosystem, projects, standards, and community
+        kind: lesson
+        unit_ids: [fpp:cncf-ecosystem-community]
+      - id: curriculum:kcna/cloud-native-architecture/kcna-domain-map
+        title: KCNA domain map and reasoning strategy
+        kind: lesson
+        unit_ids: [fpp:kcna-domain-map]
+      - id: curriculum:kcna/cloud-native-architecture/quiz
+        title: Cloud Native Architecture practice questions
+        kind: quiz
+        unit_ids: []

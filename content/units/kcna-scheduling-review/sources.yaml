@@ -85,27 +85,6 @@ sources:
     type: reference
     verified_at: 2026-09-17
     note: Official PriorityClass, priorityClassName, pending-Pod ordering, and preemption semantics.
-  - id: source:kcna-scheduling-kodekloud-context
-    title: KCNA Scheduling module
-    url: https://kodekloud.com/courses/kubernetes-and-cloud-native-associate-kcna
-    publisher: KodeKloud
-    type: reference
-    verified_at: 2026-09-17
-    note: Coverage context for the owner's current study module; all public teaching text and questions here are independently authored.
-  - id: source:kcna-scheduling-kodekloud-profiles
-    title: KodeKloud KCNA — Configuring Kubernetes Scheduler Profiles
-    url: https://notes.kodekloud.com/docs/Kubernetes-and-Cloud-Native-Associate-KCNA/Scheduling/Configuring-Kubernetes-Scheduler-Profiles/page
-    publisher: KodeKloud
-    type: reference
-    verified_at: 2026-09-17
-    note: Coverage reference for scheduler profiles, PriorityClass queueing context, and scheduler plugins; public teaching content is independently authored and cross-checked against Kubernetes documentation.
-  - id: source:kcna-scheduling-kodekloud-multiple-schedulers
-    title: KodeKloud KCNA — Multiple Schedulers
-    url: https://notes.kodekloud.com/docs/Kubernetes-and-Cloud-Native-Associate-KCNA/Scheduling/Multiple-Schedulers/page
-    publisher: KodeKloud
-    type: reference
-    verified_at: 2026-09-17
-    note: Coverage reference for schedulerName, custom scheduler deployment, RBAC, and leader-election context; public teaching content is independently authored.
   - id: source:kcna-scheduling-review-pod-lifecycle-boundaries
     title: Pod Lifecycle
     url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/

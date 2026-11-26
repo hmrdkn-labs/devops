@@ -18,14 +18,14 @@ test('KCNA focus isolates the certification curriculum', async ({ page }) => {
 
   await expect(page.getByRole('heading', { name: 'KCNA learning path', exact: true })).toBeVisible();
   await expect(page.locator('.site-nav a[aria-current="page"], .mobile-dock a[aria-current="page"]').filter({ visible: true })).toHaveText('Learn');
-  await expect(page.locator('.kcna-checkpoint')).toHaveCount(13);
-  await expect(page.locator('.kcna-course-step')).toHaveCount(105);
-  await expect(page.getByText('105 learning/practice steps', { exact: false })).toBeVisible();
+  await expect(page.locator('.kcna-checkpoint')).toHaveCount(4);
+  await expect(page.locator('.kcna-course-step')).toHaveCount(36);
+  await expect(page.getByText('36 learning and practice steps', { exact: false })).toBeVisible();
   await expect(page.locator('#kcna-today-title')).toBeVisible();
   await expect(page.getByRole('link', { name: /Start learning/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Container Orchestration – Service Mesh' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Container Orchestration' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cloud Native Architecture' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Cloud Native Application Delivery' })).toBeVisible();
   await page.getByText('Guided lessons, mental models, and scheduled review', { exact: true }).click();
   await expect(page.getByRole('link', { name: 'Scheduled KCNA review' })).toBeVisible();
@@ -79,13 +79,13 @@ test('KCNA MCQ refresher explains every option after checking', async ({ page })
   await expect(page.getByText('0 correct', { exact: true })).toBeVisible();
 });
 
-test('KCNA practice can focus a course module from its quiz checkpoint', async ({ page }) => {
-  await page.goto('/practice/kcna?module=scheduling');
+test('KCNA practice can focus an exam domain from its quiz checkpoint', async ({ page }) => {
+  await page.goto('/practice/kcna?module=container-orchestration');
   await page.getByText('Session options', { exact: true }).click();
-  const moduleSelect = page.getByLabel('Course module');
-  await expect(moduleSelect).toHaveValue('scheduling');
+  const moduleSelect = page.getByLabel('Exam domain');
+  await expect(moduleSelect).toHaveValue('container-orchestration');
   await expect(moduleSelect.locator('option[disabled]')).toHaveCount(0);
-  await expect(page.locator('.mcq-question-meta').getByText('Scheduling', { exact: true })).toBeVisible();
+  await expect(page.locator('.mcq-question-meta').getByText('Container Orchestration', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^All \d+$/ })).toBeVisible();
 });
 
@@ -212,7 +212,7 @@ test('mobile header actions meet the 44px touch-target contract', async ({ page 
   test.skip(testInfo.project.name !== 'mobile', 'Mobile-only interaction contract');
   await page.goto('/');
 
-  for (const selector of ['.theme-toggle', '.auth-popover > summary', '.header-search']) {
+  for (const selector of ['.theme-toggle', '.header-search']) {
     const control = page.locator(selector);
     await expect(control).toBeVisible();
     const box = await control.boundingBox();

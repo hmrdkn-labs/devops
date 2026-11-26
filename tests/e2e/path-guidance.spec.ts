@@ -7,10 +7,8 @@ test('guest starts a concrete unit and keeps the curriculum ahead of optional to
   await expect(page.locator('h1')).toHaveText('KCNA learning path');
   await expect(page.locator('[data-session-action]')).toContainText('Start learning');
   await expect(page.locator('[data-session-action]')).toHaveAttribute('href', /^\/learn\//);
-  await expect(page.locator('[data-checkpoint]')).toHaveCount(13);
-  await expect(page.locator('[data-course-step]')).toHaveCount(105);
-  await expect(page.getByText('Join Our Community', { exact: true })).toHaveCount(0);
-  await expect(page.getByText(/^Feedback – KCNA/)).toHaveCount(0);
+  await expect(page.locator('[data-checkpoint]')).toHaveCount(4);
+  await expect(page.locator('[data-course-step]')).toHaveCount(36);
   const uniqueUnits = await page.locator('[data-mapped-unit-id]').evaluateAll((elements) =>
     new Set(elements.map((element) => element.getAttribute('data-mapped-unit-id')).filter(Boolean)).size);
   expect(uniqueUnits).toBe(32);
@@ -34,10 +32,10 @@ test('progress failure is retryable and does not claim guest status', async ({ p
 test('checkpoint deep link stays open after saved progress loads', async ({ page }) => {
   await page.route('**/api/progress', (route) => route.fulfill({ json: { paths: [], units: [], recentUnitId: null } }));
   await page.route('**/api/review?*', (route) => route.fulfill({ json: { dueCount: 0 } }));
-  await page.goto('/kcna#kubernetes-resources');
-  await expect(page.locator('#kubernetes-resources')).toHaveAttribute('open', '');
+  await page.goto('/kcna#container-orchestration');
+  await expect(page.locator('#container-orchestration')).toHaveAttribute('open', '');
   await expect(page.locator('.path-session-status')).toContainText('No KCNA learning progress yet');
-  await expect(page.locator('#kubernetes-resources')).toHaveAttribute('open', '');
+  await expect(page.locator('#container-orchestration')).toHaveAttribute('open', '');
 });
 
 test('returning owner gets an explicit due-review handoff and a direct learning alternative', async ({ page }) => {

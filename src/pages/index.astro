@@ -2,34 +2,39 @@
 import KcnaFocusClient from '@/components/KcnaFocusClient';
 import BrandCharacter from '@/components/BrandCharacter.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { paths, unitsById } from '@/lib/content/catalog';
+import { curricula, paths, unitsById } from '@/lib/content/catalog';
 
 export const prerender = true;
 const path = paths.find((candidate) => candidate.slug === 'kcna');
 if (!path) throw new Error('KCNA path is missing');
-const sections = [
-  { id: 'fundamentals', title: 'Kubernetes Fundamentals', start: 0, end: 9 },
-  { id: 'resources', title: 'Kubernetes Resources', start: 9, end: 18 },
-  { id: 'cluster-behavior', title: 'Cluster Behavior', start: 18, end: 26 },
-  { id: 'cloud-native', title: 'Cloud-Native Context', start: 26, end: path.units.length },
-];
-const pathUnits = path.units.map((entry) => unitsById.get(entry.unit_id));
-const clientUnits = sections.flatMap((section) => pathUnits.slice(section.start, section.end).flatMap((unit) => unit ? [{
-  id: unit.metadata.id, slug: unit.metadata.slug, title: unit.metadata.title,
-  estimatedMinutes: unit.metadata.estimated_minutes, checkpointId: section.id,
-}] : []));
-const checkpoints = sections.map((section) => ({
-  id: section.id, title: section.title,
-  unitIds: clientUnits.filter((unit) => unit.checkpointId === section.id).map((unit) => unit.id),
+const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-domains');
+if (!curriculum) throw new Error('KCNA domain curriculum is missing');
+const pathUnitIds = new Set(path.units.map((entry) => entry.unit_id));
+const clientUnits = curriculum.modules.flatMap((module) => {
+  const mappedIds = [...new Set(module.steps.flatMap((step) => step.unit_ids))].filter((id) => pathUnitIds.has(id));
+  return mappedIds.flatMap((id) => {
+    const unit = unitsById.get(id);
+    return unit ? [{
+      id: unit.metadata.id, slug: unit.metadata.slug, title: unit.metadata.title,
+      estimatedMinutes: unit.metadata.estimated_minutes, checkpointId: module.slug,
+    }] : [];
+  });
+});
+const checkpoints = curriculum.modules.map((module) => ({
+  id: module.slug, title: module.title,
+  unitIds: clientUnits.filter((unit) => unit.checkpointId === module.slug).map((unit) => unit.id),
 }));
 ---
 
-<BaseLayout title="Learn" activeSection="learn" description="Start or resume a concrete DevOps learning task.">
+<BaseLayout
+  title="Free, open Kubernetes exam prep"
+  activeSection="learn"
+  description="Free, open KCNA prep: answer each question first, then see why. No account needed. MIT code, CC BY-SA 4.0 content, full Markdown export."
+>
   <header class="page-hero shell compact-hero home-welcome">
     <div>
-      <p class="eyebrow">Learn</p>
-      <h1>Your next learning task</h1>
-      <p class="lede">Work through the KCNA path one unit at a time. Read when a concept is new, then explain and apply it.</p>
+      <h1>Free, open Kubernetes exam prep. Answer first, then see why.</h1>
+      <p class="lede">DevOps by hmrdkn-labs is KCNA prep that needs no account. Code is MIT, content is CC BY-SA 4.0, and every unit downloads as Markdown.</p>
     </div>
     <BrandCharacter class="home-welcome-mark" size={144} loading="eager" />
   </header>

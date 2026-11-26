@@ -1141,7 +1141,7 @@ questions:
 
   - id: practice:kcna/q-security-authn-authz
     checkpoint: cluster-behavior
-    course_module: security
+    course_module: container-orchestration
     category: concept
     select: single
     prompt: A user presents a valid client certificate but still receives a forbidden response when listing Secrets. Which boundary rejected the request?
@@ -1164,7 +1164,7 @@ questions:
 
   - id: practice:kcna/q-security-rbac-binding
     checkpoint: cluster-behavior
-    course_module: security
+    course_module: container-orchestration
     category: scenario
     select: multiple
     prompt: A ServiceAccount should read ConfigMaps only in the payments namespace. Which RBAC pieces express that least-privilege design? Select all that apply.
@@ -1187,7 +1187,7 @@ questions:
 
   - id: practice:kcna/q-mesh-data-control-plane
     checkpoint: cloud-native
-    course_module: service-mesh
+    course_module: cloud-native-architecture
     category: concept
     select: multiple
     prompt: Which statements correctly separate a service mesh data plane from its control plane? Select all that apply.
@@ -1210,7 +1210,7 @@ questions:
 
   - id: practice:kcna/q-mesh-envoy-sidecar
     checkpoint: cloud-native
-    course_module: service-mesh
+    course_module: cloud-native-architecture
     category: scenario
     select: single
     prompt: In a classic sidecar-based Istio deployment, why can an Envoy proxy observe traffic without the application becoming an Envoy client library?
@@ -1233,7 +1233,7 @@ questions:
 
   - id: practice:kcna/q-mesh-tradeoff
     checkpoint: cloud-native
-    course_module: service-mesh
+    course_module: cloud-native-architecture
     category: concept
     select: multiple
     prompt: What are realistic reasons to evaluate a service mesh carefully before adopting it? Select all that apply.
@@ -1256,7 +1256,7 @@ questions:
 
   - id: practice:kcna/q-storage-pvc-request
     checkpoint: cluster-behavior
-    course_module: storage
+    course_module: container-orchestration
     category: concept
     select: single
     prompt: In Kubernetes persistent storage, which object represents the workload-side request for storage capacity and access characteristics?
@@ -1279,7 +1279,7 @@ questions:
 
   - id: practice:kcna/q-storage-csi
     checkpoint: cluster-behavior
-    course_module: storage
+    course_module: container-orchestration
     category: scenario
     select: multiple
     prompt: A PVC stays Pending in a cluster that uses dynamic provisioning. Which checks are directly relevant? Select all that apply.
@@ -1371,7 +1371,7 @@ questions:
 
   - id: practice:kcna/q-observability-sli-slo-sla
     checkpoint: cloud-native
-    course_module: cloud-native-observability
+    course_module: cloud-native-architecture
     category: concept
     select: single
     prompt: Which statement best separates an SLI from an SLO?
@@ -1394,7 +1394,7 @@ questions:
 
   - id: practice:kcna/q-observability-prometheus-scrape
     checkpoint: cloud-native
-    course_module: cloud-native-observability
+    course_module: cloud-native-architecture
     category: scenario
     select: multiple
     prompt: Prometheus reports a target as up. What has that observation established, and what has it not established? Select all that apply.
@@ -1523,7 +1523,7 @@ questions:
 
   - id: practice:kcna/q-resources-selector-template
     checkpoint: resources
-    course_module: kubernetes-resources
+    course_module: kubernetes-fundamentals
     category: scenario
     select: single
     prompt: A Deployment selector requires app=api, but its Pod template labels contain app=web. What is the core problem?
@@ -1538,7 +1538,7 @@ questions:
 
   - id: practice:kcna/q-resources-scale-vs-rollout
     checkpoint: resources
-    course_module: kubernetes-resources
+    course_module: kubernetes-fundamentals
     category: concept
     select: single
     prompt: Which change creates a new Deployment rollout revision rather than only changing desired replica count?
@@ -1553,7 +1553,7 @@ questions:
 
   - id: practice:kcna/q-resources-kubectl-explain
     checkpoint: resources
-    course_module: kubernetes-resources
+    course_module: kubernetes-fundamentals
     category: kubectl
     select: single
     prompt: Before editing an unfamiliar Deployment field, which command best asks the current API schema what spec.template.spec.containers means?
@@ -1568,7 +1568,7 @@ questions:
 
   - id: practice:kcna/q-resources-namespace-scope
     checkpoint: resources
-    course_module: kubernetes-resources
+    course_module: kubernetes-fundamentals
     category: scenario
     select: multiple
     prompt: You need to distinguish two ConfigMaps named app-config in namespaces blue and green. Which statements are correct? Select all that apply.
@@ -1583,7 +1583,7 @@ questions:
 
   - id: practice:kcna/q-security-serviceaccount-default
     checkpoint: cluster-behavior
-    course_module: security
+    course_module: container-orchestration
     category: concept
     select: single
     prompt: A Pod uses the default ServiceAccount in its namespace. With RBAC enabled and no additional binding, what should you assume?
@@ -1598,7 +1598,7 @@ questions:
 
   - id: practice:kcna/q-security-imagepull-vs-context
     checkpoint: cluster-behavior
-    course_module: security
+    course_module: container-orchestration
     category: scenario
     select: multiple
     prompt: A private image cannot be pulled, and the workload also must not run as root. Which controls address these different failures? Select all that apply.
@@ -1613,7 +1613,7 @@ questions:
 
   - id: practice:kcna/q-security-pod-network-boundaries
     checkpoint: cluster-behavior
-    course_module: security
+    course_module: container-orchestration
     category: scenario
     select: multiple
     prompt: Which statements correctly distinguish Pod security admission, securityContext, and NetworkPolicy? Select all that apply.
@@ -1628,7 +1628,7 @@ questions:
 
   - id: practice:kcna/q-security-auth-can-i
     checkpoint: cluster-behavior
-    course_module: security
+    course_module: container-orchestration
     category: kubectl
     select: single
     prompt: The caller may impersonate ServiceAccount reporter, and a RoleBinding names that exact subject rather than a group. Which command checks whether it may list ConfigMaps in payments?
@@ -1643,7 +1643,7 @@ questions:
 
   - id: practice:kcna/q-storage-rwo-rwop
     checkpoint: cluster-behavior
-    course_module: storage
+    course_module: container-orchestration
     category: concept
     select: single
     prompt: Which statement correctly distinguishes ReadWriteOnce from ReadWriteOncePod?
@@ -1658,7 +1658,7 @@ questions:
 
   - id: practice:kcna/q-storage-wait-first-consumer
     checkpoint: cluster-behavior
-    course_module: storage
+    course_module: container-orchestration
     category: scenario
     select: single
     prompt: Why can a StorageClass use volumeBindingMode WaitForFirstConsumer?
@@ -1673,7 +1673,7 @@ questions:
 
   - id: practice:kcna/q-storage-reclaim-policy
     checkpoint: cluster-behavior
-    course_module: storage
+    course_module: container-orchestration
     category: scenario
     select: single
     prompt: A dynamically provisioned PV has reclaimPolicy Retain. The bound PVC is deleted. What should you expect?
@@ -1688,7 +1688,7 @@ questions:
 
   - id: practice:kcna/q-storage-pvc-evidence
     checkpoint: cluster-behavior
-    course_module: storage
+    course_module: container-orchestration
     category: kubectl
     select: multiple
     prompt: A PVC remains Pending. Which observations are useful before changing storage configuration? Select all that apply.
@@ -1703,7 +1703,7 @@ questions:
 
   - id: practice:kcna/q-mesh-routing-objects
     checkpoint: cloud-native
-    course_module: service-mesh
+    course_module: cloud-native-architecture
     category: concept
     select: multiple
     prompt: In Istio sidecar mode, which statements correctly separate routing configuration from traffic execution? Select all that apply.
@@ -1718,7 +1718,7 @@ questions:
 
   - id: practice:kcna/q-mesh-gateway-sidecar
     checkpoint: cloud-native
-    course_module: service-mesh
+    course_module: cloud-native-architecture
     category: scenario
     select: single
     prompt: In a sidecar-based mesh, where should you first distinguish an ingress gateway problem from an internal workload-proxy problem?
@@ -1733,7 +1733,7 @@ questions:
 
   - id: practice:kcna/q-mesh-observability-limit
     checkpoint: cloud-native
-    course_module: service-mesh
+    course_module: cloud-native-architecture
     category: scenario
     select: multiple
     prompt: A sidecar proxy reports successful upstream connections. What does that evidence prove, and what remains separate? Select all that apply.

@@ -417,6 +417,7 @@ export const curriculumSchema = z.object({
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     title: z.string().min(2),
     summary: z.string().min(10),
+    exam_weight: z.number().int().min(1).max(100).optional(),
     steps: z.array(curriculumStepSchema).min(1),
   })).min(1),
 }).superRefine((curriculum, context) => {

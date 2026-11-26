@@ -7,7 +7,12 @@ interface Me {
   user: { id: string; name: string; image?: string | null } | null;
 }
 
-export default function AuthMenu() {
+interface Props {
+  /** Guests see a sign-in entry only where the owner is sent directly (/settings). */
+  signIn?: boolean;
+}
+
+export default function AuthMenu(props: Props) {
   const [busy, setBusy] = createSignal(false);
   const [actionError, setActionError] = createSignal('');
   const [me, { refetch }] = createResource(() => typeof window !== 'undefined', async () => {
@@ -42,7 +47,7 @@ export default function AuthMenu() {
   return (
     <div class="auth-menu">
       <Show when={!me.error && me()?.authenticated && me()?.user} fallback={
-        <details class="auth-popover">
+        <Show when={props.signIn}><details class="auth-popover">
           <summary class="quiet-button">
             <span class="status-dot" aria-hidden="true" />
             {/* SSR has no account result; only a resolved response establishes guest status. */}
@@ -51,8 +56,8 @@ export default function AuthMenu() {
           <div class="popover-panel">
             <Show when={!me.loading && (me.error || me())} fallback={<p role="status">Checking account…</p>}>
               <Show when={!me.error} fallback={<><p role="status">Account status is unavailable. You can keep learning.</p><button disabled={me.loading} onClick={() => refetch()}>Retry account</button></>}>
-                <strong>Read freely. Save as owner.</strong>
-                <p>Guest answers stay in memory and disappear when this page closes.</p>
+                <strong>Owner sign-in</strong>
+                <p>Only the site owner can sign in. Everyone else can keep learning without an account.</p>
                 <Show when={me()?.authConfigured} fallback={
                   <p class="microcopy">Owner OAuth is not configured on this deployment yet.</p>
                 }>
@@ -62,7 +67,7 @@ export default function AuthMenu() {
             </Show>
             <Show when={actionError()}><p role="alert">{actionError()}</p></Show>
           </div>
-        </details>
+        </details></Show>
       }>
         {(user) => (
           <details class="auth-popover">

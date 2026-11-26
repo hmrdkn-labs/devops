@@ -8,8 +8,8 @@ export const prerender = true;
 
 const path = paths.find((candidate) => candidate.slug === 'kcna');
 if (!path) throw new Error('KCNA path is missing');
-const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-kodekloud');
-if (!curriculum) throw new Error('KCNA course curriculum is missing');
+const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-domains');
+if (!curriculum) throw new Error('KCNA domain curriculum is missing');
 
 const pathWeights = new Map(path.units.map((entry) => [entry.unit_id, entry.weight]));
 const pathUnitIds = new Set(path.units.map((entry) => entry.unit_id));
@@ -36,8 +36,7 @@ const modules = curriculum.modules.map((module) => {
   return { ...module, learningSteps, unitIds };
 });
 
-// Future KCNA units remain reachable even before they are mapped into the
-// external course spine.
+// Future KCNA units remain reachable even before they are mapped to an exam domain.
 for (const entry of path.units) {
   if (seenUnits.has(entry.unit_id)) continue;
   const unit = unitsById.get(entry.unit_id);
@@ -95,12 +94,11 @@ const reviewUnits = path.units.flatMap((entry) => {
   return unit && unit.metadata.slug.startsWith('kcna-') && unit.metadata.slug.endsWith('-review') ? [unit] : [];
 });
 const totalLearningSteps = modules.reduce((total, module) => total + module.learningSteps.length, 0);
-const totalSourceSteps = curriculum.modules.reduce((total, module) => total + module.steps.length, 0);
 ---
 
 <BaseLayout
   title="KCNA learning path"
-  description="KCNA learning material arranged in the current KodeKloud course sequence, with independent explanations, practice, and review."
+  description="KCNA exam prep arranged by the four official exam domains and their weights, with original explanations, practice, and review."
   canonicalPath="/kcna"
   pageClass="kcna-page"
   activeSection="kcna"
@@ -109,11 +107,11 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
     <div class="kcna-hero-copy">
       <p class="eyebrow">Learn · KCNA</p>
       <h1>KCNA learning path</h1>
-      <p class="lede">Follow the same module and lesson progression as the current KodeKloud KCNA course, using our own explanations, retrieval practice, and review.</p>
+      <p class="lede">Study KCNA by exam domain, using our own explanations, retrieval practice, and review.</p>
       <p class="kcna-course-source">
-        <strong>{modules.length} modules · {totalLearningSteps} learning/practice steps</strong>
-        <span>{totalSourceSteps} source entries tracked · sequence verified {curriculum.verified_at}.</span>
-        <a href={curriculum.reference.url} rel="noreferrer">Course reference ↗</a>
+        <strong>{modules.length} exam domains · {totalLearningSteps} learning and practice steps</strong>
+        <span>Domains and weights from the official exam page, checked {curriculum.verified_at}.</span>
+        <a href={curriculum.reference.url} rel="noreferrer">Official KCNA domains ↗</a>
       </p>
     </div>
   </header>
@@ -125,7 +123,7 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
   <AnatomyLinks />
 
   <div class="shell path-curriculum-shell">
-    <section class="kcna-curriculum" aria-label="KCNA curriculum in course order">
+    <section class="kcna-curriculum" aria-label="KCNA curriculum by exam domain">
       {modules.map((module, moduleIndex) => (
         <details
           id={module.slug}
@@ -136,7 +134,7 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
           <summary>
             <span>{String(moduleIndex + 1).padStart(2, '0')}</span>
             <div>
-              <p class="section-kicker">Module {moduleIndex + 1}</p>
+              <p class="section-kicker">Domain {moduleIndex + 1}{module.exam_weight ? ` · ${module.exam_weight}% of the exam` : ''}</p>
               <h2>{module.title}</h2>
               <p>{module.summary}</p>
             </div>
@@ -173,11 +171,10 @@ const totalSourceSteps = curriculum.modules.reduce((total, module) => total + mo
                         </span>
                       </p>
                     ) : (
-                      <p>Course navigation step; no standalone learning unit is required.</p>
+                      <p>Questions for this exam domain.</p>
                     )}
                   </div>
                   <div class="kcna-course-step-action">
-                    {step.duration && <span>Source video · {step.duration}</span>}
                     {weight === 2 && <span class="critical-badge">Critical</span>}
                     {href && <a href={href}>{stepAction(step)} →</a>}
                     {unit && <div class="kcna-course-step-progress" aria-label="Evidence shared by the related canonical unit">

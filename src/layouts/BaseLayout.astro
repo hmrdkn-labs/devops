@@ -80,7 +80,7 @@ const isCurrent = (item: typeof navigation[number]) => {
         <div class="header-tools">
           <a class="header-search" href="/search" aria-current={Astro.url.pathname.startsWith('/search') ? 'page' : undefined}>Search</a>
           <ThemeToggle client:load />
-          <AuthMenu client:load />
+          <AuthMenu signIn={Astro.url.pathname.replace(/\/$/, '') === '/settings'} client:load />
         </div>
       </div>
     </header>}
@@ -96,7 +96,7 @@ const isCurrent = (item: typeof navigation[number]) => {
     {!immersive && <footer class="site-footer">
       <div>
         <strong>DevOps by hmrdkn-labs</strong>
-        <p>An independent learning project. Not affiliated with or endorsed by CNCF, Linux Foundation, Kubernetes, Docker, AWS, or KodeKloud.</p>
+        <p>An independent learning project. Not affiliated with or endorsed by CNCF, Linux Foundation, Kubernetes, Docker, or AWS.</p>
       </div>
       <div class="footer-links">
         <a href="/references">References</a>
