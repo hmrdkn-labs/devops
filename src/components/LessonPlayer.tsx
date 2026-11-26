@@ -84,8 +84,8 @@ export default function LessonPlayer(props: Props) {
   })[props.lesson.checkpoint] ?? props.lesson.title.replace(/^KCNA\s+/, ''));
   const checkpointHref = createMemo(() => `/kcna#${({
     fundamentals: 'kubernetes-fundamentals',
-    resources: 'kubernetes-resources',
-    'cluster-behavior': 'scheduling',
+    resources: 'kubernetes-fundamentals',
+    'cluster-behavior': 'container-orchestration',
     'cloud-native': 'cloud-native-architecture',
   })[props.lesson.checkpoint] ?? props.lesson.checkpoint}`);
 

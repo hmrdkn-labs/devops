@@ -751,7 +751,7 @@ export default function StudyFlow(props: Props) {
           <span hidden={studyMode() === 'read'}>{!hydrated() || me.loading ? 'Checking whether progress can be saved…'
             : authError() ? 'Sign-in is unconfirmed; saving is unavailable.'
               : me()?.authenticated ? 'Your saved progress stays with the unit whichever mode you choose.'
-                : 'Guest progress stays on this page only. Sign in as owner to save it.'}</span>
+                : 'Guest progress stays on this page only.'}</span>
         </div>
       </header>
 

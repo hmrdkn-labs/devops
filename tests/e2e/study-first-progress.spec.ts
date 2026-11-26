@@ -44,13 +44,13 @@ test('KCNA shows neutral progress while loading and restores owner evidence', as
   const html = await (await page.request.get('/kcna')).text();
   expect(html).toMatch(/data-unit-evidence="fpp:kcna-domain-map">Loading shared unit evidence…/);
   await page.goto('/kcna');
-  const row = page.locator('[data-unit-id]').first();
+  const row = page.locator(`[data-unit-id="${unitId}"]`);
   try {
     await expect(row.locator('[data-unit-evidence]')).toHaveText(/^(Loading…|Loading shared unit evidence…)$/);
-    await expect(page.locator('[data-checkpoint-progress]').first()).toHaveText('Loading…');
+    await expect(page.locator('[data-checkpoint-progress="cloud-native-architecture"]')).toHaveText('Loading…');
     release();
     await expect(row.locator('[data-unit-evidence]')).toHaveText('Prior unit practice · Understands basics');
-    await expect(page.locator('[data-checkpoint-progress]').first()).toHaveText('In progress');
+    await expect(page.locator('[data-checkpoint-progress="cloud-native-architecture"]')).toHaveText('In progress');
     const actionBox = await row.locator('.kcna-course-step-action a').boundingBox();
     const progressBox = await row.locator('.kcna-course-step-progress').boundingBox();
     expect(progressBox!.y).toBeGreaterThanOrEqual(actionBox!.y + actionBox!.height);
@@ -68,7 +68,7 @@ test('guest and unavailable KCNA progress never masquerade as empty owner histor
   status = 401;
   await page.getByRole('button', { name: 'Retry progress' }).click();
   await expect(row.locator('[data-unit-evidence]')).toHaveText('Not saved');
-  await expect(page.locator('.path-session-status')).toContainText('Sign in as owner to save');
+  await expect(page.locator('.path-session-status')).toContainText('disappear when you leave it');
 });
 
 test('prerendered lesson is neutral until the requested mode is known', async ({ page }, info) => {

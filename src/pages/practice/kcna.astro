@@ -8,53 +8,48 @@ export const prerender = true;
 
 const practice = practiceSets.find((set) => set.slug === 'kcna-mcq');
 if (!practice) throw new Error('KCNA MCQ practice set is missing');
-const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-kodekloud');
-if (!curriculum) throw new Error('KCNA course curriculum is missing');
+const curriculum = curricula.find((candidate) => candidate.slug === 'kcna-domains');
+if (!curriculum) throw new Error('KCNA domain curriculum is missing');
 
 const preferredModuleByUnit = new Map<string, string>([
   ['fpp:container-lifecycle', 'kubernetes-fundamentals'],
   ['fpp:kubernetes-control-loop', 'kubernetes-fundamentals'],
   ['fpp:kubernetes-architecture-components', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-manifests', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-pod-model', 'kubernetes-fundamentals'],
+  ['fpp:pods-workloads', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-labels-replicasets', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-deployments-rollouts', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-apply-live-state', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-namespaces-scope', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-object-lexicon', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-resource-operations', 'kubernetes-fundamentals'],
+  ['fpp:scheduling-resources-health', 'kubernetes-fundamentals'],
+  ['fpp:kubernetes-scheduling-placement', 'kubernetes-fundamentals'],
   ['fpp:kcna-kubernetes-fundamentals-review', 'kubernetes-fundamentals'],
-  ['fpp:kubernetes-pod-model', 'kubernetes-resources'],
-  ['fpp:pods-workloads', 'kubernetes-resources'],
-  ['fpp:git-yaml-declarative', 'kubernetes-resources'],
-  ['fpp:kubernetes-manifests', 'kubernetes-resources'],
-  ['fpp:kubernetes-labels-replicasets', 'kubernetes-resources'],
-  ['fpp:kubernetes-deployments-rollouts', 'kubernetes-resources'],
-  ['fpp:kubernetes-apply-live-state', 'kubernetes-resources'],
-  ['fpp:kubernetes-resource-operations', 'kubernetes-resources'],
-  ['fpp:kubernetes-namespaces-scope', 'kubernetes-resources'],
-  ['fpp:kubernetes-object-lexicon', 'kubernetes-resources'],
-  ['fpp:kcna-kubernetes-resources-review', 'kubernetes-resources'],
-  ['fpp:kubernetes-scheduling-placement', 'scheduling'],
-  ['fpp:scheduling-resources-health', 'scheduling'],
-  ['fpp:kcna-scheduling-review', 'scheduling'],
-  ['fpp:kubernetes-security-access', 'security'],
-  ['fpp:ip-subnets', 'networking'],
-  ['fpp:ports-sockets-dns', 'networking'],
-  ['fpp:services-dns-ingress', 'networking'],
-  ['fpp:kubernetes-networking-request-path', 'networking'],
-  ['fpp:config-secrets-storage', 'storage'],
-  ['fpp:kubernetes-storage-lifecycle', 'storage'],
-  ['fpp:cloud-native-architecture-principles', 'cloud-native-architecture'],
-  ['fpp:cncf-ecosystem-community', 'cloud-native-architecture'],
-  ['fpp:cloud-native-observability-signals', 'cloud-native-observability'],
-  ['fpp:troubleshoot-process-to-pod', 'cloud-native-observability'],
+  ['fpp:kcna-kubernetes-resources-review', 'kubernetes-fundamentals'],
+  ['fpp:kcna-scheduling-review', 'kubernetes-fundamentals'],
+  ['fpp:ip-subnets', 'container-orchestration'],
+  ['fpp:ports-sockets-dns', 'container-orchestration'],
+  ['fpp:services-dns-ingress', 'container-orchestration'],
+  ['fpp:kubernetes-networking-request-path', 'container-orchestration'],
+  ['fpp:kubernetes-security-access', 'container-orchestration'],
+  ['fpp:config-secrets-storage', 'container-orchestration'],
+  ['fpp:kubernetes-storage-lifecycle', 'container-orchestration'],
+  ['fpp:troubleshoot-process-to-pod', 'container-orchestration'],
+  ['fpp:git-yaml-declarative', 'cloud-native-application-delivery'],
   ['fpp:cloud-native-delivery-gitops', 'cloud-native-application-delivery'],
   ['fpp:cloud-native-release-debugging', 'cloud-native-application-delivery'],
+  ['fpp:cloud-native-observability-signals', 'cloud-native-architecture'],
+  ['fpp:cloud-native-architecture-principles', 'cloud-native-architecture'],
+  ['fpp:cncf-ecosystem-community', 'cloud-native-architecture'],
 ]);
 
 const moduleTitle = new Map(curriculum.modules.map((module) => [module.slug, module.title]));
 const modulePriority = [
-  'security',
-  'scheduling',
-  'networking',
-  'storage',
-  'cloud-native-observability',
+  'container-orchestration',
   'cloud-native-application-delivery',
   'cloud-native-architecture',
-  'kubernetes-resources',
   'kubernetes-fundamentals',
 ];
 const moduleForUnits = (unitIds: string[]) => {
@@ -80,15 +75,9 @@ const questions = practice.questions.map((question) => {
 
 const practiceModuleSlugs = [
   'kubernetes-fundamentals',
-  'kubernetes-resources',
-  'scheduling',
-  'security',
-  'networking',
-  'service-mesh',
-  'storage',
-  'cloud-native-architecture',
-  'cloud-native-observability',
+  'container-orchestration',
   'cloud-native-application-delivery',
+  'cloud-native-architecture',
 ];
 const modules = practiceModuleSlugs.flatMap((slug) => {
   const module = curriculum.modules.find((candidate) => candidate.slug === slug);
@@ -112,7 +101,7 @@ const modules = practiceModuleSlugs.flatMap((slug) => {
     <div>
       <p class="eyebrow">Practice · KCNA</p>
       <h1>KCNA question practice</h1>
-      <p class="lede">Practice the same KCNA modules you are studying, then check the reasoning behind every option.</p>
+      <p class="lede">Practice the four KCNA exam domains, then check the reasoning behind every option.</p>
     </div>
   </header>
 

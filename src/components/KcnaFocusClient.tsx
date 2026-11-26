@@ -214,7 +214,10 @@ export default function KcnaFocusClient(props: Props) {
   const learningHref = createMemo(() => {
     const unit = nextUnit();
     if (!unit) return '/kcna';
-    return `/learn/${unit.slug}${progressByUnit().get(unit.id)?.completion.lessonCompleted ? '' : '?mode=reference'}`;
+    // Guests and first-time owners land in recall-first practice with a question on screen.
+    // Owners who have started but not yet read the lesson resume in the reader.
+    const unitProgress = progressByUnit().get(unit.id);
+    return `/learn/${unit.slug}${unitProgress && !unitProgress.completion.lessonCompleted ? '?mode=reference' : ''}`;
   });
   const sessionHref = createMemo(() => {
     const unit = nextUnit();
@@ -248,7 +251,7 @@ export default function KcnaFocusClient(props: Props) {
         </div>
         <div class="path-session-status" aria-live="polite">
           <Show when={progressResult.loading || !progressResult()}><p>Loading saved progress… You can start learning while it loads.</p></Show>
-          <Show when={!progressResult.loading && progressResult()?.state === 'guest'}><p>Guest learning · answers stay only on the current learning page and disappear when you leave it. Sign in as owner to save them.</p></Show>
+          <Show when={!progressResult.loading && progressResult()?.state === 'guest'}><p>Guest learning · answers stay only on the current learning page and disappear when you leave it.</p></Show>
           <Show when={!progressResult.loading && progressResult()?.state === 'error'}><p>Saved progress could not load. <button type="button" onClick={() => void retryProgress()}>Retry progress</button></p></Show>
           <Show when={!progressResult.loading && progressResult()?.state === 'owner' && !hasStarted()}><p>No KCNA learning progress yet. Start with the first unit.</p></Show>
           <Show when={progressResult()?.state === 'owner' && review.loading}><p>Checking due reviews… You can continue learning while the recommendation updates.</p></Show>

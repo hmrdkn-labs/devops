@@ -36,9 +36,9 @@ test('Learn starts a unit and each viewport exposes one primary navigation', asy
     await expect(page.locator('[data-session-action]')).toHaveAttribute('href', /^\/learn\//);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.locator('[data-session-action]').click();
-    await expect(page).toHaveURL(/\/learn\/[^/]+\/?\?mode=reference$/);
-    await expect(page.getByTestId('reader-workspace')).toBeVisible();
-    await expect(page.getByTestId('practice-workspace')).toBeHidden();
+    await expect(page).toHaveURL(/\/learn\/[^/?]+\/?$/);
+    await expect(page.getByTestId('practice-workspace')).toBeVisible();
+    await expect(page.getByTestId('reader-workspace')).toBeHidden();
     for (const label of ['Learn', 'Review', 'Practice', 'Library']) {
       // Study is immersive; return to the shared navigation before exercising it.
       if (label === 'Learn') await page.goto('/');
@@ -143,7 +143,7 @@ test('Account loading and unavailable network recover to owner without guest cla
       await route.abort('failed');
     } else await route.fulfill({ json: { authenticated: true, authConfigured: true, user: { id: 'test:owner', name: 'Test owner' } } });
   });
-  await page.goto('/');
+  await page.goto('/settings');
   await expect.poll(() => started).toBe(true);
   const summary = page.locator('.auth-popover > summary');
   await expect(summary).toHaveText('Account');

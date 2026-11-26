@@ -4,8 +4,8 @@ import { expect, test, type Page } from '@playwright/test';
 const lessonRoute = '/lesson/kcna-kubernetes-resources';
 const checkpointLessons = [
   { checkpoint: 'fundamentals', anchor: 'kubernetes-fundamentals', title: 'Kubernetes Fundamentals', route: '/lesson/kcna-kubernetes-fundamentals', exercises: 11 },
-  { checkpoint: 'resources', anchor: 'kubernetes-resources', title: 'Kubernetes Resources', route: lessonRoute, exercises: 12 },
-  { checkpoint: 'cluster-behavior', anchor: 'scheduling', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 18 },
+  { checkpoint: 'resources', anchor: 'kubernetes-fundamentals', title: 'Kubernetes Resources', route: lessonRoute, exercises: 12 },
+  { checkpoint: 'cluster-behavior', anchor: 'container-orchestration', title: 'Cluster Behavior', route: '/lesson/kcna-cluster-behavior', exercises: 18 },
   { checkpoint: 'cloud-native', anchor: 'cloud-native-architecture', title: 'Cloud-Native Context', route: '/lesson/kcna-cloud-native-context', exercises: 11 },
 ] as const;
 
@@ -42,7 +42,7 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
   await expect(page.locator('.page-hero')).toHaveCount(0);
   await expect(page.getByTestId('lesson-active-task')).toHaveCount(1);
   await expect(page.getByRole('progressbar', { name: 'Lesson progress' })).toHaveAttribute('aria-valuenow', '8');
-  await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', '/kcna#kubernetes-resources');
+  await expect(page.getByRole('link', { name: /Exit/ })).toHaveAttribute('href', '/kcna#kubernetes-fundamentals');
 
   const heading = page.getByTestId('lesson-active-task').getByRole('heading', { level: 1 });
   const box = await heading.boundingBox();
@@ -76,7 +76,7 @@ test('KCNA Resources opens as one focused, keyboard-completable task', async ({ 
   await expect(page.getByRole('heading', { name: /Put these workload objects/ })).toBeVisible();
 });
 
-test('every KCNA guided lesson stays reachable beside the course-ordered curriculum', async ({ page }, testInfo) => {
+test('every KCNA guided lesson stays reachable beside the domain-ordered curriculum', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Catalog and checkpoint identity only need one browser project');
 
   await page.goto('/kcna');
@@ -379,9 +379,9 @@ test('lesson supports light, dark, reduced motion, and serious accessibility che
   expect(transitionMs).toBeLessThanOrEqual(1);
 });
 
-test('Exit returns safely to the Resources checkpoint', async ({ page }) => {
+test('Exit returns safely to the Fundamentals domain', async ({ page }) => {
   await page.goto(lessonRoute);
   await page.getByRole('link', { name: /Exit/ }).click();
-  await expect(page).toHaveURL(/\/kcna\/?#kubernetes-resources$/);
-  await expect(page.getByRole('heading', { name: 'Kubernetes Resources' })).toBeVisible();
+  await expect(page).toHaveURL(/\/kcna\/?#kubernetes-fundamentals$/);
+  await expect(page.getByRole('heading', { name: 'Kubernetes Fundamentals' })).toBeVisible();
 });

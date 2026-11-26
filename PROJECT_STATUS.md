@@ -1,9 +1,27 @@
 # DevOps by hmrdkn-labs — project status
 
-> **Last updated:** 2026-10-12 · This is the canonical running log. Update it
+> **Last updated:** 2026-11-26 · This is the canonical running log. Update it
 > whenever a phase completes, work starts, or a blocker changes.
 
 ## Read this first
+
+**2026-11-26 — Phase A (front door and hygiene).** The home page now says what the
+site is (free, open Kubernetes exam prep; no account; MIT code, CC BY-SA 4.0
+content, Markdown export) and its primary action opens the first concept unit in
+recall-first practice. Guests no longer see an "Account" control; the owner signs
+in at `/settings`. The KodeKloud-ordered curriculum
+(`content/curricula/kcna-kodekloud.yaml`) and every KodeKloud URL are removed from
+`content/`, `src/` and `public/raw`; the KCNA path is now organised by the four
+official exam domains and weights from the Linux Foundation KCNA page
+(Kubernetes Fundamentals 44%, Container Orchestration 28%, Cloud Native
+Application Delivery 16%, Cloud Native Architecture 12%) in
+`content/curricula/kcna-domains.yaml`. Git history still contains the old file.
+
+Content counts from `npm run content:build` on this branch: **40 units** (32 in
+the KCNA path), **82 MCQs**, **252 cards**, 4 interactive lessons (52 exercises),
+3 mental models. `npm run ci` passes 821 Vitest tests, 0 Astro diagnostics, D1
+checks and the production build. Earlier log entries below are historical and
+still use the old curriculum names.
 
 **Current phase: the 25-page Kubernetes Anatomy map is live and verified; all build agents, worktrees and preview servers are cleaned up.**
 

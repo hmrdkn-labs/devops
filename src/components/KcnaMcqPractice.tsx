@@ -311,14 +311,14 @@ export default function KcnaMcqPractice(props: Props) {
         <p>Changing the length or mix starts a new session and resets this score.</p>
         <div class="mcq-session-controls" aria-label="Practice session length">
           <label class="mcq-module-filter">
-            <span>Course module</span>
+            <span>Exam domain</span>
             <select
-              aria-label="Course module"
+              aria-label="Exam domain"
               disabled={!hydrated()}
               value={moduleFilter()}
               onChange={(event) => resetSession(mode(), 0, event.currentTarget.value)}
             >
-              <option value="all">All KCNA modules ({props.questions.length})</option>
+              <option value="all">All KCNA domains ({props.questions.length})</option>
               <For each={props.modules}>{(module) => (
                 <option value={module.id} disabled={module.questionCount === 0}>
                   {module.title} ({module.questionCount})

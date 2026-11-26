@@ -10,6 +10,12 @@ Linux, GitHub, Google, Cloudflare, and other product or organization names are
 trademarks of their respective owners. Their use identifies technologies and
 public reference material; it does not imply endorsement.
 
+The KCNA exam domain names and weights in `content/curricula/kcna-domains.yaml`
+come from the Linux Foundation's public KCNA page,
+https://training.linuxfoundation.org/certification/kubernetes-cloud-native-associate/
+(checked 2026-11-26). Only the domain names and percentages are used; all
+teaching text and questions are original.
+
 External links and source metadata remain subject to their publishers' terms.
 This repository does not redistribute private course lessons, screenshots,
 images, codebases, or course structure.

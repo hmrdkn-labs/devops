@@ -18,7 +18,7 @@ export function getStaticPaths() {
 
 const { unit } = Astro.props;
 const kcnaPath = paths.find((path) => path.slug === 'kcna');
-const kcnaCurriculum = curricula.find((curriculum) => curriculum.slug === 'kcna-kodekloud');
+const kcnaCurriculum = curricula.find((curriculum) => curriculum.slug === 'kcna-domains');
 const courseUnitIds = kcnaCurriculum
   ? [...new Set(kcnaCurriculum.modules.flatMap((module) => module.steps.flatMap((step) => step.unit_ids)))]
   : [];
